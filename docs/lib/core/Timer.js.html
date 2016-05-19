@@ -136,6 +136,12 @@
         <a href="#gametimer.hooknames">GameTimer.hookNames</a>
       </div>
       <div class="heading h2">
+        <a href="#gametimer.stagersync">GameTimer.stagerSync</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gametimer.stagerproperty">GameTimer.stagerProperty</a>
+      </div>
+      <div class="heading h2">
         <a href="#gametimer%20methods">GameTimer methods</a>
       </div>
       <div class="heading h3">
@@ -176,6 +182,18 @@
       </div>
       <div class="heading h3">
         <a href="#gametimer.ispaused">GameTimer.isPaused</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gametimer.syncwithstager">GameTimer.syncWithStager</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gametimer.setstagerproperty">GameTimer.setStagerProperty</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gametimer.getstagerproperty">GameTimer.getStagerProperty</a>
+      </div>
+      <div class="heading h2">
+        <a href="#helper%20methods.">Helper methods.</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -1858,9 +1876,73 @@ MIT Licensed</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.stagersync">
+  <h2>
+    <a href="#gametimer.stagersync" name="gametimer.stagersync" class="pilcrow">&#182;</a>
+    GameTimer.stagerSync
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>TRUE if the timer is synced with stager</p>
+
+<p>It will use GameTimer.stagerProperty to sync</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.stagerProperty</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.syncWithStager
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stagerSync</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.stagerproperty">
+  <h2>
+    <a href="#gametimer.stagerproperty" name="gametimer.stagerproperty" class="pilcrow">&#182;</a>
+    GameTimer.stagerProperty
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>The name of the property used to sync with the stager</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.stagerSync
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stagerProperty</span> <span class="o">=</span> <span class="s1">&#39;timer&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Init!</p>
         </td>
@@ -1920,10 +2002,14 @@ recycles the settings in <code>this.options</code>.</p>
              { hook: myFunc2,
                ctx: that, },
              ],
+     // Sync with the 'timer' property of the stager
+     stagerSync: true,
+     // Name of the property to listen to (Default 'timer')
+     stagerProperty: 'timer'
  }
  // Units are in milliseconds.</p>
 
-<p>Note: if <code>milliseconds</code> is a negative number the timer fire
+<p>Note: if <code>milliseconds</code> is a negative number the timer fires
 immediately.</p>
   </div>
   <div class="details">
@@ -1964,7 +2050,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Event to be fired when timer expires.</p>
         </td>
@@ -1977,7 +2063,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>TODO: update and milliseconds must be multiple now</p>
         </td>
@@ -1996,7 +2082,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Set startPaused option. if specified. Default: FALSE</p>
         </td>
@@ -2011,7 +2097,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Only set status to INITIALIZED if all of the state is valid and
 ready to be used by this.start etc.</p>
@@ -2022,6 +2108,25 @@ ready to be used by this.start etc.</p>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">eventEmitterName</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">eventEmitterName</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+</div>
+<p>Stager sync options.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">stagerSync</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">syncWithStager</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">stagerSync</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">stagerProperty</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStagerProperty</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">stagerProperty</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
 
@@ -2129,7 +2234,7 @@ timer is stopped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Check validity of state</p>
         </td>
@@ -2157,7 +2262,7 @@ timer is stopped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Remember time of start (used by this.pause to compute remaining time)</p>
         </td>
@@ -2171,7 +2276,7 @@ timer is stopped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Fires the event immediately if time is zero.
 Double check necessary in strict mode.</p>
@@ -2194,7 +2299,7 @@ Double check necessary in strict mode.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>It is not possible to pass extra parameters to updateCallback,
 by adding them after <em>this.update</em>. In IE does not work.</p>
@@ -2367,7 +2472,7 @@ status property to <code>GameTimer.PAUSED</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>Save time of pausing.
 If start was never called, or called with startPaused on.</p>
@@ -2384,7 +2489,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>Save the difference of time left.</p>
         </td>
@@ -2402,7 +2507,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>If the timer was explicitly stopped, we ignore the pause:</p>
         </td>
@@ -2417,7 +2522,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <p>pause() was called before start(); remember it:</p>
         </td>
@@ -2468,7 +2573,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Don't start if the initialization is incomplete (invalid state):</p>
         </td>
@@ -2495,7 +2600,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>Run rest of this "update" interval:</p>
         </td>
@@ -2509,7 +2614,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>start() needs the timer to not be running.</p>
         </td>
@@ -2525,7 +2630,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>start() sets status to LOADING, so change it back to RUNNING.</p>
         </td>
@@ -2735,7 +2840,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <p>return this.timeLeft !== null &amp;&amp; this.timeLeft &lt;= 0;</p>
         </td>
@@ -2748,9 +2853,239 @@ or the current settings, if undefined</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.syncwithstager">
+  <h2>
+    <a href="#gametimer.syncwithstager" name="gametimer.syncwithstager" class="pilcrow">&#182;</a>
+    GameTimer.syncWithStager
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Enables listeners to events and reads options from stager</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">sync</span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">undefined</span>
+      <span>TRUE to sync, FALSE to remove sync.
+   If undefined no operation is performed, and simply the current
+   value is returned.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">property</span>
+      <span class="dox_type">string</span>
+      <span>Optiona. Name of the property of the stager
+   from which load timer information. Default: 'timer'</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if synced, FALSE otherwise</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.setStagerProperty
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">syncWithStager</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sync</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">sync</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stagerSync</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">sync</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameTimer.syncWithStager: sync must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;boolean or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameTimer.syncWithStager: property &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must be string or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStagerProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+</div>
+<p>Do nothing if no change of status is required.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">syncWithStager</span><span class="p">()</span> <span class="o">===</span> <span class="nx">sync</span><span class="p">)</span> <span class="k">return</span> <span class="nx">sync</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sync</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">prop</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getStagerProperty</span><span class="p">();</span>
+                    <span class="nx">step</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+                    <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">options</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">processOptions</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
+                        <span class="nx">that</span><span class="p">.</span><span class="nx">startTiming</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+
+            <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;REALLY_DONE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">stopOnDone</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">gameTimer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+</div>
+<p>that.startWaiting();</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;REALLY_DONE&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+</div>
+<p>Store value.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stagerSync</span> <span class="o">=</span> <span class="nx">sync</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">sync</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.setstagerproperty">
+  <h2>
+    <a href="#gametimer.setstagerproperty" name="gametimer.setstagerproperty" class="pilcrow">&#182;</a>
+    GameTimer.setStagerProperty
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the value of stagerProperty</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">property</span>
+      <span class="dox_type">string</span>
+      <span>The property to set</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.stagerProperty</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.getStagerProperty
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStagerProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameTimer.setStageProperty: property must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stagerProperty</span> <span class="o">=</span> <span class="nx">property</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.getstagerproperty">
+  <h2>
+    <a href="#gametimer.getstagerproperty" name="gametimer.getstagerproperty" class="pilcrow">&#182;</a>
+    GameTimer.getStagerProperty
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the current value of the stager property</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>stagerProperty</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.setStagerProperty
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStagerProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stagerProperty</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper%20methods.">
+  <h2>
+    <a href="#helper%20methods." name="helper%20methods." class="pilcrow">&#182;</a>
+    Helper methods.
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Do a timer update.
 Return false if timer ran out, true otherwise.</p>
@@ -2768,7 +3103,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any</p>
         </td>
@@ -2783,7 +3118,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
@@ -2796,7 +3131,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>First stop the timer and then call the timeup</p>
         </td>
@@ -2817,7 +3152,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
 <p>Check whether the timer has a valid initialized state.
 Returns null if true, an error string otherwise.</p>
