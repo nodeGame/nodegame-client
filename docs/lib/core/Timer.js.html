@@ -3005,7 +3005,11 @@ or the current settings, if undefined</p>
                 <span class="nx">step</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
                 <span class="nx">options</span> <span class="o">=</span> <span class="nx">processStepOptions</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;will do pushing &#39;</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
                     <span class="nx">that</span><span class="p">.</span><span class="nx">restart</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;will NOT do pushing &#39;</span><span class="p">,</span> <span class="nx">step</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;_PLAYING&#39;</span><span class="p">);</span>
 
@@ -3271,16 +3275,35 @@ or the current settings, if undefined</p>
             <span class="k">break</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+</div>
+<p>Casting or Function returned null. Abort.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">||</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameTimer processStepOptions: milliseconds &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;must be a number &gt;= 0. Found: &#39;</span> <span class="o">+</span>
                             <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">);</span>
         <span class="p">}</span>
 
+        <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;timeup&#39;</span><span class="p">);</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">timeup</span> <span class="o">||</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span> <span class="p">};</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">timer</span> <span class="o">||</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span> <span class="p">};</span>
         <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
@@ -3295,7 +3318,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Do a timer update.
 Return false if timer ran out, true otherwise.</p>
@@ -3313,7 +3336,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any</p>
         </td>
@@ -3328,7 +3351,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
@@ -3341,7 +3364,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>First stop the timer and then call the timeup</p>
         </td>
@@ -3362,7 +3385,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>Check whether the timer has a valid initialized state.
 Returns null if true, an error string otherwise.</p>
