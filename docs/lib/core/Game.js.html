@@ -1679,6 +1679,20 @@ TODO: remove some unused comments in the code.
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Next step ---&gt; &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+</div>
+<p>Clear push-timer at the beginning of each new step.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">pushManager</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
+
         <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
         <span class="nx">curStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
         <span class="nx">curStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
@@ -1690,7 +1704,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Sends start / step command to connected clients if option is on.</p>
         </td>
@@ -1711,7 +1725,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Calling exit function of the step.</p>
         </td>
@@ -1730,7 +1744,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Listeners from previous step are cleared (must be after exit).</p>
         </td>
@@ -1744,7 +1758,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Emit buffered messages.</p>
         </td>
@@ -1762,7 +1776,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>TODO: see if we can avoid code duplication below.
 Calling exit function of the stage.</p>
@@ -1781,7 +1795,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Clear any event listeners added in the stage exit function.</p>
         </td>
@@ -1797,7 +1811,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -1814,7 +1828,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>else do nothing</p>
         </td>
@@ -1829,7 +1843,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>TODO maybe update also in case of string.</p>
         </td>
@@ -1843,7 +1857,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Check for stage/step existence:</p>
         </td>
@@ -1860,7 +1874,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Check options.
 TODO: this does not lock screen / stop timer.</p>
@@ -1875,7 +1889,7 @@ TODO: this does not lock screen / stop timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>If we enter a new stage we need to update a few things.</p>
         </td>
@@ -1889,7 +1903,7 @@ TODO: this does not lock screen / stop timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Calling exit function.</p>
         </td>
@@ -1907,7 +1921,7 @@ TODO: this does not lock screen / stop timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>TODO: avoid duplication.
 stageLevel needs to be changed (silent), otherwise it stays
@@ -1924,7 +1938,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Store time:</p>
         </td>
@@ -1938,7 +1952,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Clear the previous stage listeners.</p>
         </td>
@@ -1955,7 +1969,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Execute the init function of the stage, if any:</p>
         </td>
@@ -1972,7 +1986,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>TODO: avoid duplication.
 stageLevel needs to be changed (silent), otherwise it stays
@@ -1990,7 +2004,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Execute the init function of the step, if any:</p>
         </td>
@@ -2011,7 +2025,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Updating the globals object.</p>
         </td>
@@ -2025,7 +2039,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Add min/max/exactPlayers listeners for the step.
 The fields must be an array with at least two elements:
@@ -2086,7 +2100,7 @@ The fields must be an array with at least two elements:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Register event handler:</p>
         </td>
@@ -2100,7 +2114,7 @@ The fields must be an array with at least two elements:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -2156,7 +2170,7 @@ The fields must be an array with at least two elements:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>PRECONNECT doesn't change the PlayerList so we don't have to
 handle it here.</p>
@@ -2170,7 +2184,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Check conditions explicitly:</p>
         </td>
@@ -2184,7 +2198,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -2198,7 +2212,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -2228,7 +2242,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -2243,7 +2257,7 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -2261,30 +2275,12 @@ handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>Update list of stepped steps.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
-</div>
-<p>TODO: check here.
-        // Pushes clients to finish current step in line with the time
-        // expected by logic, or otherwise disconnects them.
-        if (this.plot.getProperty(nextStep, 'pushClients')) {
-            this.timer.syncWithStager(true);
-        }</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
