@@ -325,6 +325,11 @@ MIT Licensed</p>
       <span class="dox_type">object</span>
       <span>Configuration object</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">checkAndAssignAllWaitTimes
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -351,10 +356,12 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Sets a timer for checking if all clients have finished current step</p>
 
-<p>The length of the timer is equal to timer + offset.</p>
+<p>The length of the timer is equal to the sum of</p>
 
-<p>By default, it looks up the <code>timer</code> property in the current
-step object. If no <code>timer</code> property is found, timer is set to 0.</p>
+<ul>
+<li>timer: conf.timer (Default 0)
+<ul><li>offset: conf.offset (Default this.offsetWaitTime)</li></ul></li>
+</ul>
 
 <p>If timer expires <code>PushManager.pushGame</code> will be called.</p>
   </div>
@@ -363,10 +370,8 @@ step object. If no <code>timer</code> property is found, timer is set to 0.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">conf</span>
       <span class="dox_type">object</span>
-      <span>Optional. Configuration passed to <code>pushGame</code> method.
-   The pushMethod will be called when the push-manager timer expires,
-   that is equal conf.timer + conf.offset. conf.timer is interpreted
-   by the GameTimer, and can be function, number, object or string.</span>
+      <span>Optional. Configuration passed to <code>pushGame</code> method,
+   with 'milliseconds' option equal to timer + offset.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -488,6 +493,12 @@ not arrive it will disconnect them. If the reply arrives, it will
 later check if they manage to step, and if not disconnects them.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">conf</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration options.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">checkIfPushWorked
@@ -540,32 +551,6 @@ later check if they manage to step, and if not disconnects them.</p>
                              <span class="nx">executeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
                              <span class="nx">target</span><span class="o">:</span> <span class="nx">GAMECOMMAND</span><span class="p">,</span>
                              <span class="nx">timeoutCb</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
-</div>
-<p>No reply to GET, disconnect client.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                                 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;NO REPLY &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
-</div>
-<p>node.log('node.pushManager: no reply from ' +
-        p.id);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
                                  <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
                              <span class="p">}</span>
                          <span class="p">});</span>
@@ -633,7 +618,7 @@ later check if they manage to step, and if not disconnects them.</p>
         <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">stage</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">round</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">round</span>
         <span class="p">};</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;received reply from &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: received reply from &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; @&#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">);</span>
 
         <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">pp</span><span class="p">;</span>
@@ -641,50 +626,11 @@ later check if they manage to step, and if not disconnects them.</p>
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">exist</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">pp</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
 
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
-</div>
-<p>console.log('CONSOLE checking if push worked for ', p.id);
-node.log('node.pushManager: checking if push worked for ', p.id);
-console.log(pp.stage, stage);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">pp</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH did NOT work for &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
-</div>
-<p>node.log('node.pushManager: push did not work for ', p.id);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">pp</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH worked for &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">stage</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
-</div>
-<p>node.log('node.pushManager: push worked for ', p.id);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: push worked for &#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span> <span class="nx">milliseconds</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
@@ -725,6 +671,21 @@ console.log(pp.stage, stage);</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>No reply to GET, disconnect client.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;push-manager: disconnecting: &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; @&#39;</span>
+                  <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+
         <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
             <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;SERVERCOMMAND&#39;</span><span class="p">,</span>
             <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;DISCONNECT&#39;</span><span class="p">,</span>
