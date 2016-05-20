@@ -201,6 +201,12 @@
       <div class="heading h3">
         <a href="#processstepoptions">processStepOptions</a>
       </div>
+      <div class="heading h3">
+        <a href="#updatecallback">updateCallback</a>
+      </div>
+      <div class="heading h3">
+        <a href="#checkinitialized">checkInitialized</a>
+      </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
@@ -1519,7 +1525,6 @@ the given GameTimer object are removed.</p>
         <span class="nx">tentativeName</span> <span class="o">=</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">hook</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">);</span>
 
 
-
 </pre></div>
         </td>
       </tr>
@@ -2322,7 +2327,8 @@ immediately.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
-<p>TODO: update and milliseconds must be multiple now.</p>
+<p>TODO: check if this TODO is correct.
+TODO: update and milliseconds must be multiple now.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
@@ -3347,92 +3353,6 @@ is missing, it sets it to property 'timeup', if found.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code><span class="cm">/**</span>
-<span class="cm"> * ### processStepOptions</span>
-<span class="cm"> *</span>
-<span class="cm"> * Clones and cleans user options</span>
-<span class="cm"> *</span>
-<span class="cm"> * Adds the default &#39;timeup&#39; function as `node.done`.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @param {NodeGameClient} node Reference to node</span>
-<span class="cm"> * @param {object} step current game step</span>
-<span class="cm"> * @param {string} prop The name of the property containing timer info</span>
-<span class="cm"> *</span>
-<span class="cm"> * @return {object} options Validated configuration object, or null</span>
-<span class="cm"> *   if no timer info is found for current step</span>
-<span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">processStepOptions</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">typeofOptions</span><span class="p">,</span> <span class="nx">timeup</span><span class="p">;</span>
-    <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-
-    <span class="c1">// Build object.</span>
-    <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">typeofOptions</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">;</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="nx">typeofOptions</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="k">case</span> <span class="s1">&#39;number&#39;</span><span class="o">:</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">;</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s1">&#39;object&#39;</span><span class="o">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">timeup</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameTimer processStepOptions: timeup &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;must be function or undefined. &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">timeup</span><span class="p">;</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s1">&#39;string&#39;</span><span class="o">:</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Casting or Function returned null. Abort.</span>
-    <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">||</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameTimer processStepOptions: milliseconds &#39;</span> <span class="o">+</span>
-                        <span class="s1">&#39;must be a number &gt;= 0. Found: &#39;</span> <span class="o">+</span>
-                        <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">;</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;timeup&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nx">options</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="processstepoptions">
@@ -3509,7 +3429,7 @@ makes it an object with property 'milliseconds'.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Make sure update and timer are the same.</p>
         </td>
@@ -3531,15 +3451,37 @@ makes it an object with property 'milliseconds'.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="updatecallback">
+  <h3>
+    <a href="#updatecallback" name="updatecallback" class="pilcrow">&#182;</a>
+    updateCallback
+  </h3>
 </div>
-<p>Do a timer update.
-Return false if timer ran out, true otherwise.</p>
+
+  </div>
+  <div class="body"><p>Updates the timer object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">GameTimer</span>
+      <span>The game timer instance</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>FALSE if timer ran out, TRUE otherwise</span>
+    </div>
+  </div>
+</div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">updateCallback</span><span class="p">(</span><span class="nx">that</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="nx">that</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">RUNNING</span><span class="p">;</span>
         <span class="nx">that</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">+=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">update</span><span class="p">;</span>
         <span class="nx">that</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">-=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">update</span><span class="p">;</span>
@@ -3551,12 +3493,12 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
-<p>Fire custom hooks from the latest to the first if any</p>
+<p>Fire custom hooks from the latest to the first if any.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[(</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span>
         <span class="p">}</span>
 
@@ -3566,7 +3508,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
@@ -3579,9 +3521,9 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
-<p>First stop the timer and then call the timeup</p>
+<p>First stop the timer and then call the timeup.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
@@ -3598,12 +3540,35 @@ Return false if timer ran out, true otherwise.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="checkinitialized">
+  <h3>
+    <a href="#checkinitialized" name="checkinitialized" class="pilcrow">&#182;</a>
+    checkInitialized
+  </h3>
 </div>
-<p>Check whether the timer has a valid initialized state.
-Returns null if true, an error string otherwise.</p>
+
+  </div>
+  <div class="body"><p>Check whether the timer has a valid initialized state</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">GameTimer</span>
+      <span>The game timer instance</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>Returns null if timer is in valid,
+   state, or an error string otherwise.</span>
+    </div>
+  </div>
+</div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">checkInitialized</span><span class="p">(</span><span class="nx">that</span><span class="p">)</span> <span class="p">{</span>
@@ -3613,7 +3578,6 @@ Returns null if true, an error string otherwise.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">update</span> <span class="o">&gt;</span> <span class="nx">that</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="s1">&#39;this.update must not be greater than this.milliseconds&#39;</span><span class="p">;</span>
         <span class="p">}</span>
-
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 
