@@ -642,6 +642,74 @@ describe('GamePlot', function() {
             (plot.stepsFromPreviousStage('5.5.1') === null).should.eql(true);
         });
     });
+
+    describe('#getProperty()', function() {
+        before(function() {
+
+            stager = ngc.getStager();
+            node = ngc.getClient();
+            node.verbosity = -1000;
+
+            stager
+                .next('1')
+                .next('2')
+                .next({
+                    id: '3',
+                    steps: [ '3a', '3b' ]
+                })
+                .finalize();
+
+            stager.extendStep('1', {
+                a: 1,
+                d: 'step1'
+            });
+
+            stager.extendStep('3a', {
+                a: 3,
+                b: 'b'
+            });
+
+            stager.extendStep('3b', {
+                b: 'foo',
+                c: 'ah'
+            });
+
+            stager.extendStage('3', {
+                b: '3'
+            });
+
+            stager.extendStage('2', {
+                b: '2'
+            });
+
+            stager.setDefaultProperty('d', 'DD');
+
+            plot = new GamePlot(node, stager);
+        });
+
+        it('step 3 property "d" be "default"', function() {
+            plot.getProperty('3', 'd').should.eql('DD');
+        });
+        it('step 3 property "d" should be cached', function() {
+            plot.cache['3.1.1'].d.should.eql('DD');
+        });
+        it('step 3 property "d" should be fetched from cache', function() {
+            plot.cache['3.1.1'].d = J.clone(plot.cache['3.1.1'].d);
+            plot.cache['3.1.1'].d = 'muhahah';
+            plot.getProperty('3', 'd').should.eql('muhahah');
+
+        });
+        it('step 1 property "d" be from "step"', function() {
+            plot.getProperty('1', 'd').should.eql('step1');
+        });
+        it('step 2 property "b" be from "stage"', function() {
+            plot.getProperty('2', 'b').should.eql('2');
+        });
+        it('step 2 property "b" be from "step"', function() {
+            plot.getProperty('3a', 'b').should.eql('b');
+        });
+    });
+
 });
 
 // var node = require('../index.js');
