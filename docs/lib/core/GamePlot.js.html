@@ -91,9 +91,6 @@
         <a href="#gameplot.isready">GamePlot.isReady</a>
       </div>
       <div class="heading h3">
-        <a href="#gameplot.getname">GamePlot.getName</a>
-      </div>
-      <div class="heading h3">
         <a href="#gameplot.normalizegamestage">GamePlot.normalizeGameStage</a>
       </div>
       <div class="heading h3">
@@ -331,6 +328,8 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>Initializes the GamePlot with a stager</p>
+
+<p>Clears the cache also.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -358,6 +357,7 @@ MIT Licensed</p>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">stager</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">cache</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">};</span>
 
 
@@ -1264,7 +1264,7 @@ makes sures stage is with numbers and not strings.</p>
 <p>If there are more steps to jump, check if we have loops.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="nx">stageType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">curStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span>
+                    <span class="nx">stageType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">curStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span><span class="p">;</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">delta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -1306,7 +1306,7 @@ makes sures stage is with numbers and not strings.</p>
 <p>If there are more steps to jump, check if we have loops.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="nx">stageType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">curStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span>
+                    <span class="nx">stageType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">[</span><span class="nx">curStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span><span class="p">;</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span> <span class="o">||</span> <span class="nx">stageType</span> <span class="o">===</span> <span class="s1">&#39;doLoop&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">delta</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
                         <span class="k">else</span> <span class="k">return</span> <span class="nx">curStage</span><span class="p">;</span>
@@ -1994,6 +1994,11 @@ game stage.</p>
       <span class="dox_type">null</span>
       <span>The value of the property if found, NULL otherwise.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.cache
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -2122,7 +2127,9 @@ game stage.</p>
   </div>
   <div class="body"><p>Looks up a property and updates it to the new value</p>
 
-<p>Looks follows the steps described in <em>GamePlot.getProperty</em>.</p>
+<p>Look up follows the steps described in <em>GamePlot.getProperty</em>,
+excluding step 0. If a property is found and updated, its value
+is stored in the cached.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -2149,12 +2156,17 @@ game stage.</p>
       <span class="dox_type">bool</span>
       <span>TRUE, if property is found and updated, FALSE otherwise.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.cache
+</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stepObj</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">defaultProps</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stepObj</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">defaultProps</span><span class="p">,</span> <span class="nx">found</span><span class="p">;</span>
 
         <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
 
@@ -2172,13 +2184,13 @@ game stage.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
-<p>Look in current step:</p>
+<p>Look in current step.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">stepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stepObj</span> <span class="o">&amp;&amp;</span> <span class="nx">stepObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">stepObj</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
 
@@ -2190,13 +2202,15 @@ game stage.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
-<p>Look in current stage:</p>
+<p>Look in current stage.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span> <span class="o">&amp;&amp;</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">stageObj</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">stageObj</span> <span class="o">&amp;&amp;</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">stageObj</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+                <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
 
@@ -2208,14 +2222,14 @@ game stage.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
-<p>Look in Stager's defaults:</p>
+<p>Look in Stager's defaults.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">found</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">defaultProps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getDefaultProperties</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">defaultProps</span> <span class="o">&amp;&amp;</span> <span class="nx">defaultProps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">defaultProps</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -2228,7 +2242,25 @@ game stage.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
-<p>Not found:</p>
+<p>Cache it and return it.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">gameStage</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">gameStage</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">gameStage</span><span class="p">][</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+</div>
+<p>Not found.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -2267,43 +2299,6 @@ game stage.</p>
             <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span>
              <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">generalNextFunction</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">||</span>
              <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">nextFunctions</span><span class="p">));</span>
-    <span class="p">};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gameplot.getname">
-  <h3>
-    <a href="#gameplot.getname" name="gameplot.getname" class="pilcrow">&#182;</a>
-    GamePlot.getName
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>TODO: To remove once transition is complete</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">deprecated
-</div>
-
-
-<div class="highlight"><pre><code><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;dox_tag_detail&quot;</span><span class="o">&gt;</span>
-<span class="o">&lt;</span><span class="err">/div&gt;</span>
-</code></pre></div>
-
-
-
-<p></div>
-</div></p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">s</span> <span class="o">?</span> <span class="nx">s</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="nx">s</span><span class="p">;</span>
     <span class="p">};</span>
 
 

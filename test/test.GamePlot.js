@@ -16,48 +16,56 @@ var stager, plot, stagerState;
 var stepRule, globals, properties, init, gameover, done, stage;
 var loopCb, flag, tmp;
 
-
-
-//   stager = ngc.getStager();
-//   node = ngc.getClient();
+//  stager = ngc.getStager();
+//  node = ngc.getClient();
+//  node.verbosity = -1000;
 //
-//  tmp = { loops: [], counter: 1 };
+//  stager
+//      .next('1')
+//      .next('2')
+//      .next({
+//          id: '3',
+//          steps: [ '3a', '3b' ]
+//      })
+//      .finalize();
 //
-//  loopCb = function() {
-//      var res;
-//      res = !!!flag;
-//      tmp.loops.push(res);
-//      tmp.counter++;
-//      if (tmp.counter > 3) flag = true;
-//      return res;
-//  };
+//  stager.extendStep('1', {
+//      a: 1,
+//      d: 'step1'
+//  });
 //
-// stager
-//     .next('1')
-//     .loop({
-//         id: '2',
-//         cb: function() {
-//             if (tmp.counter++ >= 3) flag = true;
-//         }
-//     }, loopCb)
-//     .loop('skipped', loopCb)
-//     .next('4')
-//     .doLoop('5', loopCb)
-//     .next('6')
-//     .repeat('7', 2)
-//     .next({
-//         id: '8',
-//         steps: [ '8.1', '8.2', '8.3' ]
-//     })
-//     .repeat({
-//         id: '9',
-//         steps: [ '9.1', '9.2', '9.3' ]
-//     }, 3)
-//     .finalize();
+//  stager.extendStep('3a', {
+//      a: 3,
+//      b: 'b'
+//  });
+//
+//  stager.extendStep('3b', {
+//      b: 'foo',
+//      c: 'ah'
+//  });
+//
+//  stager.extendStage('3', {
+//      b: '3'
+//  });
+//
+//  stager.extendStage('2', {
+//      b: '2'
+//  });
+//
+//  stager.setDefaultProperty('d', 'DD');
 //
 //  plot = new GamePlot(node, stager);
 //
-//  debugger
+//    debugger
+//
+// plot.getProperty('3', 'd');
+//
+// plot.updateProperty('3', 'd', 'up');
+//
+// plot.getProperty('3', 'd');
+
+
+
 //
 // var a = plot.stepsToNextStage('1');
 // console.log(a);
@@ -705,8 +713,35 @@ describe('GamePlot', function() {
         it('step 2 property "b" be from "stage"', function() {
             plot.getProperty('2', 'b').should.eql('2');
         });
-        it('step 2 property "b" be from "step"', function() {
+        it('step 3a property "b" be from "step"', function() {
             plot.getProperty('3a', 'b').should.eql('b');
+        });
+    });
+
+    // Must follow getProperty.
+    describe('#updateProperty()', function() {
+
+        it('step 3a property "b" be from "step"', function() {
+            var res;
+            res = plot.updateProperty('3a', 'b', 'updated-b');
+            res.should.eql(true);
+        });
+
+        it('step 3a property "b" should update cache', function() {
+            plot.cache['3.1.1'].b.should.eql('updated-b');
+        });
+
+        it('updated step 3a property "b" should be eql to update', function() {
+            plot.getProperty('3a', 'b').should.eql('updated-b');
+        });
+
+        it('step 3a property "bb" be from "step"', function() {
+            var res;
+            res = plot.updateProperty('3a', 'bb', 'updated-b');
+            res.should.eql(false);
+        });
+        it('step 3a property "bb" should *not* update cache', function() {
+            ('undefined' === typeof plot.cache['3.1.1'].bb).should.eql(true);
         });
     });
 
