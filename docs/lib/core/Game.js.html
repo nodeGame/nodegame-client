@@ -566,7 +566,8 @@ automatically inserted in this object</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
-            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;game_timer&#39;</span>            
+            <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;game_timer&#39;</span><span class="p">,</span>
+            <span class="nx">stagerSync</span><span class="o">:</span> <span class="kc">true</span>
         <span class="p">});</span>
 
 
@@ -2266,7 +2267,7 @@ handle it here.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-        
+
 
 </pre></div>
         </td>
@@ -2276,13 +2277,14 @@ handle it here.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
-<p>Pushes clients to finish current step in line with the time
-expected by logic, or otherwise disconnects them.</p>
+<p>TODO: check here.
+        // Pushes clients to finish current step in line with the time
+        // expected by logic, or otherwise disconnects them.
+        if (this.plot.getProperty(nextStep, 'pushClients')) {
+            this.timer.syncWithStager(true);
+        }</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;pushClients&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">syncWithStager</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-        <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>

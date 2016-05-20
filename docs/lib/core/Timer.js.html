@@ -45,12 +45,6 @@
       <div class="heading h3">
         <a href="#timer.destroyalltimers">Timer.destroyAllTimers</a>
       </div>
-      <div class="heading h2">
-        <a href="#helper%20methods.">Helper Methods.</a>
-      </div>
-      <div class="heading h3">
-        <a href="#randomfire">randomFire</a>
-      </div>
       <div class="heading h3">
         <a href="#timer.settimestamp">Timer.setTimestamp</a>
       </div>
@@ -77,6 +71,12 @@
       </div>
       <div class="heading h3">
         <a href="#timer.randomdone">Timer.randomDone</a>
+      </div>
+      <div class="heading h2">
+        <a href="#helper%20methods.">Helper Methods.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#randomfire">randomFire</a>
       </div>
       <div class="heading h1">
         <a href="#gametimer">GameTimer</a>
@@ -218,7 +218,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Timing-related utility functions</p>
@@ -737,178 +737,6 @@ the given GameTimer object are removed.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap" id="helper%20methods.">
-  <h2>
-    <a href="#helper%20methods." name="helper%20methods." class="pilcrow">&#182;</a>
-    Helper Methods.
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="randomfire">
-  <h3>
-    <a href="#randomfire" name="randomfire" class="pilcrow">&#182;</a>
-    randomFire
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Common handler for randomEmit, randomExec, randomDone</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">method</span>
-      <span class="dox_type">string</span>
-      <span>The name of the method invoking randomFire</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">hook</span>
-      <span class="dox_type">string</span>
-      <span class="dox_type">function</span>
-      <span>The function to call or the event to emit</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">maxWait</span>
-      <span class="dox_type">number</span>
-      <span>Optional. The max number of milliseconds
-  to wait before firing</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">emit</span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if it is an event to emit</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">ctx</span>
-      <span class="dox_type">object</span>
-      <span class="dox_type">function</span>
-      <span>Optional. The context of execution for
-  the function</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">waitTime</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">timerObj</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">tentativeName</span><span class="p">;</span>
-
-        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">maxWait</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: maxWait must &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;be number or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">waitTime</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">maxWait</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
-</div>
-<p>Define timeup callback:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">emit</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timerObj</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="p">[</span><span class="nx">hook</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">hook</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">};</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timerObj</span><span class="p">);</span>
-                <span class="nx">hook</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-            <span class="p">};</span>
-        <span class="p">}</span>
-
-        <span class="nx">tentativeName</span> <span class="o">=</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">hook</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">);</span>
-
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
-</div>
-<p>Create and run timer:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">timerObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
-            <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">waitTime</span><span class="p">,</span>
-            <span class="nx">timeup</span><span class="o">:</span> <span class="nx">callback</span><span class="p">,</span>
-            <span class="nx">name</span><span class="o">:</span> <span class="nx">J</span><span class="p">.</span><span class="nx">uniqueKey</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">,</span> <span class="nx">tentativeName</span><span class="p">)</span>
-        <span class="p">});</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
-</div>
-<p>TODO: check if this condition is ok.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nx">timerObj</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
-</div>
-<p>TODO: this is not enough. Does not cover all use cases.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">timerObj</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-            <span class="p">});</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="timer.settimestamp">
@@ -947,7 +775,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Default time: Current time</p>
         </td>
@@ -961,7 +789,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Check inputs:</p>
         </td>
@@ -1021,7 +849,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Check input:</p>
         </td>
@@ -1123,7 +951,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Get current time:</p>
         </td>
@@ -1137,7 +965,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Check input:</p>
         </td>
@@ -1203,7 +1031,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Check input:</p>
         </td>
@@ -1472,6 +1300,189 @@ the given GameTimer object are removed.</p>
         <span class="nx">randomFire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;randomDone&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span>
                         <span class="nx">maxWait</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">};</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper%20methods.">
+  <h2>
+    <a href="#helper%20methods." name="helper%20methods." class="pilcrow">&#182;</a>
+    Helper Methods.
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="randomfire">
+  <h3>
+    <a href="#randomfire" name="randomfire" class="pilcrow">&#182;</a>
+    randomFire
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Common handler for randomEmit, randomExec, randomDone</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method invoking randomFire</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">hook</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">function</span>
+      <span>The function to call or the event to emit</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">maxWait</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The max number of milliseconds
+  to wait before firing</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">emit</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if it is an event to emit</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">ctx</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">function</span>
+      <span>Optional. The context of execution for
+  the function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">randomFire</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">hook</span><span class="p">,</span> <span class="nx">maxWait</span><span class="p">,</span> <span class="nx">emit</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">waitTime</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">timerObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">tentativeName</span><span class="p">;</span>
+
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">maxWait</span> <span class="o">=</span> <span class="mi">6000</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">maxWait</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: maxWait must &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;be number or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">waitTime</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">maxWait</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+</div>
+<p>Timeup callback: Emit.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">emit</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timerObj</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="p">[</span><span class="nx">hook</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">hook</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>Timeup callback: Exec.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timerObj</span><span class="p">);</span>
+                <span class="nx">hook</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+
+        <span class="nx">tentativeName</span> <span class="o">=</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">hook</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">);</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+</div>
+<p>Create and run timer:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">timerObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span>
+            <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">waitTime</span><span class="p">,</span>
+            <span class="nx">timeup</span><span class="o">:</span> <span class="nx">callback</span><span class="p">,</span>
+            <span class="nx">name</span><span class="o">:</span> <span class="nx">J</span><span class="p">.</span><span class="nx">uniqueKey</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">,</span> <span class="nx">tentativeName</span><span class="p">)</span>
+        <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>TODO: check if this condition is ok.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">timerObj</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>TODO: this is not enough. Does not cover all use cases.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">timerObj</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
 
 </pre></div>
@@ -2012,7 +2023,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Init!</p>
         </td>
@@ -2120,7 +2131,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Event to be fired when timer expires.</p>
         </td>
@@ -2133,7 +2144,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>TODO: update and milliseconds must be multiple now.</p>
         </td>
@@ -2152,7 +2163,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Set startPaused option. if specified. Default: FALSE</p>
         </td>
@@ -2167,7 +2178,7 @@ immediately.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Only set status to INITIALIZED if all of the state is valid and
 ready to be used by this.start etc.</p>
@@ -2188,7 +2199,7 @@ ready to be used by this.start etc.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Stager sync options.</p>
         </td>
@@ -2306,7 +2317,7 @@ timer is stopped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Check validity of state</p>
         </td>
@@ -2334,7 +2345,7 @@ timer is stopped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>Remember time of start (used by this.pause to compute remaining time)</p>
         </td>
@@ -2348,7 +2359,7 @@ timer is stopped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Fires the event immediately if time is zero.
 Double check necessary in strict mode.</p>
@@ -2371,7 +2382,7 @@ Double check necessary in strict mode.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>It is not possible to pass extra parameters to updateCallback,
 by adding them after <em>this.update</em>. In IE does not work.</p>
@@ -2544,7 +2555,7 @@ status property to <code>GameTimer.PAUSED</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>Save time of pausing.
 If start was never called, or called with startPaused on.</p>
@@ -2561,7 +2572,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <p>Save the difference of time left.</p>
         </td>
@@ -2579,7 +2590,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
 <p>If the timer was explicitly stopped, we ignore the pause:</p>
         </td>
@@ -2594,7 +2605,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>pause() was called before start(); remember it:</p>
         </td>
@@ -2645,7 +2656,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>Don't start if the initialization is incomplete (invalid state):</p>
         </td>
@@ -2672,7 +2683,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>Run rest of this "update" interval:</p>
         </td>
@@ -2686,7 +2697,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
 </div>
 <p>start() needs the timer to not be running.</p>
         </td>
@@ -2702,7 +2713,7 @@ If start was never called, or called with startPaused on.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <p>start() sets status to LOADING, so change it back to RUNNING.</p>
         </td>
@@ -2912,7 +2923,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>return this.timeLeft !== null &amp;&amp; this.timeLeft &lt;= 0;</p>
         </td>
@@ -2989,7 +3000,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>Do nothing if no change of status is required.</p>
         </td>
@@ -3005,11 +3016,7 @@ or the current settings, if undefined</p>
                 <span class="nx">step</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
                 <span class="nx">options</span> <span class="o">=</span> <span class="nx">processStepOptions</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;will do pushing &#39;</span><span class="p">,</span> <span class="nx">step</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
                     <span class="nx">that</span><span class="p">.</span><span class="nx">restart</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;will NOT do pushing &#39;</span><span class="p">,</span> <span class="nx">step</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;_PLAYING&#39;</span><span class="p">);</span>
 
@@ -3022,7 +3029,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>         <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">stopOnDone</span><span class="p">)</span> <span class="p">{</span>
@@ -3040,7 +3047,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>that.startWaiting();</p>
         </td>
@@ -3055,7 +3062,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>           <span class="p">}</span>
@@ -3078,7 +3085,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Store value.</p>
         </td>
@@ -3244,7 +3251,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
 </div>
 <p>Build object.</p>
         </td>
@@ -3282,7 +3289,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Casting or Function returned null. Abort.</p>
         </td>
@@ -3301,7 +3308,7 @@ or the current settings, if undefined</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;timeup&#39;</span><span class="p">);</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">timer</span> <span class="o">||</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span> <span class="p">};</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">startOnPlaying</span><span class="p">)</span> <span class="p">{</span>
@@ -3318,7 +3325,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
 </div>
 <p>Do a timer update.
 Return false if timer ran out, true otherwise.</p>
@@ -3336,7 +3343,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any</p>
         </td>
@@ -3351,7 +3358,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
@@ -3364,7 +3371,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>First stop the timer and then call the timeup</p>
         </td>
@@ -3385,7 +3392,7 @@ Return false if timer ran out, true otherwise.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Check whether the timer has a valid initialized state.
 Returns null if true, an error string otherwise.</p>
@@ -3402,6 +3409,36 @@ Returns null if true, an error string otherwise.</p>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 
+
+    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">parseOptions</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">typeofOptions</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">typeofOptions</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">;</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">typeofOptions</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">case</span> <span class="s1">&#39;number&#39;</span><span class="o">:</span>
+            <span class="nx">out</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s1">&#39;object&#39;</span><span class="o">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">out</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameOptions processStepOptions: timeup &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must be function or undefined. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">options</span><span class="p">.</span><span class="nx">timup</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">out</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">timeup</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
+            <span class="nx">out</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s1">&#39;string&#39;</span><span class="o">:</span>
+            <span class="nx">out</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+    <span class="p">}</span>
 
 
 </pre></div>

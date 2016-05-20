@@ -11765,7 +11765,7 @@ if (!Array.prototype.indexOf) {
 /**
  * # GameStage
  *
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Representation of the stage of a game:
@@ -13238,19 +13238,28 @@ if (!Array.prototype.indexOf) {
      */
     function GamePlot(node, stager) {
 
+        // ## GamePlot Properties
+
         /**
-         * ## GamePlot.node
+         * ### GamePlot.node
          *
          * Reference to the node object
          */
         this.node = node;
 
         /**
-         * ## GamePlot.stager
+         * ### GamePlot.stager
          *
          * The stager object used to perform stepping operations
          */
         this.stager = null;
+
+        /**
+         * ### GamePlot.cache
+         *
+         * Caches the value of previously fetched properties per game stage
+         */
+        this.cache = {};
 
         this.init(stager);
     }
@@ -13261,6 +13270,8 @@ if (!Array.prototype.indexOf) {
      * ### GamePlot.init
      *
      * Initializes the GamePlot with a stager
+     *
+     * Clears the cache also.
      *
      * @param {Stager} stager Optional. The Stager object.
      *
@@ -13276,6 +13287,7 @@ if (!Array.prototype.indexOf) {
         else {
             this.stager = null;
         }
+        this.cache = {};
     };
 
     /**
@@ -13632,7 +13644,7 @@ if (!Array.prototype.indexOf) {
                 delta++;
                 if (!execLoops) {
                     // If there are more steps to jump, check if we have loops.
-                    stageType = this.stager.sequence[curStage.stage -1].type
+                    stageType = this.stager.sequence[curStage.stage -1].type;
                     if (stageType === 'loop') {
                         if (delta < 0) return null;
                     }
@@ -13652,7 +13664,7 @@ if (!Array.prototype.indexOf) {
                 delta--;
                 if (!execLoops) {
                     // If there are more steps to jump, check if we have loops.
-                    stageType = this.stager.sequence[curStage.stage -1].type
+                    stageType = this.stager.sequence[curStage.stage -1].type;
                     if (stageType === 'loop' || stageType === 'doLoop') {
                         if (delta > 0) return null;
                         else return curStage;
@@ -13947,7 +13959,9 @@ if (!Array.prototype.indexOf) {
      *
      * Looks up the value of a property
      *
-     * Looks for definitions of a property in
+     * Looks for definitions of a property in:
+     *
+     * 0. the game plot cache
      *
      * 1. the step object of the given gameStage,
      *
@@ -13960,38 +13974,58 @@ if (!Array.prototype.indexOf) {
      * @param {string} property The name of the property
      *
      * @return {mixed|null} The value of the property if found, NULL otherwise.
+     *
+     * @see GamePlot.cache
      */
     GamePlot.prototype.getProperty = function(gameStage, property) {
-        var stepObj, stageObj, defaultProps;
-
-        gameStage = new GameStage(gameStage);
+        var stepObj, stageObj, defaultProps, found, res;
 
         if ('string' !== typeof property) {
             throw new TypeError('GamePlot.getProperty: property must be ' +
                                 'string');
         }
 
-        // Look in current step:
+        gameStage = new GameStage(gameStage);
+
+        if (this.cache[gameStage] &&
+            this.cache[gameStage].hasOwnProperty(property)) {
+
+            return this.cache[gameStage][property];
+        }
+
+        // Look in current step.
         stepObj = this.getStep(gameStage);
         if (stepObj && stepObj.hasOwnProperty(property)) {
-            return stepObj[property];
+            res = stepObj[property];
+            found = true;
         }
 
-        // Look in current stage:
-        stageObj = this.getStage(gameStage);
-        if (stageObj && stageObj.hasOwnProperty(property)) {
-            return stageObj[property];
-        }
-
-        // Look in Stager's defaults:
-        if (this.stager) {
-            defaultProps = this.stager.getDefaultProperties();
-            if (defaultProps && defaultProps.hasOwnProperty(property)) {
-                return defaultProps[property];
+        // Look in current stage.
+        if (!found) {
+            stageObj = this.getStage(gameStage);
+            if (stageObj && stageObj.hasOwnProperty(property)) {
+                res = stageObj[property];
+                found = true;
             }
         }
 
-        // Not found:
+        // Look in Stager's defaults.
+        if (!found && this.stager) {
+            defaultProps = this.stager.getDefaultProperties();
+            if (defaultProps && defaultProps.hasOwnProperty(property)) {
+                res = defaultProps[property];
+                found = true;
+            }
+        }
+
+        // Cache it and return it.
+        if (found) {
+            if (!this.cache[gameStage]) this.cache[gameStage] = {};
+            this.cache[gameStage][property] = res;
+            return res;
+        }
+
+        // Not found.
         return null;
     };
 
@@ -14000,7 +14034,9 @@ if (!Array.prototype.indexOf) {
      *
      * Looks up a property and updates it to the new value
      *
-     * Looks follows the steps described in _GamePlot.getProperty_.
+     * Look up follows the steps described in _GamePlot.getProperty_,
+     * excluding step 0. If a property is found and updated, its value
+     * is stored in the cached.
      *
      * @param {GameStage|string} gameStage The GameStage object,
      *  or its string representation
@@ -14008,9 +14044,11 @@ if (!Array.prototype.indexOf) {
      * @param {mixed} value The new value for the property.
      *
      * @return {bool} TRUE, if property is found and updated, FALSE otherwise.
+     *
+     * @see GamePlot.cache
      */
     GamePlot.prototype.updateProperty = function(gameStage, property, value) {
-        var stepObj, stageObj, defaultProps;
+        var stepObj, stageObj, defaultProps, found;
 
         gameStage = new GameStage(gameStage);
 
@@ -14019,30 +14057,39 @@ if (!Array.prototype.indexOf) {
                                 'string');
         }
 
-        // Look in current step:
+        // Look in current step.
         stepObj = this.getStep(gameStage);
         if (stepObj && stepObj.hasOwnProperty(property)) {
             stepObj[property] = value;
-            return true;
+            found = true;
         }
 
-        // Look in current stage:
-        stageObj = this.getStage(gameStage);
-        if (stageObj && stageObj.hasOwnProperty(property)) {
-            stageObj[property] = value;
-            return true;
-        }
-
-        // Look in Stager's defaults:
-        if (this.stager) {
-            defaultProps = this.stager.getDefaultProperties();
-            if (defaultProps && defaultProps.hasOwnProperty(property)) {
-                defaultProps[property] = value;
-                return true;
+        // Look in current stage.
+        if (!found) {
+            stageObj = this.getStage(gameStage);
+            if (stageObj && stageObj.hasOwnProperty(property)) {
+                stageObj[property] = value;
+                found = true;
             }
         }
 
-        // Not found:
+        // Look in Stager's defaults.
+        if (!found && this.stager) {
+            defaultProps = this.stager.getDefaultProperties();
+            if (defaultProps && defaultProps.hasOwnProperty(property)) {
+                defaultProps[property] = value;
+                found = true;
+            }
+        }
+
+        // Cache it and return it.
+        if (found) {
+            if (!this.cache[gameStage]) this.cache[gameStage] = {};
+            this.cache[gameStage][property] = value;
+            return true;
+        }
+
+        // Not found.
         return false;
     };
 
@@ -14058,17 +14105,6 @@ if (!Array.prototype.indexOf) {
             (this.stager.sequence.length > 0 ||
              this.stager.generalNextFunction !== null ||
              !J.isEmpty(this.stager.nextFunctions));
-    };
-
-    /**
-     * ### GamePlot.getName
-     *
-     * TODO: To remove once transition is complete
-     * @deprecated
-     */
-    GamePlot.prototype.getName = function(gameStage) {
-        var s = this.getStep(gameStage);
-        return s ? s.name : s;
     };
 
     /**
@@ -14337,20 +14373,20 @@ if (!Array.prototype.indexOf) {
         this.node = node;
 
         /**
-         * ### PushManager.timeout
+         * ### PushManager.timer
          *
-         * The timeout object that will fire the checking of clients
+         * The timer object that will fire the checking of clients
          *
-         * @see PushManager.startTimeout
+         * @see PushManager.startTimer
          */
-        this.timeout = null;
+        this.timer = this.node.timer.createTimer({ name: 'push_clients' });
 
         /**
          * ### PushManager.offsetWaitTime
          *
          * Time that is always added to the timer value of
          *
-         * @see PushManager.startTimeout
+         * @see PushManager.startTimer
          */
         this.offsetWaitTime = PushManager.offsetWaitTime;
 
@@ -14384,67 +14420,72 @@ if (!Array.prototype.indexOf) {
      */
     PushManager.prototype.init = function(options) {
         options = options || {};
-        checkAndAssignWaitTime(options, 'offsetWaitTime', this);
-        checkAndAssignWaitTime(options, 'replyWaitTime', this);
-        checkAndAssignWaitTime(options, 'checkPushWaitTime', this);
+        checkAndAssignAllWaitTimes('init', options, this);
     };
 
     /**
-     * ## PushManager.startTimeout
+     * ## PushManager.startTimer
      *
-     * Sets a timeout for checking if all clients have finished current step
+     * Sets a timer for checking if all clients have finished current step
      *
-     * The length of the timeout is equal to timer + offset.
+     * The length of the timer is equal to timer + offset.
      *
      * By default, it looks up the `timer` property in the current
      * step object. If no `timer` property is found, timer is set to 0.
      *
-     * If timeout expires `PushManager.pushGame` will be called.
+     * If timer expires `PushManager.pushGame` will be called.
      *
-     * @param {number} timer Optional. If set, overwrite the default behavior
-     *   and this number will be used instead of the `timer` property from
-     *   current step object.
+     * @param {object} conf Optional. Configuration passed to `pushGame` method.
+     *    The pushMethod will be called when the push-manager timer expires,
+     *    that is equal conf.timer + conf.offset. conf.timer is interpreted
+     *    by the GameTimer, and can be function, number, object or string.
      *
      * @see PushManager.offsetWaitTime
      * @see PushManager.pushGame
+     * @see GameTimer.parseMilliseconds
      */
-    PushManager.prototype.startTimeout = function(timer) {
-        var node, gameStage, that;
+    PushManager.prototype.startTimer = function(conf) {
+        var gameStage, pushCb, that, timer, offset;
 
-        node = this.node;
+        if (this.timer) this.clearTimer();
 
-        if (this.timeout) this.clearTimeout();
+        conf = conf || {};
 
-        // Determine the value for timer. Total timeout = timer + offset.
-        if ('undefined' === typeof timer) {
-            gameStage = node.game.getCurrentGameStage();
-            timer = node.game.plot.getProperty(gameStage, 'timer');
-            if ('function' === typeof timer) timer = timer.call(node.game);
+        if ('function' === typeof conf.timer) {
+            timer = conf.timer.call(this.node.game);
         }
-        else if ('number' !== typeof timer) {
-            throw new TypeError('PushManager.startTimeout: timer must be ' +
-                                'number or undefined.');
-        }
+        // timer = GameTimer.parseMilliseconds(conf.timer) || 0;
         timer = timer || 0;
 
-        console.log('TIMER: ', timer, this.offsetWaitTime, node.player.stage);
+        offset = 'undefined' !== typeof offset ? offset : this.offsetWaitTime;
 
         that = this;
-        this.timeout = setTimeout(function() {
-            that.pushGame.call(that);
-        }, (timer + this.offsetWaitTime));
+        pushCb = function() { that.pushGame.call(that, conf); };
+
+        console.log('TIMER: ', timer, this.offsetWaitTime,
+                    this.node.player.stage);
+
+        // Make sure milliseconds and update are the same.
+        timer = timer + offset;
+        this.timer.init({
+            milliseconds: timer,
+            update: timer,
+            timeup: pushCb,
+        });
+
+        this.timer.start();
     };
 
     /**
-     * ## PushManager.clearTimeout
+     * ## PushManager.clearTimer
      *
-     * Clears timeout for checking if all clients have finished current step
+     * Clears timer for checking if all clients have finished current step
      *
-     * @see PushManager.startTimeout
+     * @see PushManager.startTimer
      */
-    PushManager.prototype.clearTimeout = function() {
-        console.log('Clearing old push players timeout.');
-        clearTimeout(this.timeout);
+    PushManager.prototype.clearTimer = function() {
+        console.log('Clearing old push players timer.');
+        if (!this.timer.isStopped()) this.timer.stop();
     };
 
     /**
@@ -14459,11 +14500,22 @@ if (!Array.prototype.indexOf) {
      *
      * @see checkIfPushWorked
      */
-    PushManager.prototype.pushGame = function() {
-        var that, node;
-        that = this;
+    PushManager.prototype.pushGame = function(conf) {
+        var node, replyWaitTime, checkPushWaitTime;
         node = this.node;
-        // console.log('PUSHGAME', node.player.stage);
+
+        if ('object' === typeof conf) {
+            replyWaitTime = checkAndAssignWaitTime(method, conf, 'reply', conf);
+            checkPushWaitTime = checkAndAssignWaitTime(method, conf,
+                                                       'check', conf);
+        }
+        if ('undefined' === typeof replyWaitTime) {
+            replyWaitTime = this.replyWaitTime;
+        }
+        if ('undefined' === typeof checkPushWaitTime) {
+            checkPushWaitTime = this.checkPushWaitTime;
+        }
+
         node.game.pl.each(function(p) {
             var stage;
             if (p.stageLevel !== DONE) {
@@ -14472,11 +14524,11 @@ if (!Array.prototype.indexOf) {
                 // Send push.
                 node.get(PUSH_STEP,
                          function(value) {
-                             checkIfPushWorked(node, p, that.checkPushWaitTime);
+                             checkIfPushWorked(node, p, checkPushWaitTime);
                          },
                          p.id,
                          {
-                             timeout: that.replyWaitTime,
+                             timeout: replyWaitTime,
                              executeOnce: true,
                              target: GAMECOMMAND,
                              timeoutCb: function() {
@@ -14558,28 +14610,55 @@ if (!Array.prototype.indexOf) {
      *
      * Checks if a valid wait time is found in options object, if so assigns it
      *
-     * It is used by `PushManager.init` and will throw an error if value
-     * is not valid.
+     * Option name is first tried as it is, and if not found, 'WaitTime'
+     * is appended, and check if performed again.
      *
+     * If set, properties must be positive numbers, otherwise an error is
+     * thrown.
+     *
+     * @param {string} method Then name of the method invoking the function
      * @param {object} options Configuration options
-     * @param {string} name The name of the option to check and assign
-     * @param {PushManage} that The instance to which assign the value
+     * @param {string} name The name of the option to check and assign.
+     *    If the option is not defined, it appends 'WaitTime', and tries again.
+     * @param {object} that The instance to which assign the correct value
      *
-     * @see PushManager.init
+     * @return {number} The validated number, or undefined if not set
      */
-    function checkAndAssignWaitTime(options, name, that) {
+    function checkAndAssignWaitTime(method, options, name, that) {
         var n;
         n = options[name];
         if ('undefined' !== typeof n) {
+            name = name + 'WaitTime';
+            n = options[name];
+        }
+        if ('undefined' !== typeof n) {
             if ('number' !== typeof n || n < 0) {
-                throw new TypeError('PushManager.init: options.' + name +
-                                    'must be a positive number, found: ' + n);
+                throw new TypeError('PushManager.' + method + ': options.' +
+                                    name + 'must be a positive number. ' +
+                                    'Found: ' + n);
             }
             that[name] = n;
+            return n;
         }
     }
 
-
+    /**
+     * ### checkAndAssignAllWaitTimes
+     *
+     * Validates properties 'offset', 'reply', and 'check' of an object
+     *
+     * @param {string} method Then name of the method invoking the function
+     * @param {object} options Configuration options
+     * @param {object} that The instance to which assign the correct value
+     *
+     * @see PushManager.init
+     * @see checkAndAssignWaitTime
+     */
+    function checkAndAssignAllWaitTimes(method, options, that) {
+        checkAndAssignWaitTime(method, options, 'offset', that);
+        checkAndAssignWaitTime(method, options, 'reply', that);
+        checkAndAssignWaitTime(method, options, 'check', that);
+    }
 })(
     'undefined' !== typeof node ? node : module.exports,
     'undefined' !== typeof node ? node : module.parent.exports
@@ -19906,11 +19985,12 @@ if (!Array.prototype.indexOf) {
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
 
-        // Pushes clients to finish current step in line with the time
-        // expected by logic, or otherwise disconnects them.
-        if (this.plot.getProperty(nextStep, 'pushClients')) {
-            this.pushManager.startTimeout();
-        }
+// TODO: check here.
+//         // Pushes clients to finish current step in line with the time
+//         // expected by logic, or otherwise disconnects them.
+//         if (this.plot.getProperty(nextStep, 'pushClients')) {
+//             this.timer.syncWithStager(true);
+//         }
 
         this.execStep(this.getCurrentGameStage());
         return true;
@@ -20990,7 +21070,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Timer
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Timing-related utility functions
@@ -21193,81 +21273,6 @@ if (!Array.prototype.indexOf) {
             }
         }
     };
-
-    // ## Helper Methods.
-
-    /**
-     * ### randomFire
-     *
-     * Common handler for randomEmit, randomExec, randomDone
-     *
-     * @param {string} method The name of the method invoking randomFire
-     * @param {string|function} hook The function to call or the event to emit
-     * @param {number} maxWait Optional. The max number of milliseconds
-     *   to wait before firing
-     * @param {boolean} emit TRUE, if it is an event to emit
-     * @param {object|function} ctx Optional. The context of execution for
-     *   the function
-     */
-    function randomFire(method, hook, maxWait, emit, ctx, args) {
-        var that;
-        var waitTime;
-        var callback;
-        var timerObj;
-        var tentativeName;
-
-        that = this;
-
-        if ('undefined' === typeof maxWait) {
-            maxWait = 6000;
-        }
-        else if ('number' !== typeof maxWait) {
-            throw new TypeError('Timer.' + method + ': maxWait must ' +
-                                    'be number or undefined.');
-        }
-
-        waitTime = Math.random() * maxWait;
-
-        // Define timeup callback:
-        if (emit) {
-            callback = function() {
-                that.destroyTimer(timerObj);
-                if (args) {
-                    that.node.emit.apply(that.node.events, [hook].concat(args));
-                }
-                else {
-                    that.node.emit(hook);
-                }
-            };
-        }
-        else {
-            callback = function() {
-                that.destroyTimer(timerObj);
-                hook.apply(ctx, args);
-            };
-        }
-
-        tentativeName = method + '_' + hook + '_' + J.randomInt(0, 1000000);
-
-
-        // Create and run timer:
-        timerObj = this.createTimer({
-            milliseconds: waitTime,
-            timeup: callback,
-            name: J.uniqueKey(this.timers, tentativeName)
-        });
-
-        // TODO: check if this condition is ok.
-        if (this.node.game && this.node.game.isReady()) {
-            timerObj.start();
-        }
-        else {
-            // TODO: this is not enough. Does not cover all use cases.
-            this.node.once('PLAYING', function() {
-                timerObj.start();
-            });
-        }
-    }
 
     /**
      * ### Timer.setTimestamp
@@ -21529,6 +21534,81 @@ if (!Array.prototype.indexOf) {
         randomFire.call(this, 'randomDone', this.node.done,
                         maxWait, false, this.node, args);
     };
+ // ## Helper Methods.
+
+    /**
+     * ### randomFire
+     *
+     * Common handler for randomEmit, randomExec, randomDone
+     *
+     * @param {string} method The name of the method invoking randomFire
+     * @param {string|function} hook The function to call or the event to emit
+     * @param {number} maxWait Optional. The max number of milliseconds
+     *   to wait before firing
+     * @param {boolean} emit TRUE, if it is an event to emit
+     * @param {object|function} ctx Optional. The context of execution for
+     *   the function
+     */
+    function randomFire(method, hook, maxWait, emit, ctx, args) {
+        var that;
+        var waitTime;
+        var callback;
+        var timerObj;
+        var tentativeName;
+
+        that = this;
+
+        if ('undefined' === typeof maxWait) {
+            maxWait = 6000;
+        }
+        else if ('number' !== typeof maxWait) {
+            throw new TypeError('Timer.' + method + ': maxWait must ' +
+                                    'be number or undefined.');
+        }
+
+        waitTime = Math.random() * maxWait;
+
+        // Timeup callback: Emit.
+        if (emit) {
+            callback = function() {
+                that.destroyTimer(timerObj);
+                if (args) {
+                    that.node.emit.apply(that.node.events, [hook].concat(args));
+                }
+                else {
+                    that.node.emit(hook);
+                }
+            };
+        }
+        // Timeup callback: Exec.
+        else {
+            callback = function() {
+                that.destroyTimer(timerObj);
+                hook.apply(ctx, args);
+            };
+        }
+
+        tentativeName = method + '_' + hook + '_' + J.randomInt(0, 1000000);
+
+
+        // Create and run timer:
+        timerObj = this.createTimer({
+            milliseconds: waitTime,
+            timeup: callback,
+            name: J.uniqueKey(this.timers, tentativeName)
+        });
+
+        // TODO: check if this condition is ok.
+        if (this.node.game && this.node.game.isReady()) {
+            timerObj.start();
+        }
+        else {
+            // TODO: this is not enough. Does not cover all use cases.
+            this.node.once('PLAYING', function() {
+                timerObj.start();
+            });
+        }
+    }
 
     /**
      * # GameTimer
@@ -22271,16 +22351,24 @@ if (!Array.prototype.indexOf) {
             break;
         }
 
-        if (!options.milliseconds || options.milliseconds < 0) {
+        // Casting or Function returned null. Abort.
+        if (null === options.milliseconds) return;
+
+        if ('number' !== typeof options.milliseconds ||
+            options.milliseconds <= 0) {
+
             throw new Error('GameTimer processStepOptions: milliseconds ' +
                             'must be a number >= 0. Found: ' +
                             options.milliseconds);
         }
 
+        options.update = options.milliseconds;
+
         if ('undefined' === typeof options.timeup) {
             timer = node.game.plot.getProperty(step, 'timeup');
-            options.timeup = timeup || function() { node.done(); };
+            if (timer) options.timeup = timer;
         }
+
         if ('undefined' === typeof options.startOnPlaying) {
             options.startOnPlaying = true;
         }
@@ -22324,6 +22412,36 @@ if (!Array.prototype.indexOf) {
         return null;
     }
 
+
+    GameTimer.parseOptions = function(options) {
+        var out, typeofOptions;
+        out = {};
+        typeofOptions = typeof options;
+        switch (typeofOptions) {
+
+        case 'number':
+            out.milliseconds = options;
+            break;
+        case 'object':
+            if ('function' === typeof options.milliseconds) {
+                out.milliseconds = options.milliseconds.call(node.game);
+            }
+            if (options.timeup && 'function' !== typeof options.timeup) {
+                throw new TypeError('GameOptions processStepOptions: timeup ' +
+                                    'must be function or undefined. Found: ' +
+                                options.timup);
+            }
+            out.timeup = options.timeup;
+            break;
+        case 'function':
+            out.milliseconds = options.call(node.game);
+            break;
+        case 'string':
+            out.milliseconds = Number(options);
+            break;
+        }
+        return out;
+    }
 
     // ## Closure
 })(
