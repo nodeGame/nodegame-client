@@ -51,6 +51,9 @@
       <div class="heading h2">
         <a href="#pushmanager.cleartimer">PushManager.clearTimer</a>
       </div>
+      <div class="heading h2">
+        <a href="#pushmanager.isactive">PushManager.isActive</a>
+      </div>
       <div class="heading h3">
         <a href="#pushmanager.pushgame">PushManager.pushGame</a>
       </div>
@@ -393,30 +396,22 @@ MIT Licensed</p>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">pushCb</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">offset</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">parseInput</span><span class="p">(</span><span class="s1">&#39;milliseconds&#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">timer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">timer</span> <span class="o">+</span>
+                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">offset</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">parseInput</span><span class="p">(</span><span class="s1">&#39;offset&#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">offset</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">offset</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">;</span>
         <span class="p">}</span>
-
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="nx">pushCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">pushGame</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span> <span class="p">};</span>
-
-        <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span> <span class="o">+</span> <span class="nx">offset</span><span class="p">;</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager creating timer: &#39;</span> <span class="o">+</span> <span class="nx">timer</span> <span class="o">+</span>
-                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
 
 
 </pre></div>
@@ -431,11 +426,10 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
-            <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timer</span><span class="p">,</span>
+            <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">offset</span><span class="p">,</span>
             <span class="nx">update</span><span class="o">:</span> <span class="nx">timer</span><span class="p">,</span>
             <span class="nx">timeup</span><span class="o">:</span> <span class="nx">pushCb</span><span class="p">,</span>
         <span class="p">});</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
     <span class="p">};</span>
 
@@ -467,9 +461,35 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Clearing old push players timer.&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: timer cleared.&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="p">}</span>
     <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="pushmanager.isactive">
+  <h2>
+    <a href="#pushmanager.isactive" name="pushmanager.isactive" class="pilcrow">&#182;</a>
+    PushManager.isActive
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if timer is running</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isActive</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">();</span>
+    <span class="p">}</span>
 
 
 </pre></div>
@@ -513,6 +533,8 @@ later check if they manage to step, and if not disconnects them.</p>
         <span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">replyWaitTime</span><span class="p">,</span> <span class="nx">checkPushWaitTime</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: checking clients.&#39;</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">m</span> <span class="o">=</span> <span class="s1">&#39;pushGame&#39;</span><span class="p">;</span>
             <span class="nx">replyWaitTime</span> <span class="o">=</span> <span class="nx">checkAndAssignWaitTime</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">conf</span><span class="p">,</span> <span class="s1">&#39;reply&#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
@@ -537,7 +559,7 @@ later check if they manage to step, and if not disconnects them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Send push.</p>
         </td>
@@ -679,7 +701,7 @@ later check if they manage to step, and if not disconnects them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>No reply to GET, disconnect client.</p>
         </td>
