@@ -2557,8 +2557,9 @@ by adding them after <em>this.update</em>. In IE does not work.</p>
 </div>
 
   </div>
-  <div class="body"><p>Add an hook to the hook list after performing conformity checks.
-The first parameter hook can be a string, a function, or an object
+  <div class="body"><p>Add an hook to the hook list after performing conformity checks</p>
+
+<p>The first parameter hook can be a string, a function, or an object
 containing an hook property.</p>
   </div>
   <div class="details">
@@ -2592,16 +2593,14 @@ containing an hook property.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addHook</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hook</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hook</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameTimer.addHook: missing argument&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">hook</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameTimer.addHook: hook must be function, &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string or object. Found: &#39;</span> <span class="o">+</span> <span class="nx">hook</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">ctx</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">hook</span><span class="p">.</span><span class="nx">hook</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">hook</span><span class="p">.</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">ctx</span><span class="p">;</span>
-            <span class="k">if</span><span class="p">(</span><span class="nx">hook</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">name</span> <span class="o">=</span> <span class="nx">hook</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">hook</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">hook</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
             <span class="nx">hook</span> <span class="o">=</span> <span class="nx">hook</span><span class="p">.</span><span class="nx">hook</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
@@ -2632,7 +2631,7 @@ containing an hook property.</p>
 </div>
 
   </div>
-  <div class="body"><p>Removes a hook given its' name</p>
+  <div class="body"><p>Removes a hook by its name</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
