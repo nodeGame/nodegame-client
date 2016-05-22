@@ -189,6 +189,9 @@
       <div class="heading h2">
         <a href="#gametimer.syncwithstager">GameTimer.syncWithStager</a>
       </div>
+      <div class="heading h3">
+        <a href="#visualtimer.dotimeup%20%7C%20dotimeup">VisualTimer.doTimeUp | doTimeup</a>
+      </div>
       <div class="heading h2">
         <a href="#gametimer.setstagerproperty">GameTimer.setStagerProperty</a>
       </div>
@@ -3216,12 +3219,56 @@ or the current settings, if undefined</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="visualtimer.dotimeup%20%7C%20dotimeup">
+  <h3>
+    <a href="#visualtimer.dotimeup%20%7C%20dotimeup" name="visualtimer.dotimeup%20%7C%20dotimeup" class="pilcrow">&#182;</a>
+    VisualTimer.doTimeUp | doTimeup
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Stops the timer and calls the timeup</p>
+
+<p>It will call timeup even if the game is paused/stopped,
+but not if timeup was already called.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.isTimeup</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.stop</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameTimer.fire
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">doTimeUp</span> <span class="o">=</span> <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">doTimeup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isTimeup</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_timeup</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
-<p>TODO: improve.
-TODO: doTimeup as in VisualTimer.</p>
+<p>TODO: improve.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
@@ -3395,7 +3442,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Make sure update and timer are the same.</p>
         </td>
@@ -3475,7 +3522,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any.</p>
         </td>
@@ -3490,7 +3537,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
@@ -3504,7 +3551,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>First stop the timer and then call the timeup.</p>
         </td>

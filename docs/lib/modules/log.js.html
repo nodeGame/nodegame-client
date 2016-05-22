@@ -69,6 +69,8 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">LOG</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span><span class="p">;</span>
 
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
 
 </pre></div>
         </td>
@@ -117,16 +119,30 @@ smaller than <code>this.remoteVerbosity</code>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">numLevel</span><span class="p">,</span> <span class="nx">info</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">txt</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
         <span class="nx">level</span>  <span class="o">=</span> <span class="nx">level</span> <span class="o">||</span> <span class="s1">&#39;info&#39;</span><span class="p">;</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">prefix</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;&gt; &#39;</span> <span class="o">:</span> <span class="nx">prefix</span><span class="p">;</span>
-
         <span class="nx">numLevel</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Add game stage manually (faster than toString()).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">round</span> <span class="o">+</span>
+                <span class="s1">&#39; - &#39;</span> <span class="o">+</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getTimeM</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; &gt; &#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">prefix</span><span class="p">)</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">info</span> <span class="o">+</span> <span class="nx">prefix</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">info</span> <span class="o">+</span> <span class="nx">txt</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteVerbosity</span> <span class="o">&gt;=</span> <span class="nx">numLevel</span><span class="p">)</span> <span class="p">{</span>
 
@@ -136,7 +152,7 @@ smaller than <code>this.remoteVerbosity</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>We need to avoid creating errors here,
 otherwise we enter an infinite loop.</p>
@@ -151,7 +167,7 @@ otherwise we enter an infinite loop.</p>
                         <span class="nx">data</span><span class="o">:</span> <span class="nx">txt</span><span class="p">,</span>
                         <span class="nx">to</span><span class="o">:</span> <span class="s1">&#39;SERVER&#39;</span>
                     <span class="p">}));</span>
-                    <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">];</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -174,12 +190,24 @@ otherwise we enter an infinite loop.</p>
   </div>
   <div class="body"><p>Logs an INFO message</p>
   </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">txt</span>
+      <span class="dox_type">string</span>
+      <span>The text to log</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.log
+</span>
+    </div>
+  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; info - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;info - &#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -199,12 +227,24 @@ otherwise we enter an infinite loop.</p>
   </div>
   <div class="body"><p>Logs a WARNING message</p>
   </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">txt</span>
+      <span class="dox_type">string</span>
+      <span>The text to log</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.log
+</span>
+    </div>
+  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">warn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; warn - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">warn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;warn - &#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -224,12 +264,24 @@ otherwise we enter an infinite loop.</p>
   </div>
   <div class="body"><p>Logs an ERROR message</p>
   </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">txt</span>
+      <span class="dox_type">string</span>
+      <span>The text to log</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.log
+</span>
+    </div>
+  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">err</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; error - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">err</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;error - &#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -249,12 +301,24 @@ otherwise we enter an infinite loop.</p>
   </div>
   <div class="body"><p>Logs a SILLY message</p>
   </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">txt</span>
+      <span class="dox_type">string</span>
+      <span>The text to log</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NodeGameClient.log
+</span>
+    </div>
+  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">silly</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">?</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">prefix</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt; silly - &#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;silly&#39;</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">);</span>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">silly</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="s1">&#39;silly&#39;</span><span class="p">,</span> <span class="s1">&#39;silly - &#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

@@ -245,47 +245,26 @@
          * ## NODEGAME_GAMECOMMAND: push_step
          */
         node.events.ng.on(CMD + gcommands.push_step, function() {
-            var res;
-            console.log('BEING PUSHED! ', node.player.stage);
+            var res, stageLevel;
+            node.warn('push_step command. ', node.player.stage);
 
+            // Call timeup, if defined.
+            if (!node.game.timer.isTimeup()) node.game.timer.doTimeup();
 
-            // TODO: check this:
-            // At the moment, we do not have a default timer object,
-            // nor a default done/timeup cb.
-            // We try to see if they exist, and as last resort we emit DONE.
+            // Force node.done.
+            if (!node.game.willBeDone) {
+                stageLevel = node.game.getStageLevel();
 
-            if (node.game.timer && node.game.timer.doTimeUp) {
-                console.log('TIMEEEEUuuuuuuuuuup');
-                node.game.timer.doTimeUp();
-            }
-            else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
-                console.log('TIMEEEEUuuuuuuuuuup 2');
-                node.game.visualTimer.doTimeUp();
-            }
+                if (stageLevel !== stageLevels.DONE_CALLED &&
+                    stageLevel !== stageLevels.GETTING_DONE &&
+                    stageLevel !== stageLevels.DONE) {
 
-
-            // TODO: CHECK OTHER LEVELS (e.g. getting_done).
-            if (!node.game.willBeDone &&
-                node.game.getStageLevel() !== stageLevels.DONE) {
-
-                console.log('NODE.DDDDDDDDDDOOONE');
-
-                res = node.done();
-                if (!res) {
-                    node.emit('DONE');
-                    console.log('EMIT DONEOOOOOOOOOOOOO');
+                    res = node.done();
+                    if (!res) node.emit('DONE');
                 }
             }
 
-            // Check this.
-            // node.game.setStageLevel(stageLevels.DONE);
-
             return 'ok!';
-
-
-            // Important for GET msgs.
-            return node.game.getStageLevel() === stageLevels.DONE  ?
-                'ok!' : 'stuck!';
         });
 
         this.conf.internalAdded = true;

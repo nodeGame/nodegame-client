@@ -665,9 +665,8 @@ In case the handler returns FALSE, the process is stopped.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">CMD</span> <span class="o">+</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">push_step</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;BEING PUSHED! &#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-
+            <span class="kd">var</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;push_step command. &#39;</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
 
 
 </pre></div>
@@ -678,22 +677,10 @@ In case the handler returns FALSE, the process is stopped.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
-<p>TODO: check this:
-At the moment, we do not have a default timer object,
-nor a default done/timeup cb.
-We try to see if they exist, and as last resort we emit DONE.</p>
+<p>Call timeup, if defined.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;TIMEEEEUuuuuuuuuuup&#39;</span><span class="p">);</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">();</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">visualTimer</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">visualTimer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;TIMEEEEUuuuuuuuuuup 2&#39;</span><span class="p">);</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">visualTimer</span><span class="p">.</span><span class="nx">doTimeUp</span><span class="p">();</span>
-            <span class="p">}</span>
-
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isTimeup</span><span class="p">())</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">doTimeup</span><span class="p">();</span>
 
 
 </pre></div>
@@ -704,52 +691,22 @@ We try to see if they exist, and as last resort we emit DONE.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
-<p>TODO: CHECK OTHER LEVELS (e.g. getting_done).</p>
+<p>Force node.done.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
 
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;NODE.DDDDDDDDDDOOONE&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE_CALLED</span> <span class="o">&amp;&amp;</span>
+                    <span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">GETTING_DONE</span> <span class="o">&amp;&amp;</span>
+                    <span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span>
-                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EMIT DONEOOOOOOOOOOOOO&#39;</span><span class="p">);</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">res</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;DONE&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
-</div>
-<p>Check this.
-node.game.setStageLevel(stageLevels.DONE);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
             <span class="k">return</span> <span class="s1">&#39;ok!&#39;</span><span class="p">;</span>
-
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
-</div>
-<p>Important for GET msgs.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">()</span> <span class="o">===</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span>  <span class="o">?</span>
-                <span class="s1">&#39;ok!&#39;</span> <span class="o">:</span> <span class="s1">&#39;stuck!&#39;</span><span class="p">;</span>
         <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">internalAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>

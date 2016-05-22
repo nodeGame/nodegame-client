@@ -5270,42 +5270,63 @@ if (!Array.prototype.indexOf) {
      * hh:mm:ss
      *
      * @return {string} Formatted time string hh:mm:ss
+     *
+     * @see TIME.getTimeM
      */
     TIME.getTime = function() {
-        var d = new Date();
-        var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        var d;
+        d = new Date();
+        return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    };
 
-        return time;
+    /**
+     * ## TIME.getTimeM
+     *
+     * Like TIME.getTime, but with millisecondsx
+     *
+     * String is ormatted as follows:
+     *
+     * hh:mm:ss:mls
+     *
+     * @return {string} Formatted time string hh:mm:ss:mls
+     *
+     * @see TIME.getTime
+     */
+    TIME.getTimeM = function() {
+        var d;
+        d = new Date();
+        return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() +
+            ':' + d.getMilliseconds();
     };
 
     /**
      * ## TIME.parseMilliseconds
      *
-     * Parses an integer number representing milliseconds,
-     * and returns an array of days, hours, minutes and seconds
+     * Parses milliseconds into an array of days, hours, minutes and seconds
      *
      * @param {number} ms Integer representing milliseconds
      *
      * @return {array} Milleconds parsed in days, hours, minutes, and seconds
      */
-    TIME.parseMilliseconds = function (ms) {
-        if ('number' !== typeof ms) return;
-
-        var result = [];
-        var x = ms / 1000;
+    TIME.parseMilliseconds = function(ms) {
+        var result, x, seconds, minutes, hours, days;
+        if ('number' !== typeof ms) {
+            throw new TypeError('TIME.parseMilliseconds: ms must be number.');
+        }
+        result = [];
+        x = ms / 1000;
         result[4] = x;
-        var seconds = x % 60;
+        seconds = x % 60;
         result[3] = Math.floor(seconds);
         x = x / 60;
-        var minutes = x % 60;
+        minutes = x % 60;
         result[2] = Math.floor(minutes);
         x = x / 60;
-        var hours = x % 24;
+        hours = x % 24;
         result[1] = Math.floor(hours);
         x = x / 24;
-        var days = x;
+        days = x;
         result[1] = Math.floor(days);
-
         return result;
     };
 
@@ -14529,10 +14550,8 @@ if (!Array.prototype.indexOf) {
         }
 
         node.game.pl.each(function(p) {
-            var stage;
             if (p.stageLevel !== DONE) {
-                console.log('Push needed ', p.id, node.player.stage);
-                stage = p.stage;
+                node.warn('push needed: ' + p.id);
                 // Send push.
                 node.get(PUSH_STEP,
                          function(value) {
@@ -14568,7 +14587,7 @@ if (!Array.prototype.indexOf) {
         stage = {
             stage: p.stage.stage, step: p.stage.step, round: p.stage.round
         };
-        node.silly('push-manager: received reply from ' + p.id + ' @' + stage);
+        node.info('push-manager: received reply from ' + p.id);
 
         setTimeout(function() {
             var pp;
@@ -14580,7 +14599,7 @@ if (!Array.prototype.indexOf) {
                     forceDisconnect(node, pp);
                 }
                 else {
-                    node.silly('push-manager: push worked for ', p.id);
+                    node.info('push-manager: push worked for ', p.id);
                 }
             }
         }, milliseconds || 0);
@@ -14597,8 +14616,7 @@ if (!Array.prototype.indexOf) {
     function forceDisconnect(node, p) {
         var msg;
         // No reply to GET, disconnect client.
-        node.warn('push-manager: disconnecting: ' + p.id + ' @'
-                  + node.player.stage);
+        node.warn('push-manager: disconnecting: ' + p.id);
 
         msg = node.msg.create({
             target: 'SERVERCOMMAND',
@@ -22364,6 +22382,27 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### VisualTimer.doTimeUp | doTimeup
+     *
+     * Stops the timer and calls the timeup
+     *
+     * It will call timeup even if the game is paused/stopped,
+     * but not if timeup was already called.
+     *
+     * @see GameTimer.isTimeup
+     * @see GameTimer.stop
+     * @see GameTimer.fire
+     */
+    GameTimer.prototype.doTimeUp = GameTimer.prototype.doTimeup = function() {
+        if (this.isTimeup()) return;
+        if (!this.isStopped()) this.stop();
+        this._timeup = true;
+        this.fire(this.timeup);
+    };
+
+    // TODO: improve.
+
+    /**
      * ## GameTimer.setStagerProperty
      *
      * Sets the value of stagerProperty
@@ -22506,7 +22545,6 @@ if (!Array.prototype.indexOf) {
             return 'this.milliseconds must be a number';
         }
         if (that.update > that.milliseconds) {
-            debugger
             return 'this.update must not be greater than this.milliseconds';
         }
         return null;
@@ -23452,6 +23490,8 @@ if (!Array.prototype.indexOf) {
 
     var LOG = constants.target.LOG;
 
+    var J = parent.JSUS;
+
     /**
      * ### NodeGameClient.log
      *
@@ -23470,16 +23510,19 @@ if (!Array.prototype.indexOf) {
      *   the log entry. Default: 'ng> '
      */
     NGC.prototype.log = function(txt, level, prefix) {
-        var numLevel;
+        var numLevel, info;
         if ('undefined' === typeof txt) return;
 
         level  = level || 'info';
-        prefix = 'undefined' === typeof prefix ? this.nodename + '> ' : prefix;
-
         numLevel = constants.verbosity_levels[level];
 
         if (this.verbosity >= numLevel) {
-            console.log(prefix + txt);
+            // Add game stage manually (faster than toString()).
+            info = this.nodename + '@' + this.player.stage.stage + '.' +
+                this.player.stage.step + '.' + this.player.stage.round +
+                ' - ' + J.getTimeM() + ' > ';
+            if ('undefined' !== typeof prefix) info = info + prefix;
+            console.log(info + txt);
         }
         if (this.remoteVerbosity >= numLevel) {
             // We need to avoid creating errors here,
@@ -23493,7 +23536,7 @@ if (!Array.prototype.indexOf) {
                         data: txt,
                         to: 'SERVER'
                     }));
-                    delete this.remoteLogMap[txt];
+                    this.remoteLogMap[txt] = null;
                 }
             }
         }
@@ -23503,40 +23546,52 @@ if (!Array.prototype.indexOf) {
      * ### NodeGameClient.info
      *
      * Logs an INFO message
+     *
+     * @param {string} txt The text to log
+     *
+     * @see NodeGameClient.log
      */
-    NGC.prototype.info = function(txt, prefix) {
-        prefix = this.nodename + (prefix ? '|' + prefix : '') + '> info - ';
-        this.log(txt, 'info', prefix);
+    NGC.prototype.info = function(txt) {
+        this.log(txt, 'info', 'info - ');
     };
 
     /**
      * ### NodeGameClient.warn
      *
      * Logs a WARNING message
+     *
+     * @param {string} txt The text to log
+     *
+     * @see NodeGameClient.log
      */
-    NGC.prototype.warn = function(txt, prefix) {
-        prefix = this.nodename + (prefix ? '|' + prefix : '') + '> warn - ';
-        this.log(txt, 'warn', prefix);
+    NGC.prototype.warn = function(txt) {
+        this.log(txt, 'warn', 'warn - ');
     };
 
     /**
      * ### NodeGameClient.err
      *
      * Logs an ERROR message
+     *
+     * @param {string} txt The text to log
+     *
+     * @see NodeGameClient.log
      */
-    NGC.prototype.err = function(txt, prefix) {
-        prefix = this.nodename + (prefix ? '|' + prefix : '') + '> error - ';
-        this.log(txt, 'error', prefix);
+    NGC.prototype.err = function(txt) {
+        this.log(txt, 'error', 'error - ');
     };
 
     /**
      * ### NodeGameClient.silly
      *
      * Logs a SILLY message
+     *
+     * @param {string} txt The text to log
+     *
+     * @see NodeGameClient.log
      */
-    NGC.prototype.silly = function(txt, prefix) {
-        prefix = this.nodename + (prefix ? '|' + prefix : '') + '> silly - ';
-        this.log(txt, 'silly', prefix);
+    NGC.prototype.silly = function(txt) {
+        this.log(txt, 'silly', 'silly - ');
     };
 
 })(
@@ -25517,47 +25572,26 @@ if (!Array.prototype.indexOf) {
          * ## NODEGAME_GAMECOMMAND: push_step
          */
         node.events.ng.on(CMD + gcommands.push_step, function() {
-            var res;
-            console.log('BEING PUSHED! ', node.player.stage);
+            var res, stageLevel;
+            node.warn('push_step command. ', node.player.stage);
 
+            // Call timeup, if defined.
+            if (!node.game.timer.isTimeup()) node.game.timer.doTimeup();
 
-            // TODO: check this:
-            // At the moment, we do not have a default timer object,
-            // nor a default done/timeup cb.
-            // We try to see if they exist, and as last resort we emit DONE.
+            // Force node.done.
+            if (!node.game.willBeDone) {
+                stageLevel = node.game.getStageLevel();
 
-            if (node.game.timer && node.game.timer.doTimeUp) {
-                console.log('TIMEEEEUuuuuuuuuuup');
-                node.game.timer.doTimeUp();
-            }
-            else if (node.game.visualTimer && node.game.visualTimer.doTimeUp) {
-                console.log('TIMEEEEUuuuuuuuuuup 2');
-                node.game.visualTimer.doTimeUp();
-            }
+                if (stageLevel !== stageLevels.DONE_CALLED &&
+                    stageLevel !== stageLevels.GETTING_DONE &&
+                    stageLevel !== stageLevels.DONE) {
 
-
-            // TODO: CHECK OTHER LEVELS (e.g. getting_done).
-            if (!node.game.willBeDone &&
-                node.game.getStageLevel() !== stageLevels.DONE) {
-
-                console.log('NODE.DDDDDDDDDDOOONE');
-
-                res = node.done();
-                if (!res) {
-                    node.emit('DONE');
-                    console.log('EMIT DONEOOOOOOOOOOOOO');
+                    res = node.done();
+                    if (!res) node.emit('DONE');
                 }
             }
 
-            // Check this.
-            // node.game.setStageLevel(stageLevels.DONE);
-
             return 'ok!';
-
-
-            // Important for GET msgs.
-            return node.game.getStageLevel() === stageLevels.DONE  ?
-                'ok!' : 'stuck!';
         });
 
         this.conf.internalAdded = true;
