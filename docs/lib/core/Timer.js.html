@@ -2517,8 +2517,7 @@ Double check necessary in strict mode.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">&amp;&amp;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">doTimeup</span><span class="p">();</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -3543,21 +3542,7 @@ makes it an object with property 'milliseconds'. Makes sure
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">_timeup</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
-</div>
-<p>First stop the timer and then call the timeup.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">timeup</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">doTimeup</span><span class="p">();</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>

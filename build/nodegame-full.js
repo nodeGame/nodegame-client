@@ -22063,8 +22063,7 @@ if (!Array.prototype.indexOf) {
         // Double check necessary in strict mode.
         if ('undefined' !== typeof this.options.milliseconds &&
                 this.options.milliseconds === 0) {
-            this.stop();
-            this.fire(this.timeup);
+            this.doTimeup();
             return;
         }
 
@@ -22519,10 +22518,7 @@ if (!Array.prototype.indexOf) {
         }
         // Fire Timeup Event
         if (that.timeLeft <= 0) {
-            that._timeup = true;
-            // First stop the timer and then call the timeup.
-            that.stop();
-            that.fire(that.timeup);
+            that.doTimeup();
             return false;
         }
         else {
