@@ -134,7 +134,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#x69;l&#116;&#111;:&#115;&#46;&#98;&#97;&#108;&#105;e&#x74;&#x74;&#105;&#x40;&#110;e&#117;&#46;&#101;&#100;&#x75;">&#115;&#46;&#98;&#97;&#108;&#105;e&#x74;&#x74;&#105;&#x40;&#110;e&#117;&#46;&#101;&#100;&#x75;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#105;&#108;&#x74;o:&#x73;&#46;&#x62;&#x61;&#108;&#x69;&#x65;&#x74;&#x74;&#105;&#64;&#x6E;&#x65;&#117;&#x2E;&#101;&#100;&#x75;">&#x73;&#46;&#x62;&#x61;&#108;&#x69;&#x65;&#x74;&#x74;&#105;&#64;&#x6E;&#x65;&#117;&#x2E;&#101;&#100;&#x75;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -904,28 +904,44 @@ match the numbers in the <code>matches</code> array.</p>
 </div>
 
   </div>
-  <div class="body"><p>Calls the assigner callback to assign existing ids to positions</p>
+  <div class="body"><p>Calls the assigner callback to assign ids to positions</p>
+
+<p>Ids can be overwritten by parameter. If no ids are found,
+they will be automatically generated, provided that matches
+have been generated first.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">ids</span>
       <span class="dox_type">array</span>
-      <span>Array containing the id of the matches</span>
+      <span>Optinal. Array containing the id of the matches
+  to pass to Matcher.setIds</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.ids
+      <span class="dox_type">Matcher.ids</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.setIds
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">assignIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">assignIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">ids</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.assignIds: no id found.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.assignIds: no ids and no &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;matches found.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>        
         <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">);</span>
     <span class="p">};</span>
 
@@ -1002,6 +1018,15 @@ will be thrown.</p>
 <p>If the ids have not been assigned, it will do it automatically.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">assignIds</span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">array</span>
+      <span>Optional. A flag to force to 
+  re-assign existing ids, or an an array containing new ids to
+  assign.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Matcher.assignIds</span>
@@ -1019,7 +1044,7 @@ will be thrown.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">assignIds</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">pair</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matched</span><span class="p">,</span> <span class="nx">matchedId</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">;</span>
 
@@ -1039,13 +1064,9 @@ will be thrown.</p>
 <p>Assign/generate ids if not done before.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">;</span>
-                <span class="p">});</span>
-            <span class="p">}</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">||</span> <span class="nx">assignIds</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">assignIds</span><span class="p">))</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">(</span><span class="nx">assignIds</span><span class="p">);</span>
+            <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignIds</span><span class="p">();</span>
         <span class="p">}</span>
 
 
@@ -1483,8 +1504,6 @@ they are considered as already an id.</p>
     <span class="p">}</span>
 
 
-
-
 </pre></div>
         </td>
       </tr>
@@ -1516,8 +1535,6 @@ they are considered as already an id.</p>
         <span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
-
-
 
 
 </pre></div>
