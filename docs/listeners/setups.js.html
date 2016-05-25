@@ -743,11 +743,7 @@ object).</p>
                                     <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: name must string &#39;</span> <span class="o">+</span>
-                                   <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">getTimer</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: timer not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>

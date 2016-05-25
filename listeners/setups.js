@@ -329,11 +329,7 @@
                                     'undefined. Found: ' + opts);
             }
             name = opts.name || node.game.timer.name;
-            if ('string' !== typeof name) {
-                throw new TypeError('node.setup.timer: name must string ' +
-                                   'or undefined. Found: ' + name);
-            }
-            timer = this.timer.timers[name];
+            timer = this.timer.getTimer(name);
             if (!timer) {
                 this.warn('node.setup.timer: timer not found: ' + name);
                 return null;
