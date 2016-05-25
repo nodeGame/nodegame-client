@@ -13222,7 +13222,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GamePlot
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` container of game stages functions
@@ -19882,7 +19882,7 @@ if (!Array.prototype.indexOf) {
                 if (property.length < 2) {
                     throw new TypeError(
                         'Game.gotoStep: minPlayers field must be an array ' +
-                            'of length 2.');
+                            'of at least length 2.');
                 }
 
                 minThreshold = property[0];
@@ -19896,7 +19896,7 @@ if (!Array.prototype.indexOf) {
                 if (property.length < 2) {
                     throw new TypeError(
                         'Game.gotoStep: maxPlayers field must be an array ' +
-                            'of length 2.');
+                            'of at least length 2.');
                 }
 
                 maxThreshold = property[0];
@@ -19911,7 +19911,7 @@ if (!Array.prototype.indexOf) {
                 if (property.length < 2) {
                     throw new TypeError(
                         'Game.gotoStep: exactPlayers field must be an array ' +
-                            'of length 2.');
+                            'of at least length 2.');
                 }
 
                 exactThreshold = property[0];
@@ -19922,49 +19922,58 @@ if (!Array.prototype.indexOf) {
             }
 
             if (minCallback || maxCallback || exactCallback) {
-                // Register event handler:
+                // Register event handler.
                 handler = function() {
                     var nPlayers = node.game.pl.size();
                     // Players should count themselves too.
                     if (!node.player.admin) nPlayers++;
 
-                    if (nPlayers < minThreshold) {
-                        if (minCallback && !node.game.minPlayerCbCalled) {
-                            node.game.minPlayerCbCalled = true;
-                            minCallback.call(node.game);
+                    if ('number' === typeof minThreshold) {
+                        if (nPlayers < minThreshold) {
+                            if (minCallback && !node.game.minPlayerCbCalled) {
+                                node.game.minPlayerCbCalled = true;
+                                minCallback.call(node.game);
+                            }
                         }
-                    }
-                    else {
-                        if (node.game.minPlayerCbCalled && minRecoverCb) {
-                            minRecoverCb.call(node.game);
+                        else {
+                            if (node.game.minPlayerCbCalled && minRecoverCb) {
+                                minRecoverCb.call(node.game);
+                            }
+                            node.game.minPlayerCbCalled = false;
                         }
-                        node.game.minPlayerCbCalled = false;
                     }
 
-                    if (nPlayers > maxThreshold) {
-                        if (maxCallback && !node.game.maxPlayerCbCalled) {
-                            node.game.maxPlayerCbCalled = true;
-                            maxCallback.call(node.game);
+                    if ('number' === typeof maxThreshold) {
+                        if (nPlayers > maxThreshold) {
+                            if (maxCallback && !node.game.maxPlayerCbCalled) {
+                                node.game.maxPlayerCbCalled = true;
+                                maxCallback.call(node.game);
+                            }
+                        }
+                        else {
+                            if (node.game.maxPlayerCbCalled && maxRecoverCb) {
+                                maxRecoverCb.call(node.game);
+                            }
+                            node.game.maxPlayerCbCalled = false;
                         }
                     }
-                    else {
-                        if (node.game.maxPlayerCbCalled && maxRecoverCb) {
-                            maxRecoverCb.call(node.game);
-                        }
-                        node.game.maxPlayerCbCalled = false;
-                    }
+                    if ('number' === typeof exactThreshold) {
+                        if (nPlayers !== exactThreshold) {
+                            if (exactCallback &&
+                                !node.game.exactPlayerCbCalled) {
 
-                    if (nPlayers !== exactThreshold) {
-                        if (exactCallback && !node.game.exactPlayerCbCalled) {
-                            node.game.exactPlayerCbCalled = true;
-                            exactCallback.call(node.game);
+                                node.game.exactPlayerCbCalled = true;
+                                exactCallback.call(node.game);
+                            }
                         }
-                    }
-                    else {
-                        if (node.game.exactPlayerCbCalled && exactRecoverCb) {
-                            exactRecoverCb.call(node.game);
+                        else {
+                            if (node.game.exactPlayerCbCalled &&
+                                exactRecoverCb) {
+
+                                exactRecoverCb.call(node.game);
+                            }
+                            node.game.exactPlayerCbCalled = false;
                         }
-                        node.game.exactPlayerCbCalled = false;
                     }
                 };
 
@@ -22080,7 +22089,8 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GameTimer.addHook
      *
-     * Add an hook to the hook list after performing conformity checks.
+     * Add an hook to the hook list after performing conformity checks
+     *
      * The first parameter hook can be a string, a function, or an object
      * containing an hook property.
      *
@@ -22095,16 +22105,14 @@ if (!Array.prototype.indexOf) {
      */
     GameTimer.prototype.addHook = function(hook, ctx, name) {
         var i;
-
-        if (!hook) {
-            throw new Error('GameTimer.addHook: missing argument');
+        if ('undefined' === typeof hook) {
+            throw new TypeError('GameTimer.addHook: hook must be function, ' +
+                                'string or object. Found: ' + hook);
         }
         ctx = ctx || this.node.game;
         if (hook.hook) {
             ctx = hook.ctx || ctx;
-            if(hook.name) {
-                name = hook.name;
-            }
+            if (hook.name) name = hook.name;
             hook = hook.hook;
         }
         if (!name) {
@@ -22123,7 +22131,7 @@ if (!Array.prototype.indexOf) {
     /*
      * ### GameTimer.removeHook
      *
-     * Removes a hook given its' name
+     * Removes a hook by its name
      *
      * @param {string} name Name of the hook to be removed
      * @return {mixed} the hook if it was removed; false otherwise.
@@ -27842,7 +27850,7 @@ if (!Array.prototype.indexOf) {
         var that;
         var loadCache;
         var storeCacheNow, storeCacheLater;
-        var autoParse, autoParsePrefix;
+        var autoParse, autoParsePrefix, autoParseMod;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
@@ -27938,6 +27946,14 @@ if (!Array.prototype.indexOf) {
                 }
                 autoParsePrefix = opts.autoParsePrefix;
             }
+            if ('undefined' !== typeof opts.autoParseMod) {
+                if ('string' !== typeof opts.autoParseMod) {
+                    throw new TypeError('GameWindow.loadFrame: opts.' +
+                                        'autoParseMod must be string ' +
+                                        'or undefined.');
+                }
+                autoParseMod = opts.autoParseMod;
+            }
             autoParse = opts.autoParse;
         }
 
@@ -28006,6 +28022,7 @@ if (!Array.prototype.indexOf) {
                                     // and updates GameWindow state.
                                     that.updateLoadFrameState(func,
                                                               autoParse,
+                                                              autoParseMod,
                                                               autoParsePrefix);
                                 });
             });
@@ -28026,6 +28043,7 @@ if (!Array.prototype.indexOf) {
                                     // and updates GameWindow state.
                                     that.updateLoadFrameState(func,
                                                               autoParse,
+                                                              autoParseMod,
                                                               autoParsePrefix);
                                 });
             }
@@ -28072,23 +28090,27 @@ if (!Array.prototype.indexOf) {
      * @param {function} func Optional. A callback function
      * @param {object} autoParse Optional. An object containing elements
      *    to replace in the HTML DOM.
+     * @param {string} autoParseMod Optional. Modifier for search and replace
      * @param {string} autoParsePrefix Optional. Custom prefix to add to the
      *    keys of the elements in autoParse object
      *
-     * @see GameWindow.setInnerHTML
+     * @see GameWindow.searchReplace
      * @see updateAreLoading
      *
      * @emit FRAME_LOADED
      * @emit LOADED
      */
     GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
+                                                         autoParseMod,
                                                          autoParsePrefix) {
 
         var loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
         if (func) func.call(node.game);
-        if (autoParse) this.setInnerHTML(autoParse, autoParsePrefix);
+        if (autoParse) {
+            this.searchReplace(autoParse, autoParseMod, autoParsePrefix);
+        }
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
@@ -28233,6 +28255,7 @@ if (!Array.prototype.indexOf) {
 
             func();
         };
+
         if (loadCache) {
             reloadScripts(iframe, afterScripts);
         }
@@ -29974,6 +29997,11 @@ if (!Array.prototype.indexOf) {
      *    }
      * ```
      *
+     * It accepts a variable number of input parameters. The first is always
+     * _elements_. If there are 2 input parameters, the second is _prefix_,
+     * while if there are 3 input parameters, the second is _mod_ and the third
+     * is _prefix_.
+     *
      * @param {object|array} Elements to search and replace
      * @param {string} mod Optional. Modifier passed to GameWindow.setInnerHTML
      * @param {string} prefix Optional. Prefix added to the search string.
@@ -30091,52 +30119,6 @@ if (!Array.prototype.indexOf) {
             }
         }
     };
-
-//     GameWindow.prototype.setInnerHTML_old = function(elements, prefix) {
-//         var el, name, text, search, len, i;
-//
-//         if ('object' !== typeof elements) {
-//             throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-//                                 'object.');
-//         }
-//         if (prefix) {
-//             if ('string' !== typeof prefix) {
-//                 throw new TypeError('GameWindow.setInnerHTML: prefix must be ' +
-//                                     'string or undefined.');
-//             }
-//         }
-//         else {
-//             prefix = 'ng_replace_';
-//         }
-//
-//         for (name in elements) {
-//             if (elements.hasOwnProperty(name)) {
-//                 text = elements[name];
-//                 // Only process strings.
-//                 if ('string' !== typeof text && 'number' !== typeof text) {
-//                     node.warn('GameWindow.setInnerHTML: key "' + name +
-//                               '" does not contain a string value. Ignored.');
-//                     continue;
-//                 }
-//                 // Compose name with prefix and lower case.
-//                 search = (prefix + name).toLowerCase();
-//
-//                 // Look by id.
-//                 el = W.getElementById(search);
-//                 if (el && el.className !== search) el.innerHTML = text;
-//
-//                 // Look by class name.
-//                 el = W.getElementsByClassName(search);
-//                 len = el.length;
-//                 if (len) {
-//                     i = -1;
-//                     for ( ; ++i < len ; ) {
-//                         elements[i].innerHTML = text;
-//                     }
-//                 }
-//             }
-//         }
-//     };
 
     /**
      * ## GameWindow.hide
@@ -30282,53 +30264,6 @@ if (!Array.prototype.indexOf) {
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
-
-
-// GameWindow.prototype.setInnerHTML2 = function(elements, values) {
-//     var el, i, len, res, lenValues;
-//     res = true;
-//     if ('string' === typeof elements) {
-//         if ('string' !== typeof values) {
-//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                 'string, if elements is string.');
-//         }
-//         el = W.getElementById(elements);
-//         if (el) el.innerHTML = values;
-//         else res = false;
-//     }
-//     else if (J.isArray(elements)) {
-//         if ('string' === typeof values) values = [values];
-//         else if (!J.isArray(values) || !values.length) {
-//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                 'string or non-empty array, if elements ' +
-//                                 'is string.');
-//         }
-//         i = -1, len = elements.length, lenValues = values.length;
-//         for ( ; ++i < len ; ) {
-//             el = W.getElementById(elements[i]);
-//             if (el) el.innerHTML = values[i % lenValues];
-//             else res = false;
-//         }
-//     }
-//     else if ('object' === typeof elements) {
-//         if ('undefined' !== typeof values) {
-//             node.warn('GameWindow.setInnerHTML: elements is ' +
-//                       'object, therefore values will be ignored.');
-//         }
-//         for (i in elements) {
-//             if (elements.hasOwnProperty(i)) {
-//                 el = W.getElementById(i);
-//                 if (el) el.innerHTML = elements[i];
-//                 else res = false;
-//             }
-//         }
-//     }
-//     else {
-//         throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-//                             'string, array, or object.');
-//     }
-//     return res;
-// };
 
 // Creates a new GameWindow instance in the global scope.
 (function() {
@@ -32019,6 +31954,58 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Widget.hide
+     *
+     * Hides the widget, if it was previously appended to DOM
+     *
+     * Sets the 'display' property of `panelDiv` to 'none'
+     *
+     * @see Widget.show
+     */
+    Widget.prototype.hide = function() {
+        if (!this.panelDiv) return;
+        this.panelDiv.style.display = 'none';
+    };
+
+    /**
+     * ### Widget.show
+     *
+     * Show the widget, if it was previously appended and hidden
+     *
+     * Sets the 'display' property of `panelDiv` to ''
+     *
+     * @param {string} display Optional. The value of the display
+     *    property. Default: ''
+     *
+     * @see Widget.hide
+     */
+    Widget.prototype.show = function(display) {
+        if (this.panelDiv && this.panelDiv.style.display === 'none') {
+            this.panelDiv.style.display = display || '';
+        }
+    };
+
+    /**
+     * ### Widget.toggle
+     *
+     * Toggles the display of the widget, if it was previously appended
+     *
+     * @param {string} display Optional. The value of the display
+     *    property in case the widget is currently hidden. Default: ''
+     *
+     * @see Widget.hide
+     */
+    Widget.prototype.toggle = function(display) {
+        if (!this.panelDiv) return;
+        if (this.panelDiv.style.display === 'none') {
+            this.panelDiv.style.display = display || '';
+        }
+        else {
+            this.panelDiv.style.display = 'none';
+        }
+    };
+
+    /**
      * ### Widget.destroy
      *
      * Performs cleanup operations
@@ -33053,7 +33040,7 @@ if (!Array.prototype.indexOf) {
             // or what is the current value of sliders,
             // or a random face.
             if (!f && that.sc) {
-                f = that.sc.getAllValues();
+                f = that.sc.getValues();
                 if ('undefined' === typeof updateControls) {
                     updateControls = false;
                 }
@@ -33095,7 +33082,7 @@ if (!Array.prototype.indexOf) {
      *      to false no controls will be created. Default: SlidersControls.
      *      Any custom implementation must provide the following methods:
      *
-     *          - getAllValues: returns the current features vector
+     *          - getValues: returns the current features vector
      *          - refresh: redraws the current feature vector
      *          - init: accepts a configuration object containing a
      *               features and onChange as specified above.
@@ -33142,35 +33129,29 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ## ChernoffFaces.append
+     * ## ChernoffFaces.buildHTML
      *
-     * Appends the widget
+     * Builds HTML objects, but does not append them
      *
-     * Creates table, canvas, face painter (fp) and controls (sc), according
-     * to current options.
+     * Creates the table, canvas, draw the current image, and
+     * eventually adds the controls.
      *
-     * @see ChernoffFaces.fp
-     * @see ChernoffFaces.sc
-     * @see ChernoffFaces.table
-     * @see Table
-     * @see Canvas
-     * @see SliderControls
-     * @see FacePainter
-     * @see FaceVector
+     * If the table was already built, it returns immediately.
      */
-    ChernoffFaces.prototype.append = function() {
+    ChernoffFaces.prototype.buildHTML = function() {
         var controlsOptions, f;
         var tblOptions, options;
+
+        if (this.table) return;
 
         options = this.options;
 
         // Table.
         tblOptions = {};
         if (this.id) tblOptions.id = this.id;
-        else if (this.id !== false) tblOptions.id = 'cf_table';
 
         if ('string' === typeof options.className) {
-            tblOptions.id = options.className;
+            tblOptions.className = options.className;
         }
         else if (options.className !== false) {
             tblOptions.className = 'cf_table';
@@ -33179,20 +33160,7 @@ if (!Array.prototype.indexOf) {
         this.table = new Table(tblOptions);
 
         // Canvas.
-        if (!options.canvas) {
-            options.canvas = {};
-            if ('undefined' !== typeof options.height) {
-                options.canvas.height = options.height;
-            }
-            if ('undefined' !== typeof options.width) {
-                options.canvas.width = options.width;
-            }
-        }
-        this.canvas = W.getCanvas('ChernoffFaces_canvas', options.canvas);
-
-        // Face Painter.
-        this.fp = new FacePainter(this.canvas);
-        this.fp.draw(new FaceVector(this.features));
+        if (!this.canvas) this.buildCanvas();
 
         // Controls.
         if ('undefined' === typeof options.controls || options.controls) {
@@ -33219,6 +33187,61 @@ if (!Array.prototype.indexOf) {
 
         // Create and append table.
         this.table.parse();
+    };
+
+    /**
+     * ## ChernoffFaces.buildCanvas
+     *
+     * Builds the canvas object and face painter
+     *
+     * All the necessary to draw faces
+     *
+     * If the canvas was already built, it simply returns it.
+     *
+     * @return {canvas}
+     */
+    ChernoffFaces.prototype.buildCanvas = function() {
+        var options;
+        if (!this.canvas) {
+            options = this.options;
+
+            if (!options.canvas) {
+                options.canvas = {};
+                if ('undefined' !== typeof options.height) {
+                    options.canvas.height = options.height;
+                }
+                if ('undefined' !== typeof options.width) {
+                    options.canvas.width = options.width;
+                }
+            }
+            this.canvas = W.getCanvas('ChernoffFaces_canvas', options.canvas);
+
+            // Face Painter.
+            this.fp = new FacePainter(this.canvas);
+            this.fp.draw(new FaceVector(this.features));
+        }
+    };
+
+    /**
+     * ## ChernoffFaces.append
+     *
+     * Appends the widget
+     *
+     * Creates table, canvas, face painter (fp) and controls (sc), according
+     * to current options.
+     *
+     * @see ChernoffFaces.buildHTML
+     * @see ChernoffFaces.fp
+     * @see ChernoffFaces.sc
+     * @see ChernoffFaces.table
+     * @see Table
+     * @see Canvas
+     * @see SliderControls
+     * @see FacePainter
+     * @see FaceVector
+     */
+    ChernoffFaces.prototype.append = function() {
+        if (!this.table) this.buildHTML();
         this.bodyDiv.appendChild(this.table.table);
     };
 
@@ -33249,7 +33272,7 @@ if (!Array.prototype.indexOf) {
         }
     };
 
-    ChernoffFaces.prototype.getAllValues = function() {
+    ChernoffFaces.prototype.getValues = function() {
         return this.fp.face;
     };
 
@@ -34961,6 +34984,8 @@ if (!Array.prototype.indexOf) {
      *
      *   - markAttempt: If TRUE, getting the value counts as an attempt
      *      to find the correct answer. Default: TRUE.
+     *   - highlight:   If TRUE, forms that do not have a correct value
+     *      will be highlighted. Default: FALSE.
      *
      * @return {object} Object containing the choice and paradata
      *
@@ -34975,12 +35000,17 @@ if (!Array.prototype.indexOf) {
             missValues: []
         };
         opts = opts || {};
+        if (opts.markAttempt) obj.isCorrect = true;
+        opts = opts || {};
         i = -1, len = this.forms.length;
         for ( ; ++i < len ; ) {
             form = this.forms[i]
             obj.forms[form.id] = form.getValues(opts);
             if (obj.forms[form.id].choice === null) {
                 obj.missValues.push(form.id);
+            }
+            if (opts.markAttempt && !obj.forms[form.id].isCorrect) {
+                obj.isCorrect = false;
             }
         }
         if (this.textarea) obj.freetext = this.textarea.value;
@@ -35200,6 +35230,13 @@ if (!Array.prototype.indexOf) {
         this.correctChoice = null;
 
         /**
+         * ### ChoiceTable.requiredChoice
+         *
+         * The number of required choices. Default 0
+         */
+        this.requiredChoice = null;
+
+        /**
          * ### ChoiceTable.attempts
          *
          * List of currentChoices at the moment of verifying correct answers
@@ -35393,6 +35430,19 @@ if (!Array.prototype.indexOf) {
         else tmp = !!options.selectMultiple;
         this.selectMultiple = tmp;
 
+        // Option requiredChoice, if any.
+        if ('number' === typeof options.requiredChoice) {
+            this.requiredChoice = options.requiredChoice;
+        }
+        else if ('boolean' === typeof options.requiredChoice) {
+            this.requiredChoice = options.requiredChoice ? 1 : 0;
+        }
+        else if ('undefined' !== typeof options.requiredChoice) {
+            throw new TypeError('ChoiceTable.init: options.requiredChoice ' +
+                                'be number or boolean or undefined. Found: ' +
+                                options.requiredChoice);
+        }
+
         // Set the group, if any.
         if ('string' === typeof options.group ||
             'number' === typeof options.group) {
@@ -35544,6 +35594,10 @@ if (!Array.prototype.indexOf) {
 
         // Add the correct choices.
         if ('undefined' !== typeof options.correctChoice) {
+            if (this.requiredChoice) {
+                throw new Error('ChoiceTable.init: cannot specify both ' +
+                                'options requiredChoice and correctChoice.');
+            }
             this.setCorrectChoice(options.correctChoice);
         }
 
@@ -35955,6 +36009,12 @@ if (!Array.prototype.indexOf) {
      *
      * Compares the current choice/s with the correct one/s
      *
+     * Depending on current settings, there are two modes of verifying
+     * choices:
+     *
+     *    - requiredChoice: there must be at least N choices selected
+     *    - correcChoice:   the choices are compared against correct ones.
+     *
      * @param {boolean} markAttempt Optional. If TRUE, the value of
      *   current choice is added to the attempts array. Default
      *
@@ -35967,6 +36027,13 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTable.prototype.verifyChoice = function(markAttempt) {
         var i, len, j, lenJ, c, clone, found;
+
+        // Check the number of choices.
+        if (this.requiredChoice !== null) {
+            if (!this.selectMultiple) return this.currentChoice !== null;
+            else return this.currentChoice.length >= this.requiredChoice;
+        }
+
         // If no correct choice is set return null.
         if (!this.correctChoice) return null;
         // Mark attempt by default.
@@ -36123,6 +36190,8 @@ if (!Array.prototype.indexOf) {
      *
      *   - markAttempt: If TRUE, getting the value counts as an attempt
      *      to find the correct answer. Default: TRUE.
+     *   - highlight:   If TRUE, if current value is not the correct
+     *      value, widget will be highlighted. Default: FALSE.
      *
      * @return {object} Object containing the choice and paradata
      *
@@ -36146,9 +36215,10 @@ if (!Array.prototype.indexOf) {
         if (this.groupOrder === 0 || this.groupOrder) {
             obj.groupOrder = this.groupOrder;
         }
-        if (null !== this.correctChoice) {
+        if (null !== this.correctChoice || null !== this.requiredChoice) {
             obj.isCorrect = this.verifyChoice(opts.markAttempt);
             obj.attemps = this.attemps;
+            if (!obj.isCorrect && opts.highlight) this.highlight();
         }
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
@@ -36360,6 +36430,13 @@ if (!Array.prototype.indexOf) {
         this.shuffleItems = null;
 
         /**
+         * ### ChoiceTableGroup.requiredChoice
+         *
+         * The number of required choices.
+         */
+        this.requiredChoice = null;
+
+        /**
          * ### ChoiceTableGroup.orientation
          *
          * Orientation of display of items: vertical ('V') or horizontal ('H')
@@ -36528,6 +36605,19 @@ if (!Array.prototype.indexOf) {
         else tmp = !!options.shuffleItems;
         this.shuffleItems = tmp;
 
+        // Option requiredChoice, if any.
+        if ('number' === typeof options.requiredChoice) {
+            this.requiredChoice = options.requiredChoice;
+        }
+        else if ('boolean' === typeof options.requiredChoice) {
+            this.requiredChoice = options.requiredChoice ? 1 : 0;
+        }
+        else if ('undefined' !== typeof options.requiredChoice) {
+            throw new TypeError('ChoiceTableGroup.init: ' +
+                                'options.requiredChoice ' +
+                                'be number or boolean or undefined. Found: ' +
+                                options.requiredChoice);
+        }
 
         // Set the group, if any.
         if ('string' === typeof options.group ||
@@ -36965,13 +37055,15 @@ if (!Array.prototype.indexOf) {
      *
      *   - markAttempt: If TRUE, getting the value counts as an attempt
      *      to find the correct answer. Default: TRUE.
+     *   - highlight:   If TRUE, if current value is not the correct
+     *      value, widget will be highlighted. Default: FALSE.
      *
      * @return {object} Object containing the choice and paradata
      *
      * @see ChoiceTableGroup.verifyChoice
      */
     ChoiceTableGroup.prototype.getValues = function(opts) {
-        var obj, i, len, tbl;
+        var obj, i, len, tbl, toHighlight;
         obj = {
             id: this.id,
             order: this.order,
@@ -36982,8 +37074,15 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             tbl = this.items[i];
             obj.items[tbl.id] = tbl.getValues(opts);
-            if (obj.items[tbl.id].choice === null) obj.missValues = true;
+            if (obj.items[tbl.id].choice === null) {
+                obj.missValues = true;
+                if (tbl.requiredChoice) toHighlight = true;
+            }
+            if (!obj.items[tbl.id].isCorrect === false && opts.highlight) {
+                toHighlight = true;
+            }
         }
+        if (toHighlight) this.highlight();
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
     };
@@ -37011,6 +37110,10 @@ if (!Array.prototype.indexOf) {
         s.separator = that.separator;
 
         if (!s.renderer && that.renderer) s.renderer = that.renderer;
+
+        if ('undefined' === typeof s.requiredChoice && that.requiredChoice) {
+            s.requiredChoice = that.requiredChoice;
+        }
 
         if ('undefined' === typeof s.selectMultiple &&
             null !== that.selectMultiple) {
@@ -37075,7 +37178,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Controls.version = '0.3.1';
+    Controls.version = '0.5.0';
     Controls.description = 'Wraps a collection of user-inputs controls.';
 
     Controls.title = 'Controls';
@@ -37290,7 +37393,7 @@ if (!Array.prototype.indexOf) {
         return true;
     };
 
-    Controls.prototype.getAllValues = function() {
+    Controls.prototype.getValues = function() {
         var out, el, key;
         out = {};
         for (key in this.features) {
@@ -37476,7 +37579,7 @@ if (!Array.prototype.indexOf) {
     };
 
     // Override getAllValues for Radio Controls
-    RadioControls.prototype.getAllValues = function() {
+    RadioControls.prototype.getValues = function() {
 
         for (var key in this.features) {
             if (this.features.hasOwnProperty(key)) {
@@ -39380,8 +39483,8 @@ if (!Array.prototype.indexOf) {
         this.methods[name] = cb;
     };
 
-    MoodGauge.prototype.getValues = function() {
-        return this.gauge.getValues();
+    MoodGauge.prototype.getValues = function(opts) {
+        return this.gauge.getValues(opts);
     };
 
     MoodGauge.prototype.enable = function() {
@@ -39475,7 +39578,8 @@ if (!Array.prototype.indexOf) {
             id: 'ipnassf',
             items: items,
             mainText: mainText,
-            title: false
+            title: false,
+            requiredChoice: true
         });
 
         return gauge;
@@ -40773,8 +40877,8 @@ if (!Array.prototype.indexOf) {
         this.methods[name] = cb;
     };
 
-    SVOGauge.prototype.getValues = function() {
-        return this.gauge.getValues();
+    SVOGauge.prototype.getValues = function(opts) {
+        return this.gauge.getValues(opts);
     };
 
     SVOGauge.prototype.enable = function() {
@@ -40936,7 +41040,8 @@ if (!Array.prototype.indexOf) {
             items: items,
             mainText: mainText,
             title: false,
-            renderer: renderer
+            renderer: renderer,
+            requiredChoice: true
         });
 
         return gauge;
@@ -42212,7 +42317,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualTimer.version = '0.7.0';
+    VisualTimer.version = '0.8.0';
     VisualTimer.description = 'Display a timer for the game. Timer can ' +
         'trigger events. Only for countdown smaller than 1h.';
 
@@ -42337,24 +42442,6 @@ if (!Array.prototype.indexOf) {
                                 'object or undefined');
         }
 
-        // Important! Hooks must be added before calling mixout.
-        if (options.hooks) {
-            if (!J.isArray(options.hooks)) {
-                options.hooks = [options.hooks];
-            }
-        }
-        else {
-            options.hooks = [];
-        }
-        // Only push this hook once.
-        if (!this.isInitialized) {
-            options.hooks.push({
-                hook: this.updateDisplay,
-                ctx: this
-            });
-        }
-        J.mixout(options, this.options);
-
         // If gameTimer is not already set, check options, then
         // try to use node.game.timer, if defined, otherwise crete a new timer.
         if ('undefined' !== typeof options.gameTimer) {
@@ -42378,6 +42465,31 @@ if (!Array.prototype.indexOf) {
                 this.gameTimer = node.timer.createTimer();
             }
         }
+
+        if (options.hooks) {
+            if (!this.internalTimer) {
+                throw new Error('VisualTimer.init: cannot add hooks on ' +
+                                'external gameTimer.');
+            }
+            if (!J.isArray(options.hooks)) {
+                options.hooks = [options.hooks];
+            }
+        }
+        else {
+            options.hooks = [];
+        }
+
+        // Only push this hook once.
+        if (!this.isInitialized) {
+            options.hooks.push({
+                name: 'VisualTimer_' + this.wid,
+                hook: this.updateDisplay,
+                ctx: this
+            });
+        }
+
+        // Important! Must be called after processing hooks and gameTimer.
+        J.mixout(options, this.options);
 
         // Parse milliseconds option.
         if ('undefined' !== typeof options.milliseconds) {
@@ -42485,6 +42597,9 @@ if (!Array.prototype.indexOf) {
         if (this.internalTimer) {
             node.timer.destroyTimer(this.gameTimer);
             this.internalTimer = null;
+        }
+        else {
+            this.gameTimer.removeHook(this.updateHookName);
         }
 
         this.gameTimer = null;
@@ -42692,6 +42807,10 @@ if (!Array.prototype.indexOf) {
     VisualTimer.prototype.listeners = function() {
         var that = this;
 
+        if (!this.internalTimer) {
+            return;
+        }
+
         node.on('PLAYING', function() {
             var options;
             if (that.options.startOnPlaying) {
@@ -42719,6 +42838,9 @@ if (!Array.prototype.indexOf) {
         if (this.internalTimer) {
             node.timer.destroyTimer(this.gameTimer);
             this.internalTimer = null;
+        }
+        else {
+            this.gameTimer.removeHook('VisualTimer_' + this.wid);
         }
         this.bodyDiv.removeChild(this.mainBox.boxDiv);
         this.bodyDiv.removeChild(this.waitBox.boxDiv);
