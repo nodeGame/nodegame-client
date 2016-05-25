@@ -63,9 +63,7 @@
                     'function' === typeof this.setup[i]) {
 
                     // Old Operas loop over the prototype property as well.
-                    if (i !== 'register' &&
-                        i !== 'nodegame' &&
-                        i !== 'prototype') {
+                    if (i !== 'nodegame' && i !== 'prototype') {
                         // Like this browsers do not complain in strict mode.
                         setupOptions = 'undefined' === typeof options[i] ?
                             undefined : options[i];
@@ -84,7 +82,7 @@
          * @see node.SocketFactory
          */
         this.registerSetup('socket', function(conf) {
-            if (!conf) return;
+            if ('undefined' === typeof conf) return;
             this.socket.setup(conf);
             return conf;
         });
@@ -96,6 +94,8 @@
          *
          * If no value is passed, it will try to set the host from
          * the window object in the browser enviroment.
+         *
+         * TODO: what happens if there is a basedir?
          */
         this.registerSetup('host', function(host) {
             var tokens;
@@ -107,8 +107,11 @@
                     }
                 }
             }
-
             if (host) {
+                if ('string' !== typeof host) {
+                    throw new TypeError('node.setup.host: if set, host must ' +
+                                        'be string. Found: ' + host);
+                }
                 tokens = host.split('/').slice(0,-2);
                 // url was not of the form '/channel'
                 if (tokens.length > 1) {
@@ -120,7 +123,6 @@
                     host = host + '/';
                 }
             }
-
             return host;
         });
 
@@ -130,13 +132,20 @@
          * Sets the verbosity level for nodegame
          */
         this.registerSetup('verbosity', function(level) {
-            if ('string' === typeof level &&
-                constants.verbosity_levels.hasOwnProperty(level)) {
-
+            if ('undefined' === typeof level) return this.verbosity;
+            if ('string' === typeof level) {
+                if (!constants.verbosity_levels.hasOwnProperty(level)) {
+                    throw new Error('node.setup.verbosity: level not found: ' +
+                                    level);
+                }
                 this.verbosity = constants.verbosity_levels[level];
             }
             else if ('number' === typeof level) {
                 this.verbosity = level;
+            }
+            else {
+                throw new TypeError('node.setup.verbosity: level must be ' +
+                                    'number or string. Found: ' + level);
             }
             return level;
         });
@@ -149,7 +158,8 @@
         this.registerSetup('nodename', function(newName) {
             newName = newName || constants.nodename;
             if ('string' !== typeof newName) {
-                throw new TypeError('node.nodename must be of type string.');
+                throw new TypeError('node.setup.nodename: newName must be ' +
+                                    'string. Found: ' + newName);
             }
             this.nodename = newName;
             return newName;
@@ -161,10 +171,7 @@
          * Sets the debug flag for nodegame
          */
         this.registerSetup('debug', function(enable) {
-            enable = enable || false;
-            if ('boolean' !== typeof enable) {
-                throw new TypeError('node.debug must be of type boolean.');
-            }
+            enable = !!enable || false;
             this.debug = enable;
             return enable;
         });
@@ -176,14 +183,16 @@
          */
         this.registerSetup('env', function(conf) {
             var i;
-            if ('undefined' !== typeof conf) {
-                for (i in conf) {
-                    if (conf.hasOwnProperty(i)) {
-                        this.env[i] = conf[i];
-                    }
+            if ('undefined' === typeof conf) return;
+            if ('object' !== typeof conf) {
+                throw new TypeError('node.setup.env: conf must be object ' +
+                                    'or undefined. Found: ' + conf);
+            }
+            for (i in conf) {
+                if (conf.hasOwnProperty(i)) {
+                    this.env[i] = conf[i];
                 }
             }
-
             return conf;
         });
 
@@ -195,15 +204,21 @@
          * @see node.EventEmitter
          */
         this.registerSetup('events', function(conf) {
-            conf = conf || {};
+            if (conf) {
+                if ('object' !== typeof conf) {
+                    throw new TypeError('node.setup.events: conf must be ' +
+                                        'object or undefined. Found: ' + conf);
+                }
+            }
+            else {
+                conf = {};
+            }
             if ('undefined' === typeof conf.history) {
-                conf.history = false;
+                conf.history = this.conf.history || false;
             }
-
             if ('undefined' === typeof conf.dumpEvents) {
-                conf.dumpEvents = false;
+                conf.dumpEvents = this.conf.dumpEvents || false;
             }
-
             return conf;
         });
 
@@ -213,10 +228,14 @@
          * Sets up `node.game.settings`
          */
         this.registerSetup('settings', function(settings) {
-            if (settings) {
+            if ('undefined' !== typeof settings) {
+                if ('object' !== typeof settings) {
+                    throw new TypeError('node.setup.settings: settings must ' +
+                                        'be object or undefined. Found: ' +
+                                        settings);
+                }
                 J.mixin(this.game.settings, settings);
             }
-
             return this.game.settings;
         });
 
@@ -226,10 +245,14 @@
          * Sets up `node.game.metadata`
          */
         this.registerSetup('metadata', function(metadata) {
-            if (metadata) {
+            if ('undefined' !== typeof metadata) {
+                if ('object' !== typeof metadata) {
+                    throw new TypeError('node.setup.metadata: metadata must ' +
+                                        'be object or undefined. Found: ' +
+                                        metadata);
+                }
                 J.mixin(this.game.metadata, metadata);
             }
-
             return this.game.metadata;
         });
 
@@ -243,8 +266,15 @@
          * @see node.createPlayer
          */
         this.registerSetup('player', function(player) {
-            if (!player) return null;
-            return this.createPlayer(player);
+            if ('undefined' !== typeof player) {
+                if ('object' !== typeof player) {
+                    throw new TypeError('node.setup.player: player must ' +
+                                        'be object or undefined. Found: ' +
+                                        player);
+                }
+                this.createPlayer(player);
+            }
+            return this.player;
         });
 
         /**
@@ -261,10 +291,20 @@
          * @see node.setLanguage
          */
         this.registerSetup('lang', function(lang) {
-            if (!lang) return null;
-            if (J.isArray(lang)) node.setLanguage(lang[0], lang[1]);
-            else node.setLanguage(lang);
-            return node.player.lang;
+            if ('undefined' !== typeof lang) {
+                if (J.isArray(lang)) {
+                    this.setLanguage(lang[0], lang[1]);
+                }
+                else if ('string' === typeof lang) {
+                    this.setLanguage(lang);
+                }
+                else {
+                    throw new TypeError('node.setup.lang: lang must be ' +
+                                        'string, array, or undefined. Found: ' +
+                                        lang);
+                }
+            }
+            return this.player.lang;
         });
 
         /**
@@ -272,19 +312,38 @@
          *
          * Setup a timer object
          *
+         * Accepts one configuration parameter of the type:
+         *
+         *  - name: name of the timer. Default: node.game.timer.name
+         *  - options: configuration options to pass to the init method
+         *  - action: an action to call on the timer (e.g. start, stop, etc.)
+         *
          * @see node.timer
          * @see node.GameTimer
          */
-        this.registerSetup('timer', function(name, data) {
-            var timer;
-            if (!name) return null;
+        this.registerSetup('timer', function(opts) {
+            var name, timer;
+            if (!opts) return;
+            if ('object' !== typeof opts) {
+                throw new TypeError('node.setup.timer: opts must object or ' +
+                                    'undefined. Found: ' + opts);
+            }
+            name = opts.name || node.game.timer.name;
+            if ('string' !== typeof name) {
+                throw new TypeError('node.setup.timer: name must string ' +
+                                   'or undefined. Found: ' + name);
+            }
             timer = this.timer.timers[name];
-            if (!timer) return null;
-            if (timer.options) {
-                timer.init(data.options);
+            if (!timer) {
+                this.warn('node.setup.timer: timer not found: ' + name);
+                return null;
             }
 
-            switch (timer.action) {
+            if (opts.options) {
+                timer.init(opts.options);
+            }
+
+            switch (opts.action) {
             case 'start':
                 timer.start();
                 break;
@@ -302,10 +361,7 @@
             }
 
             // Last configured timer options.
-            return {
-                name: name,
-                data: data
-            };
+            return opts;
         });
 
         /**

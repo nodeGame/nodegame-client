@@ -211,9 +211,7 @@ the default values.</p>
 <p>Old Operas loop over the prototype property as well.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;register&#39;</span> <span class="o">&amp;&amp;</span>
-                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span> <span class="o">&amp;&amp;</span>
-                        <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -266,7 +264,7 @@ the default values.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;socket&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
         <span class="p">});</span>
@@ -290,6 +288,8 @@ the default values.</p>
 
 <p>If no value is passed, it will try to set the host from
 the window object in the browser enviroment.</p>
+
+<p>TODO: what happens if there is a basedir?</p>
   </div>
 </div>
         </td>
@@ -315,8 +315,11 @@ the window object in the browser enviroment.</p>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.host: if set, host must &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">);</span>
+                <span class="p">}</span>
                 <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
 
 </pre></div>
@@ -350,7 +353,6 @@ the window object in the browser enviroment.</p>
                     <span class="nx">host</span> <span class="o">=</span> <span class="nx">host</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-
             <span class="k">return</span> <span class="nx">host</span><span class="p">;</span>
         <span class="p">});</span>
 
@@ -375,13 +377,20 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;verbosity&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">level</span><span class="p">))</span> <span class="p">{</span>
-
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">level</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup.verbosity: level not found: &#39;</span> <span class="o">+</span>
+                                    <span class="nx">level</span><span class="p">);</span>
+                <span class="p">}</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">level</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.verbosity: level must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;number or string. Found: &#39;</span> <span class="o">+</span> <span class="nx">level</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">level</span><span class="p">;</span>
         <span class="p">});</span>
@@ -409,7 +418,8 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodename&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">newName</span> <span class="o">=</span> <span class="nx">newName</span> <span class="o">||</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">nodename</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.nodename must be of type string.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.nodename: newName must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">newName</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="nx">newName</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">newName</span><span class="p">;</span>
@@ -436,10 +446,7 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">enable</span> <span class="o">=</span> <span class="nx">enable</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;boolean&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.debug must be of type boolean.&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">enable</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">enable</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">enable</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">enable</span><span class="p">;</span>
         <span class="p">});</span>
@@ -466,14 +473,16 @@ the window object in the browser enviroment.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                    <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.env: conf must be object &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">conf</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
         <span class="p">});</span>
 
@@ -505,15 +514,21 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.events: conf must be &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;object or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">conf</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">conf</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">history</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">dumpEvents</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
-
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
         <span class="p">});</span>
 
@@ -538,10 +553,14 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.settings: settings must &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">settings</span><span class="p">);</span>
+                <span class="p">}</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">settings</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
             <span class="p">}</span>
-
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">settings</span><span class="p">;</span>
         <span class="p">});</span>
 
@@ -566,10 +585,14 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.metadata: metadata must &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">metadata</span><span class="p">);</span>
+                <span class="p">}</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">,</span> <span class="nx">metadata</span><span class="p">);</span>
             <span class="p">}</span>
-
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">;</span>
         <span class="p">});</span>
 
@@ -609,8 +632,15 @@ the window object in the browser enviroment.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.player: player must &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">player</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">;</span>
         <span class="p">});</span>
 
 
@@ -650,10 +680,20 @@ object).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lang</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">lang</span><span class="p">))</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">lang</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-            <span class="k">else</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
-            <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">lang</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.lang: lang must be &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;string, array, or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">lang</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
         <span class="p">});</span>
 
 
@@ -672,6 +712,14 @@ object).</p>
 
   </div>
   <div class="body"><p>Setup a timer object</p>
+
+<p>Accepts one configuration parameter of the type:</p>
+
+<ul>
+<li>name: name of the timer. Default: node.game.timer.name
+<ul><li>options: configuration options to pass to the init method</li>
+<li>action: an action to call on the timer (e.g. start, stop, etc.)</li></ul></li>
+</ul>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -687,16 +735,29 @@ object).</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">timer</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">timer</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">opts</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: opts must object or &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">name</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: name must string &#39;</span> <span class="o">+</span>
+                                   <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">.</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: timer not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">switch</span> <span class="p">(</span><span class="nx">timer</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">case</span> <span class="s1">&#39;start&#39;</span><span class="o">:</span>
                 <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
                 <span class="k">break</span><span class="p">;</span>
@@ -725,10 +786,7 @@ object).</p>
 <p>Last configured timer options.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">return</span> <span class="p">{</span>
-                <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-                <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span>
-            <span class="p">};</span>
+            <span class="k">return</span> <span class="nx">opts</span><span class="p">;</span>
         <span class="p">});</span>
 
 
