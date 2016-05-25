@@ -19329,6 +19329,16 @@ if (!Array.prototype.indexOf) {
         this.paused = false;
 
         /**
+         * ### Game.pauseCounter
+         *
+         * Counts the number of times the game was paused
+         *
+         * @see Game.pause
+         * @see Game.resume
+         */
+        this.pauseCounter = 0
+
+        /**
          * ### Game.willBeDone
          *
          * TRUE, if DONE was emitted and evaluated successfully
@@ -19573,6 +19583,17 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Game.isPaused
+     *
+     * Returns TRUE, if game is paused
+     *
+     * @see Game.pause
+     */
+    Game.prototype.isPaused = function() {
+        return this.paused;
+    };
+
+    /**
      * ### Game.pause
      *
      * Sets the game to pause
@@ -19593,6 +19614,7 @@ if (!Array.prototype.indexOf) {
         node.emit('PAUSING', param);
 
         this.paused = true;
+        this.pauseCounter++;
 
         // If the Stager has a method for accepting messages during a
         // pause, pass them to it. Otherwise, buffer the messages
@@ -21144,6 +21166,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} settings Optional. A configuration object
      */
     function Timer(node, settings) {
+        var that;
         this.node = node;
 
         this.settings = settings || {};
@@ -21168,6 +21191,70 @@ if (!Array.prototype.indexOf) {
          * @see Timer.getTimeSince
          */
         this.timestamps = {};
+
+        /**
+         * ### Timer.pausedTimestamps
+         *
+         * Collection of timestamps existing while game is paused
+         *
+         * Will be cleared on resume
+         *
+         * @see Timer.setTimestamp
+         * @see Timer.getTimestamp
+         * @see Timer.getTimeSince
+         */
+        this._pausedTimestamps = {};
+
+        /**
+         * ### Timer.cumulPausedTimestamps
+         *
+         * List of timestamps that had a paused time in between
+         *
+         * Persists after resume
+         *
+         * @see Timer.setTimestamp
+         * @see Timer.getTimestamp
+         * @see Timer.getTimeSince
+         */
+        this._cumulPausedTimestamps = {};
+
+        /**
+         * ### Timer._effectiveDiffs
+         *
+         * List of time differences between timestamps minus paused time
+         *
+         * Persists after resume
+         *
+         * @see Timer.setTimestamp
+         * @see Timer.getTimestamp
+         * @see Timer.getTimeSince
+         */
+        this._effectiveDiffs = {};
+
+        that = this;
+        this.node.on('PAUSED', function() {
+            var i, ts;
+            ts = that.getTimestamp('paused');
+            for (i in that.timestamps) {
+                if (that.timestamps.hasOwnProperty(i)) {
+                    that._pausedTimestamps[i] = ts;
+                }
+            }
+        });
+        this.node.on('RESUMED', function() {
+            var i, time, pt, cpt, pausedTime;
+            pt = that._pausedTimestamps;
+            cpt = that._cumulPausedTimestamps;
+            time = (new Date()).getTime();
+            for (i in pt) {
+                if (pt[i] && pt.hasOwnProperty(i)) {
+                    pausedTime = time - pt[i];
+                    if (!cpt[i]) cpt[i] = pausedTime;
+                    else cpt[i] += pausedTime;
+                }
+            }
+            that._pausedTimestamps = {};
+        });
     }
 
     // ## Timer methods
@@ -21334,6 +21421,7 @@ if (!Array.prototype.indexOf) {
      *   Date.getTime(). Default: Current time.
      */
     Timer.prototype.setTimestamp = function(name, time) {
+        var i;
         // Default time: Current time
         if ('undefined' === typeof time) time = (new Date()).getTime();
 
@@ -21346,6 +21434,26 @@ if (!Array.prototype.indexOf) {
                             'undefined');
         }
 
+        // We had at least one pause.
+        if (this.node.game.pauseCounter) {
+            // Remove records of paused timestamps.
+            if (this._pausedTimestamps[name]) {
+                this._pausedTimestamps[name] = null;
+            }
+            if (this._cumulPausedTimestamps[name]) {
+                this._cumulPausedTimestamps[name] = null;
+            }
+            // Mark timestamp as paused since the beginning, if game is paused.
+            if (this.node.game.isPaused()) this._pausedTimestamps[name] = time;
+
+            // Diffs are updated immediately.
+            this._effectiveDiffs[name] = {};
+            for (i in this.timestamps) {
+                if (this.timestamps.hasOwnProperty(i)) {
+                    this._effectiveDiffs[name][i] = this.getTimeSince(i, true);
+                }
+            }
+        }
         this.timestamps[name] = time;
     };
 
@@ -21364,7 +21472,6 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof name) {
             throw new Error('Timer.getTimestamp: name must be a string');
         }
-
         if (this.timestamps.hasOwnProperty(name)) {
             return this.timestamps[name];
         }
@@ -21392,13 +21499,15 @@ if (!Array.prototype.indexOf) {
      * Gets the time in ms since a timestamp
      *
      * @param {string} name The name of the timestamp
+     * @param {boolean} effective Optional. If set, effective time
+     *    is returned, i.e. time minus paused time. Default: false.
      *
      * @return {number|null} The time since the timestamp in ms,
      *   NULL if it doesn't exist
      *
      * @see Timer.getTimeDiff
      */
-    Timer.prototype.getTimeSince = function(name) {
+    Timer.prototype.getTimeSince = function(name, effective) {
         var currentTime;
 
         // Get current time:
@@ -21410,6 +21519,14 @@ if (!Array.prototype.indexOf) {
         }
 
         if (this.timestamps.hasOwnProperty(name)) {
+            if (effective) {
+                if (this._pausedTimestamps[name]) {
+                    currentTime -= (currentTime - this._pausedTimestamps[name]);
+                }
+                if (this._cumulPausedTimestamps[name]) {
+                    currentTime -= this._cumulPausedTimestamps[name];
+                }
+            }
             return currentTime - this.timestamps[name];
         }
         else {
@@ -21424,11 +21541,13 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} nameFrom The name of the first timestamp
      * @param {string} nameTo The name of the second timestamp
+     * @param {boolean} effective Optional. If set, effective time
+     *    is returned, i.e. time diff minus paused time. Default: false.
      *
      * @return {number} The time difference between the timestamps
      */
-    Timer.prototype.getTimeDiff = function(nameFrom, nameTo) {
-        var timeFrom, timeTo;
+    Timer.prototype.getTimeDiff = function(nameFrom, nameTo, effective) {
+        var timeFrom, timeTo, ed;
 
         // Check input:
         if ('string' !== typeof nameFrom) {
@@ -21450,6 +21569,16 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof timeTo || timeTo === null) {
             throw new Error('Timer.getTimeDiff: nameTo does not resolve to ' +
                             'a valid timestamp.');
+        }
+
+        if (effective) {
+            ed = this._effectiveDiffs;
+            if (ed[nameFrom] && ed[nameFrom][nameTo]) {
+                return ed[nameFrom][nameTo];
+            }
+            else if (ed[nameTo] && ed[nameTo][nameFrom]) {
+                return ed[nameTo][nameFrom];
+            }
         }
 
         return timeTo - timeFrom;
@@ -25971,11 +26100,7 @@ if (!Array.prototype.indexOf) {
                                     'undefined. Found: ' + opts);
             }
             name = opts.name || node.game.timer.name;
-            if ('string' !== typeof name) {
-                throw new TypeError('node.setup.timer: name must string ' +
-                                   'or undefined. Found: ' + name);
-            }
-            timer = this.timer.timers[name];
+            timer = this.timer.getTimer(name);
             if (!timer) {
                 this.warn('node.setup.timer: timer not found: ' + name);
                 return null;
@@ -42550,8 +42675,9 @@ if (!Array.prototype.indexOf) {
         else {
             if (!this.isInitialized) {
                 this.internalTimer = true;
-                options.name = 'VisualTimer.updateDisplay';
-                this.gameTimer = node.timer.createTimer();
+                this.gameTimer = node.timer.createTimer({
+                    name: options.name || 'VisualTimer'
+                });
             }
         }
 

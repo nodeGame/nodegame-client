@@ -993,7 +993,7 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pausedTimestamps</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_pausedTimestamps</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>                
+                <span class="k">this</span><span class="p">.</span><span class="nx">_pausedTimestamps</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_cumulPausedTimestamps</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_cumulPausedTimestamps</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -1155,7 +1155,7 @@ the given GameTimer object are removed.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">effective</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. If set, effective time 
+      <span>Optional. If set, effective time
    is returned, i.e. time minus paused time. Default: false.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -1256,7 +1256,7 @@ the given GameTimer object are removed.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">effective</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. If set, effective time 
+      <span>Optional. If set, effective time
    is returned, i.e. time diff minus paused time. Default: false.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -1306,7 +1306,7 @@ the given GameTimer object are removed.</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">effective</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">ed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_effectiveDiffs</span><span class="p">;</span> 
+            <span class="nx">ed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_effectiveDiffs</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">ed</span><span class="p">[</span><span class="nx">nameFrom</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">ed</span><span class="p">[</span><span class="nx">nameFrom</span><span class="p">][</span><span class="nx">nameTo</span><span class="p">])</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">ed</span><span class="p">[</span><span class="nx">nameFrom</span><span class="p">][</span><span class="nx">nameTo</span><span class="p">];</span>
             <span class="p">}</span>
