@@ -251,10 +251,10 @@
             feature = msg.text;
             if ('string' !== typeof feature) {
                 node.err('"in.say.SETUP": msg.text must be string: ' +
-                         ferature);
+                         feature);
                 return;
             }
-            if (!node.setup[feature]) {
+            if (!node._setup[feature]) {
                 node.err('"in.say.SETUP": no such setup function: ' +
                          feature);
                 return;
@@ -268,6 +268,7 @@
                          'payload of incoming remote setup message.');
                 return;
             }
+
             node.setup.apply(node, [feature].concat(payload));
         });
 

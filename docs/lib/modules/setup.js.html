@@ -53,10 +53,12 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> configuration module</p>
+
+<p><a href='http://nodegame.org'>http://nodegame.org</a></p>
   </div>
 </div>
         </td>
@@ -81,22 +83,7 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre>
 
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-
     <span class="kd">var</span> <span class="nx">NGC</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NodeGameClient</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
-</div>
-<p>TODO: check this</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">var</span> <span class="nx">frozen</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
 
 </pre></div>
@@ -118,10 +105,8 @@ MIT Licensed</p>
 <p>Configures a specific feature of nodeGame and and stores
 the settings in <code>node.conf</code>.</p>
 
-<p>Accepts any number of extra parameters that are passed to the callback
-function.</p>
-
-<p>See the examples folder for all available configuration options.</p>
+<p>Accepts any number of extra parameters that are passed
+to the callback function.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -129,12 +114,6 @@ function.</p>
       <span class="dox_tag_name">property</span>
       <span class="dox_type">string</span>
       <span>The feature to configure</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if configuration is successful</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -153,15 +132,6 @@ function.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup: expects a string as first parameter.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">frozen</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup: nodeGame configuration is frozen. &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;Calling setup is not allowed.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">===</span> <span class="s1">&#39;register&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup: cannot setup property &quot;register&quot;.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
         <span class="nx">func</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">[</span><span class="nx">property</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup: no such property to configure: &#39;</span> <span class="o">+</span>
@@ -175,7 +145,7 @@ function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>Setup the property using rest of arguments.</p>
         </td>
@@ -201,8 +171,6 @@ function.</p>
         <span class="p">};</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">=</span> <span class="nx">res</span><span class="p">;</span>
-
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">};</span>
 
 
