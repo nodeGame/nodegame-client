@@ -201,6 +201,8 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>The timer object that will fire the checking of clients</p>
+
+<p>The timer will be created only if needed.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -212,7 +214,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;push_clients&#39;</span> <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -399,7 +401,13 @@ MIT Licensed</p>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;push_clients&#39;</span> <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
+        <span class="p">}</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">timer</span> <span class="o">+</span>
                    <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
