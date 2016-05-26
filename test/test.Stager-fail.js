@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 should = require('should');
 
@@ -14,7 +16,7 @@ module.exports = node;
 node.verbosity = -1000;
 
 var i, len, tmp, res;
-var stagerState;
+var stager;
 
 describe('Stager', function() {
 
@@ -22,7 +24,7 @@ describe('Stager', function() {
     describe('should fail', function() {
         beforeEach(function() {
             stager = ngc.getStager();
-            i = null, len = null, res = null, stagerStage = null;
+            i = null, len = null, res = null;
             tmp = function() { console.log('ahah'); };
 
         });

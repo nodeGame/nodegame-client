@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 should = require('should');
 
@@ -14,7 +16,9 @@ var stager, plot, game;
 var stepRule, globals, properties, init, gameover, done, stage;
 var i, tmp, flag, res, loopCb;
 
-// stager = ngc.getStager();
+var node = ngc.getClient();
+var stager = ngc.getStager();
+
 //
 // stage = {
 //     id: '3',

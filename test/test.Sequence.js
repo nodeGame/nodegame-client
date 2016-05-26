@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 should = require('should');
 
@@ -14,6 +16,8 @@ var loopCb, flag;
 
 // For loops, because the loop function might be evaluated multiple times.
 var testNext = false;
+
+var i, len, res, stagerStage;
 
 // stager = ngc.getStager();
 //

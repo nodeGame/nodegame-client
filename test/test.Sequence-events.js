@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 should = require('should');
 
@@ -748,7 +750,7 @@ function hasNextStep(game) {
 }
 
 function testPositions(node, stager, len, debug) {
-    var i, len, game, result;
+    var i, game, result;
     i = -1;
     result = {};
     for ( ; ++i < len ; ) {

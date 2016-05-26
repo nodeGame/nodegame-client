@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util'),
 should = require('should');
 
@@ -15,22 +17,22 @@ var GameDB = ngc.GameDB;
 var gs321 = new GameStage({
     stage: 3,
     step: 2,
-    round: 1,
+    round: 1
 });
 var gs331 = new GameStage({
     stage: 3,
     step: 3,
-    round: 1,
+    round: 1
 });
 var gs311 = new GameStage({
     stage: 3,
     step: 1,
-    round: 1,
+    round: 1
 });
 var gs111 = new GameStage({
     stage: 1,
     step: 1,
-    round: 1,
+    round: 1
 });
 
 var db, tmp, node;
@@ -41,7 +43,7 @@ function samePlayer(pl1, pl2) {
     pl2.should.exist;
     pl2.name.should.equal(pl1.name);
     pl2.id.should.equal(pl1.id);
-};
+}
 
 describe('GameDB', function() {
 
@@ -78,7 +80,6 @@ describe('GameDB', function() {
             tmp = null;
         });
         it('should add another item into db', function() {
-            var dateNow = Date.now();
             db.add({
                 player: '2',
                 stage: J.clone(gs111),

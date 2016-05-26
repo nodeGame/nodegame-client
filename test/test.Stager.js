@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 should = require('should');
 
@@ -17,6 +19,7 @@ var i, len, tmp, res;
 var stagerState;
 
 var stepRule, globals, properties, init, gameover, done;
+var stagerStage;
 
 var stager = new Stager();
 
@@ -1653,41 +1656,41 @@ function testExtendStepsArray() {
 return;
 
 
-// Simple mode test:
-console.log();
-console.log('SIMPLE MODE');
-console.log('===========');
-stager.addStep(stepWoop);
-stager.addStep(stepBeep);
-
-stager.addStage(stepDurr);
-stager.addStage(stepBlah);
-stager.addStage(stageMain);
-stager.setDefaultGlobals({GLOB: 3.14});
-stager.setDefaultProperties({myProp: 1});
-
-var counter = 0;
-var flag = false;
-
-stager
-    .repeat('main', 2)
-    .loop('durr', function() {
-        if (counter++ >= 3) return false;
-        return true;
-    })
-    .next('blah')
-    .next('durr AS durrurrurr')
-    .gameover()
-;
-
-// Testing extraction:
-console.log("Extraction of 'main':");
-console.log(util.inspect(stager.extractStage('main'), false, 4));
-console.log();
-console.log("Extraction of ['blah', 'durrurrurr', 'blah']:");
-console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']),
-                         false, 4));
-console.log();
+// // Simple mode test:
+// console.log();
+// console.log('SIMPLE MODE');
+// console.log('===========');
+// stager.addStep(stepWoop);
+// stager.addStep(stepBeep);
+//
+// stager.addStage(stepDurr);
+// stager.addStage(stepBlah);
+// stager.addStage(stageMain);
+// stager.setDefaultGlobals({GLOB: 3.14});
+// stager.setDefaultProperties({myProp: 1});
+//
+// var counter = 0;
+// var flag = false;
+//
+// stager
+//     .repeat('main', 2)
+//     .loop('durr', function() {
+//         if (counter++ >= 3) return false;
+//         return true;
+//     })
+//     .next('blah')
+//     .next('durr AS durrurrurr')
+//     .gameover()
+// ;
+//
+// // Testing extraction:
+// console.log("Extraction of 'main':");
+// console.log(util.inspect(stager.extractStage('main'), false, 4));
+// console.log();
+// console.log("Extraction of ['blah', 'durrurrurr', 'blah']:");
+// console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']),
+//                          false, 4));
+// console.log();
 
 /*
   console.log('Sequence (JS object):');
