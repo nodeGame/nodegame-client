@@ -1217,13 +1217,32 @@ because array size has changed.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">EventEmitter</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">count</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">)</span> <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">);</span>
+        <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">mod</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">mod</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+</div>
+<p>Not null (delete events).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">mod</span><span class="p">])</span> <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">count</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">mod</span><span class="p">])</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">mod</span><span class="p">])</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">mod</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">mod</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">count</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="nx">mod</span><span class="p">);</span>
         <span class="p">}</span>
@@ -1614,7 +1633,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
         </td>
@@ -1628,7 +1647,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.</p>
         </td>
@@ -1687,7 +1706,7 @@ because array size has changed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>If there are less than 2 elements, unpack the array.
 res[0] is either undefined or some value.</p>
@@ -1748,7 +1767,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>The scope might <code>node</code> if this method is invoked from <code>node.emit</code>.</p>
         </td>
@@ -1762,7 +1781,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>The arguments object must not be passed or leaked anywhere.</p>
         </td>
@@ -2232,7 +2251,7 @@ res[0] is either undefined or some value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>cleaning up the events to remit
 TODO NDDB commands have changed, update</p>
@@ -2260,7 +2279,7 @@ TODO NDDB commands have changed, update</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>We have events that were fired at the stage when
 disconnection happened. Let's fire them again</p>

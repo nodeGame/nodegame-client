@@ -422,10 +422,20 @@ describe('EventEmitter', function() {
     });
 
     describe('#off by label', function() {
+        before(function() {
+            tmp.counter = ee.size(true);
+        });
         it('should remove event listener labeled with Label', function() {
             ee.off('L', 'Label');
             (null === ee.events['L']).should.eql(true);
             (null === ee.labels['Label']).should.eql(true);
+        });
+    });
+
+    describe('#size after a deletion', function() {
+        it('should not count deleted listeners', function() {
+            ee.size(true).should.eql(tmp.counter -1);
+            ee.size().should.eql(tmp.counter -1);
         });
     });
 
