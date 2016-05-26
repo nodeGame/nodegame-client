@@ -122,7 +122,7 @@ describe('Timer', function() {
                hooks: function() {
                    result.update3.push(1);
                },
-               update: 150,
+               update: 300,
                timeup: function() {
                    result.timeup3 = true;
                }
@@ -132,19 +132,19 @@ describe('Timer', function() {
           function(done) {
               tmp.start();
               setTimeout(function() {
-                  // 3 updates.
+                  // 1 update.
                   node.game.pause();
                   setTimeout(function() {
                       // 0 updates.
                       node.game.resume();
                       setTimeout(function() {
-                          // 2 updates
-                          result.update3.length.should.eql(5);
+                          // 1 updates
+                          result.update3.length.should.eql(2);
                           result.timeup3.should.eql(false);
                           done();
                       }, 400);
-                  }, 300);
-              }, 500);
+                  }, 400);
+              }, 400);
           });
     });
 
@@ -187,7 +187,6 @@ describe('Timer', function() {
 
     describe('#syncWithStager', function() {
        before(function() {
-
            tmp2 = timer.createTimer();
            result.listeners2 = node.events.size(true);
            tmp2.syncWithStager(true);
@@ -219,17 +218,127 @@ describe('Timer', function() {
 
    describe('#set|getTimestamp', function() {
 
-
-       it('should set current time', function() {
+       it('should set|get current time', function() {
            var d1, d2;
+           timer = node.timer;
            d1 = (new Date()).getTime();
            timer.setTimestamp('1');
            d2 = (new Date()).getTime();
            timer.getTimestamp('1').should.eql(timer.timestamps['1']);
-           // timer.getTimestamp('1').should.be.between(d1, d2);
-
+           timer.getTimestamp('1').should.be.within(d1, d2);
        });
 
+       it('should set|get a fixed time', function() {
+           var time;
+           time = 1000;
+           timer.setTimestamp('2', time);
+           timer.getTimestamp('2').should.eql(time);
+       });
+   });
+
+   describe('#getAllTimestamps', function() {
+       it('should return user-creted timestamps', function() {
+           var res = timer.getAllTimestamps();
+           res[1].should.eql(timer.timestamps['1']);
+           res[2].should.eql(1000);
+       });
+       it('should return all default timestamps', function() {
+           var res = timer.getAllTimestamps();
+           res["1.1.1"].should.be.greaterThan(0);
+           res["paused"].should.be.greaterThan(0);
+           res["resumed"].should.be.greaterThan(0);
+           res["stage"].should.be.greaterThan(0);
+           res["start"].should.be.greaterThan(0);
+           res["step"].should.be.greaterThan(0);
+       });
+       it('resumed should be largest timestamp', function() {
+           var res = timer.getAllTimestamps();
+// TODO HERE.
+//            res["step"].should.be.greaterThan(res["start"]);
+//            res["step"].should.be.greaterThan(res["stage"]);
+//            res["paused"].should.be.greaterThan(res["step"]);
+//            res["resumed"].should.be.greaterThan(res["step"]);
+//            res["resumed"].should.be.greaterThan(res["paused"]);
+       });
+
+       it('step should be equal to 1.1.1', function() {
+           var res = timer.getAllTimestamps();
+           res["step"].should.be.eql(res["1.1.1"]);
+       });
+
+   });
+
+   describe('#getTimeSince', function() {
+       it('should return the difference between cur time and a timestamp',
+          function(done) {
+              var d1, d2;
+              var i, len;
+              timer.setTimestamp('3');
+              setTimeout(function() {
+                  d1 = timer.getTimeSince('1');
+                  d2 = timer.getTimeSince('3');
+                  d1.should.be.greaterThan(0);
+                  d2.should.be.greaterThan(0);
+                  d1.should.be.greaterThan(d2);
+                  done();
+              }, 300);
+
+       });
+   });
+
+   describe('#getTimeDiff', function() {
+       it('should return the difference between two timestamps', function() {
+           var d1;
+           d1 = timer.getTimeDiff('3', '1');
+           d1.should.be.lessThan(0);
+           d1 = timer.getTimeDiff('1', '3');
+           d1.should.be.greaterThan(0);
+       });
+   });
+
+   describe('#getTimeSince effective', function() {
+       it('should return the effective dist between cur time and a timestamp ',
+          function(done) {
+              var d1, d2;
+              node.game.pause();
+              setTimeout(function() {
+                  d1 = timer.getTimeSince('1', true);
+                  d2 = timer.getTimeSince('1');
+                  (d2 - d1).should.be.within(550, 650);
+                  done();
+              }, 600);
+         });
+   });
+
+   describe('#getTimeDiff effective', function() {
+       it('should return the effective difference between two timestamps',
+          function(done) {
+              var d1, d2;
+              node.timer.setTimestamp('4');
+              setTimeout(function() {
+                  d1 = timer.getTimeDiff('1', '4', true);
+                  d2 = timer.getTimeSince('1', true);
+                  d1.should.be.eql(d2);
+                  done();
+              }, 600);
+         });
+   });
+
+   describe('#getTimeSince effective after resume', function() {
+       it('should return the effective dist between cur time and a timestamp ',
+          function(done) {
+              var d1, d2, d0;
+
+              // TODO. check if it is valid test.
+
+              d0 = timer.getTimeSince('1', true);
+              node.game.resume();
+              setTimeout(function() {
+                  d1 = timer.getTimeSince('1', true);
+                  (d1 - d0).should.be.within(550, 650);
+                  done();
+              }, 600);
+         });
    });
 
 
