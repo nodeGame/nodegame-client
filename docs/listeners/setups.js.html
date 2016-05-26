@@ -25,52 +25,52 @@
         <a href="#nodegameclient.adddefaultsetupfunctions">NodeGameClient.addDefaultSetupFunctions</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.nodegame">node.setup.nodegame</a>
+        <a href="#setup(%22nodegame%22)">setup("nodegame")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.socket">node.setup.socket</a>
+        <a href="#setup(%22socket%22)">setup("socket")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.host">node.setup.host</a>
+        <a href="#setup(%22host%22)">setup("host")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.verbosity">node.setup.verbosity</a>
+        <a href="#setup(%22verbosity%22)">setup("verbosity")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.nodename">node.setup.nodename</a>
+        <a href="#setup(%22nodename%22)">setup("nodename")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.debug">node.setup.debug</a>
+        <a href="#setup(%22debug%22)">setup("debug")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.env">node.setup.env</a>
+        <a href="#setup(%22env%22)">setup("env")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.events">node.setup.events</a>
+        <a href="#setup(%22events%22)">setup("events")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.game_settings">node.setup.game_settings</a>
+        <a href="#setup(%22settings%22)">setup("settings")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.metadata">node.setup.metadata</a>
+        <a href="#setup(%22metadata%22)">setup("metadata")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.player">node.setup.player</a>
+        <a href="#setup(%22player%22)">setup("player")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.lang">node.setup.lang</a>
+        <a href="#setup(%22lang%22)">setup("lang")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.timer">node.setup.timer</a>
+        <a href="#setup(%22timer%22)">setup("timer")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.plot">node.setup.plot</a>
+        <a href="#setup(%22plot%22)">setup("plot")</a>
       </div>
       <div class="heading h3">
-        <a href="#node.setup.plist">node.setup.plist</a>
+        <a href="#setup(%22plist%22)">setup("plist")</a>
       </div>
       <div class="heading h3">
-        <a href="#this.setup.mlist">this.setup.mlist</a>
+        <a href="#setup(%22mlist%22)">setup("mlist")</a>
       </div>
     </div>
   </div>
@@ -161,10 +161,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.nodegame">
+<div class="pilwrap" id="setup(%22nodegame%22)">
   <h3>
-    <a href="#node.setup.nodegame" name="node.setup.nodegame" class="pilcrow">&#182;</a>
-    node.setup.nodegame
+    <a href="#setup(%22nodegame%22)" name="setup(%22nodegame%22)" class="pilcrow">&#182;</a>
+    setup("nodegame")
   </h3>
 </div>
 
@@ -191,13 +191,13 @@ the default values.</p>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.nodegame: options must &#39;</span> <span class="o">+</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;nodegame&quot;): options must &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
-                    <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                    <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
 
 
 </pre></div>
@@ -213,6 +213,7 @@ the default values.</p>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;nodegame&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">!==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
 
+
 </pre></div>
         </td>
       </tr>
@@ -226,7 +227,8 @@ the default values.</p>
         <td class="code highlight"><div class="highlight"><pre>
                         <span class="nx">setupOptions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">?</span>
                             <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">);</span>
+
+                        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setup</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">setupOptions</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -239,10 +241,10 @@ the default values.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.socket">
+<div class="pilwrap" id="setup(%22socket%22)">
   <h3>
-    <a href="#node.setup.socket" name="node.setup.socket" class="pilcrow">&#182;</a>
-    node.setup.socket
+    <a href="#setup(%22socket%22)" name="setup(%22socket%22)" class="pilcrow">&#182;</a>
+    setup("socket")
   </h3>
 </div>
 
@@ -276,10 +278,10 @@ the default values.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.host">
+<div class="pilwrap" id="setup(%22host%22)">
   <h3>
-    <a href="#node.setup.host" name="node.setup.host" class="pilcrow">&#182;</a>
-    node.setup.host
+    <a href="#setup(%22host%22)" name="setup(%22host%22)" class="pilcrow">&#182;</a>
+    setup("host")
   </h3>
 </div>
 
@@ -317,8 +319,8 @@ the window object in the browser enviroment.</p>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.host: if set, host must &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">);</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;host&quot;): if set, host &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;must be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">host</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
 
@@ -363,10 +365,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.verbosity">
+<div class="pilwrap" id="setup(%22verbosity%22)">
   <h3>
-    <a href="#node.setup.verbosity" name="node.setup.verbosity" class="pilcrow">&#182;</a>
-    node.setup.verbosity
+    <a href="#setup(%22verbosity%22)" name="setup(%22verbosity%22)" class="pilcrow">&#182;</a>
+    setup("verbosity")
   </h3>
 </div>
 
@@ -380,7 +382,7 @@ the window object in the browser enviroment.</p>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">level</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;node.setup.verbosity: level not found: &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;setup(&quot;verbosity&quot;): level not found: &#39;</span> <span class="o">+</span>
                                     <span class="nx">level</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">verbosity_levels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
@@ -389,7 +391,7 @@ the window object in the browser enviroment.</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="nx">level</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.verbosity: level must be &#39;</span> <span class="o">+</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;verbosity&quot;): level must be &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;number or string. Found: &#39;</span> <span class="o">+</span> <span class="nx">level</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">level</span><span class="p">;</span>
@@ -402,10 +404,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.nodename">
+<div class="pilwrap" id="setup(%22nodename%22)">
   <h3>
-    <a href="#node.setup.nodename" name="node.setup.nodename" class="pilcrow">&#182;</a>
-    node.setup.nodename
+    <a href="#setup(%22nodename%22)" name="setup(%22nodename%22)" class="pilcrow">&#182;</a>
+    setup("nodename")
   </h3>
 </div>
 
@@ -418,7 +420,7 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;nodename&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">newName</span> <span class="o">=</span> <span class="nx">newName</span> <span class="o">||</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">nodename</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.nodename: newName must be &#39;</span> <span class="o">+</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;nodename&quot;): newName must be &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">newName</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="nx">newName</span><span class="p">;</span>
@@ -432,10 +434,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.debug">
+<div class="pilwrap" id="setup(%22debug%22)">
   <h3>
-    <a href="#node.setup.debug" name="node.setup.debug" class="pilcrow">&#182;</a>
-    node.setup.debug
+    <a href="#setup(%22debug%22)" name="setup(%22debug%22)" class="pilcrow">&#182;</a>
+    setup("debug")
   </h3>
 </div>
 
@@ -458,10 +460,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.env">
+<div class="pilwrap" id="setup(%22env%22)">
   <h3>
-    <a href="#node.setup.env" name="node.setup.env" class="pilcrow">&#182;</a>
-    node.setup.env
+    <a href="#setup(%22env%22)" name="setup(%22env%22)" class="pilcrow">&#182;</a>
+    setup("env")
   </h3>
 </div>
 
@@ -475,7 +477,7 @@ the window object in the browser enviroment.</p>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.env: conf must be object &#39;</span> <span class="o">+</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;env&quot;): conf must be object &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">conf</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
@@ -493,10 +495,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.events">
+<div class="pilwrap" id="setup(%22events%22)">
   <h3>
-    <a href="#node.setup.events" name="node.setup.events" class="pilcrow">&#182;</a>
-    node.setup.events
+    <a href="#setup(%22events%22)" name="setup(%22events%22)" class="pilcrow">&#182;</a>
+    setup("events")
   </h3>
 </div>
 
@@ -516,7 +518,7 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.events: conf must be &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;events&quot;): conf must be &#39;</span> <span class="o">+</span>
                                         <span class="s1">&#39;object or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">conf</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -539,10 +541,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.game_settings">
+<div class="pilwrap" id="setup(%22settings%22)">
   <h3>
-    <a href="#node.setup.game_settings" name="node.setup.game_settings" class="pilcrow">&#182;</a>
-    node.setup.game_settings
+    <a href="#setup(%22settings%22)" name="setup(%22settings%22)" class="pilcrow">&#182;</a>
+    setup("settings")
   </h3>
 </div>
 
@@ -555,8 +557,8 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;settings&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.settings: settings must &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;settings&quot;): settings &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;must be object or undefined. Found: &#39;</span> <span class="o">+</span>
                                         <span class="nx">settings</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">settings</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
@@ -571,10 +573,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.metadata">
+<div class="pilwrap" id="setup(%22metadata%22)">
   <h3>
-    <a href="#node.setup.metadata" name="node.setup.metadata" class="pilcrow">&#182;</a>
-    node.setup.metadata
+    <a href="#setup(%22metadata%22)" name="setup(%22metadata%22)" class="pilcrow">&#182;</a>
+    setup("metadata")
   </h3>
 </div>
 
@@ -587,8 +589,8 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">metadata</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.metadata: metadata must &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup(&quot;metadata&quot;): metadata &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;must be object or undefined. Found: &#39;</span> <span class="o">+</span>
                                         <span class="nx">metadata</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">metadata</span><span class="p">,</span> <span class="nx">metadata</span><span class="p">);</span>
@@ -603,10 +605,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.player">
+<div class="pilwrap" id="setup(%22player%22)">
   <h3>
-    <a href="#node.setup.player" name="node.setup.player" class="pilcrow">&#182;</a>
-    node.setup.player
+    <a href="#setup(%22player%22)" name="setup(%22player%22)" class="pilcrow">&#182;</a>
+    setup("player")
   </h3>
 </div>
 
@@ -634,7 +636,7 @@ the window object in the browser enviroment.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;player&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.player: player must &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;player&quot;): player must &#39;</span> <span class="o">+</span>
                                         <span class="s1">&#39;be object or undefined. Found: &#39;</span> <span class="o">+</span>
                                         <span class="nx">player</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -650,10 +652,10 @@ the window object in the browser enviroment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.lang">
+<div class="pilwrap" id="setup(%22lang%22)">
   <h3>
-    <a href="#node.setup.lang" name="node.setup.lang" class="pilcrow">&#182;</a>
-    node.setup.lang
+    <a href="#setup(%22lang%22)" name="setup(%22lang%22)" class="pilcrow">&#182;</a>
+    setup("lang")
   </h3>
 </div>
 
@@ -688,7 +690,7 @@ object).</p>
                     <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.lang: lang must be &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;lang&quot;): lang must be &#39;</span> <span class="o">+</span>
                                         <span class="s1">&#39;string, array, or undefined. Found: &#39;</span> <span class="o">+</span>
                                         <span class="nx">lang</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -703,10 +705,10 @@ object).</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.timer">
+<div class="pilwrap" id="setup(%22timer%22)">
   <h3>
-    <a href="#node.setup.timer" name="node.setup.timer" class="pilcrow">&#182;</a>
-    node.setup.timer
+    <a href="#setup(%22timer%22)" name="setup(%22timer%22)" class="pilcrow">&#182;</a>
+    setup("timer")
   </h3>
 </div>
 
@@ -739,13 +741,13 @@ object).</p>
             <span class="kd">var</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">timer</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">opts</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: opts must object or &#39;</span> <span class="o">+</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;timer&quot;): opts must object or &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
             <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">getTimer</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.timer: timer not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;timer&quot;): timer not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
 
@@ -792,10 +794,10 @@ object).</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.plot">
+<div class="pilwrap" id="setup(%22plot%22)">
   <h3>
-    <a href="#node.setup.plot" name="node.setup.plot" class="pilcrow">&#182;</a>
-    node.setup.plot
+    <a href="#setup(%22plot%22)" name="setup(%22plot%22)" class="pilcrow">&#182;</a>
+    setup("plot")
   </h3>
 </div>
 
@@ -851,10 +853,10 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="node.setup.plist">
+<div class="pilwrap" id="setup(%22plist%22)">
   <h3>
-    <a href="#node.setup.plist" name="node.setup.plist" class="pilcrow">&#182;</a>
-    node.setup.plist
+    <a href="#setup(%22plist%22)" name="setup(%22plist%22)" class="pilcrow">&#182;</a>
+    setup("plist")
   </h3>
 </div>
 
@@ -889,10 +891,10 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="this.setup.mlist">
+<div class="pilwrap" id="setup(%22mlist%22)">
   <h3>
-    <a href="#this.setup.mlist" name="this.setup.mlist" class="pilcrow">&#182;</a>
-    this.setup.mlist
+    <a href="#setup(%22mlist%22)" name="setup(%22mlist%22)" class="pilcrow">&#182;</a>
+    setup("mlist")
   </h3>
 </div>
 
@@ -955,7 +957,7 @@ Updates are not possible for the moment.</p>
                     <span class="nx">dstList</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">updateRule</span> <span class="o">!==</span> <span class="s1">&#39;append&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;setup.&#39;</span> <span class="o">+</span> <span class="nx">dstListName</span> <span class="o">+</span> <span class="s1">&#39;ist: invalid &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;setup(&quot;&#39;</span> <span class="o">+</span> <span class="nx">dstListName</span> <span class="o">+</span> <span class="s1">&#39;&quot;) is invalid &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;updateRule: &#39;</span> <span class="o">+</span> <span class="nx">updateRule</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
 

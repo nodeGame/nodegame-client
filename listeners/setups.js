@@ -39,7 +39,7 @@
         this.info('node: registering setup functions.');
 
         /**
-         * ### node.setup.nodegame
+         * ### setup("nodegame")
          *
          * Runs all the registered configuration functions
          *
@@ -54,27 +54,29 @@
             var i, setupOptions;
 
             if (options && 'object' !== typeof options) {
-                throw new TypeError('node.setup.nodegame: options must ' +
+                throw new TypeError('node.setup("nodegame"): options must ' +
                                     'object or undefined.');
             }
             options = options || {};
-            for (i in this.setup) {
-                if (this.setup.hasOwnProperty(i) &&
-                    'function' === typeof this.setup[i]) {
+            for (i in this._setup) {
+                if (this._setup.hasOwnProperty(i) &&
+                    'function' === typeof this._setup[i]) {
 
                     // Old Operas loop over the prototype property as well.
                     if (i !== 'nodegame' && i !== 'prototype') {
+
                         // Like this browsers do not complain in strict mode.
                         setupOptions = 'undefined' === typeof options[i] ?
                             undefined : options[i];
-                        this.conf[i] = this.setup[i].call(this, setupOptions);
+
+                        this.conf[i] = this._setup[i].call(this, setupOptions);
                     }
                 }
             }
         });
 
         /**
-         * ### node.setup.socket
+         * ### setup("socket")
          *
          * Configures the socket connection to the nodegame-server
          *
@@ -88,7 +90,7 @@
         });
 
         /**
-         * ### node.setup.host
+         * ### setup("host")
          *
          * Sets the uri of the host
          *
@@ -109,8 +111,8 @@
             }
             if (host) {
                 if ('string' !== typeof host) {
-                    throw new TypeError('node.setup.host: if set, host must ' +
-                                        'be string. Found: ' + host);
+                    throw new TypeError('node.setup("host"): if set, host ' +
+                                        'must be string. Found: ' + host);
                 }
                 tokens = host.split('/').slice(0,-2);
                 // url was not of the form '/channel'
@@ -127,7 +129,7 @@
         });
 
         /**
-         * ### node.setup.verbosity
+         * ### setup("verbosity")
          *
          * Sets the verbosity level for nodegame
          */
@@ -135,7 +137,7 @@
             if ('undefined' === typeof level) return this.verbosity;
             if ('string' === typeof level) {
                 if (!constants.verbosity_levels.hasOwnProperty(level)) {
-                    throw new Error('node.setup.verbosity: level not found: ' +
+                    throw new Error('setup("verbosity"): level not found: ' +
                                     level);
                 }
                 this.verbosity = constants.verbosity_levels[level];
@@ -144,21 +146,21 @@
                 this.verbosity = level;
             }
             else {
-                throw new TypeError('node.setup.verbosity: level must be ' +
+                throw new TypeError('node.setup("verbosity"): level must be ' +
                                     'number or string. Found: ' + level);
             }
             return level;
         });
 
         /**
-         * ### node.setup.nodename
+         * ### setup("nodename")
          *
          * Sets the name for nodegame
          */
         this.registerSetup('nodename', function(newName) {
             newName = newName || constants.nodename;
             if ('string' !== typeof newName) {
-                throw new TypeError('node.setup.nodename: newName must be ' +
+                throw new TypeError('setup("nodename"): newName must be ' +
                                     'string. Found: ' + newName);
             }
             this.nodename = newName;
@@ -166,7 +168,7 @@
         });
 
         /**
-         * ### node.setup.debug
+         * ### setup("debug")
          *
          * Sets the debug flag for nodegame
          */
@@ -177,7 +179,7 @@
         });
 
         /**
-         * ### node.setup.env
+         * ### setup("env")
          *
          * Defines global variables to be stored in `node.env[myvar]`
          */
@@ -185,7 +187,7 @@
             var i;
             if ('undefined' === typeof conf) return;
             if ('object' !== typeof conf) {
-                throw new TypeError('node.setup.env: conf must be object ' +
+                throw new TypeError('node.setup("env"): conf must be object ' +
                                     'or undefined. Found: ' + conf);
             }
             for (i in conf) {
@@ -197,7 +199,7 @@
         });
 
         /**
-         * ### node.setup.events
+         * ### setup("events")
          *
          * Configure the EventEmitter object
          *
@@ -206,7 +208,7 @@
         this.registerSetup('events', function(conf) {
             if (conf) {
                 if ('object' !== typeof conf) {
-                    throw new TypeError('node.setup.events: conf must be ' +
+                    throw new TypeError('node.setup("events"): conf must be ' +
                                         'object or undefined. Found: ' + conf);
                 }
             }
@@ -223,15 +225,15 @@
         });
 
         /**
-         * ### node.setup.game_settings
+         * ### setup("settings")
          *
          * Sets up `node.game.settings`
          */
         this.registerSetup('settings', function(settings) {
             if ('undefined' !== typeof settings) {
                 if ('object' !== typeof settings) {
-                    throw new TypeError('node.setup.settings: settings must ' +
-                                        'be object or undefined. Found: ' +
+                    throw new TypeError('node.setup("settings"): settings ' +
+                                        'must be object or undefined. Found: ' +
                                         settings);
                 }
                 J.mixin(this.game.settings, settings);
@@ -240,15 +242,15 @@
         });
 
         /**
-         * ### node.setup.metadata
+         * ### setup("metadata")
          *
          * Sets up `node.game.metadata`
          */
         this.registerSetup('metadata', function(metadata) {
             if ('undefined' !== typeof metadata) {
                 if ('object' !== typeof metadata) {
-                    throw new TypeError('node.setup.metadata: metadata must ' +
-                                        'be object or undefined. Found: ' +
+                    throw new TypeError('node.setup("metadata"): metadata ' +
+                                        'must be object or undefined. Found: ' +
                                         metadata);
                 }
                 J.mixin(this.game.metadata, metadata);
@@ -257,7 +259,7 @@
         });
 
         /**
-         * ### node.setup.player
+         * ### setup("player")
          *
          * Creates the `node.player` object
          *
@@ -268,7 +270,7 @@
         this.registerSetup('player', function(player) {
             if ('undefined' !== typeof player) {
                 if ('object' !== typeof player) {
-                    throw new TypeError('node.setup.player: player must ' +
+                    throw new TypeError('setup("player"): player must ' +
                                         'be object or undefined. Found: ' +
                                         player);
                 }
@@ -278,7 +280,7 @@
         });
 
         /**
-         * ### node.setup.lang
+         * ### setup("lang")
          *
          * Setups the language of the client
          *
@@ -299,7 +301,7 @@
                     this.setLanguage(lang);
                 }
                 else {
-                    throw new TypeError('node.setup.lang: lang must be ' +
+                    throw new TypeError('setup("lang"): lang must be ' +
                                         'string, array, or undefined. Found: ' +
                                         lang);
                 }
@@ -308,7 +310,7 @@
         });
 
         /**
-         * ### node.setup.timer
+         * ### setup("timer")
          *
          * Setup a timer object
          *
@@ -325,13 +327,13 @@
             var name, timer;
             if (!opts) return;
             if ('object' !== typeof opts) {
-                throw new TypeError('node.setup.timer: opts must object or ' +
+                throw new TypeError('setup("timer"): opts must object or ' +
                                     'undefined. Found: ' + opts);
             }
             name = opts.name || node.game.timer.name;
             timer = this.timer.getTimer(name);
             if (!timer) {
-                this.warn('node.setup.timer: timer not found: ' + name);
+                this.warn('setup("timer"): timer not found: ' + name);
                 return null;
             }
 
@@ -361,7 +363,7 @@
         });
 
         /**
-         * ### node.setup.plot
+         * ### setup("plot")
          *
          * Creates the `node.game.plot` object
          *
@@ -389,7 +391,7 @@
         (function(node) {
 
             /**
-             * ### node.setup.plist
+             * ### setup("plist")
              *
              * Updates the player list in Game
              *
@@ -402,7 +404,7 @@
             });
 
             /**
-             * ### this.setup.mlist
+             * ### setup("mlist")
              *
              * Updates the monitor list in Game
              *
@@ -427,7 +429,7 @@
                     dstList.clear(true);
                 }
                 else if (updateRule !== 'append') {
-                    throw new Error('setup.' + dstListName + 'ist: invalid ' +
+                    throw new Error('setup("' + dstListName + '") is invalid ' +
                                     'updateRule: ' + updateRule + '.');
                 }
 
