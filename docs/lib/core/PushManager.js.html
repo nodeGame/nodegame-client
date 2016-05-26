@@ -361,22 +361,21 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Sets a timer for checking if all clients have finished current step</p>
 
-<p>The length of the timer is equal to the sum of</p>
+<p>The duration of the timer is specified by parameter  conf.offset.
+(Default this.offsetWaitTime). Other options in configuration
+parameter are passed to <code>PushManager.pushGame</code>, which is called
+if timer expires.</p>
 
-<ul>
-<li>timer: conf.timer (Default 0)
-<ul><li>offset: conf.offset (Default this.offsetWaitTime)</li></ul></li>
-</ul>
-
-<p>If timer expires <code>PushManager.pushGame</code> will be called.</p>
+<p>Calling startTimer on a running timer will clear previous one,
+and create a new one.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">conf</span>
       <span class="dox_type">object</span>
-      <span>Optional. Configuration passed to <code>pushGame</code> method,
-   with 'milliseconds' option equal to timer + offset.</span>
+      <span>Optional. Configuration object passed
+   to <code>pushGame</code> method.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -469,7 +468,7 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: timer cleared.&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
         <span class="p">}</span>
