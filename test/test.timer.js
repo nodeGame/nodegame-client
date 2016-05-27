@@ -257,8 +257,9 @@ describe('Timer', function() {
        });
        it('resumed should be largest timestamp', function() {
            var res = timer.getAllTimestamps();
+           debugger
            res["step"].should.be.greaterThan(res["start"]);
-           res["step"].should.be.greaterThan(res["stage"]);
+           res["step"].should.be.greaterThanOrEqual(res["stage"]);
            res["paused"].should.be.greaterThan(res["step"]);
            res["resumed"].should.be.greaterThan(res["step"]);
            res["resumed"].should.be.greaterThan(res["paused"]);
@@ -417,4 +418,61 @@ describe('Timer', function() {
 
     // Random Fire.
 
+
+    describe('#randomEmit', function() {
+        it('should emit an event in a time interval', function(done) {
+            node.on('AH', function(param) {
+                done();
+            });
+
+            node.timer.randomEmit('AH', 1000);
+        });
+    });
+
+
+    describe('#randomEmit', function() {
+        it('should emit an event in a time interval with param',
+           function(done) {
+
+               node.on('AH2', function(param) {
+                   if (param === 1) done();
+               });
+
+               node.timer.randomEmit('AH2', 1000, 1);
+        });
+    });
+
+    describe('#randomExec', function() {
+        it('should exec a cb in a time interval', function(done) {
+            function ah(param) {
+                done();
+            }
+
+            node.timer.randomExec(ah, 1000);
+        });
+    });
+
+    describe('#randomExec', function() {
+        it('should exec a cb in a time interval with context',
+           function(done) {
+               function ah(param) {
+                   if (this.a === 1) done();
+               }
+               var a = { a: 1 };
+
+               node.timer.randomExec(ah, 1000, a);
+        });
+    });
+
+    describe('#randomDone', function() {
+        it('should call node.done in a time interval',
+           function(done) {
+               var o;
+               o = node.game.plot.getStep(node.game.getCurrentGameStage());
+               o.done = function(a) {
+                   if (a === 1) done();
+               };
+               node.timer.randomDone(1000, 1);
+        });
+    });
 });
