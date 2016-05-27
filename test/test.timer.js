@@ -35,6 +35,8 @@ describe('Timer', function() {
 
     });
 
+    // GameTimers.
+
     describe('#createTimer', function() {
         before(function() {
             tmp = timer.createTimer();
@@ -216,7 +218,9 @@ describe('Timer', function() {
        });
    });
 
-   describe('#set|getTimestamp', function() {
+    // Timestamps.
+
+    describe('#set|getTimestamp', function() {
 
        it('should set|get current time', function() {
            var d1, d2;
@@ -253,12 +257,11 @@ describe('Timer', function() {
        });
        it('resumed should be largest timestamp', function() {
            var res = timer.getAllTimestamps();
-// TODO HERE.
-//            res["step"].should.be.greaterThan(res["start"]);
-//            res["step"].should.be.greaterThan(res["stage"]);
-//            res["paused"].should.be.greaterThan(res["step"]);
-//            res["resumed"].should.be.greaterThan(res["step"]);
-//            res["resumed"].should.be.greaterThan(res["paused"]);
+           res["step"].should.be.greaterThan(res["start"]);
+           res["step"].should.be.greaterThan(res["stage"]);
+           res["paused"].should.be.greaterThan(res["step"]);
+           res["resumed"].should.be.greaterThan(res["step"]);
+           res["resumed"].should.be.greaterThan(res["paused"]);
        });
 
        it('step should be equal to 1.1.1', function() {
@@ -328,11 +331,11 @@ describe('Timer', function() {
        it('should return the effective dist between cur time and a timestamp ',
           function(done) {
               var d1, d2, d0;
-
-              // TODO. check if it is valid test.
-
               d0 = timer.getTimeSince('1', true);
+              d2 = timer.getTimeSince('1');
               node.game.resume();
+              d1 = node.timer.getTimeDiff('paused', 'resumed');
+              (d2 - d0).should.be.within(d1 - 50, d1 + 50);
               setTimeout(function() {
                   d1 = timer.getTimeSince('1', true);
                   (d1 - d0).should.be.within(550, 650);
@@ -341,5 +344,77 @@ describe('Timer', function() {
          });
    });
 
+   describe('#getTimeDiff effective after resume', function() {
+       it('should return the effective difference between two timestamps',
+          function() {
+             var d1, d2, d3;
+              d1 = node.timer.getTimeDiff('paused', 'resumed');
+              // Keep reference to paused time.
+              result.pausedTime = d1;
+              node.timer.setTimestamp('5');
+              d2 = node.timer.getTimeDiff('5', '1', true);
+              d3 = node.timer.getTimeSince('1');
+              d2.should.be.within((d3 - d1) - 50, (d3 - d1) + 50);
+         });
+   });
+
+   describe('#getTimeSince effective after another pause', function() {
+       it('should return the effective dist between cur time and a timestamp ',
+          function(done) {
+              var d1, d2, d0;
+              result.diffBeforePause = node.timer.getTimeDiff('5', '1', true);
+              d1 = timer.getTimeSince('1', true);
+              node.game.pause();
+              setTimeout(function() {
+                  d2 = timer.getTimeSince('1', true);
+                  (d2 - d1).should.be.within(0, 10);
+                  done();
+              }, 600);
+         });
+   });
+
+   describe('#getTimeDiff effective after another pause', function() {
+       it('should return the effective difference between two timestamps',
+          function() {
+             var d1, d2, d3;
+              d1 = node.timer.getTimeDiff('5', '1', true);
+              d1.should.be.within(result.diffBeforePause - 10,
+                                  result.diffBeforePause + 10);
+         });
+   });
+
+   describe('#getTimeSince effective after another resume', function() {
+       it('should return the effective dist between cur time and a timestamp ',
+          function(done) {
+              var d1, d2, d0, d3;
+              node.game.resume();
+              setTimeout(function() {
+                  var totalPause;
+                  debugger
+                  d1 = timer.getTimeSince('1');
+                  d2 = timer.getTimeSince('1', true);
+                  d0 = result.pausedTime;
+                  d3 = node.timer.getTimeDiff('paused', 'resumed');
+                  result.totalPause = totalPause = d3 + d0;
+                  (d1 - d2).should.be.within(totalPause - 50, totalPause + 50);
+                  done();
+              }, 600);
+         });
+   });
+
+   describe('#getTimeDiff effective after another pause', function() {
+       it('should return the effective difference between two timestamps',
+          function() {
+             var d1, d2, d3;
+              node.timer.setTimestamp('6');
+              d1 = node.timer.getTimeDiff('1', '6', true);
+              d2 = node.timer.getTimeDiff('1', '6');
+              (d2 - d1).should.be.within(result.totalPause - 50,
+                                         result.totalPause + 50);
+         });
+   });
+
+
+    // Random Fire.
 
 });
