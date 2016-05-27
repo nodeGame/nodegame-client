@@ -12,21 +12,6 @@ var J = ngc.JSUS;
 var result, tmp;
 var matcher;
 
-// matcher = new Matcher();
-// debugger
-// matcher.generateMatches('random', 3);
-// tmp = function(ids) {
-//     return ['c', 'a', 'b'];
-// };
-// matcher.setAssignerCb(tmp);
-// matcher.setIds(['a', 'b', 'c']);
-// matcher.assignIds();
-//
-// matcher.match();
-// console.log(matcher.resolvedMatches);
-// debugger
-// return;
-
 describe('Matcher', function() {
 
     describe('#constructor', function() {

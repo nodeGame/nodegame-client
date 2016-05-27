@@ -17,29 +17,6 @@ stager = ngc.getStager();
 tmp = {};
 tmp.events = [];
 
-// node = ngc.getClient();
-// stager = ngc.getStager();
-// stager.next('1');
-// stager.next({
-//     id: '2',
-//     exit: function() {
-//         node.on('A', function() {
-//             tmp.events.push('stage-init-A');
-//         });
-//         node.on('B', function() {
-//             tmp.events.push('stage-init-B');
-//         });
-//     }
-// });
-// stager.next('3');
-//
-// game = initGame(node, stager);
-// game.step();
-
-// game.step();
-// game.step();
-// return;
-
 describe('Registering events', function() {
 
      describe('registering events before a game is defined', function() {

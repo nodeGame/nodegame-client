@@ -19,53 +19,6 @@ var testNext = false;
 
 var i, len, res, stagerStage;
 
-// stager = ngc.getStager();
-//
-// tmp = { loops: [], counter: 1 };
-//
-// loopCb = function() {
-//     var res;
-//     res = !!!flag;
-//     // Not an actual update, just checking via test infrastructure.
-//     if (!testNext) {
-//         debugger
-//         tmp.loops.push([ this.getCurrentStepObj().id, res ]);
-//     }
-//     return res;
-// };
-//
-// stager
-//     .next('1')
-//     .loop({
-//         id: '2',
-//         cb: function() {
-//             if (tmp.counter++ >= 3) flag = true;
-//         }
-//     }, loopCb)
-//     .loop('skipped', loopCb)
-//     .next('3')
-//     .doLoop('4', loopCb)
-//     .next('5');
-//
-// stager.extendStage('2', {
-//     steps: [ '2', '2b', '2c' ]
-// });
-//
-// stager.extendStage('4', {
-//     steps: [ '4', '4b' ]
-// });
-// debugger
-//
-// stager.finalize();
-//
-// debugger
-//
-// result = testPositions(stager, 1);
-//
-// console.log(result);
-//
-//  return;
-
 describe('Moving through the sequence', function() {
 
     describe('#next: 3 fixed positions. Mode (A).', function() {
