@@ -257,7 +257,6 @@ describe('Timer', function() {
        });
        it('resumed should be largest timestamp', function() {
            var res = timer.getAllTimestamps();
-           debugger
            res["step"].should.be.greaterThan(res["start"]);
            res["step"].should.be.greaterThanOrEqual(res["stage"]);
            res["paused"].should.be.greaterThan(res["step"]);
