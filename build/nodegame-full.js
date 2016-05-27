@@ -19094,7 +19094,6 @@ if (!Array.prototype.indexOf) {
         this.comparator('stage', function(o1, o2) {
             var _o2;
             if ('string' === typeof o2.stage && that.node) {
-                debugger
                 if (false === J.isInt(o2.stage)) {
                     _o2 = that.node.game.plot.normalizeGameStage(o2.stage);
                     if (_o2) o2.stage = _o2;
@@ -21434,11 +21433,45 @@ if (!Array.prototype.indexOf) {
         var i;
         for (i in this.timers) {
             if (this.timers.hasOwnProperty(i)) {
-                // Skip node.game.timer, unless so specified
+                // Skip node.game.timer, unless so specified.
                 if (!all && i === this.node.game.timer.name) continue;
                 this.destroyTimer(this.timers[i]);
             }
         }
+    };
+
+    /**
+     * ### Timer.getTimer
+     *
+     * Returns a reference to a previosly registered game timer.
+     *
+     * @param {string} name The name of the timer
+     *
+     * @return {GameTimer|null} The game timer with the given name, or
+     *   null if none is found
+     */
+    Timer.prototype.getTimer = function(name) {
+        if ('string' !== typeof name) {
+            throw new TypeError('Timer.getTimer: name must be string.');
+        }
+        return this.timers[name] || null;
+    };
+
+    /**
+     * ### Timer.getTimer
+     *
+     * Returns a reference to a previosly registered game timer.
+     *
+     * @param {string} name The name of the timer
+     *
+     * @return {GameTimer|null} The game timer with the given name, or
+     *   null if none is found
+     */
+    Timer.prototype.getTimer = function(name) {
+        if ('string' !== typeof name) {
+            throw new TypeError('Timer.getTimer: name must be string.');
+        }
+        return this.timers[name] || null;
     };
 
     /**
@@ -21615,30 +21648,13 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### Timer.getTimer
-     *
-     * Returns a reference to a previosly registered game timer.
-     *
-     * @param {string} name The name of the timer
-     *
-     * @return {GameTimer|null} The game timer with the given name, or
-     *   null if none is found
-     */
-    Timer.prototype.getTimer = function(name) {
-        if ('string' !== typeof name) {
-            throw new TypeError('Timer.getTimer: name must be string.');
-        }
-        return this.timers[name] || null;
-    };
-
-    /**
      * ### Timer.randomEmit
      *
      * Emits an event after a random time interval between 0 and maxWait
      *
      * Respects pausing / resuming.
      *
-     * Additional parameters are passed to the
+     * Additional parameters are passed to the node.emit
      *
      * @param {string} event The name of the event
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
@@ -21674,6 +21690,8 @@ if (!Array.prototype.indexOf) {
      * Executes a callback function after a random time interval
      *
      * Respects pausing / resuming.
+     *
+     * Additional parameters are passed to the the callback function.
      *
      * @param {function} func The callback function to execute
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
@@ -21718,6 +21736,8 @@ if (!Array.prototype.indexOf) {
      * Executes node.done after a random time interval
      *
      * Respects pausing / resuming.
+     *
+     * Additional parameters are passed to the the done event listener.
      *
      * @param {number} maxWait Optional. The maximum time (in milliseconds)
      *   to wait before executing the callback. Default: 6000
