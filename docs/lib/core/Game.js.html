@@ -2158,7 +2158,7 @@ DONE for a short time in the new game stage:</p>
         <td class="code highlight"><div class="highlight"><pre>
 
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;minPlayers&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">!==</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
                 <span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">minCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
@@ -2167,7 +2167,7 @@ DONE for a short time in the new game stage:</p>
             <span class="p">}</span>
 
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;maxPlayers&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">!==</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
                 <span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">maxCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
@@ -2180,7 +2180,7 @@ DONE for a short time in the new game stage:</p>
             <span class="p">}</span>
 
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;exactPlayers&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">!==</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">createPlayerHandler</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: exactPlayers cannot be &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;set if minPlayers or maxPlayers are set.&#39;</span><span class="p">);</span>

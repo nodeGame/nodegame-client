@@ -395,11 +395,13 @@ and create a new one.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">pushCb</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">timer</span><span class="p">,</span> <span class="nx">offset</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">pushCb</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">offset</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH.TIMER ************************* &#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;push_clients&#39;</span> <span class="p">});</span>
@@ -408,15 +410,15 @@ and create a new one.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">timer</span> <span class="o">+</span>
-                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">offset</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">parseInput</span><span class="p">(</span><span class="s1">&#39;offset&#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">offset</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">offset</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span>
+                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="nx">pushCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">pushGame</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span> <span class="p">};</span>
 
@@ -434,7 +436,7 @@ and create a new one.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
             <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">offset</span><span class="p">,</span>
-            <span class="nx">update</span><span class="o">:</span> <span class="nx">timer</span><span class="p">,</span>
+            <span class="nx">update</span><span class="o">:</span> <span class="nx">offset</span><span class="p">,</span>
             <span class="nx">timeup</span><span class="o">:</span> <span class="nx">pushCb</span><span class="p">,</span>
         <span class="p">});</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
