@@ -24135,7 +24135,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Connect
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` connect module
@@ -24156,9 +24156,9 @@ if (!Array.prototype.indexOf) {
      *
      * If node is executed in the browser additional checks are performed:
      *
-     * 1. If channel does not begin with `http://`, then `window.location.host`
-     *    will be added in front of channel to avoid cross-domain errors
-     *    (as of Socket.io >= 1).
+     * 1. If channel does not begin with `http://` or `https://,
+     *    then `window.location.origin` will be added in front of
+     *    channel to avoid cross-domain errors (as of Socket.io >= 1).
      *
      * 2. If no socketOptions.query parameter is specified any query
      *    parameters found in `location.search(1)` will be passed.
@@ -24187,9 +24187,12 @@ if (!Array.prototype.indexOf) {
                 }
             }
             // Make full path otherwise socket.io will complain.
-            if (channel && channel.substr(0,7) !== 'http://') {
-                if (window.location && window.location.host) {
-                    channel = 'http://' + window.location.host + channel;
+            if (channel &&
+                (channel.substr(0,8) !== 'https://' &&
+                 channel.substr(0,7) !== 'http://')) {
+
+                if (window.location && window.location.origin) {
+                    channel = window.location.origin + channel;
                 }
             }
             // Pass along any query options. (?clientType=...).
@@ -29718,7 +29721,10 @@ if (!Array.prototype.indexOf) {
             W.setScreenLevel('ACTIVE');
         }
         if (this.waitingDiv) {
-            this.waitingDiv.parentNode.removeChild(this.waitingDiv);
+            // It might have gotten destroyed in the meantime.
+            if (this.waitingDiv.parentNode) {
+                this.waitingDiv.parentNode.removeChild(this.waitingDiv);
+            }
         }
         // Removes previously registered listeners.
         this.disable();
@@ -35477,25 +35483,46 @@ if (!Array.prototype.indexOf) {
         this.choicesCells = null;
 
         /**
-         * ### ChoiceTable.description
+         * ### ChoiceTable.left
          *
-         * A title included in the first cell of the row/column
+         * A non-clickable first cell of the row/column
          *
          * It will be placed to the left of the choices if orientation
          * is horizontal, or above the choices if orientation is vertical
          *
          * @see ChoiceTable.orientation
          */
-        this.description = null;
+        this.left = null;
 
         /**
-         * ### ChoiceTable.descriptionCell
+         * ### ChoiceTable.leftCell
          *
-         * The rendered title cell
+         * The rendered left cell
          *
-         * @see ChoiceTable.renderDescription
+         * @see ChoiceTable.renderSpecial
          */
-        this.descriptionCell = null;
+        this.leftCell = null;
+
+        /**
+         * ### ChoiceTable.right
+         *
+         * A non-clickable last cell of the row/column
+         *
+         * It will be placed to the right of the choices if orientation
+         * is horizontal, or below the choices if orientation is vertical
+         *
+         * @see ChoiceTable.orientation
+         */
+        this.right = null;
+
+        /**
+         * ### ChoiceTable.rightCell
+         *
+         * The rendered right cell
+         *
+         * @see ChoiceTable.renderSpecial
+         */
+        this.rightCell = null;
 
         /**
          * ### ChoiceTable.timeCurrentChoice
@@ -35825,28 +35852,38 @@ if (!Array.prototype.indexOf) {
                             options.separator);
         }
 
-        // Copy short-form for description (only if not defined).
-        if ('undefined' !== typeof options.descr &&
-            'undefined' === typeof options.description) {
+        if ('string' === typeof options.left ||
+            'number' === typeof options.left) {
 
-            options.description = options.descr;
+            this.left = '' + options.left;
         }
+        else if(J.isNode(options.left) ||
+                J.isElement(options.left)) {
 
-        if ('string' === typeof options.description ||
-            'number' === typeof options.description) {
-
-            this.description = '' + options.description;
+            this.left = options.left;
         }
-        else if(J.isNode(options.description) ||
-                J.isElement(options.description)) {
-
-            this.description = options.description;
-        }
-        else if ('undefined' !== typeof options.description) {
-            throw new TypeError('ChoiceTable.init: options.description must ' +
+        else if ('undefined' !== typeof options.left) {
+            throw new TypeError('ChoiceTable.init: options.left must ' +
                                 'be string, number, an HTML Element or ' +
-                                'undefined. Found: ' + options.description);
+                                'undefined. Found: ' + options.left);
         }
+
+        if ('string' === typeof options.right ||
+            'number' === typeof options.right) {
+
+            this.right = '' + options.right;
+        }
+        else if(J.isNode(options.right) ||
+                J.isElement(options.right)) {
+
+            this.right = options.right;
+        }
+        else if ('undefined' !== typeof options.right) {
+            throw new TypeError('ChoiceTable.init: options.right must ' +
+                                'be string, number, an HTML Element or ' +
+                                'undefined. Found: ' + options.right);
+        }
+
 
         // Set the className, if not use default.
         if ('undefined' === typeof options.className) {
@@ -35953,11 +35990,13 @@ if (!Array.prototype.indexOf) {
      *
      * Render every choice and stores cell in `choicesCells` array
      *
+     * Left and right cells are also rendered, if specified.
+     *
      * Follows a shuffled order, if set
      *
      * @see ChoiceTable.order
      * @see ChoiceTable.renderChoice
-     * @see ChoiceTable.descriptionCell
+     * @see ChoiceTable.renderSpecial
      */
     ChoiceTable.prototype.buildChoices = function() {
         var i, len;
@@ -35967,7 +36006,8 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             this.renderChoice(this.choices[this.order[i]], i);
         }
-        if (this.description) this.renderDescription(this.description);
+        if (this.left) this.renderSpecial('left', this.left);
+        if (this.right) this.renderSpecial('right', this.right);
     };
 
     /**
@@ -35994,7 +36034,7 @@ if (!Array.prototype.indexOf) {
             tr = document.createElement('tr');
             this.table.appendChild(tr);
             // Add horizontal choices title.
-            if (this.descriptionCell) tr.appendChild(this.descriptionCell);
+            if (this.leftCell) tr.appendChild(this.leftCell);
         }
         // Main loop.
         for ( ; ++i < len ; ) {
@@ -36002,14 +36042,21 @@ if (!Array.prototype.indexOf) {
                 tr = document.createElement('tr');
                 this.table.appendChild(tr);
                 // Add vertical choices title.
-                if (i === 0 && this.descriptionCell) {
-                    tr.appendChild(this.descriptionCell);
+                if (i === 0 && this.leftCell) {
+                    tr.appendChild(this.leftCell);
                     tr = document.createElement('tr');
                     this.table.appendChild(tr);
                 }
             }
             // Clickable cell.
             tr.appendChild(this.choicesCells[i]);
+        }
+        if (this.rightCell) {
+            if (!H) {
+                tr = document.createElement('tr');
+                this.table.appendChild(tr);
+            }
+            tr.appendChild(this.rightCell);
         }
         // Enable onclick listener.
         this.enable();
@@ -36038,9 +36085,9 @@ if (!Array.prototype.indexOf) {
         if (H) {
             tr = document.createElement('tr');
             this.table.appendChild(tr);
-            // Add horizontal choices description.
-            if (this.description) {
-                td = this.renderDescription(this.description);
+            // Add horizontal choices left.
+            if (this.left) {
+                td = this.renderSpecial('left', this.left);
                 tr.appendChild(td);
             }
         }
@@ -36049,9 +36096,9 @@ if (!Array.prototype.indexOf) {
             if (!H) {
                 tr = document.createElement('tr');
                 this.table.appendChild(tr);
-                // Add vertical choices description.
-                if (i === 0 && this.description) {
-                    td = this.renderDescription(this.description);
+                // Add vertical choices left.
+                if (i === 0 && this.left) {
+                    td = this.renderSpecial('left', this.left);
                     tr.appendChild(td);
                     tr = document.createElement('tr');
                     this.table.appendChild(tr);
@@ -36061,34 +36108,51 @@ if (!Array.prototype.indexOf) {
             td = this.renderChoice(this.choices[this.order[i]], i);
             tr.appendChild(td);
         }
+        if (this.right) {
+            if (!H) {
+                tr = document.createElement('tr');
+                this.table.appendChild(tr);
+            }
+            td = this.renderSpecial('right', this.right);
+            tr.appendChild(td);
+        }
 
         // Enable onclick listener.
         this.enable();
     };
 
     /**
-     * ### ChoiceTable.renderDescription
+     * ### ChoiceTable.renderSpecial
      *
-     * Transforms a choice element into a cell of the table
+     * Renders a non-choice element into a cell of the table (e.g. left/right)
      *
-     * @param {mixed} descr The description. It must be string or number,
+     * @param {mixed} special The special element. It must be string or number,
      *   or array where the first element is the 'value' (incorporated in the
-     *   `id` field) and the second the text to display as choice. If a
-     *   If renderer function is defined there are no restriction on the
-     *   format of choice
+     *   `id` field) and the second the text to display as choice.
      *
      * @return {HTMLElement} td The newly created cell of the table
      *
-     * @see ChoiceTable.description
+     * @see ChoiceTable.left
+     * @see ChoiceTable.right
      */
-    ChoiceTable.prototype.renderDescription = function(descr) {
-        var td;
+    ChoiceTable.prototype.renderSpecial = function(type, special) {
+        var td, className;
         td = document.createElement('td');
-        if ('string' === typeof descr) td.innerHTML = descr;
+        if ('string' === typeof special) td.innerHTML = special;
         // HTML element (checked before).
-        else td.appendChild(descr);
-        td.className = this.className ? this.className + '-descr' : 'descr';
-        this.descriptionCell = td;
+        else td.appendChild(special);
+        if (type === 'left') {
+            className = this.className ? this.className + '-left' : 'left';
+            this.leftCell = td;
+        }
+        else if (type === 'right') {
+            className = this.className ? this.className + '-right' : 'right';
+            this.rightCell = td;
+        }
+        else {
+            throw new Error('ChoiceTable.renderSpecial: unknown type: ' + type);
+        }
+        td.className = className;
         return td;
     };
 
@@ -37080,7 +37144,7 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTableGroup.prototype.buildTable = function() {
         var i, len, tr, H, ct;
-        var j, lenJ, lenJOld;
+        var j, lenJ, lenJOld, hasRight;
 
         H = this.orientation === 'H';
         i = -1, len = this.itemsSettings.length;
@@ -37093,7 +37157,7 @@ if (!Array.prototype.indexOf) {
                 // Get item, append choices for item.
                 ct = getChoiceTable(this, i);
 
-                tr.appendChild(ct.descriptionCell);
+                tr.appendChild(ct.leftCell);
                 j = -1, lenJ = ct.choicesCells.length;
                 // Make sure all items have same number of choices.
                 if (i === 0) {
@@ -37108,6 +37172,7 @@ if (!Array.prototype.indexOf) {
                 for ( ; ++j < lenJ ; ) {
                     tr.appendChild(ct.choicesCells[j]);
                 }
+                if (ct.rightCell) tr.appendChild(ct.rightCell);
             }
         }
         else {
@@ -37133,9 +37198,22 @@ if (!Array.prototype.indexOf) {
                                     ct.id);
                 }
 
+                if ('undefined' === typeof hasRight) {
+                    hasRight = !!ct.rightCell;
+                }
+                else if ((!ct.rightCell && hasRight) ||
+                         (ct.rightCell && !hasRight)) {
+
+                    throw new Error('ChoiceTableGroup.buildTable: either all ' +
+                                    'items or no item must have the right ' +
+                                    'cell: ' + ct.id);
+
+                }
                 // Add titles.
-                tr.appendChild(ct.descriptionCell);
+                tr.appendChild(ct.leftCell);
             }
+
+            if (hasRight) lenJ++;
 
             j = -1;
             for ( ; ++j < lenJ ; ) {
@@ -37146,9 +37224,15 @@ if (!Array.prototype.indexOf) {
                 i = -1;
                 // TODO: might optimize. There are two loops (+1 inside ct).
                 for ( ; ++i < len ; ) {
-                    tr.appendChild(this.items[i].choicesCells[j]);
+                    if (hasRight && j === (lenJ-1)) {
+                        tr.appendChild(this.items[i].rightCell);
+                    }
+                    else {
+                        tr.appendChild(this.items[i].choicesCells[j]);
+                    }
                 }
             }
+
         }
 
         // Enable onclick listener.
@@ -37454,9 +37538,9 @@ if (!Array.prototype.indexOf) {
             throw new Error('ChoiceTableGroup.buildTable: an item ' +
                             'with the same id already exists: ' + ct.id);
         }
-        if (!ct.descriptionCell) {
+        if (!ct.leftCell) {
             throw new Error('ChoiceTableGroup.buildTable: item ' +
-                            'is missing a description: ' + s.id);
+                            'is missing a left cell: ' + s.id);
         }
         that.itemsById[ct.id] = ct;
         that.items[i] = ct;
@@ -39659,7 +39743,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    MoodGauge.version = '0.1.1';
+    MoodGauge.version = '0.2.0';
     MoodGauge.description = 'Displays an interface to measure mood ' +
         'and emotions.';
 
@@ -39839,7 +39923,7 @@ if (!Array.prototype.indexOf) {
 
     // ### I_PANAS_SF
     function I_PANAS_SF(options) {
-        var items, emotions, mainText, choices;
+        var items, emotions, mainText, choices, left, right;
         var gauge, i, len;
 
         if ('undefined' === typeof options.mainText) {
@@ -39852,7 +39936,7 @@ if (!Array.prototype.indexOf) {
         // Other types ignored.
 
         choices = options.choices ||
-            [ 'never', '1', '2', '3', '4', '5', 'always' ];
+            [ '1', '2', '3', '4', '5' ];
 
         emotions = options.emotions || [
             'Upset',
@@ -39867,6 +39951,10 @@ if (!Array.prototype.indexOf) {
             'Active'
         ];
 
+        left = options.left || 'never';
+
+        right = options.right || 'always';
+
         len = emotions.length;
 
         items = new Array(len);
@@ -39875,7 +39963,8 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             items[i] = {
                 id: emotions[i],
-                descr: emotions[i],
+                left: '<span class="emotion">' + emotions[i] + ':</span> never',
+                right: right,
                 choices: choices
             };
         }
@@ -41235,7 +41324,7 @@ if (!Array.prototype.indexOf) {
     function SVO_Slider(options) {
         var items, sliders, mainText;
         var gauge, i, len;
-        var descr, renderer;
+        var left, renderer;
 
         if ('undefined' === typeof options.mainText) {
             mainText =
@@ -41322,11 +41411,11 @@ if (!Array.prototype.indexOf) {
             td.innerHTML = choice[0] + '<hr/>' + choice[1];
         };
 
-        if (options.description) {
-            descr = options.description;
+        if (options.left) {
+            left = options.left;
         }
         else {
-            descr = 'You:<hr/>Other:';
+            left = 'You:<hr/>Other:';
         }
 
         len = sliders.length;
@@ -41336,7 +41425,7 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             items[i] = {
                 id: (i+1),
-                descr: descr,
+                left: left,
                 choices: sliders[i]
             };
         }

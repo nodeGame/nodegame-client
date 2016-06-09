@@ -41,7 +41,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p><code>nodeGame</code> connect module</p>
@@ -77,9 +77,9 @@ channel parameter might be optional.</p>
 <p>If node is executed in the browser additional checks are performed:</p>
 
 <ol>
-<li><p>If channel does not begin with <code>http://</code>, then <code>window.location.host</code>
-will be added in front of channel to avoid cross-domain errors
-(as of Socket.io >= 1).</p></li>
+<li><p>If channel does not begin with <code>http://</code> or <code>https://,
+then</code>window.location.origin` will be added in front of
+channel to avoid cross-domain errors (as of Socket.io >= 1).</p></li>
 <li><p>If no socketOptions.query parameter is specified any query
 parameters found in <code>location.search(1)</code> will be passed.</p></li>
 </ol>
@@ -173,9 +173,12 @@ that the name of the game is also the name of the endpoint.</p>
 <p>Make full path otherwise socket.io will complain.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">channel</span> <span class="o">&amp;&amp;</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">channel</span> <span class="o">=</span> <span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">host</span> <span class="o">+</span> <span class="nx">channel</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">channel</span> <span class="o">&amp;&amp;</span>
+                <span class="p">(</span><span class="nx">channel</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;https://&#39;</span> <span class="o">&amp;&amp;</span>
+                 <span class="nx">channel</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;http://&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">origin</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">channel</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">origin</span> <span class="o">+</span> <span class="nx">channel</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
