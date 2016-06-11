@@ -651,8 +651,7 @@ and calls the appropriate callback functions.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
-
+        <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">};</span>
 
 
 </pre></div>
@@ -1767,7 +1766,7 @@ TODO: remove some unused comments in the code.
         <span class="kd">var</span> <span class="nx">curStepObj</span><span class="p">,</span> <span class="nx">curStageObj</span><span class="p">,</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">handler</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">createPlayerHandler</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">doPlChangeHandler</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minThreshold</span><span class="p">,</span> <span class="nx">maxThreshold</span><span class="p">,</span> <span class="nx">exactThreshold</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">maxCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">exactCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minRecoverCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">maxRecoverCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">exactRecoverCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -2163,7 +2162,7 @@ DONE for a short time in the new game stage:</p>
                 <span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">minCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                 <span class="nx">minRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-                <span class="nx">createPlayerHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
 
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;maxPlayers&#39;</span><span class="p">);</span>
@@ -2176,12 +2175,12 @@ DONE for a short time in the new game stage:</p>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: maxPlayers is smaller &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;than minPlayers: &#39;</span> <span class="o">+</span> <span class="nx">maxThreshold</span><span class="p">);</span>
                 <span class="p">}</span>
-                <span class="nx">createPlayerHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
 
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;exactPlayers&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">createPlayerHandler</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">doPlChangeHandler</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: exactPlayers cannot be &#39;</span> <span class="o">+</span>
                                     <span class="s1">&#39;set if minPlayers or maxPlayers are set.&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -2189,10 +2188,10 @@ DONE for a short time in the new game stage:</p>
                 <span class="nx">exactThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">exactCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                 <span class="nx">exactRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-                <span class="nx">createPlayerHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">createPlayerHandler</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">doPlChangeHandler</span><span class="p">)</span> <span class="p">{</span>
 
 
 </pre></div>
@@ -2206,9 +2205,10 @@ DONE for a short time in the new game stage:</p>
 <p>Register event handler.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">nPlayers</span><span class="p">,</span> <span class="nx">wrongNumCb</span><span class="p">,</span> <span class="nx">correctNumCb</span><span class="p">;</span>
-                    <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+                    <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">that</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
                     <span class="nx">nPlayers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
 
@@ -2231,13 +2231,14 @@ DONE for a short time in the new game stage:</p>
                                 <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
 
-                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minCallback</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minCallback</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                             <span class="p">}</span>
+                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                             <span class="p">}</span>
                             <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
@@ -2250,6 +2251,7 @@ DONE for a short time in the new game stage:</p>
                                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
                                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxCallback</span><span class="p">);</span>
                             <span class="p">}</span>
+                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
@@ -2267,6 +2269,7 @@ DONE for a short time in the new game stage:</p>
                                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
                                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactCallback</span><span class="p">);</span>
                             <span class="p">}</span>
+                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
@@ -2276,6 +2279,8 @@ DONE for a short time in the new game stage:</p>
                             <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
+
+                    <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
                 <span class="p">};</span>
 
                 <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
@@ -2366,7 +2371,7 @@ so we don't have to handle it here.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                 <span class="k">this</span><span class="p">.</span><span class="nx">checkPlistSize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
             <span class="p">}</span>
 
 
