@@ -698,6 +698,8 @@ object).</p>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span><span class="p">;</span>
         <span class="p">});</span>
 
+        <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
 
 </pre></div>
         </td>
@@ -720,7 +722,7 @@ object).</p>
 <ul>
 <li>name: name of the timer. Default: node.game.timer.name
 <ul><li>options: configuration options to pass to the init method</li>
-<li>action: an action to call on the timer (e.g. start, stop, etc.)</li></ul></li>
+<li>action: an action to call on the timer (start, stop, etc.)</li></ul></li>
 </ul>
   </div>
   <div class="details">
@@ -737,40 +739,23 @@ object).</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">timer</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">opts</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;timer&quot;): opts must object or &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="nx">name</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-            <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">getTimer</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;timer&quot;): timer not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
-                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="k">switch</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">case</span> <span class="s1">&#39;start&#39;</span><span class="o">:</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="s1">&#39;stop&#39;</span><span class="o">:</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="s1">&#39;restart&#39;</span><span class="o">:</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">restart</span><span class="p">();</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="s1">&#39;pause&#39;</span><span class="o">:</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="k">case</span> <span class="s1">&#39;resume&#39;</span><span class="o">:</span>
-                <span class="nx">timer</span><span class="p">.</span><span class="nx">resume</span><span class="p">();</span>
-            <span class="p">}</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">opts</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;timer&quot;): opts must object or &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">opts</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="nx">setupTimer</span><span class="p">(</span><span class="nx">opts</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="nx">setupTimer</span><span class="p">(</span><span class="nx">opts</span><span class="p">);</span>
+                <span class="p">}</span>
 
 
 </pre></div>
@@ -781,11 +766,57 @@ object).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
-<p>Last configured timer options.</p>
+<p>Last configured timer options, or null if an error occurred.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">return</span> <span class="nx">opts</span><span class="p">;</span>
-        <span class="p">});</span>
+                <span class="k">return</span> <span class="nx">res</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>Helper function to setup a single timer.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="kd">function</span> <span class="nx">setupTimer</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">timer</span><span class="p">;</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">getTimer</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;setup(&quot;timer&quot;): timer not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">);</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">)</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+
+                <span class="k">switch</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s1">&#39;start&#39;</span><span class="o">:</span>
+                    <span class="nx">timer</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;stop&#39;</span><span class="o">:</span>
+                    <span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;restart&#39;</span><span class="o">:</span>
+                    <span class="nx">timer</span><span class="p">.</span><span class="nx">restart</span><span class="p">();</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;pause&#39;</span><span class="o">:</span>
+                    <span class="nx">timer</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;resume&#39;</span><span class="o">:</span>
+                    <span class="nx">timer</span><span class="p">.</span><span class="nx">resume</span><span class="p">();</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+
+        <span class="p">})(</span><span class="k">this</span><span class="p">);</span>
 
 
 </pre></div>
@@ -929,7 +960,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Utility for setup.plist and setup.mlist:</p>
         </td>
@@ -943,7 +974,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Initial setup call. Nothing to do.</p>
         </td>
@@ -968,7 +999,7 @@ Updates are not possible for the moment.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Import clients (if any).
 Automatic cast from Object to Player.</p>

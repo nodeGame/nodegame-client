@@ -309,58 +309,78 @@
             return this.player.lang;
         });
 
-        /**
-         * ### setup("timer")
-         *
-         * Setup a timer object
-         *
-         * Accepts one configuration parameter of the type:
-         *
-         *  - name: name of the timer. Default: node.game.timer.name
-         *  - options: configuration options to pass to the init method
-         *  - action: an action to call on the timer (e.g. start, stop, etc.)
-         *
-         * @see node.timer
-         * @see node.GameTimer
-         */
-        this.registerSetup('timer', function(opts) {
-            var name, timer;
-            if (!opts) return;
-            if ('object' !== typeof opts) {
-                throw new TypeError('setup("timer"): opts must object or ' +
-                                    'undefined. Found: ' + opts);
-            }
-            name = opts.name || node.game.timer.name;
-            timer = this.timer.getTimer(name);
-            if (!timer) {
-                this.warn('setup("timer"): timer not found: ' + name);
-                return null;
+        (function(node) {
+
+            /**
+             * ### setup("timer")
+             *
+             * Setup a timer object
+             *
+             * Accepts one configuration parameter of the type:
+             *
+             *  - name: name of the timer. Default: node.game.timer.name
+             *  - options: configuration options to pass to the init method
+             *  - action: an action to call on the timer (start, stop, etc.)
+             *
+             * @see node.timer
+             * @see node.GameTimer
+             */
+            node.registerSetup('timer', function(opts) {
+                var i, len, res;
+                if (!opts) return;
+                if ('object' !== typeof opts) {
+                    throw new TypeError('setup("timer"): opts must object or ' +
+                                        'undefined. Found: ' + opts);
+                }
+                if (J.isArray(opts)) {
+                    res = true;
+                    i = -1, len = opts.length;
+                    for ( ; ++i < len ; ) {
+                        res = res && setupTimer(opts[i]);
+                    }
+                }
+                else {
+                    res = setupTimer(opts);
+                }
+
+                // Last configured timer options, or null if an error occurred.
+                return res ? opts : null;
+            });
+
+            // Helper function to setup a single timer.
+            function setupTimer(opts) {
+                var name, timer;
+                name = opts.name || node.game.timer.name;
+                timer = node.timer.getTimer(name);
+
+                if (!timer) {
+                    node.warn('setup("timer"): timer not found: ' + name);
+                    return false;
+                }
+
+                if (opts.options) timer.init(opts.options);
+
+                switch (opts.action) {
+                case 'start':
+                    timer.start();
+                    break;
+                case 'stop':
+                    timer.stop();
+                    break;
+                case 'restart':
+                    timer.restart();
+                    break;
+                case 'pause':
+                    timer.pause();
+                    break;
+                case 'resume':
+                    timer.resume();
+                }
+
+                return true;
             }
 
-            if (opts.options) {
-                timer.init(opts.options);
-            }
-
-            switch (opts.action) {
-            case 'start':
-                timer.start();
-                break;
-            case 'stop':
-                timer.stop();
-                break;
-            case 'restart':
-                timer.restart();
-                break;
-            case 'pause':
-                timer.pause();
-                break;
-            case 'resume':
-                timer.resume();
-            }
-
-            // Last configured timer options.
-            return opts;
-        });
+        })(this);
 
         /**
          * ### setup("plot")

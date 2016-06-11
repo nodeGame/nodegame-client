@@ -14477,11 +14477,13 @@ if (!Array.prototype.indexOf) {
      * @see GameTimer.parseMilliseconds
      */
     PushManager.prototype.startTimer = function(conf) {
-        var gameStage, pushCb, that, timer, offset;
+        var gameStage, pushCb, that, offset;
         var node;
 
         node = this.node;
         conf = conf || {};
+
+        console.log('PUSH.TIMER ************************* ', conf);
 
         if (!this.timer) {
             this.timer = this.node.timer.createTimer({ name: 'push_clients' });
@@ -14490,22 +14492,22 @@ if (!Array.prototype.indexOf) {
             this.clearTimer();
         }
 
-        node.silly('push-manager: starting timer: ' + timer +
-                   ', ' + node.player.stage);
-
         if ('undefined' !== typeof conf.offset) {
             offset = node.timer.parseInput('offset', conf.offset);
         }
         else {
             offset = this.offsetWaitTime;
         }
+
+        node.silly('push-manager: starting timer: ' + offset +
+                   ', ' + node.player.stage);
         that = this;
         pushCb = function() { that.pushGame.call(that, conf); };
 
         // Make sure milliseconds and update are the same.
         this.timer.init({
             milliseconds: offset,
-            update: timer,
+            update: offset,
             timeup: pushCb,
         });
         this.timer.start();
@@ -19934,7 +19936,7 @@ if (!Array.prototype.indexOf) {
             // Min/Max/Exact Properties.
 
             property = this.plot.getProperty(nextStep, 'minPlayers');
-            if (null !== property) {
+            if (property) {
                 property = checkMinMaxExactParams('min', property);
                 minThreshold = property[0];
                 minCallback = property[1];
@@ -19943,7 +19945,7 @@ if (!Array.prototype.indexOf) {
             }
 
             property = this.plot.getProperty(nextStep, 'maxPlayers');
-            if (null !== property) {
+            if (property) {
                 property = checkMinMaxExactParams('max', property);
                 maxThreshold = property[0];
                 maxCallback = property[1];
@@ -19956,7 +19958,7 @@ if (!Array.prototype.indexOf) {
             }
 
             property = this.plot.getProperty(nextStep, 'exactPlayers');
-            if (null !== property) {
+            if (property) {
                 if (createPlayerHandler) {
                     throw new Error('Game.gotoStep: exactPlayers cannot be ' +
                                     'set if minPlayers or maxPlayers are set.');
@@ -21474,23 +21476,6 @@ if (!Array.prototype.indexOf) {
                 this.destroyTimer(this.timers[i]);
             }
         }
-    };
-
-    /**
-     * ### Timer.getTimer
-     *
-     * Returns a reference to a previosly registered game timer.
-     *
-     * @param {string} name The name of the timer
-     *
-     * @return {GameTimer|null} The game timer with the given name, or
-     *   null if none is found
-     */
-    Timer.prototype.getTimer = function(name) {
-        if ('string' !== typeof name) {
-            throw new TypeError('Timer.getTimer: name must be string.');
-        }
-        return this.timers[name] || null;
     };
 
     /**
@@ -26206,58 +26191,78 @@ if (!Array.prototype.indexOf) {
             return this.player.lang;
         });
 
-        /**
-         * ### setup("timer")
-         *
-         * Setup a timer object
-         *
-         * Accepts one configuration parameter of the type:
-         *
-         *  - name: name of the timer. Default: node.game.timer.name
-         *  - options: configuration options to pass to the init method
-         *  - action: an action to call on the timer (e.g. start, stop, etc.)
-         *
-         * @see node.timer
-         * @see node.GameTimer
-         */
-        this.registerSetup('timer', function(opts) {
-            var name, timer;
-            if (!opts) return;
-            if ('object' !== typeof opts) {
-                throw new TypeError('setup("timer"): opts must object or ' +
-                                    'undefined. Found: ' + opts);
-            }
-            name = opts.name || node.game.timer.name;
-            timer = this.timer.getTimer(name);
-            if (!timer) {
-                this.warn('setup("timer"): timer not found: ' + name);
-                return null;
+        (function(node) {
+
+            /**
+             * ### setup("timer")
+             *
+             * Setup a timer object
+             *
+             * Accepts one configuration parameter of the type:
+             *
+             *  - name: name of the timer. Default: node.game.timer.name
+             *  - options: configuration options to pass to the init method
+             *  - action: an action to call on the timer (start, stop, etc.)
+             *
+             * @see node.timer
+             * @see node.GameTimer
+             */
+            node.registerSetup('timer', function(opts) {
+                var i, len, res;
+                if (!opts) return;
+                if ('object' !== typeof opts) {
+                    throw new TypeError('setup("timer"): opts must object or ' +
+                                        'undefined. Found: ' + opts);
+                }
+                if (J.isArray(opts)) {
+                    res = true;
+                    i = -1, len = opts.length;
+                    for ( ; ++i < len ; ) {
+                        res = res && setupTimer(opts[i]);
+                    }
+                }
+                else {
+                    res = setupTimer(opts);
+                }
+
+                // Last configured timer options, or null if an error occurred.
+                return res ? opts : null;
+            });
+
+            // Helper function to setup a single timer.
+            function setupTimer(opts) {
+                var name, timer;
+                name = opts.name || node.game.timer.name;
+                timer = node.timer.getTimer(name);
+
+                if (!timer) {
+                    node.warn('setup("timer"): timer not found: ' + name);
+                    return false;
+                }
+
+                if (opts.options) timer.init(opts.options);
+
+                switch (opts.action) {
+                case 'start':
+                    timer.start();
+                    break;
+                case 'stop':
+                    timer.stop();
+                    break;
+                case 'restart':
+                    timer.restart();
+                    break;
+                case 'pause':
+                    timer.pause();
+                    break;
+                case 'resume':
+                    timer.resume();
+                }
+
+                return true;
             }
 
-            if (opts.options) {
-                timer.init(opts.options);
-            }
-
-            switch (opts.action) {
-            case 'start':
-                timer.start();
-                break;
-            case 'stop':
-                timer.stop();
-                break;
-            case 'restart':
-                timer.restart();
-                break;
-            case 'pause':
-                timer.pause();
-                break;
-            case 'resume':
-                timer.resume();
-            }
-
-            // Last configured timer options.
-            return opts;
-        });
+        })(this);
 
         /**
          * ### setup("plot")
