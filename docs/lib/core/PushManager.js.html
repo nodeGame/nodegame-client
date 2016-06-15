@@ -471,8 +471,12 @@ and create a new one.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;push-manager: timer cleared.&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: timer cleared.&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;NO NEED TO CLEAR PUSH_MANAGER&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
@@ -542,6 +546,7 @@ later check if they manage to step, and if not disconnects them.</p>
         <span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">replyWaitTime</span><span class="p">,</span> <span class="nx">checkPushWaitTime</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push-manager: checking clients.&#39;</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: checking clients.&#39;</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
