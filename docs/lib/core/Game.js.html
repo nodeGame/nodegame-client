@@ -1801,10 +1801,11 @@ TODO: remove some unused comments in the code.
 </div>
 <p>TODO: even if node.game.timer.syncWithStage is on,
 node.done() is not called on logics. So the timer
-is not stopped. We do it manually here for the moment.</p>
+is not stopped. We do it manually here for the moment,
+and we clear also the milliseconds count.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
 
 
 </pre></div>

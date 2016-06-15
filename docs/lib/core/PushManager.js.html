@@ -373,6 +373,7 @@ and create a new one.</p>
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">conf</span>
+      <span class="dox_type">boolean</span>
       <span class="dox_type">object</span>
       <span>Optional. Configuration object passed
    to <code>pushGame</code> method.</span>
@@ -398,13 +399,32 @@ and create a new one.</p>
         <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">pushCb</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">offset</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
 
-        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-        <span class="nx">conf</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">||</span> <span class="p">{};</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Adjust user input.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">||</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypError</span><span class="p">(</span><span class="s1">&#39;PushManager.startTimer: conf must be &#39;</span> <span class="o">+</span>
+                               <span class="s1">&#39;object, TRUE, or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">conf</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH.TIMER ************************* &#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
 
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;push_clients&#39;</span> <span class="p">});</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;push_clients&#39;</span> <span class="p">});</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
@@ -416,7 +436,8 @@ and create a new one.</p>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">offset</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">;</span>
         <span class="p">}</span>
-
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span>
+                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span>
                    <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
@@ -429,7 +450,7 @@ and create a new one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>Make sure milliseconds and update are the same.</p>
         </td>
@@ -471,12 +492,8 @@ and create a new one.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;push-manager: timer cleared.&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: timer cleared.&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;NO NEED TO CLEAR PUSH_MANAGER&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
@@ -546,7 +563,6 @@ later check if they manage to step, and if not disconnects them.</p>
         <span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">replyWaitTime</span><span class="p">,</span> <span class="nx">checkPushWaitTime</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push-manager: checking clients.&#39;</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: checking clients.&#39;</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
@@ -571,7 +587,7 @@ later check if they manage to step, and if not disconnects them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Send push.</p>
         </td>
@@ -713,7 +729,7 @@ later check if they manage to step, and if not disconnects them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>No reply to GET, disconnect client.</p>
         </td>

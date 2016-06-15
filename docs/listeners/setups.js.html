@@ -833,25 +833,36 @@ object).</p>
 </div>
 
   </div>
-  <div class="body"><p>Creates the <code>node.game.plot</code> object</p>
+  <div class="body"><p>Updates the <code>node.game.plot</code> object</p>
 
-<p>It can either replace current plot object, or append to it.
-Updates are not possible for the moment.</p>
-
-<p>TODO: allows updates in plot.</p>
+<p>It can either replace entirely the current plot object, 
+append to it, or update single properties.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">stagerState</span>
       <span class="dox_type">object</span>
-      <span>Stager state which is passed
-  to <code>Stager.setState</code></span>
+      <span>The update for the stager. Depending
+  on the rule, it will be passed to <code>Stager.setState</code>, or to
+  <code>GamePlot.setStepProperty</code>, <code>GamePlot.setStageProperty</code>.</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">updateRule</span>
+      <span class="dox_tag_name">rule</span>
       <span class="dox_type">string</span>
-      <span>Optional. Accepted: <replace>, <append>.
+      <span>Optional. The update rule. Valid rules:
+
+<ul>
+<li>'replace', <strong>default</strong></li>
+<li>'append',</li>
+<li>'updateStep',</li>
+<li>'updateStage'.</li>
+</ul></span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">rule</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Accepted: <replace>, <append>,
   Default: 'replace'</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -867,11 +878,37 @@ Updates are not possible for the moment.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">rule</span><span class="p">,</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">plot</span><span class="p">,</span> <span class="nx">prop</span><span class="p">;</span>
             <span class="nx">stagerState</span> <span class="o">=</span> <span class="nx">stagerState</span> <span class="o">||</span> <span class="p">{};</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">);</span>
-
+            <span class="nx">plot</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">;</span>
+            <span class="nx">rule</span> <span class="o">=</span> <span class="nx">rule</span> <span class="o">||</span> <span class="s1">&#39;replace&#39;</span><span class="p">;</span>
+            <span class="k">switch</span><span class="p">(</span><span class="nx">rule</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s1">&#39;replace&#39;</span><span class="o">:</span>
+            <span class="k">case</span> <span class="s1">&#39;append&#39;</span><span class="o">:</span>
+                <span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">rule</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;updateStep&#39;</span><span class="o">:</span>
+                <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameStage</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">stagerState</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">stagerState</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">plot</span><span class="p">.</span><span class="nx">setStepProperty</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
+                                             <span class="nx">stagerState</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;updateStage&#39;</span><span class="o">:</span>
+                <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameStage</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">stagerState</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">stagerState</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">plot</span><span class="p">.</span><span class="nx">setStageProperty</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
+                                              <span class="nx">stagerState</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;setup(&quot;plot&quot;): invalid rule: &#39;</span> <span class="o">+</span> <span class="nx">rule</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">;</span>
         <span class="p">});</span>
 
