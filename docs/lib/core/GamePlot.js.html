@@ -131,7 +131,11 @@
 <p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p><code>nodeGame</code> container of game stages functions</p>
+  <div class="body"><p>Wraps a stager and exposes methods to navigate through the sequence</p>
+
+<p>TODO: consider plot updates (setStepProperty, setStageProperty). They
+alter the original values, so that an hypothetical game.replay would not
+work. It could be solved by updating the cache only. (but not for stages).</p>
   </div>
 </div>
         </td>
