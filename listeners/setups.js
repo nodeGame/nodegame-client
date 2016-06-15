@@ -385,26 +385,58 @@
         /**
          * ### setup("plot")
          *
-         * Creates the `node.game.plot` object
+         * Updates the `node.game.plot` object
          *
-         * It can either replace current plot object, or append to it.
-         * Updates are not possible for the moment.
+         * It can either replace entirely the current plot object,
+         * append to it, or update single properties.
          *
-         * TODO: allows updates in plot.
+         * @param {object} stagerState The update for the stager. Depending
+         *   on the rule, it will be passed to `Stager.setState`, or to
+         *   `GamePlot.setStepProperty`, `GamePlot.setStageProperty`.
+         * @param {string} rule Optional. The update rule. Valid rules:
          *
-         * @param {object} stagerState Stager state which is passed
-         *   to `Stager.setState`
-         * @param {string} updateRule Optional. Accepted: <replace>, <append>.
+         *    - 'replace', **default**
+         *    - 'append',
+         *    - 'updateStep',
+         *    - 'updateStage'.
+         *
+         * @param {string} rule Optional. Accepted: <replace>, <append>,
          *   Default: 'replace'
          *
          * @see node.game.plot
          * @see Stager.setState
          */
-        this.registerSetup('plot', function(stagerState, updateRule) {
+        this.registerSetup('plot', function(stagerState, rule, gameStage) {
+            var plot, prop;
             stagerState = stagerState || {};
-
-            this.game.plot.stager.setState(stagerState, updateRule);
-
+            plot = this.game.plot;
+            rule = rule || 'replace';
+            switch(rule) {
+            case 'replace':
+            case 'append':
+                plot.stager.setState(stagerState, rule);
+                break;
+            case 'updateStep':
+                gameStage = gameStage || this.game.getCurrentGameStage();
+                for (prop in stagerState) {
+                    if (stagerState.hasOwnProperty(prop)) {
+                        plot.setStepProperty(gameStage, prop,
+                                             stagerState[prop]);
+                    }
+                }
+                break;
+            case 'updateStage':
+                gameStage = gameStage || this.game.getCurrentGameStage();
+                for (prop in stagerState) {
+                    if (stagerState.hasOwnProperty(prop)) {
+                        plot.setStageProperty(gameStage, prop,
+                                              stagerState[prop]);
+                    }
+                }
+                break;
+            default:
+                throw new Error('setup("plot"): invalid rule: ' + rule);
+            }
             return this.game.plot.stager;
         });
 
