@@ -57,9 +57,6 @@
       <div class="heading h3">
         <a href="#gamestage.compare%20(static)">GameStage.compare (static)</a>
       </div>
-      <div class="heading h3">
-        <a href="#gamestage.stringify%20(static)">GameStage.stringify (static)</a>
-      </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
@@ -509,7 +506,19 @@ and stage, round can be only a positive number, or 0.0.0.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameStage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>return this.toHash('S.s.r');</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="p">};</span>
 
 
@@ -710,7 +719,7 @@ the object is placed ahead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>null, undefined, 0.</p>
         </td>
@@ -765,45 +774,6 @@ the object is placed ahead.</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">result</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="nx">result</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="gamestage.stringify%20(static)">
-  <h3>
-    <a href="#gamestage.stringify%20(static)" name="gamestage.stringify%20(static)" class="pilcrow">&#182;</a>
-    GameStage.stringify (static)
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Converts an object GameStage-like to its string representation</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">gs</span>
-      <span class="dox_type">GameStage</span>
-      <span>The object to convert to string</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">string</span>
-      <span>out The string representation of a GameStage object</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gs</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gs</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gs</span><span class="p">).</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;(r) S.s_i&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 

@@ -78,7 +78,7 @@
       <div class="heading h4">
         <a href="#handlestageparameter">handleStageParameter</a>
       </div>
-      <div class="heading h3">
+      <div class="heading h4">
         <a href="#checkstagestepid">checkStageStepId</a>
       </div>
     </div>
@@ -1659,14 +1659,23 @@ If a step with same id is already existing, raise an error.</p>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="checkstagestepid">
-  <h3>
+  <h4>
     <a href="#checkstagestepid" name="checkstagestepid" class="pilcrow">&#182;</a>
     checkStageStepId
-  </h3>
+  </h4>
 </div>
 
   </div>
   <div class="body"><p>Check the validity of the ID of a step or a stage</p>
+
+<p>Must be non-empty string, and cannot begin with a dot.</p>
+
+<p>Notice: in the future, the following limitations might apply:</p>
+
+<ul>
+<li>no dots at all in the name</li>
+<li>cannot begin with a number</li>
+</ul>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1699,29 +1708,21 @@ If a step with same id is already existing, raise an error.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;.id cannot &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;be an empty string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
-</div>
-<p>TODO. check here, throws errors in tests
-        char0 = id.charAt(0);
-        if (char0 === '.') {
-            throw new Error('Stager.' + method + ': ' + s + '.id cannot ' +
-                            'begin with a dot. Found: ' + id);
-        }
-        if (/^\d+$/.test(char0)) {
-            throw new Error('Stager.' + method + ': ' + s + '.id cannot ' +
-                            'begin with a number. Found: ' + id);
-        }</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">char0</span> <span class="o">=</span> <span class="nx">id</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">char0</span> <span class="o">===</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;.id cannot &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;begin with a dot. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">id</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** deprecated naming! Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
+                        <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;.id cannot contains dots. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; ***&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="sr">/^\d+$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">char0</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** deprecated naming! Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span>
+                        <span class="s1">&#39;.id cannot begin with a number. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span>
+                        <span class="s1">&#39; ***&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-
 
 <span class="p">})(</span>
     <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>

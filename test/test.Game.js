@@ -150,25 +150,25 @@ describe('Game', function() {
             };
 
             stager
-                .next('1')
+                .next('s1')
                 .loop({
-                    id: '2',
+                    id: 's2',
                     cb: function() {
                         if (tmp.counter++ >= 3) flag = true;
                     }
                 }, loopCb)
                 .loop('skipped', loopCb)
-                .next('4')
-                .doLoop('5', loopCb)
-                .next('6')
-                .repeat('7', 2)
+                .next('s4')
+                .doLoop('s5', loopCb)
+                .next('s6')
+                .repeat('s7', 2)
                 .next({
-                    id: '8',
-                    steps: [ '8.1', '8.2', '8.3' ]
+                    id: 's8',
+                    steps: [ 'step8-1', 'step8-2', 'step8-3' ]
                 })
                 .repeat({
-                    id: '9',
-                    steps: [ '9.1', '9.2', '9.3' ]
+                    id: 's9',
+                    steps: [ 'step9-1', 'step9-2', 'step9-3' ]
                 }, 2)
                 .finalize();
 
@@ -315,25 +315,25 @@ describe('Game', function() {
             };
 
             stager
-                .next('1')
+                .next('s1')
                 .loop({
-                    id: '2',
+                    id: 's2',
                     cb: function() {
                         if (tmp.counter++ >= 3) flag = true;
                     }
                 }, loopCb)
                 .loop('skipped', loopCb)
-                .next('4')
-                .doLoop('5', loopCb)
-                .next('6')
-                .repeat('7', 2)
+                .next('s4')
+                .doLoop('s5', loopCb)
+                .next('s6')
+                .repeat('s7', 2)
                 .next({
-                    id: '8',
-                    steps: [ '8.1', '8.2', '8.3' ]
+                    id: 's8',
+                    steps: [ 'step8-1', 'step8-2', 'steo8-3' ]
                 })
                 .repeat({
-                    id: '9',
-                    steps: [ '9.1', '9.2', '9.3' ]
+                    id: 's9',
+                    steps: [ 'step9-1', 'step9-2', 'step9-3' ]
                 }, 2)
                 .finalize();
 
