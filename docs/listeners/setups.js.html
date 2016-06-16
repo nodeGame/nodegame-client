@@ -888,6 +888,12 @@ append to it, or update single properties.</p>
             <span class="k">case</span> <span class="s1">&#39;append&#39;</span><span class="o">:</span>
                 <span class="nx">plot</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">stagerState</span><span class="p">,</span> <span class="nx">rule</span><span class="p">);</span>
                 <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;tmpCache&#39;</span><span class="o">:</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">stagerState</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">stagerState</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="nx">prop</span><span class="p">,</span> <span class="nx">stagerState</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
             <span class="k">case</span> <span class="s1">&#39;updateStep&#39;</span><span class="o">:</span>
                 <span class="nx">gameStage</span> <span class="o">=</span> <span class="nx">gameStage</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">stagerState</span><span class="p">)</span> <span class="p">{</span>

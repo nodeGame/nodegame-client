@@ -416,6 +416,12 @@
             case 'append':
                 plot.stager.setState(stagerState, rule);
                 break;
+            case 'tmpCache':
+                for (prop in stagerState) {
+                    if (stagerState.hasOwnProperty(prop)) {
+                        plot.tmpCache(prop, stagerState[prop]);
+                    }
+                }
             case 'updateStep':
                 gameStage = gameStage || this.game.getCurrentGameStage();
                 for (prop in stagerState) {

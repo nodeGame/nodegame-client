@@ -24180,7 +24180,8 @@ if (!Array.prototype.indexOf) {
      * @see JSUS.stringifyAll
      */
     NGC.prototype.remoteSetup = function(feature, to) {
-        var msg, payload, len;
+        var msg, payload;
+        var i, len;
 
         if ('string' !== typeof feature) {
             throw new TypeError('node.remoteSetup: feature must be string.');
@@ -26467,6 +26468,7 @@ if (!Array.prototype.indexOf) {
                 plot.stager.setState(stagerState, rule);
                 break;
             case 'updateStep':
+                debugger
                 gameStage = gameStage || this.game.getCurrentGameStage();
                 for (prop in stagerState) {
                     if (stagerState.hasOwnProperty(prop)) {
