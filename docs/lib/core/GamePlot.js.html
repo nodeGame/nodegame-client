@@ -2122,18 +2122,14 @@ game stage.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
-<p>Look in the tmpCache (cleared every step).
-        if (this.tmpCache.hasOwnProperty(property) &amp;&amp;
-            GameStage.compare(gameStage, this.node.player.stage) === 0) {</p>
-
-
-<div class="highlight"><pre><code>        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="nx">property</span><span class="p">);</span>
-    <span class="p">}</span>
-</code></pre></div>
-
-
+<p>Look in the tmpCache (cleared every step).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="nx">property</span><span class="p">);</span>
+        <span class="p">}</span>
 
 
 </pre></div>

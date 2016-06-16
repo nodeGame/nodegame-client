@@ -422,6 +422,7 @@
                         plot.tmpCache(prop, stagerState[prop]);
                     }
                 }
+                break;
             case 'updateStep':
                 gameStage = gameStage || this.game.getCurrentGameStage();
                 for (prop in stagerState) {
