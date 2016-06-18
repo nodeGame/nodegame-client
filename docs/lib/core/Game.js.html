@@ -1793,7 +1793,6 @@ TODO: remove some unused comments in the code.
         <span class="p">}</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Next step ---&gt; &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
 
@@ -1863,7 +1862,7 @@ and we clear also the milliseconds count.</p>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;goto_step&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">);</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;goto_step&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">.</span><span class="nx">toObject</span><span class="p">());</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -2026,7 +2025,7 @@ Calling exit function of the stage.</p>
   <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>        <span class="c1">// TODO: was here.</span>
+<div class="highlight"><pre><code>        <span class="c1">// TODO: was here. (options might be undefined now)</span>
         <span class="c1">// Check options.</span>
         <span class="c1">// TODO: this does not lock screen / stop timer.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -2101,6 +2100,10 @@ DONE for a short time in the new game stage:</p>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">processGotoStepOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: options must be object &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>  <span class="nx">options</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">stageInit</span><span class="p">)</span> <span class="p">{</span>

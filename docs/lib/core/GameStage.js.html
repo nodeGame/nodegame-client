@@ -52,6 +52,9 @@
         <a href="#gamestage.tohash">GameStage.toHash</a>
       </div>
       <div class="heading h3">
+        <a href="#gamestage.toobject">GameStage.toObject</a>
+      </div>
+      <div class="heading h3">
         <a href="#gamestage.tohash%20(static)">GameStage.toHash (static)</a>
       </div>
       <div class="heading h3">
@@ -536,8 +539,7 @@ and stage, round can be only a positive number, or 0.0.0.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns a simplified hash of the stage of the GameStage,
-according to the input string</p>
+  <div class="body"><p>Hashes the game stage according to the input string</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -563,6 +565,42 @@ according to the input string</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameStage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toHash</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamestage.toobject">
+  <h3>
+    <a href="#gamestage.toobject" name="gamestage.toobject" class="pilcrow">&#182;</a>
+    GameStage.toObject
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a clone of the game stage with Object as prototype</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>A new object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameStage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toObject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
+            <span class="nx">step</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span>
+            <span class="nx">round</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">round</span>
+        <span class="p">};</span>
     <span class="p">};</span>
 
 
@@ -719,7 +757,7 @@ the object is placed ahead.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>null, undefined, 0.</p>
         </td>

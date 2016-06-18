@@ -721,7 +721,6 @@ later check if they manage to step, and if not disconnects them.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">forceDisconnect</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">msg</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -735,16 +734,7 @@ later check if they manage to step, and if not disconnects them.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;push-manager: disconnecting: &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
-
-        <span class="nx">msg</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
-            <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;SERVERCOMMAND&#39;</span><span class="p">,</span>
-            <span class="nx">text</span><span class="o">:</span> <span class="s1">&#39;DISCONNECT&#39;</span><span class="p">,</span>
-            <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">id</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-                <span class="nx">sid</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">sid</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">disconnectClient</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
     <span class="p">}</span>
 
 

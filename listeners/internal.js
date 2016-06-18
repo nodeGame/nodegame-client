@@ -83,7 +83,6 @@
             else {
                 node.game.willBeDone = true;
             }
-
         });
 
         /**

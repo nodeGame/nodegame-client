@@ -278,7 +278,7 @@
          * Executes a game command (pause, resume, etc.)
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            if (!checkGameCommand(msg, 'say')) return;
+            if (!checkGameCommandMsg(msg)) return;
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
         });
 
@@ -289,7 +289,7 @@
          */
         node.events.ng.on( IN + get + 'GAMECOMMAND', function(msg) {
             var res;
-            if (!checkGameCommand(msg, 'get')) return;
+            if (!checkGameCommandMsg(msg)) return;
             res = node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
             if (!J.isEmpty(res)) {
                 // New key must contain msg.id.
@@ -421,17 +421,33 @@
 
     // ## Helper functions.
 
-    function checkGameCommand(msg, action) {
+    /**
+     * ### checkGameCommandMsg
+     *
+     * Checks that the incoming message contains a valid command and options
+     *
+     * Msg.data contains the options for the command. If string, it will be
+     * parsed with JSUS.parse
+     *
+     * @param {GameMsg} msg The incoming message
+     *
+     * @see JSUS.parse
+     */
+    function checkGameCommandMsg(msg) {
         if ('string' !== typeof msg.text || msg.text.trim() === '') {
-            node.err('"in.' + action + '.GAMECOMMAND": msg.text must be ' +
+            node.err('"in.' + msg.action + '.GAMECOMMAND": msg.text must be ' +
                      'a non-empty string: ' + msg.text);
             return false;
         }
         if (!parent.constants.gamecommands[msg.text]) {
-            node.err('"in.' + action + '.GAMECOMMAND": unknown game command ' +
-                     'received: ' + msg.text);
+            node.err('"in.' + msg.action + '.GAMECOMMAND": unknown game  ' +
+                     'command received: ' + msg.text);
             return false;
         }
+
+        // Parse msg.data.
+        if ('string' === typeof msg.data) msg.data = J.parse(msg.data);
+
         return true;
     }
 
