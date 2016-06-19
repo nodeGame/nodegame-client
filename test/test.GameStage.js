@@ -231,11 +231,11 @@ describe('GameStage', function() {
     describe('#toHash()', function() {
 
         it("S.s.r' should be equal '3.2.1'", function() {
-            stage.toHash('S.s.r').should.be.eql('3.2.1');
+            GameStage.toHash(stage, 'S.s.r').should.be.eql('3.2.1');
         });
 
         it("Ss(r)' should be equal '32(1)'", function() {
-            stage.toHash('Ss(r)').should.be.eql('32(1)');
+            GameStage.toHash(stage, 'Ss(r)').should.be.eql('32(1)');
         });
 
     });
