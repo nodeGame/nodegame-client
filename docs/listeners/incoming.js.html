@@ -93,6 +93,9 @@
       <div class="heading h2">
         <a href="#helper%20functions.">Helper functions.</a>
       </div>
+      <div class="heading h3">
+        <a href="#checkgamecommandmsg">checkGameCommandMsg</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -702,7 +705,7 @@ Sending data, do something before disconnect.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">say</span> <span class="o">+</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;say&#39;</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommandMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
         <span class="p">});</span>
 
@@ -728,7 +731,7 @@ Sending data, do something before disconnect.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="nx">IN</span> <span class="o">+</span> <span class="nx">get</span> <span class="o">+</span> <span class="s1">&#39;GAMECOMMAND&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">checkGameCommandMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
             <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAMECOMMAND_&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">,</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span>
 
@@ -1049,17 +1052,68 @@ Sending data, do something before disconnect.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
-    <span class="kd">function</span> <span class="nx">checkGameCommand</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="checkgamecommandmsg">
+  <h3>
+    <a href="#checkgamecommandmsg" name="checkgamecommandmsg" class="pilcrow">&#182;</a>
+    checkGameCommandMsg
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Checks that the incoming message contains a valid command and options</p>
+
+<p>Msg.data contains the options for the command. If string, it will be
+parsed with JSUS.parse</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">msg</span>
+      <span class="dox_type">GameMsg</span>
+      <span>The incoming message</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.parse
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">checkGameCommandMsg</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;&quot;in.&#39;</span> <span class="o">+</span> <span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.GAMECOMMAND&quot;: msg.text must be &#39;</span> <span class="o">+</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;&quot;in.&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.GAMECOMMAND&quot;: msg.text must be &#39;</span> <span class="o">+</span>
                      <span class="s1">&#39;a non-empty string: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">gamecommands</span><span class="p">[</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;&quot;in.&#39;</span> <span class="o">+</span> <span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.GAMECOMMAND&quot;: unknown game command &#39;</span> <span class="o">+</span>
-                     <span class="s1">&#39;received: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;&quot;in.&#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;.GAMECOMMAND&quot;: unknown game  &#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;command received: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+</div>
+<p>Parse msg.data.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
 

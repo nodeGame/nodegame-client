@@ -58,9 +58,6 @@
         <a href="#timer.gettimer">Timer.getTimer</a>
       </div>
       <div class="heading h3">
-        <a href="#timer.gettimer">Timer.getTimer</a>
-      </div>
-      <div class="heading h3">
         <a href="#timer.settimestamp">Timer.setTimestamp</a>
       </div>
       <div class="heading h3">
@@ -124,6 +121,9 @@
         <a href="#gametimer.timeleft">GameTimer.timeLeft</a>
       </div>
       <div class="heading h3">
+        <a href="#gametimer.timeleft">GameTimer.timeLeft</a>
+      </div>
+      <div class="heading h3">
         <a href="#gametimer.timepassed">GameTimer.timePassed</a>
       </div>
       <div class="heading h3">
@@ -182,6 +182,9 @@
       </div>
       <div class="heading h3">
         <a href="#gametimer.stop">GameTimer.stop</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gametimer.reset">GameTimer.reset</a>
       </div>
       <div class="heading h3">
         <a href="#gametimer.restart">GameTimer.restart</a>
@@ -993,49 +996,6 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="timer.gettimer">
-  <h3>
-    <a href="#timer.gettimer" name="timer.gettimer" class="pilcrow">&#182;</a>
-    Timer.getTimer
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Returns a reference to a previosly registered game timer.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">name</span>
-      <span class="dox_type">string</span>
-      <span>The name of the timer</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">GameTimer</span>
-      <span class="dox_type">null</span>
-      <span>The game timer with the given name, or
-  null if none is found</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Timer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.getTimer: name must be string.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">timers</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="timer.settimestamp">
   <h3>
     <a href="#timer.settimestamp" name="timer.settimestamp" class="pilcrow">&#182;</a>
@@ -1073,7 +1033,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Default time: Current time</p>
         </td>
@@ -1087,7 +1047,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Check inputs:</p>
         </td>
@@ -1107,7 +1067,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>We had at least one pause.</p>
         </td>
@@ -1120,7 +1080,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Remove records of paused timestamps.</p>
         </td>
@@ -1138,7 +1098,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Mark timestamp as paused since the beginning, if game is paused.</p>
         </td>
@@ -1152,7 +1112,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Diffs are updated immediately.</p>
         </td>
@@ -1211,7 +1171,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Check input:</p>
         </td>
@@ -1318,7 +1278,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Get current time:</p>
         </td>
@@ -1332,7 +1292,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Check input:</p>
         </td>
@@ -1412,7 +1372,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Check input:</p>
         </td>
@@ -1835,7 +1795,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Timeup callback: Emit.</p>
         </td>
@@ -1858,7 +1818,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Timeup callback: Exec.</p>
         </td>
@@ -1879,7 +1839,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Create and run timer:</p>
         </td>
@@ -1897,7 +1857,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>TODO: check if this condition is ok.</p>
         </td>
@@ -1913,7 +1873,7 @@ the given GameTimer object are removed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>TODO: this is not enough. Does not cover all use cases.</p>
         </td>
@@ -2142,6 +2102,28 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">timerId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.timeleft">
+  <h3>
+    <a href="#gametimer.timeleft" name="gametimer.timeleft" class="pilcrow">&#182;</a>
+    GameTimer.timeLeft
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Total running time of timer.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -3253,6 +3235,47 @@ and time left properties</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">timerId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">timePassed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">timeLeft</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">startPaused</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">updateRemaining</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">updateStart</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gametimer.reset">
+  <h3>
+    <a href="#gametimer.reset" name="gametimer.reset" class="pilcrow">&#182;</a>
+    GameTimer.reset
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Resets the timer</p>
+
+<p>Stops the timer, sets the status to UNINITIALIZED, and
+sets the following properties to default: milliseconds,
+update, timeup, hooks, hookNames.</p>
+
+<p>Does <strong>not</strong> change properties: eventEmitterName, and
+stagerSync.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">checkDestroyed</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;reset&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timeup</span> <span class="o">=</span> <span class="s1">&#39;TIMEUP&#39;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">hookNames</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">};</span>
 
 
@@ -3293,9 +3316,7 @@ or the current settings, if undefined</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameTimer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restart</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">checkDestroyed</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;restart&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isStopped</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
     <span class="p">};</span>
@@ -3499,7 +3520,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Do nothing if no change of status is required.</p>
         </td>
@@ -3517,7 +3538,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>On PLAYING starts.</p>
         </td>
@@ -3535,7 +3556,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>On REALLY_DONE stops.</p>
         </td>
@@ -3556,7 +3577,7 @@ or the current settings, if undefined</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Store value.</p>
         </td>
@@ -3618,7 +3639,7 @@ but not if timeup was already called.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
+  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
 </div>
 <p>TODO: improve.</p>
         </td>
@@ -3797,7 +3818,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
 </div>
 <p>Make sure update and timer are the same.</p>
         </td>
@@ -3877,7 +3898,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any.</p>
         </td>
@@ -3892,7 +3913,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>

@@ -192,8 +192,14 @@
       <div class="heading h3">
         <a href="#game.updateglobals">Game.updateGlobals</a>
       </div>
+      <div class="heading h3">
+        <a href="#game.getproperty">Game.getProperty</a>
+      </div>
       <div class="heading h2">
         <a href="#helper%20methods">Helper Methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#processgotostepoptions">processGoToStepOptions</a>
       </div>
       <div class="heading h3">
         <a href="#checkminmaxexactparams">checkMinMaxExactParams</a>
@@ -264,7 +270,8 @@ MIT Licensed</p>
     <span class="nx">GamePlot</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">GamePlot</span><span class="p">,</span>
     <span class="nx">PlayerList</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PlayerList</span><span class="p">,</span>
     <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
-    <span class="nx">PushManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PushManager</span><span class="p">;</span>
+    <span class="nx">PushManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PushManager</span><span class="p">,</span>
+    <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
 
@@ -647,8 +654,7 @@ and calls the appropriate callback functions.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
-
+        <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">};</span>
 
 
 </pre></div>
@@ -1097,9 +1103,7 @@ This options is useful when a player reconnets.</p>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started.&#39;</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">step</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">step</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
     <span class="p">};</span>
 
 
@@ -1669,6 +1673,12 @@ its result.</p>
   <div class="body"><p>Executes the next stage / step</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Options passed to <code>gotoStep</code></span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
@@ -1696,11 +1706,11 @@ its result.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">step</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">curStep</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">;</span>
         <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
         <span class="nx">nextStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gotoStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">gotoStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1759,10 +1769,11 @@ TODO: remove some unused comments in the code.
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">gotoStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">curStep</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">curStepObj</span><span class="p">,</span> <span class="nx">curStageObj</span><span class="p">,</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">curStep</span><span class="p">,</span> <span class="nx">curStepObj</span><span class="p">,</span> <span class="nx">curStageObj</span><span class="p">,</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stageInit</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">handler</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">doPlChangeHandler</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minThreshold</span><span class="p">,</span> <span class="nx">maxThreshold</span><span class="p">,</span> <span class="nx">exactThreshold</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">maxCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">exactCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">minRecoverCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">maxRecoverCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">exactRecoverCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -1782,7 +1793,6 @@ TODO: remove some unused comments in the code.
         <span class="p">}</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;Next step ---&gt; &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
 
@@ -1795,10 +1805,41 @@ TODO: remove some unused comments in the code.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
-<p>Clear push-timer at the beginning of each new step.</p>
+<p>TODO: even if node.game.timer.syncWithStage is on,
+node.done() is not called on logics. So the timer
+is not stopped. We do it manually here for the moment,
+and we clear also the milliseconds count.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+</div>
+<p>Clear push-timer.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">pushManager</span><span class="p">.</span><span class="nx">clearTimer</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+</div>
+<p>Clear the cache of temporary changes to steps.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
 
         <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
         <span class="nx">curStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
@@ -1811,7 +1852,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Sends start / step command to connected clients if option is on.</p>
         </td>
@@ -1832,7 +1873,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Calling exit function of the step.</p>
         </td>
@@ -1851,7 +1892,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Listeners from previous step are cleared (must be after exit).</p>
         </td>
@@ -1865,7 +1906,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Emit buffered messages.</p>
         </td>
@@ -1883,7 +1924,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>TODO: see if we can avoid code duplication below.
 Calling exit function of the stage.</p>
@@ -1902,7 +1943,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Clear any event listeners added in the stage exit function.</p>
         </td>
@@ -1918,7 +1959,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -1935,7 +1976,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>else do nothing</p>
         </td>
@@ -1950,7 +1991,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>TODO maybe update also in case of string.</p>
         </td>
@@ -1964,7 +2005,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Check for stage/step existence:</p>
         </td>
@@ -1981,13 +2022,18 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
-<p>Check options.
-TODO: this does not lock screen / stop timer.</p>
+
+<div class="highlight"><pre><code>        <span class="c1">// TODO: was here. (options might be undefined now)</span>
+        <span class="c1">// Check options.</span>
+        <span class="c1">// TODO: this does not lock screen / stop timer.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</code></pre></div>
+
+
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1996,7 +2042,7 @@ TODO: this does not lock screen / stop timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>If we enter a new stage we need to update a few things.</p>
         </td>
@@ -2010,7 +2056,7 @@ TODO: this does not lock screen / stop timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Calling exit function.</p>
         </td>
@@ -2021,6 +2067,9 @@ TODO: this does not lock screen / stop timer.</p>
 
                     <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
                 <span class="p">}</span>
+                <span class="nx">stageInit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+
 
 </pre></div>
         </td>
@@ -2028,15 +2077,14 @@ TODO: this does not lock screen / stop timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
-<p>TODO: avoid duplication.
-stageLevel needs to be changed (silent), otherwise it stays
+<p>stageLevel needs to be changed (silent), otherwise it stays
 DONE for a short time in the new game stage:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
 
 
 </pre></div>
@@ -2045,7 +2093,28 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+</div>
+<p>Process options before calling any init function.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">processGotoStepOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: options must be object &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>  <span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">stageInit</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Store time:</p>
         </td>
@@ -2059,7 +2128,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Clear the previous stage listeners.</p>
         </td>
@@ -2076,7 +2145,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Execute the init function of the stage, if any:</p>
         </td>
@@ -2085,24 +2154,6 @@ DONE for a short time in the new game stage:</p>
                     <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
-</div>
-<p>TODO: avoid duplication.
-stageLevel needs to be changed (silent), otherwise it stays
-DONE for a short time in the new game stage:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-            <span class="p">}</span>
 
 
 </pre></div>
@@ -2111,7 +2162,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>Execute the init function of the step, if any:</p>
         </td>
@@ -2132,7 +2183,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Updating the globals object.</p>
         </td>
@@ -2146,60 +2197,49 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
-<p>Add min/max/exactPlayers listeners for the step.
-The fields must be an array with at least two elements:
-  - min/max/exactNum,
-  - callbackFn,
-  - [recoverCb]</p>
+<p>Min/Max/Exact Properties.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;minPlayers&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
-                        <span class="s1">&#39;Game.gotoStep: minPlayers field must be an array &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;of at least length 2.&#39;</span><span class="p">);</span>
-                <span class="p">}</span>
-
+                <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
                 <span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">minCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                 <span class="nx">minRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-                <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minThreshold</span><span class="p">,</span>
-                                       <span class="nx">minCallback</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">);</span>
+                <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
+
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;maxPlayers&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
-                        <span class="s1">&#39;Game.gotoStep: maxPlayers field must be an array &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;of at least length 2.&#39;</span><span class="p">);</span>
-                <span class="p">}</span>
-
+                <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
                 <span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">maxCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                 <span class="nx">maxRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-                <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxThreshold</span><span class="p">,</span>
-                                       <span class="nx">maxCallback</span><span class="p">,</span> <span class="nx">maxRecoverCb</span><span class="p">);</span>
-
+                <span class="k">if</span> <span class="p">(</span><span class="nx">maxThreshold</span> <span class="o">&lt;=</span> <span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: maxPlayers is smaller &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;than minPlayers: &#39;</span> <span class="o">+</span> <span class="nx">maxThreshold</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
+
             <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;exactPlayers&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span>
-                        <span class="s1">&#39;Game.gotoStep: exactPlayers field must be an array &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;of at least length 2.&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">doPlChangeHandler</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: exactPlayers cannot be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;set if minPlayers or maxPlayers are set.&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
-
+                <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
                 <span class="nx">exactThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                 <span class="nx">exactCallback</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                 <span class="nx">exactRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-                <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactThreshold</span><span class="p">,</span>
-                                       <span class="nx">exactCallback</span><span class="p">,</span> <span class="nx">exactRecoverCb</span><span class="p">);</span>
+                <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">minCallback</span> <span class="o">||</span> <span class="nx">maxCallback</span> <span class="o">||</span> <span class="nx">exactCallback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">doPlChangeHandler</span><span class="p">)</span> <span class="p">{</span>
+
 
 </pre></div>
         </td>
@@ -2207,13 +2247,17 @@ The fields must be an array with at least two elements:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Register event handler.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                    <span class="kd">var</span> <span class="nx">nPlayers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+                <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">nPlayers</span><span class="p">,</span> <span class="nx">wrongNumCb</span><span class="p">,</span> <span class="nx">correctNumCb</span><span class="p">;</span>
+                    <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">that</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+                    <span class="nx">nPlayers</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
 
 </pre></div>
         </td>
@@ -2221,7 +2265,7 @@ The fields must be an array with at least two elements:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -2230,51 +2274,60 @@ The fields must be an array with at least two elements:
 
                     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">nPlayers</span> <span class="o">&lt;</span> <span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">minCallback</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                                <span class="nx">minCallback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minCallback</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                             <span class="p">}</span>
+                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">&amp;&amp;</span> <span class="nx">minRecoverCb</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">minRecoverCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                             <span class="p">}</span>
-                            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">nPlayers</span> <span class="o">&gt;</span> <span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">maxCallback</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                                <span class="nx">maxCallback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxCallback</span><span class="p">);</span>
                             <span class="p">}</span>
+                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">&amp;&amp;</span> <span class="nx">maxRecoverCb</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">maxRecoverCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxRecoverCb</span><span class="p">);</span>
                             <span class="p">}</span>
-                            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
+
                     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">nPlayers</span> <span class="o">!==</span> <span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">exactCallback</span> <span class="o">&amp;&amp;</span>
-                                <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
-
-                                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                                <span class="nx">exactCallback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactCallback</span><span class="p">);</span>
                             <span class="p">}</span>
+                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">&amp;&amp;</span>
-                                <span class="nx">exactRecoverCb</span><span class="p">)</span> <span class="p">{</span>
-
-                                <span class="nx">exactRecoverCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactRecoverCb</span><span class="p">);</span>
                             <span class="p">}</span>
-                            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayerCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
+
+                    <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
                 <span class="p">};</span>
 
                 <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
@@ -2286,7 +2339,7 @@ The fields must be an array with at least two elements:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>PRECONNECT needs to verify client is authorized,
 so we don't have to handle it here.</p>
@@ -2300,7 +2353,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>Check conditions explicitly:</p>
         </td>
@@ -2315,7 +2368,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -2329,7 +2382,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -2359,13 +2412,13 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                 <span class="k">this</span><span class="p">.</span><span class="nx">checkPlistSize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
             <span class="p">}</span>
 
 
@@ -2375,7 +2428,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -2393,7 +2446,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>Update list of stepped steps.</p>
         </td>
@@ -2458,7 +2511,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
 </div>
 <p>Handle frame loading natively, if required.</p>
         </td>
@@ -2490,7 +2543,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <p>Replacing TRUE with node.game.settings.</p>
         </td>
@@ -2518,7 +2571,7 @@ so we don't have to handle it here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Auto load frame and wrap cb.</p>
         </td>
@@ -2584,7 +2637,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>Execute custom callback. Can throw errors.</p>
         </td>
@@ -2598,7 +2651,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <p>A non fatal error occurred.</p>
         </td>
@@ -2616,7 +2669,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <p>Internal listeners will check whether we need to emit PLAYING.</p>
         </td>
@@ -2852,7 +2905,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -2981,7 +3034,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3107,7 +3160,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
+  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3253,7 +3306,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -3274,7 +3327,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -3288,7 +3341,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -3315,7 +3368,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -3646,7 +3699,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>
@@ -3847,7 +3900,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>Adding new globals.</p>
         </td>
@@ -3869,7 +3922,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>Removing old ones.</p>
         </td>
@@ -3890,7 +3943,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
+  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
 </div>
 <p>Updating globals reference.</p>
         </td>
@@ -3899,6 +3952,56 @@ method call.</p>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">globals</span><span class="p">;</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.getproperty">
+  <h3>
+    <a href="#game.getproperty" name="game.getproperty" class="pilcrow">&#182;</a>
+    Game.getProperty
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the requested step property from the game plot</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">property</span>
+      <span class="dox_type">string</span>
+      <span>The name of the property</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">gameStage</span>
+      <span class="dox_type">GameStage</span>
+      <span>Optional. The reference game stage.
+  Default: Game.currentGameStage()</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">miexed</span>
+      <span>The value of the requested step property</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.getProperty
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">property</span><span class="p">,</span> <span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">gameStage</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gameStage</span> <span class="o">?</span>
+            <span class="nx">gameStage</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
+    <span class="p">};</span>
 
 
 </pre></div>
@@ -3915,6 +4018,122 @@ method call.</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="processgotostepoptions">
+  <h3>
+    <a href="#processgotostepoptions" name="processgotostepoptions" class="pilcrow">&#182;</a>
+    processGoToStepOptions
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Process options before executing the init functions of stage/steps</p>
+
+<p>Valid options:</p>
+
+<ul>
+<li>willBeDone: sets game.willBeDone to TRUE,
+<ul><li>plot: add entries to the tmpCache of the plot,</li>
+<li>cb: a callback executed with the game context, and with options
+ object itself as parameter</li></ul></li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">game</span>
+      <span class="dox_type">Game</span>
+      <span>The game instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>The options to process</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gotoStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.tmpCache</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.willBeDone
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">processGotoStepOptions</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">prop</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+</div>
+<p>Set willBeDone. TODO: this does not lock screen / stop timer.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+</div>
+<p>Temporarily modify plot properties.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="nx">prop</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">plot</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+</div>
+<p>Call the cb with options as param, if found.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">options</span><span class="p">.</span><span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: options.cb must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;function or undefined. Found: &#39;</span> <span class="o">+</span>
+                                    <span class="nx">options</span><span class="p">.</span><span class="nx">cb</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
 
 </pre></div>
@@ -3968,24 +4187,47 @@ method call.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">recoverCb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">recoverCb</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">property</span> <span class="o">=</span> <span class="p">[</span><span class="nx">num</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;Players field &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;is empty array.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">num</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="nx">recoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;Players field &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;must be number or non-empty array. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">property</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">num</span> <span class="o">||</span> <span class="o">!</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="o">||</span> <span class="nx">num</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span>
                                 <span class="s1">&#39;Players must be a finite number &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;greater than 1: &#39;</span> <span class="o">+</span> <span class="nx">num</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span>
                                 <span class="s1">&#39;Players cb must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;function: &#39;</span> <span class="o">+</span> <span class="nx">cb</span><span class="p">);</span>
+                                <span class="s1">&#39;function or undefined: &#39;</span> <span class="o">+</span> <span class="nx">cb</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">recoverCb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span>
                                 <span class="s1">&#39;Players recoverCb must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;function: &#39;</span> <span class="o">+</span> <span class="nx">recoverCb</span><span class="p">);</span>
+                                <span class="s1">&#39;function or undefined: &#39;</span> <span class="o">+</span> <span class="nx">recoverCb</span><span class="p">);</span>
         <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">property</span><span class="p">;</span>
     <span class="p">}</span>
 
 

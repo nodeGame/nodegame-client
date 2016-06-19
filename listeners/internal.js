@@ -83,7 +83,6 @@
             else {
                 node.game.willBeDone = true;
             }
-
         });
 
         /**
@@ -207,8 +206,12 @@
                          'be stepped now.');
                 return;
             }
+
             // Adjust parameters.
-            if (options.targetStep) step = options.targetStep;
+            if (options.targetStep) {
+                step = options.targetStep;
+                delete options.targetStep;
+            }
             else {
                 step = options;
                 options = undefined;

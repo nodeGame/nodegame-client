@@ -309,82 +309,141 @@
             return this.player.lang;
         });
 
-        /**
-         * ### setup("timer")
-         *
-         * Setup a timer object
-         *
-         * Accepts one configuration parameter of the type:
-         *
-         *  - name: name of the timer. Default: node.game.timer.name
-         *  - options: configuration options to pass to the init method
-         *  - action: an action to call on the timer (e.g. start, stop, etc.)
-         *
-         * @see node.timer
-         * @see node.GameTimer
-         */
-        this.registerSetup('timer', function(opts) {
-            var name, timer;
-            if (!opts) return;
-            if ('object' !== typeof opts) {
-                throw new TypeError('setup("timer"): opts must object or ' +
-                                    'undefined. Found: ' + opts);
-            }
-            name = opts.name || node.game.timer.name;
-            timer = this.timer.getTimer(name);
-            if (!timer) {
-                this.warn('setup("timer"): timer not found: ' + name);
-                return null;
+        (function(node) {
+
+            /**
+             * ### setup("timer")
+             *
+             * Setup a timer object
+             *
+             * Accepts one configuration parameter of the type:
+             *
+             *  - name: name of the timer. Default: node.game.timer.name
+             *  - options: configuration options to pass to the init method
+             *  - action: an action to call on the timer (start, stop, etc.)
+             *
+             * @see node.timer
+             * @see node.GameTimer
+             */
+            node.registerSetup('timer', function(opts) {
+                var i, len, res;
+                if (!opts) return;
+                if ('object' !== typeof opts) {
+                    throw new TypeError('setup("timer"): opts must object or ' +
+                                        'undefined. Found: ' + opts);
+                }
+                if (J.isArray(opts)) {
+                    res = true;
+                    i = -1, len = opts.length;
+                    for ( ; ++i < len ; ) {
+                        res = res && setupTimer(opts[i]);
+                    }
+                }
+                else {
+                    res = setupTimer(opts);
+                }
+
+                // Last configured timer options, or null if an error occurred.
+                return res ? opts : null;
+            });
+
+            // Helper function to setup a single timer.
+            function setupTimer(opts) {
+                var name, timer;
+                name = opts.name || node.game.timer.name;
+                timer = node.timer.getTimer(name);
+
+                if (!timer) {
+                    node.warn('setup("timer"): timer not found: ' + name);
+                    return false;
+                }
+
+                if (opts.options) timer.init(opts.options);
+
+                switch (opts.action) {
+                case 'start':
+                    timer.start();
+                    break;
+                case 'stop':
+                    timer.stop();
+                    break;
+                case 'restart':
+                    timer.restart();
+                    break;
+                case 'pause':
+                    timer.pause();
+                    break;
+                case 'resume':
+                    timer.resume();
+                }
+
+                return true;
             }
 
-            if (opts.options) {
-                timer.init(opts.options);
-            }
-
-            switch (opts.action) {
-            case 'start':
-                timer.start();
-                break;
-            case 'stop':
-                timer.stop();
-                break;
-            case 'restart':
-                timer.restart();
-                break;
-            case 'pause':
-                timer.pause();
-                break;
-            case 'resume':
-                timer.resume();
-            }
-
-            // Last configured timer options.
-            return opts;
-        });
+        })(this);
 
         /**
          * ### setup("plot")
          *
-         * Creates the `node.game.plot` object
+         * Updates the `node.game.plot` object
          *
-         * It can either replace current plot object, or append to it.
-         * Updates are not possible for the moment.
+         * It can either replace entirely the current plot object,
+         * append to it, or update single properties.
          *
-         * TODO: allows updates in plot.
+         * @param {object} stagerState The update for the stager. Depending
+         *   on the rule, it will be passed to `Stager.setState`, or to
+         *   `GamePlot.setStepProperty`, `GamePlot.setStageProperty`.
+         * @param {string} rule Optional. The update rule. Valid rules:
          *
-         * @param {object} stagerState Stager state which is passed
-         *   to `Stager.setState`
-         * @param {string} updateRule Optional. Accepted: <replace>, <append>.
+         *    - 'replace', **default**
+         *    - 'append',
+         *    - 'updateStep',
+         *    - 'updateStage'.
+         *
+         * @param {string} rule Optional. Accepted: <replace>, <append>,
          *   Default: 'replace'
          *
          * @see node.game.plot
          * @see Stager.setState
          */
-        this.registerSetup('plot', function(stagerState, updateRule) {
+        this.registerSetup('plot', function(stagerState, rule, gameStage) {
+            var plot, prop;
             stagerState = stagerState || {};
-
-            this.game.plot.stager.setState(stagerState, updateRule);
-
+            plot = this.game.plot;
+            rule = rule || 'replace';
+            switch(rule) {
+            case 'replace':
+            case 'append':
+                plot.stager.setState(stagerState, rule);
+                break;
+            case 'tmpCache':
+                for (prop in stagerState) {
+                    if (stagerState.hasOwnProperty(prop)) {
+                        plot.tmpCache(prop, stagerState[prop]);
+                    }
+                }
+                break;
+            case 'updateStep':
+                gameStage = gameStage || this.game.getCurrentGameStage();
+                for (prop in stagerState) {
+                    if (stagerState.hasOwnProperty(prop)) {
+                        plot.setStepProperty(gameStage, prop,
+                                             stagerState[prop]);
+                    }
+                }
+                break;
+            case 'updateStage':
+                gameStage = gameStage || this.game.getCurrentGameStage();
+                for (prop in stagerState) {
+                    if (stagerState.hasOwnProperty(prop)) {
+                        plot.setStageProperty(gameStage, prop,
+                                              stagerState[prop]);
+                    }
+                }
+                break;
+            default:
+                throw new Error('setup("plot"): invalid rule: ' + rule);
+            }
             return this.game.plot.stager;
         });
 
