@@ -20316,7 +20316,10 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} The result of the execution of the step callback
      */
     Game.prototype.execStep = function(step) {
-        var cb;
+        var cb, origCb;
+        var widget, widgetObj, widgetRoot;
+        var widgetCb, widgetExit, widgetDone;
+        var doneCb, origDoneCb, exitCb, origExitCb;
         var frame, uri, frameOptions;
         var frameLoadMode, frameStoreMode;
         var frameAutoParse, frameAutoParsePrefix;
@@ -20327,6 +20330,109 @@ if (!Array.prototype.indexOf) {
 
         cb = this.plot.getProperty(step, 'cb');
         frame = this.plot.getProperty(step, 'frame');
+        widget = this.plot.getProperty(step, 'widget');
+
+        if (widget) {
+            // Parse input params. // TODO: throws errors.
+            if ('string' === typeof widget) widget = {
+                name: widget,
+                ref: widget.toLowerCase()
+            };
+            if ('string' !== typeof widget.id) {
+                widget.id = 'ng_step_widget_' + widget.name;
+            }
+
+            // Make main callback to get/append the widget.
+            widgetCb = function() {
+
+                if (widget.append === false) {
+                    widgetObj = this.node.widgets.get(widget.name,
+                                                      widget.options);
+                }
+                else {
+                    // Default id 'container' (as in default.html).
+                    widgetRoot = widget.root || 'container';
+                    widgetRoot =  W.getElementById(widgetRoot);
+                    widgetObj = this.node.widgets.append(widget.name,
+                                                         widgetRoot,
+                                                         widget.options);
+                }
+                this[widget.ref] = widgetObj;
+            };
+
+            // Make the step callback.
+            if (cb) {
+                origCb = cb;
+                cb = function() {
+                    widgetCb.call(this);
+                    origCb.call(this);
+                };
+            }
+            else {
+                cb = widgetCb;
+            }
+
+            // Make the done callback to send results.
+            widgetDone = function() {
+                var values;
+                values = this[widget.ref].getValues({
+                    markAttempt: true,
+                    highlight: true
+                });
+                if (values.missValues ||
+                    values.choice === null ||
+                    values.isCorrect === false) {
+
+                    return false;
+                }
+                return values;
+            };
+            doneCb = this.plot.getProperty(step, 'done');
+            if (doneCb) {
+                origDoneCb = doneCb;
+                doneCb = function() {
+                    var values;
+                    values = widgetDone.call(this);
+                    if (values !== false) {
+                        values = origDoneCb.call(this, values);
+                    }
+                    return values;
+                };
+            }
+            else {
+                doneCb = widgetDone;
+            }
+
+            // Update the exit function for this step.
+            this.plot.tmpCache('done', doneCb);
+
+            // Make the exit callback (destroy widget by default).
+            if (widget.destroyOnExit !== false) {
+                widgetExit = function() {
+                    this[widget.ref].destroy();
+                    // Remove node.game reference.
+                    this[widget.ref] = null;
+                };
+                exitCb = this.plot.getProperty(step, 'exit');
+                if (exitCb) {
+                    origExitCb = exitCb;
+                    exitCb = function() {
+                        widgetExit.call(this);
+                        origCb.call(this);
+                    };
+                }
+                else {
+                    exitCb = widgetExit;
+                }
+                // Update the exit function for this step.
+                this.plot.tmpCache('exit', exitCb);
+            }
+
+            // Sets a default frame, if none was found.
+            if (widget.append !== false && !frame) {
+                frame = '/pages/default.html';
+            }
+        }
 
         // Handle frame loading natively, if required.
         if (frame) {
