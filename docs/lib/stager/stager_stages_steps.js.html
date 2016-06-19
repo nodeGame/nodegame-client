@@ -1715,12 +1715,13 @@ If a step with same id is already existing, raise an error.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">id</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** deprecated naming! Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
-                        <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;.id cannot contains dots. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; ***&#39;</span><span class="p">);</span>
+                        <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;.id contains dots. Game will run, but will fail &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;to normalize &#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;s. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; ***&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="sr">/^\d+$/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">char0</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;*** deprecated naming! Stager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span>
-                        <span class="s1">&#39;.id cannot begin with a number. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span>
-                        <span class="s1">&#39; ***&#39;</span><span class="p">);</span>
+                        <span class="s1">&#39;.id begins with a number. Game will run, but will &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;fail to normalize &#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;s. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; ***&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
