@@ -2226,7 +2226,7 @@ res[0] is either undefined or some value.</p>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
 
-            <span class="nx">hash</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">).</span><span class="nx">toHash</span><span class="p">(</span><span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
+            <span class="nx">hash</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">.</span><span class="nx">toHash</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;S.s.r&#39;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;No past events to re-emit found.&#39;</span><span class="p">);</span>
