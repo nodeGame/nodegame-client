@@ -428,8 +428,17 @@ will be removed immediately after its execution.</p>
                 <span class="p">}</span>
             <span class="p">};</span>
 
+<<<<<<< HEAD
             <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
 
+=======
+            <span class="k">if</span> <span class="p">(</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
+            <span class="p">}</span>
+>>>>>>> refactorWaitingRoom
 
 </pre></div>
         </td>
@@ -596,6 +605,7 @@ this case it must be emitted last.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+<<<<<<< HEAD
 </div>
 <p>A done callback can manipulate arguments, add new values to
 send to server, or even halt the procedure if returning false.</p>
@@ -628,6 +638,8 @@ send to server, or even halt the procedure if returning false.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+=======
+>>>>>>> refactorWaitingRoom
 </div>
 <p>If a <code>done</code> callback returns false, exit.</p>
         </td>
@@ -658,6 +670,7 @@ send to server, or even halt the procedure if returning false.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
+<<<<<<< HEAD
   <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>If a value is provided make it an array, if not already one.</p>
@@ -678,6 +691,9 @@ send to server, or even halt the procedure if returning false.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+=======
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+>>>>>>> refactorWaitingRoom
 </div>
 <p>Build set object (will be sent to server).
 Back-compatible checks.</p>
@@ -696,7 +712,11 @@ Back-compatible checks.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
+<<<<<<< HEAD
   <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+=======
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+>>>>>>> refactorWaitingRoom
 </div>
 <p>Keep track that the game will be done (done is asynchronous)
 to avoid calling <code>node.done</code> multiple times in the same stage.</p>
@@ -728,7 +748,11 @@ TODO: check if it safe to copy arguments by reference.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
+<<<<<<< HEAD
   <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+=======
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+>>>>>>> refactorWaitingRoom
 </div>
 <p>The arguments object must not be passed or leaked anywhere.
 Therefore, we recreate an args array here. We have a different
@@ -759,7 +783,11 @@ timeout in a different branch for optimization.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
+<<<<<<< HEAD
   <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+=======
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+>>>>>>> refactorWaitingRoom
 </div>
 <p>Send two setObjs.</p>
         </td>
