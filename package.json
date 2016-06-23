@@ -1,7 +1,7 @@
 {
     "name": "nodegame-client"
   , "description": "nodeGame client for the browser and node.js"
-  , "version": "1.0.0"
+  , "version": "2.0.0"
   , "homepage": "http://www.nodegame.org"
   , "keywords": ["game", "multiplayer", "experiment", "behavioral", "socket.io", "websockets"]
   , "author": "Stefano Balietti <futur.dorko@gmail.com>"
@@ -24,7 +24,7 @@
     }
   , "devDependencies": {
     "mocha": ">= 0.3.0",
-    "should": ">= 0.5.1"
+    "should": "8.4.0"
   }
   , "license": "MIT"
   , "engines": { "node": ">= 0.10.0" }
