@@ -1,12 +1,13 @@
 :qwq# nodegame-client change log
 
-## 1.5.0 (current)
+## 2.0.0-alpha (current)
 
 - Push Manager: Unresponsive clients are checked and tried to be pushed to the next stage. If no answer is received within a specified timeout, they are diconnected.
 - Matcher: matching algorithms available: roundrobin
 - `#node.get()` has now an option to specify a different target than DATA.
 - SERVERCOMMAND disconnect
  - `#node.set()` accepts a third optional parameter specifying the text of the message. This way it is possible to define on.data listeners on receiver.
+ - Stager: steps accept widget property.
  - The return value of the done callback function changed meaning. If it is strictly equal to FALSE, it stops the procedure. If it is equal to any other value different from undefined, then the return value replacesthe arguments of node.done to be sent to server. For retro-compatibility TRUE is not sent to server (for the moment).
  - `#Game.getNextStep() returns the next game stage (if no loops are involved).
  - `#Game.getPreviousStep() returns the past game stage (if no loops are involved).
