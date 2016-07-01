@@ -4401,21 +4401,10 @@ method call.</p>
       <span>The name of the parameter: min|max|exact</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">num</span>
+      <span class="dox_tag_name">property</span>
       <span class="dox_type">number</span>
-      <span>The threshold for numer of players</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb</span>
-      <span class="dox_type">function</span>
-      <span>The function being called when the threshold
-   is not met</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">recoverCb</span>
-      <span class="dox_type">function</span>
-      <span>Optional. The function being called
-   when the a threshold previously not met is recovered</span>
+      <span class="dox_type">array</span>
+      <span>The property to check</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -4429,9 +4418,7 @@ method call.</p>
     <span class="kd">function</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">recoverCb</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">property</span> <span class="o">=</span> <span class="p">[</span><span class="nx">num</span><span class="p">];</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="nx">property</span> <span class="o">=</span> <span class="p">[</span><span class="nx">property</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">property</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">property</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
