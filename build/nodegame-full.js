@@ -10207,7 +10207,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '1.0.0';
+    node.version = '2.0.0';
 
 })(window);
 
@@ -20390,7 +20390,7 @@ if (!Array.prototype.indexOf) {
                 if (widget.checkAnswers !== false &&
                     !node.game.timer.isTimeup()) {
 
-                    if (!isvalues.missValues ||
+                    if (values.missValues === true ||
                         values.choice === null ||
                         values.isCorrect === false) {
 
@@ -21174,20 +21174,14 @@ if (!Array.prototype.indexOf) {
      * Method is invoked by Game.gotoStep, and errors are thrown accordingly.
      *
      * @param {string} name The name of the parameter: min|max|exact
-     * @param {number} num The threshold for numer of players
-     * @param {function} cb The function being called when the threshold
-     *    is not met
-     * @param {function} recoverCb Optional. The function being called
-     *    when the a threshold previously not met is recovered
+     * @param {number|array} property The property to check
      *
      * @see Game.gotoStep
      */
     function checkMinMaxExactParams(name, property) {
         var num, cb, recoverCb;
 
-        if ('number' === typeof property) {
-            property = [num];
-        }
+        if ('number' === typeof property) property = [property];
 
         if (J.isArray(property)) {
             if (!property.length) {
