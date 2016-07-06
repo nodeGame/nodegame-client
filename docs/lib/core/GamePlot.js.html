@@ -1690,9 +1690,7 @@ loop or a repeat stage.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the step-rule function corresponding to a GameStage</p>
-
-<p>If gameStage.stage = 0, it returns a function that always returns FALSE.</p>
+  <div class="body"><p>Returns the step-rule function for a given game-stage</p>
 
 <p>Otherwise, the order of lookup is:</p>
 
@@ -1716,57 +1714,15 @@ loop or a repeat stage.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">function</span>
-      <span class="dox_type">null</span>
-      <span>The step-rule function, or NULL if
-  the step is not found, or the step-rule is not found or
-  in the wrong format.</span>
+      <span>The step-rule function or the default rule</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Stager.getDefaultStepRule
+</span>
     </div>
   </div>
 </div>
-
-
-<div class="highlight"><pre><code><span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">stepObj</span><span class="p">,</span> <span class="nx">rule</span><span class="p">;</span>
-
-    <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="p">};</span>
-    <span class="p">}</span>
-
-    <span class="nx">stepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
-
-    <span class="c1">// Step not found.</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stepObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-
-    <span class="c1">// Step rule.</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stepObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">rule</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">[</span><span class="nx">stepObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">];</span>
-        <span class="k">return</span> <span class="nx">rule</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stepObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">stepObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Stage rule.</span>
-    <span class="nx">stageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">rule</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">[</span><span class="nx">stepObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">];</span>
-        <span class="k">return</span> <span class="nx">rule</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">stepRule</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="c1">// Default rule.</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">.</span><span class="nx">getDefaultStepRule</span><span class="p">();</span>
-    <span class="c1">// TODO: Use first line once possible (serialization issue):</span>
-    <span class="c1">// 06.Jul. Just did.</span>
-    <span class="c1">// return this.stager.defaultStepRule;</span>
-<span class="p">};</span>
-</code></pre></div>
-
-
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStepRule</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
