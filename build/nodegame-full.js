@@ -13882,60 +13882,66 @@ if (!Array.prototype.indexOf) {
      *
      * Returns the step-rule function corresponding to a GameStage
      *
-     * If gameStage.stage = 0, it returns a function that always returns TRUE.
+     * If gameStage.stage = 0, it returns a function that always returns FALSE.
      *
      * Otherwise, the order of lookup is:
      *
-     * 1. `steprule` property of the step object
-     *
-     * 2. `steprule` property of the stage object
-     *
-     * 3. default step-rule of the Stager object
+     * 1. step object
+     * 2. stage object
+     * 3. default property
+     * 4. default step-rule of the Stager object
      *
      * @param {GameStage|string} gameStage The GameStage object,
-     *  or its string representation
+     *   or its string representation
      *
-     * @return {function|null} The step-rule function. NULL on error.
+     * @return {function|null} The step-rule function, or NULL if
+     *   the step is not found, or the step-rule is not found or
+     *   in the wrong format.
      */
+//     GamePlot.prototype.getStepRule = function(gameStage) {
+//         var stageObj, stepObj, rule;
+//
+//         gameStage = new GameStage(gameStage);
+//
+//         if (gameStage.stage === 0) {
+//             return function() { return false; };
+//         }
+//
+//         stepObj = this.getStep(gameStage);
+//
+//         // Step not found.
+//         if (!stepObj) return null;
+//
+//         // Step rule.
+//         if ('string' === typeof stepObj.stepRule) {
+//             rule = parent.stepRules[stepObj.stepRule];
+//             return rule || null;
+//         }
+//         if ('function' === typeof stepObj.stepRule) {
+//             return stepObj.stepRule;
+//         }
+//
+//         // Stage rule.
+//         stageObj = this.getStage(gameStage);
+//         if ('string' === typeof stageObj.stepRule) {
+//             rule = parent.stepRules[stepObj.stepRule];
+//             return rule || null;
+//         }
+//         else if ('function' === typeof stageObj.stepRule) {
+//             return stageObj.stepRule;
+//         }
+//
+//         // Default rule.
+//         return this.stager.getDefaultStepRule();
+//         // TODO: Use first line once possible (serialization issue):
+//         // 06.Jul. Just did.
+//         // return this.stager.defaultStepRule;
+//     };
     GamePlot.prototype.getStepRule = function(gameStage) {
-        var stageObj, stepObj, rule;
-
-        gameStage = new GameStage(gameStage);
-
-        if (gameStage.stage === 0) {
-            return function() { return false; };
-        }
-
-        stageObj = this.getStage(gameStage);
-        stepObj  = this.getStep(gameStage);
-
-        if (!stageObj || !stepObj) {
-            // TODO is this an error?
-            return null;
-        }
-
-        // return a step-defined rule
-        if ('string' === typeof stepObj.stepRule) {
-            rule = parent.stepRules[stepObj.stepRule];
-        }
-        else if ('function' === typeof stepObj.stepRule) {
-            rule = stepObj.stepRule;
-        }
-        if ('function' === typeof rule) return rule;
-
-        // return a stage-defined rule
-        if ('string' === typeof stageObj.stepRule) {
-            rule = parent.stepRules[stageObj.stepRule];
-        }
-        else if ('function' === typeof stageObj.stepRule) {
-            rule = stageObj.stepRule;
-        }
-        if ('function' === typeof rule) return rule;
-
-        // Default rule.
-        // TODO: Use first line once possible (serialization issue):
-        //return this.stager.getDefaultStepRule();
-        return this.stager.defaultStepRule;
+        var rule;
+        rule = this.getProperty(gameStage, 'stepRule');
+        if ('string' === typeof rule) rule = parent.stepRules[rule];
+        return rule || this.stager.getDefaultStepRule();
     };
 
     /**
@@ -14040,13 +14046,9 @@ if (!Array.prototype.indexOf) {
      * Looks for definitions of a property in:
      *
      * 1. the temporary cache, if game stage equals current game stage
-     *
      * 2. the game plot cache
-     *
      * 3. the step object of the given gameStage,
-     *
      * 4. the stage object of the given gameStage,
-     *
      * 5. the defaults, defined in the Stager.
      *
      * @param {GameStage|string} gameStage The GameStage object,
@@ -15872,19 +15874,19 @@ if (!Array.prototype.indexOf) {
          */
         this.nextFunctions = {};
 
-        /**
-         * #### Stager.defaultStepRule
-         *
-         * Default step-rule function
-         *
-         * This function decides whether it is possible to proceed to
-         * the next step/stage. If a step/stage object defines a
-         * `steprule` property, then that function is used instead.
-         *
-         * @see Stager.getDefaultStepRule
-         * @see GamePlot.getStepRule
-         */
-        this.setDefaultStepRule();
+//         /**
+//          * #### Stager.defaultStepRule
+//          *
+//          * Default step-rule function
+//          *
+//          * This function decides whether it is possible to proceed to
+//          * the next step/stage. If a step/stage object defines a
+//          * `steprule` property, then that function is used instead.
+//          *
+//          * @see Stager.getDefaultStepRule
+//          * @see GamePlot.getStepRule
+//          */
+//         this.setDefaultStepRule();
 
         /**
          * #### Stager.defaultGlobals
@@ -16047,7 +16049,7 @@ if (!Array.prototype.indexOf) {
         this.sequence = [];
         this.generalNextFunction = null;
         this.nextFunctions = {};
-        this.setDefaultStepRule();
+        // this.setDefaultStepRule();
         this.defaultGlobals = {};
         this.defaultProperties = {};
         this.onInit = null;
@@ -19908,37 +19910,36 @@ if (!Array.prototype.indexOf) {
      *
      * Checks if the next step can be executed
      *
-     * Checks the number of players required.
-     * If the game has been initialized and is not in GAME_OVER, then
-     * evaluates the stepRule function for the current step and returns
-     * its result.
+     * The game can step forward if:
+     *
+     *   - There is the "right" number of players.
+     *   - The game has been initialized, and is not in GAME_OVER.
+     *   - The stepRule function for current step and returns TRUE.
      *
      * @param {number} stageLevel Optional. If set, it is used instead
      *   of `Game.getStageLevel()`
      *
-     * @return {boolean} TRUE, if stepping is allowed;
-     *   FALSE, if stepping is not allowed
+     * @return {boolean} TRUE, if stepping is allowed.
      *
      * @see Game.step
      * @see Game.checkPlistSize
      * @see stepRules
      */
     Game.prototype.shouldStep = function(stageLevel) {
-        var stepRule;
+        var stepRule, curStep;
 
-        if (!this.checkPlistSize() || !this.isSteppable()) {
-            return false;
-        }
+        if (!this.checkPlistSize() || !this.isSteppable()) return false;
 
-        stepRule = this.plot.getStepRule(this.getCurrentGameStage());
+        curStep = this.getCurrentGameStage();
+        stepRule = this.plot.getStepRule(curStep);
 
         if ('function' !== typeof stepRule) {
+            debugger
             throw new TypeError('Game.shouldStep: stepRule is not a function.');
         }
 
         stageLevel = stageLevel || this.getStageLevel();
-
-        return stepRule(this.getCurrentGameStage(), stageLevel, this.pl, this);
+        return stepRule(curStep, stageLevel, this.pl, this);
     };
 
     /**
@@ -44004,7 +44005,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitingRoom
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Display the number of connected / required players to start a game
@@ -44439,6 +44440,8 @@ if (!Array.prototype.indexOf) {
                     'Unfortunately, there are not enough participants in ' +
                     'your group to start the experiment.<br>';
 
+                if (that.onTimeout) that.onTimeout(msg.data);
+
                 that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
             }
 
@@ -44463,7 +44466,6 @@ if (!Array.prototype.indexOf) {
             msg = msg || {};
             console.log('TIME IS UP!');
             that.stopTimer();
-            if (this.onTimeout) this.onTimeout(msg.data);
         });
 
 

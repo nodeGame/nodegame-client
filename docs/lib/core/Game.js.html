@@ -1600,10 +1600,13 @@ In this case the PLAYING event got lost.</p>
   </div>
   <div class="body"><p>Checks if the next step can be executed</p>
 
-<p>Checks the number of players required.
-If the game has been initialized and is not in GAME_OVER, then
-evaluates the stepRule function for the current step and returns
-its result.</p>
+<p>The game can step forward if:</p>
+
+<ul>
+<li>There is the "right" number of players.
+<ul><li>The game has been initialized, and is not in GAME_OVER.</li>
+<li>The stepRule function for current step and returns TRUE.</li></ul></li>
+</ul>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1617,8 +1620,7 @@ its result.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if stepping is allowed;
-  FALSE, if stepping is not allowed</span>
+      <span>TRUE, if stepping is allowed.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1638,21 +1640,20 @@ its result.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shouldStep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stageLevel</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">stepRule</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stepRule</span><span class="p">,</span> <span class="nx">curStep</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">checkPlistSize</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isSteppable</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">checkPlistSize</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isSteppable</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+        <span class="nx">curStep</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+        <span class="nx">stepRule</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStepRule</span><span class="p">(</span><span class="nx">curStep</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stepRule</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kr">debugger</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.shouldStep: stepRule is not a function.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">stageLevel</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
-
-        <span class="k">return</span> <span class="nx">stepRule</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">(),</span> <span class="nx">stageLevel</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">stepRule</span><span class="p">(</span><span class="nx">curStep</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
     <span class="p">};</span>
 
 
