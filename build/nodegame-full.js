@@ -13880,9 +13880,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GamePlot.getStepRule
      *
-     * Returns the step-rule function corresponding to a GameStage
-     *
-     * If gameStage.stage = 0, it returns a function that always returns FALSE.
+     * Returns the step-rule function for a given game-stage
      *
      * Otherwise, the order of lookup is:
      *
@@ -13894,49 +13892,10 @@ if (!Array.prototype.indexOf) {
      * @param {GameStage|string} gameStage The GameStage object,
      *   or its string representation
      *
-     * @return {function|null} The step-rule function, or NULL if
-     *   the step is not found, or the step-rule is not found or
-     *   in the wrong format.
+     * @return {function} The step-rule function or the default rule
+     *
+     * @see Stager.getDefaultStepRule
      */
-//     GamePlot.prototype.getStepRule = function(gameStage) {
-//         var stageObj, stepObj, rule;
-//
-//         gameStage = new GameStage(gameStage);
-//
-//         if (gameStage.stage === 0) {
-//             return function() { return false; };
-//         }
-//
-//         stepObj = this.getStep(gameStage);
-//
-//         // Step not found.
-//         if (!stepObj) return null;
-//
-//         // Step rule.
-//         if ('string' === typeof stepObj.stepRule) {
-//             rule = parent.stepRules[stepObj.stepRule];
-//             return rule || null;
-//         }
-//         if ('function' === typeof stepObj.stepRule) {
-//             return stepObj.stepRule;
-//         }
-//
-//         // Stage rule.
-//         stageObj = this.getStage(gameStage);
-//         if ('string' === typeof stageObj.stepRule) {
-//             rule = parent.stepRules[stepObj.stepRule];
-//             return rule || null;
-//         }
-//         else if ('function' === typeof stageObj.stepRule) {
-//             return stageObj.stepRule;
-//         }
-//
-//         // Default rule.
-//         return this.stager.getDefaultStepRule();
-//         // TODO: Use first line once possible (serialization issue):
-//         // 06.Jul. Just did.
-//         // return this.stager.defaultStepRule;
-//     };
     GamePlot.prototype.getStepRule = function(gameStage) {
         var rule;
         rule = this.getProperty(gameStage, 'stepRule');
