@@ -3416,7 +3416,8 @@ if (!Array.prototype.indexOf) {
      *
      * Registers a callback to be executed when the page acquires focus
      *
-     * @param {function} cb Executed if page acquires focus
+     * @param {function|null} cb Callback executed if page acquires focus,
+     *   or NULL, to delete an existing callback.
      * @param {object|function} ctx Optional. Context of execution for cb
      *
      * @see onFocusChange
@@ -3443,7 +3444,8 @@ if (!Array.prototype.indexOf) {
      *
      * Registers a callback to be executed when the page loses focus
      *
-     * @param {function} cb Executed if page loses focus
+     * @param {function} cb Callback executed if page loses focus,
+     *   or NULL, to delete an existing callback.
      * @param {object|function} ctx Optional. Context of execution for cb
      *
      * @see onFocusChange
@@ -3477,61 +3479,163 @@ if (!Array.prototype.indexOf) {
      *   and that string.
      *
      * @param {mixed} titles New title to blink
-     * @param {object} options Optional. Configuration object. Default:
-     *  {
-     *    stopOnFocus: false, // Stop blinking if tab is switched to
-     *    startOnBlur: false, // Start blinking if switching away from tab
-     *    period: 1000 * titles.length, // How much time to complete a cycle
-     *  }
+     * @param {object} options Optional. Configuration object.
+     *   Accepted values and default in parenthesis:
+     *
+     *     - stopOnFocus (false): Stop blinking if user switched to tab
+     *     - stopOnClick (false): Stop blinking if user clicks on the
+     *         specified element
+     *     - finalTitle (document.title): Title to set after blinking is done
+     *     - repeatFor (undefined): Show each element in titles at most
+     *         N times -- might be stopped earlier by other events.
+     *     - startOnBlur(false): Start blinking if user switches
+     *          away from tab
+     *     - period (1000) How much time between two blinking texts in the title
+     *
+     * @return {function|null} A function to clear the blinking of texts,
+     *    or NULL, if the interval was not created yet (e.g. with startOnBlur
+     *    option), or just destroyed.
      */
     DOM.blinkTitle = (function(id) {
+        var clearBlinkInterval, finalTitle, elem;
+        clearBlinkInterval = function(opts) {
+            clearInterval(id);
+            id = null;
+            if (elem) {
+                elem.removeEventListener('click', clearBlinkInterval);
+                elem = null;
+            }
+            if (finalTitle) {
+                document.title = finalTitle;
+                finalTitle = null;
+            }
+        };
         return function(titles, options) {
             var period, where, rotation;
-            where = 'JSUS.blinkTitle: ';
+            var rotationId, nRepeats;
 
+            if (null !== id) clearBlinkInterval();
+            if ('undefined' === typeof titles) return null;
+
+            where = 'JSUS.blinkTitle: ';
             options = options || {};
 
+            // Option finalTitle.
+            if ('undefined' === typeof options.finalTitle) {
+                finalTitle = document.title;
+            }
+            else if ('string' === typeof options.finalTitle) {
+                finalTitle = options.finalTitle;
+            }
+            else {
+                throw new TypeError(where + 'options.finalTitle must be ' +
+                                    'string or undefined. Found: ' +
+                                    options.finalTitle);
+            }
+
+            // Option repeatFor.
+            if ('undefined' !== typeof options.repeatFor) {
+                nRepeats = JSUS.isInt(options.repeatFor, 0);
+                if (false === nRepeats) {
+                    throw new TypeError(where + 'options.repeatFor must be ' +
+                                        'a positive integer. Found: ' +
+                                        options.repeatFor);
+                }
+            }
+
+            // Option stopOnFocus.
             if (options.stopOnFocus) {
                 JSUS.onFocusIn(function() {
-                    JSUS.blinkTitle();
+                    clearBlinkInterval();
+                    onFocusChange(null, null);
                 });
             }
+
+            // Option stopOnClick.
+            if ('undefined' !== typeof options.stopOnClick) {
+                if ('object' !== typeof options.stopOnClick ||
+                    !options.stopOnClick.addEventListener) {
+
+                    throw new TypeError(where + 'options.stopOnClick must be ' +
+                                        'an HTML element with method ' +
+                                        'addEventListener. Found: ' +
+                                        options.stopOnClick);
+                }
+                elem = options.stopOnClick;
+                elem.addEventListener('click', clearBlinkInterval);
+            }
+
+            // Option startOnBlur.
             if (options.startOnBlur) {
                 options.startOnBlur = null;
                 JSUS.onFocusOut(function() {
                     JSUS.blinkTitle(titles, options);
                 });
-                return;
+                return null;
             }
-            if (null !== id) {
-                clearInterval(id);
-                id = null;
+
+            // Prepare the rotation.
+            if ('string' === typeof titles) {
+                titles = [titles, '!!!'];
             }
-            if ('undefined' !== typeof titles) {
-                if ('string' === typeof titles) {
-                    titles = [titles, '!!!'];
+            else if (!JSUS.isArray(titles)) {
+                throw new TypeError(where + 'titles must be string, ' +
+                                    'array of strings or undefined.');
+            }
+            rotationId = 0;
+            period = options.period || 1000;
+            // Function to be executed every period.
+            rotation = function() {
+                changeTitle(titles[rotationId]);
+                rotationId = (rotationId+1) % titles.length;
+                // Control the number of times it should be cycled through.
+                if ('number' === typeof nRepeats) {
+                    if (rotationId === 0) {
+                        nRepeats--;
+                        if (nRepeats === 0) clearBlinkInterval();
+                    }
                 }
-                else if (!JSUS.isArray(titles)) {
-                    throw new TypeError(where + 'titles must be string, ' +
-                                        'array of strings or undefined.');
-                }
-                period = options.period || 1000 * titles.length;
-                // Function to be executed every period.
-                rotation = function() {
-                    // For every title wait some time, then change title.
-                    titles.forEach(function(title,i) {
-                        setTimeout(function() {
-                            changeTitle(title);
-                        }, i * period/titles.length);
-                    });
-                };
-                // Perform first rotation right now.
-                rotation();
-                id = setInterval(rotation,period);
-            }
+            };
+            // Perform first rotation right now.
+            rotation();
+            id = setInterval(rotation, period);
+
+            // Return clear function.
+            return clearBlinkInterval;
         };
     })(null);
 
+    /**
+     * ### DOM.cookieSupport
+     *
+     * Tests for cookie support
+     *
+     * @return {boolean|null} The type of support for cookies. Values:
+     *
+     *   - null: no cookies
+     *   - false: only session cookies
+     *   - true: session cookies and persistent cookies (although
+     *       the browser might clear them on exit)
+     *
+     * Kudos: http://stackoverflow.com/questions/2167310/
+     *        how-to-show-a-message-only-if-cookies-are-disabled-in-browser
+     */
+    DOM.cookieSupport = function() {
+        var c, persist;
+        persist = true;
+        do {
+            c = 'gCStest=' + Math.floor(Math.random()*100000000);
+            document.cookie = persist ? c +
+                ';expires=Tue, 01-Jan-2030 00:00:00 GMT' : c;
+
+            if (document.cookie.indexOf(c) !== -1) {
+                document.cookie= c + ';expires=Sat, 01-Jan-2000 00:00:00 GMT';
+                return persist;
+            }
+        } while (!(persist = !persist));
+
+        return null;
+    };
 
     // ## Helper methods
 
@@ -3542,8 +3646,10 @@ if (!Array.prototype.indexOf) {
      *
      * Expects only one callback, either inCb, or outCb.
      *
-     * @param {function} inCb Optional. Executed if page acquires focus
-     * @param {function} outCb Optional. Executed if page loses focus
+     * @param {function|null} inCb Optional. Executed if page acquires focus,
+     *   or NULL, to delete an existing callback.
+     * @param {function|null} outCb Optional. Executed if page loses focus,
+     *   or NULL, to delete an existing callback.
      *
      * Kudos: http://stackoverflow.com/questions/1060008/
      *   is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
@@ -3626,11 +3732,12 @@ if (!Array.prototype.indexOf) {
      * @param {string} title New title of the page
      */
     changeTitle = function(title) {
-        if ("string" === typeof(title)) {
+        if ('string' === typeof title) {
             document.title = title;
         }
         else {
-            throw new TypeError("JSUS.changeTitle: title must be string.");
+            throw new TypeError('JSUS.changeTitle: title must be string. ' +
+                                'Found: ' + title);
         }
     };
 
@@ -24563,13 +24670,22 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} channel Optional. The channel to connect to
      * @param {object} socketOptions Optional. A configuration object for
-     *   the socket connect method.
+     *   the socket connect method. If channel is omitted, then socketOptions
+     *   is the first parameter.
      *
      * @emit SOCKET_CONNECT
      * @emit PLAYER_CREATED
      * @emit NODEGAME_READY
      */
-    NGC.prototype.connect = function(channel, socketOptions) {
+    NGC.prototype.connect = function() {
+        var channel, socketOptions;
+        if (arguments.length >= 2) {
+            channel = arguments[0];
+            socketOptions = arguments[1];
+        }
+        else if (arguments.length === 1) {
+            socketOptions = arguments[0];
+        }
         // Browser adjustements.
         if ('undefined' !== typeof window) {
             // If no channel is defined use the pathname, and assume
@@ -28007,6 +28123,8 @@ if (!Array.prototype.indexOf) {
      * @see GameWindow.setFrame
      * @see GameWindow.clearFrame
      * @see GameWindow.destroyFrame
+     *
+     * @emit FRAME_GENERATED
      */
     GameWindow.prototype.generateFrame = function(root, frameName, force) {
         var iframe;
@@ -28045,6 +28163,9 @@ if (!Array.prototype.indexOf) {
         if (this.frameElement) {
             adaptFrame2HeaderPosition(this);
         }
+
+        // Emit event.
+        node.events.ng.emit('FRAME_GENERATED', iframe);
 
         return iframe;
     };
@@ -28288,6 +28409,10 @@ if (!Array.prototype.indexOf) {
         this.headerElement = header;
         this.headerName = headerName;
         this.headerRoot = root;
+
+
+        // Emit event.
+        node.events.ng.emit('HEADER_GENERATED', header);
 
         return this.headerElement;
     };
@@ -41027,6 +41152,9 @@ if (!Array.prototype.indexOf) {
  *
  * Checks a list of requirements and displays the results
  *
+ * TODO: see if we need to reset the state between two
+ * consecutive calls to checkRequirements (results array).
+ *
  * www.nodegame.org
  */
 (function(node) {
@@ -41039,7 +41167,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Requirements.version = '0.6.0';
+    Requirements.version = '0.7.0';
     Requirements.description = 'Checks a set of requirements and display the ' +
         'results';
 
@@ -41358,10 +41486,10 @@ if (!Array.prototype.indexOf) {
                 resultCb(this, cbName, i);
             }
             catch(e) {
+                this.hasFailed = true;
                 errMsg = extractErrorMsg(e);
                 this.updateStillChecking(-1);
-
-                errors.push('An exception occurred in requirement n.' +
+                errors.push('An error occurred in requirement n.' +
                             cbName + ': ' + errMsg);
             }
         }
@@ -41595,7 +41723,7 @@ if (!Array.prototype.indexOf) {
             // Configure all requirements.
             that.init(conf);
             // Start a checking immediately if requested.
-            if (conf.doChecking) that.checkRequirements();
+            if (conf.doChecking !== false) that.checkRequirements();
 
             return conf;
         });
@@ -41605,7 +41733,7 @@ if (!Array.prototype.indexOf) {
         node.deregisterSetup('requirements');
     };
 
-    // ## Helper methods
+    // ## Helper methods.
 
     function resultCb(that, name, i) {
         var req, update, res;
@@ -44481,8 +44609,34 @@ if (!Array.prototype.indexOf) {
     };
 
     WaitingRoom.prototype.alertPlayer = function() {
+        var clearBlink, onFrame;
+
         JSUS.playSound('/sounds/doorbell.ogg');
-        JSUS.blinkTitle('GAME STARTS!', {stopOnFocus: true});
+        // If document.hasFocus() returns TRUE, then just one repeat is enough.
+        if (document.hasFocus && document.hasFocus()) {
+            JSUS.blinkTitle('GAME STARTS!', { repeatFor: 1 });
+        }
+        // Otherwise we repeat blinking until an event that shows that the
+        // user is active on the page happens, e.g. focus and click. However,
+        // the iframe is not created yet, and even later. if the user clicks it
+        // it won't be detected in the main window, so we need to handle it.
+        else {
+            clearBlink = JSUS.blinkTitle('GAME STARTS!', {
+                stopOnFocus: true,
+                stopOnClick: window
+            });
+            onFrame = function() {
+                var frame;
+                clearBlink();
+                frame = W.getFrame();
+                if (frame) {
+                    frame.removeEventListener('mouseover', onFrame, false);
+                }
+            };
+            node.events.ng.once('FRAME_GENERATED', function(frame) {
+                frame.addEventListener('mouseover', onFrame, false);
+            });
+        }
     };
 
     WaitingRoom.prototype.destroy = function() {

@@ -95,7 +95,8 @@ parameters found in <code>location.search(1)</code> will be passed.</p></li>
       <span class="dox_tag_name">socketOptions</span>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object for
-  the socket connect method.</span>
+  the socket connect method. If channel is omitted, then socketOptions
+  is the first parameter.</span>
     </div>
     <div class="dox_tag_title">emit</div>
     <div class="dox_tag_detail">
@@ -113,7 +114,15 @@ parameters found in <code>location.search(1)</code> will be passed.</p></li>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">NGC</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">connect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">channel</span><span class="p">,</span> <span class="nx">socketOptions</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">channel</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="nx">socketOptions</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">socketOptions</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">}</span>
 
 </pre></div>
         </td>
