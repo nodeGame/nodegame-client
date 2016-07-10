@@ -273,7 +273,8 @@ property and also adds a timestamp and session field.</p>
 <p>if (node.nodename !== nodename) o.session = node.nodename;</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nb">Date</span> <span class="o">?</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">)</span> <span class="nx">o</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span> <span class="o">?</span>
+            <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
     <span class="p">};</span>
 
