@@ -1,13 +1,9 @@
 /**
  * # incoming
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for incoming messages
- *
- * TODO: PRECONNECT events are not handled, just emitted.
- * Maybe some default support should be given, or some
- * default handlers provided.
  */
 (function(exports, parent) {
 
