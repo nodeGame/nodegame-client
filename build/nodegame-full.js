@@ -21210,7 +21210,13 @@ if (!Array.prototype.indexOf) {
         var prop;
 
         // Set willBeDone. TODO: this does not lock screen / stop timer.
-        if (options.willBeDone) game.willBeDone = true;
+        if (options.willBeDone) {
+            // Temporarily remove the done callback.
+            game.plot.tmpCache('done', null);
+            game.node.once('PLAYING', function() {
+                game.node.done();
+            });
+        }
 
         // Temporarily modify plot properties.
         if (options.plot) {
@@ -25695,14 +25701,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # incoming
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for incoming messages
- *
- * TODO: PRECONNECT events are not handled, just emitted.
- * Maybe some default support should be given, or some
- * default handlers provided.
  */
 (function(exports, parent) {
 
@@ -34040,6 +34042,18 @@ if (!Array.prototype.indexOf) {
             that.draw(f, updateControls);
         };
 
+        /**
+         * ### ChoiceTable.timeFrom
+         *
+         * Name of the event to measure time from for each change
+         *
+         * Default event is a new step is loaded (user can interact with
+         * the screen). Set it to FALSE, to have absolute time.
+         *
+         * @see node.timer.getTimeSince
+         */
+        this.timeFrom = 'step';
+
         // ### ChernoffFaces.features
         // The object containing all the features to draw Chernoff faces
         this.features = null;
@@ -34254,12 +34268,21 @@ if (!Array.prototype.indexOf) {
      * @see ChernoffFaces.features
      */
     ChernoffFaces.prototype.draw = function(features, updateControls) {
+        var time;
         if ('object' !== typeof features) {
             throw new TypeError('ChernoffFaces.draw: features must be object.');
         }
         if (this.options.trackChanges) {
+            // Relative time.
+            if ('string' === typeof this.timeFrom) {
+                time = node.timer.getTimeSince(this.timeFrom);
+            }
+            // Absolute time.
+            else {
+                time = Date.now ? Date.now() : new Date().getTime();
+            }
             this.changes.push({
-                time: new Date().getTime(),
+                time: time,
                 change: features
             });
         };
@@ -34589,12 +34612,9 @@ if (!Array.prototype.indexOf) {
 
 
     /**
+     * FaceVector.defaults
      *
-     * A description of a Chernoff Face.
-     *
-     * This class packages the 11-dimensional vector of numbers from 0 through
-     * 1 that completely describe a Chernoff face.
-     *
+     * Numerical description of all the components of a standard Chernoff Face
      */
     FaceVector.defaults = {
         // Head
@@ -37300,6 +37320,9 @@ if (!Array.prototype.indexOf) {
             nClicks: this.numberOfClicks
         };
         opts = opts || {};
+        if (opts.processChoice) {
+            obj.choice = opts.processChoice.call(this, obj.choice);
+        }
         if (this.shuffleChoices) {
             obj.order = this.order;
         }
@@ -37311,7 +37334,7 @@ if (!Array.prototype.indexOf) {
         }
         if (null !== this.correctChoice || null !== this.requiredChoice) {
             obj.isCorrect = this.verifyChoice(opts.markAttempt);
-            obj.attemps = this.attemps;
+            obj.attempts = this.attempts;
             if (!obj.isCorrect && opts.highlight) this.highlight();
         }
         if (this.textarea) obj.freetext = this.textarea.value;
@@ -42000,6 +42023,13 @@ if (!Array.prototype.indexOf) {
     };
 
     SVOGauge.prototype.getValues = function(opts) {
+        opts = opts || {};
+        // Transform choice in numerical values.
+        if ('undefined' === typeof opts.processChoice) {
+            opts.processChoice = function(choice) {
+                return this.choices[choice];
+            };
+        }
         return this.gauge.getValues(opts);
     };
 
@@ -42136,6 +42166,7 @@ if (!Array.prototype.indexOf) {
 
         renderer = options.renderer || function(td, choice, idx) {
             td.innerHTML = choice[0] + '<hr/>' + choice[1];
+            // return (choice[0] + '_' + choice[1]);
         };
 
         if (options.left) {

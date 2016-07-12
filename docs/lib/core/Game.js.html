@@ -4329,8 +4329,7 @@ method call.</p>
 <p>Set willBeDone. TODO: this does not lock screen / stop timer.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">willBeDone</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -4339,6 +4338,36 @@ method call.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+</div>
+<p>Temporarily remove the done callback.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+</div>
+<p>Call node.done() immediately after PLAYING is emitted.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">game</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;PLAYING&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">game</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">done</span><span class="p">();</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
 </div>
 <p>Temporarily modify plot properties.</p>
         </td>
@@ -4358,7 +4387,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
 </div>
 <p>Call the cb with options as param, if found.</p>
         </td>
