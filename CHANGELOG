@@ -20,6 +20,7 @@
  - `#node.timer.randomDone()` and `#node.timer.randomExec accepts context parameter.
  - Fixed bug for default context of `#node.env()` in Node.js.
  - Fixed bug with node.done with more than 2 parameters.
+ - Removed prepublish script.
 
 ## 1.0.0
 
