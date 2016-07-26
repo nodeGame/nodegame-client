@@ -1,5 +1,8 @@
 :qwq# nodegame-client change log
 
+## 2.0.2
+- Cleanup debugger statements.
+
 ## 2.0.1
 - `node.connect()` parameters are interpreted correctly if channel is omitted.
 
