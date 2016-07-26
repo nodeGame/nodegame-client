@@ -1,6 +1,9 @@
 :qwq# nodegame-client change log
 
-## 2.0.0-alpha (current)
+## 2.0.1
+- `node.connect()` parameters are interpreted correctly if channel is omitted.
+
+## 2.0.0
 
 - Push Manager: Unresponsive clients are checked and tried to be pushed to the next stage. If no answer is received within a specified timeout, they are diconnected.
 - Matcher: matching algorithms available: roundrobin
