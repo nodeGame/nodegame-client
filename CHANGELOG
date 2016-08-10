@@ -1,5 +1,8 @@
 :qwq# nodegame-client change log
 
+## 2.0.3
+- Fixed wrong reference to node.emit in Socket.js.
+
 ## 2.0.2
 - Cleanup debugger statements.
 
