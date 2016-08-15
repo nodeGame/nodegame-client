@@ -1,5 +1,8 @@
 :qwq# nodegame-client change log
 
+## 2.0.4
+- Socket.js start session does not set uriChannel if server returns undefined channel (for default channel).
+
 ## 2.0.3
 - Fixed wrong reference to node.emit in Socket.js.
 
