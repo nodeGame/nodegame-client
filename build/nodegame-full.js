@@ -10403,7 +10403,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '2.0.2';
+    node.version = '2.0.3';
 
 })(window);
 
@@ -18627,7 +18627,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Socket
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Wrapper class for the actual socket to send messages
@@ -18951,7 +18951,7 @@ if (!Array.prototype.indexOf) {
     Socket.prototype.onDisconnect = function() {
         this.connected = false;
         this.connecting = false;
-        node.emit('SOCKET_DISCONNECT');
+        this.node.emit('SOCKET_DISCONNECT');
         // Save the current stage of the game
         //this.node.session.store();
 
@@ -19191,7 +19191,10 @@ if (!Array.prototype.indexOf) {
     Socket.prototype.startSession = function(msg) {
         this.session = msg.session;
         this.node.createPlayer(msg.data);
-        if (this.node.window) this.node.window.setUriChannel(msg.text);
+        // msg.text can be undefined if channel is the "mainChannel."
+        if (this.node.window && msg.text) {
+            this.node.window.setUriChannel(msg.text);
+        }
     };
 
     /**
@@ -41571,6 +41574,13 @@ if (!Array.prototype.indexOf) {
         this.results = [];
 
         /**
+         * ### Requirements.completed
+         *
+         * Maps all tests that have been completed already to avoid duplication
+         */
+        this.completed = {};
+
+        /**
          * ### Requirements.sayResult
          *
          * If true, the final result of the tests will be sent to the server
@@ -42042,10 +42052,13 @@ if (!Array.prototype.indexOf) {
         var req, update, res;
 
         update = function(success, errors, data) {
-            that.updateStillChecking(-1);
-            if (!success) {
-                that.hasFailed = true;
+            if (that.completed[name]) {
+                throw new Error('Requirements.checkRequirements: test ' +
+                                'already completed: ' + name);
             }
+            that.completed[name] = true;
+            that.updateStillChecking(-1);
+            if (!success) that.hasFailed = true;
 
             if (errors) {
                 if (!J.isArray(errors)) {

@@ -137,7 +137,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Wrapper class for the actual socket to send messages</p>
@@ -1551,7 +1551,21 @@ stores the session ids in the session object.</p>
     <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setUriChannel</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+</div>
+<p>msg.text can be undefined if channel is the "mainChannel."</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">&amp;&amp;</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setUriChannel</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
 
@@ -1644,7 +1658,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Emit out event, if required.</p>
         </td>
@@ -1666,7 +1680,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Experimental code.</p>
         </td>
@@ -1681,7 +1695,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>End experimental code.</p>
         </td>
@@ -1697,7 +1711,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Helper methods.</p>
         </td>
