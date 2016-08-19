@@ -134,7 +134,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#97;&#105;&#108;&#116;&#x6F;:&#115;&#46;&#98;&#x61;&#108;&#105;&#101;&#x74;t&#105;&#x40;&#110;&#x65;&#x75;&#46;&#x65;&#100;&#117;">&#115;&#46;&#98;&#x61;&#108;&#105;&#101;&#x74;t&#105;&#x40;&#110;&#x65;&#x75;&#46;&#x65;&#100;&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#x69;&#x6C;t&#x6F;:&#115;&#x2E;&#98;&#97;&#108;&#x69;&#x65;&#x74;&#116;&#x69;&#x40;&#x6E;&#x65;&#117;&#46;&#101;&#100;&#x75;">&#115;&#x2E;&#98;&#97;&#108;&#x69;&#x65;&#x74;&#116;&#x69;&#x40;&#x6E;&#x65;&#117;&#46;&#101;&#100;&#x75;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -795,12 +795,21 @@ match the numbers in the <code>matches</code> array.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.generateMatches: alg must be string.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">alg</span> <span class="o">=</span> <span class="nx">alg</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">!==</span> <span class="s1">&#39;roundrobin&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">alg</span> <span class="o">!==</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;roundrobin&#39;</span> <span class="o">||</span> <span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">replace</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">matches</span> <span class="o">=</span> <span class="nx">randomPairs</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">matches</span> <span class="o">=</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.generateMatches: unknown algorithm: &#39;</span> <span class="o">+</span>
                             <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">matches</span> <span class="o">=</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">setMatches</span><span class="p">(</span><span class="nx">matches</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
     <span class="p">};</span>
@@ -1611,6 +1620,7 @@ they are considered as already an id.</p>
 <li>bye: identifier for dummy competitor. Default: -1.</li>
 <li>skypeBye: flag whether players matched with the dummy
    competitor should be added or not. Default: true.</li>
+<li>rounds: number of rounds to repeat matching. Default</li>
 </ul></span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -1721,6 +1731,166 @@ they are considered as already an id.</p>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
     <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+</div>
+<p>TODO: support limited number of rounds.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="kd">function</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">ps</span><span class="p">,</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">bye</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">roundsLimit</span><span class="p">,</span> <span class="nx">odd</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">skipBye</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ps</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: n must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">odd</span> <span class="o">=</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="nx">roundsLimit</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="c1">// (odd &amp;&amp; !skipBye) ? n+1 : n;</span>
+
+    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: options.rounds &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;must be a positive number or undefined. &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="nx">roundsLimit</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;options.rounds cannot be &gt; than &#39;</span> <span class="o">+</span>
+                            <span class="nx">roundsLimit</span> <span class="o">+</span> <span class="s1">&#39;. Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">roundsLimit</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">roundsLimit</span><span class="p">);</span>
+
+    <span class="nx">bye</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="nx">skipBye</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Make sure we have even numbers.</span>
+        <span class="nx">ps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">bye</span><span class="p">);</span>
+        <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">roundsLimit</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Shuffle list of ids for random.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ps</span><span class="p">);</span>
+        <span class="c1">// Create a new array for round i.</span>
+        <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span> <span class="o">&amp;&amp;</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// Insert match.</span>
+                <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">// Permutate for next round.</span>
+        <span class="nx">ps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+</div>
+<p>TODO: random with replacement.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="cm">/**</span>
+<span class="cm"> * ### pairMatcher</span>
+<span class="cm"> *</span>
+<span class="cm"> * Creates tournament schedules for different algorithms</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {string} alg The name of the algorithm</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param {number|array} n The number of participants (&gt;1) or</span>
+<span class="cm"> *   an array containing the ids of the participants</span>
+<span class="cm"> * @param {object} options Optional. Configuration object</span>
+<span class="cm"> *   contains the following options:</span>
+<span class="cm"> *</span>
+<span class="cm"> *   - rounds: the number</span>
+<span class="cm"> *</span>
+<span class="cm"> * @return {array} matches The matches according to the algorithm</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">pairMatcherWithReplacement</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcherWithReplacement: n must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">m</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
 
 </pre></div>
