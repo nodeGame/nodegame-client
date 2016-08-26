@@ -3835,7 +3835,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # OBJ
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate JavaScript objects
@@ -4772,12 +4772,12 @@ if (!Array.prototype.indexOf) {
     /**
      * ## OBJ.split
      *
-     * Splits an object along a specified dimension, and returns
-     * all the copies in an array.
+     * Splits an object along a specified dimension
+     *
+     * All fragments are returned in an array (as copies).
      *
      * It creates as many new objects as the number of properties
-     * contained in the specified dimension. The object are identical,
-     * but for the given dimension, which was split. E.g.
+     * contained in the specified dimension. E.g.
      *
      * ```javascript
      *  var o = { a: 1,
@@ -4802,40 +4802,108 @@ if (!Array.prototype.indexOf) {
      * ```
      *
      * @param {object} o The object to split
-     * @param {sting} key The name of the property to split
+     * @param {string} key The name of the property to split
+     * @param {number} l Optional. The recursion level. Default: 1.
+     * @param {boolean} positionAsKey Optional. If TRUE, the position
+     *   of an element in the array to split will be used as key.
      *
-     * @return {object} A copy of the object with split values
+     * @return {array} A list of copies of the object with split values
      */
-    OBJ.split = function(o, key) {
-        var out, model, splitValue;
-        if (!o) return;
-        if (!key || 'object' !== typeof o[key]) {
-            return JSUS.clone(o);
-        }
+    OBJ.split = (function() {
+        var makeClone, splitValue;
+        var model, level, _key, posAsKeys;
 
-        out = [];
-        model = JSUS.clone(o);
-        model[key] = {};
+        makeClone = function(value, out, keys) {
+            var i, len, tmp, copy;
+            copy = JSUS.clone(model);
 
-        splitValue = function(value) {
-            var i, copy;
-            for (i in value) {
-                copy = JSUS.clone(model);
-                if (value.hasOwnProperty(i)) {
-                    if ('object' === typeof value[i]) {
-                        out = out.concat(splitValue(value[i]));
-                    }
-                    else {
-                        copy[key][i] = value[i];
-                        out.push(copy);
+            switch(keys.length) {
+            case 0:
+                copy[_key] = JSUS.clone(value);
+                break;
+            case 1:
+                copy[_key][keys[0]] = JSUS.clone(value);
+                break;
+            case 2:
+                copy[_key][keys[0]] = {};
+                copy[_key][keys[0]][keys[1]] = JSUS.clone(value);
+                break;
+            default:
+                i = -1, len = keys.length-1;
+                tmp = copy[_key];
+                for ( ; ++i < len ; ) {
+                    tmp[keys[i]] = {};
+                    tmp = tmp[keys[i]];
+                }
+                tmp[keys[keys.length-1]] = JSUS.clone(value);
+            }
+            out.push(copy);
+            return;
+        };
+
+        splitValue = function(value, out, curLevel, keysArray) {
+            var i, curPosAsKey;
+
+            // level == 0 means no limit.
+            if (level && (curLevel >= level)) {
+                makeClone(value, out, keysArray);
+            }
+            else {
+
+                curPosAsKey = posAsKeys || !JSUS.isArray(value);
+
+                for (i in value) {
+                    if (value.hasOwnProperty(i)) {
+
+                        if ('object' === typeof value[i] &&
+                            (level && ((curLevel+1) <= level))) {
+
+                            splitValue(value[i], out, (curLevel+1),
+                                       curPosAsKey ?
+                                       keysArray.concat(i) : keysArray);
+                        }
+                        else {
+                            makeClone(value[i], out, curPosAsKey ?
+                                      keysArray.concat(i) : keysArray);
+                        }
                     }
                 }
             }
-            return out;
         };
 
-        return splitValue(o[key]);
-    };
+        return function(o, key, l, positionAsKey) {
+            var out;
+            if ('object' !== typeof o) {
+                throw new TypeError('JSUS.split: o must be object. Found: ' +
+                                    o);
+            }
+            if ('string' !== typeof key || key.trim() === '') {
+                throw new TypeError('JSUS.split: key must a non-empty ' +
+                                    'string. Found: ' + key);
+            }
+            if (l && ('number' !== typeof l || l < 0)) {
+                throw new TypeError('JSUS.split: l must a non-negative ' +
+                                    'number or undefined. Found: ' + l);
+            }
+            model = JSUS.clone(o);
+            if ('object' !== typeof o[key]) return [model];
+            // Init.
+            out = [];
+            _key = key;
+            model[key] = {};
+            level = 'undefined' === typeof l ? 1 : l;
+            posAsKeys = positionAsKey;
+            // Recursively compute split.
+            splitValue(o[key], out, 0, []);
+            // Cleanup.
+            _key = undefined;
+            model = undefined;
+            level = undefined;
+            posAsKeys = undefined;
+            // Return.
+            return out;
+        };
+    })();
 
     /**
      * ## OBJ.melt
@@ -6806,10 +6874,14 @@ if (!Array.prototype.indexOf) {
      * @param {string} type Optional. The error type, e.g. 'TypeError'.
      *   Default, 'Error'
      * @param {string} method Optional. The name of the method
-     * @param {string} text Optional. The error text. Default, 'generic error'
+     * @param {string|object} err Optional. The error. Default, 'generic error'
      */
-    NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg;
+    NDDB.prototype.throwErr = function(type, method, err) {
+        var errMsg, text;
+
+        if ('object' === typeof err) text = err.stack || err;
+        else if ('string' === typeof err) text = err;
+
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
@@ -7022,18 +7094,12 @@ if (!Array.prototype.indexOf) {
      * @api private
      */
     NDDB.prototype._autoUpdate = function(options) {
-        var update = options ? J.merge(this.__update, options) : this.__update;
+        var update;
+        update = options ? J.merge(this.__update, options) : this.__update;
 
-        if (update.pointer) {
-            this.nddb_pointer = this.db.length-1;
-        }
-        if (update.sort) {
-            this.sort();
-        }
-
-        if (update.indexes) {
-            this.rebuildIndexes();
-        }
+        if (update.pointer) this.nddb_pointer = this.db.length-1;
+        if (update.sort) this.sort();
+        if (update.indexes) this.rebuildIndexes();
     };
 
     /**
@@ -7229,19 +7295,19 @@ if (!Array.prototype.indexOf) {
      */
     NDDB.prototype.stringify = function(compressed) {
         var spaces, out;
+        var item, i, len;
         if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
-
         spaces = compressed ? 0 : 4;
-
         out = '[';
-        this.each(function(e) {
-            // Decycle, if possible
-            e = NDDB.decycle(e);
-            out += J.stringify(e, spaces) + ', ';
-        });
-        out = out.replace(/, $/,']');
-
+        i = -1, len = this.db.length;
+        for ( ; ++i < len ; ) {
+            // Decycle, if possible.
+            item = NDDB.decycle(this.db[i]);
+            out += J.stringify(item, spaces);
+            if (i !== len-1) out += ', ';
+        }
+        out += ']';
         return out;
     };
 
@@ -8497,6 +8563,8 @@ if (!Array.prototype.indexOf) {
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
+     *
+     * TODO: do we still need this method?
      */
     NDDB.prototype.removeAllEntries = function() {
         if (!this.db.length) return this;
@@ -8516,38 +8584,27 @@ if (!Array.prototype.indexOf) {
      * and resets the current query selection
      *
      * Hooks, indexing, comparator, views, and hash functions are not deleted.
-     *
-     * Requires an additional parameter to confirm the deletion.
-     *
-     * @return {boolean} TRUE, if the database was cleared
      */
-    NDDB.prototype.clear = function(confirm) {
+    NDDB.prototype.clear = function() {
         var i;
-        if (confirm) {
-            this.db = [];
-            this.nddbid.resolve = {};
-            this.tags = {};
-            this.query.reset();
-            this.nddb_pointer = 0;
-            this.lastSelection = [];
-            this.hashtray.clear();
 
-            for (i in this.__H) {
-                if (this[i]) delete this[i];
-            }
-            for (i in this.__C) {
-                if (this[i]) delete this[i];
-            }
-            for (i in this.__I) {
-                if (this[i]) delete this[i];
-            }
-        }
-        else {
-            this.log('Do you really want to clear the current dataset? ' +
-                     'Please use clear(true)', 'WARN');
-        }
+        this.db = [];
+        this.nddbid.resolve = {};
+        this.tags = {};
+        this.query.reset();
+        this.nddb_pointer = 0;
+        this.lastSelection = [];
+        this.hashtray.clear();
 
-        return confirm;
+        for (i in this.__H) {
+            if (this[i]) this[i] = null;
+        }
+        for (i in this.__C) {
+            if (this[i]) this[i] = null;
+        }
+        for (i in this.__I) {
+            if (this[i]) this[i] = null;
+        }
     };
 
 
@@ -8682,20 +8739,23 @@ if (!Array.prototype.indexOf) {
     /**
      * ### NDDB.split
      *
-     * Splits all the entries  containing the specified dimension
+     * Splits recursively all the entries containing the specified dimension
      *
      * If a active selection if found, operation is applied only to the subset.
      *
-     * New entries are created and a new NDDB object is breeded
-     * to allows method chaining.
+     * A NDDB object is breeded containing all the split items.
      *
      * @param {string} key The dimension along which items will be split
+     * @param {number} level Optional. Limits how deep to perform the split.
+     *   Value equal to 0 means no limit in the recursive split.
+     * @param {boolean} positionAsKey Optional. If TRUE, when splitting an
+     *   array the position of an element is used as key. Default: FALSE.
      *
      * @return {NDDB} A new database containing the split entries
      *
      * @see JSUS.split
      */
-    NDDB.prototype.split = function(key) {
+    NDDB.prototype.split = function(key, level, positionAsKey) {
         var out, i, db, len;
         if ('string' !== typeof key) {
             this.throwErr('TypeError', 'split', 'key must be string');
@@ -8704,7 +8764,7 @@ if (!Array.prototype.indexOf) {
         len = db.length;
         out = [];
         for (i = 0; i < len; i++) {
-            out = out.concat(J.split(db[i], key));
+            out = out.concat(J.split(db[i], key, level, positionAsKey));
         }
         return this.breed(out);
     };
@@ -9082,7 +9142,7 @@ if (!Array.prototype.indexOf) {
      * groups[1].fetch(); // [ { a: 3, b: 4 } ]
      * ```
      *
-     * @param {string} key If the dimension for grouping
+     * @param {string} key The dimension for grouping
      *
      * @return {array} outs The array of NDDB (or constructor) groups
      */
@@ -9953,6 +10013,7 @@ if (!Array.prototype.indexOf) {
         }
         return ff;
     }
+
     /**
      * ### validateFormatParameters
      *
@@ -22914,7 +22975,7 @@ if (!Array.prototype.indexOf) {
      * @params {object} ctx A reference to the context wherein the hook is
      *  called.
      * @params {string} name The name of the hook. If not provided, this method
-     *  provides an uniqueKey for the hook
+     *  provides a uniqueKey for the hook
      *
      * @returns {mixed} The name of the hook, if it was added; false otherwise.
      */
@@ -23334,15 +23395,23 @@ if (!Array.prototype.indexOf) {
         timer = this.node.game.plot.getProperty(step, prop);
         if (null === timer) return null;
 
-        if ('object' !== typeof timer) {
-            timer = { milliseconds: timer };
-        }
+        // If function, it can return a full object, 
+        // a function, or just the number of milliseconds.
+        if ('function' === typeof timer) timer = timer.call(this.node.game);
 
-        if ('function' === typeof timer.milliseconds) {
-            timer.milliseconds = timer.milliseconds.call(this.node.game);
-        }
+        if (null === timer) return null
+        if ('function' === typeof timer) timer = timer.call(this.node.game);
+        if ('number' === typeof timer) timer = { milliseconds: timer };        
 
-        if ('number' !== typeof timer.milliseconds) return null;
+
+        if ('object' !== typeof timer ||
+            'number' !== typeof timer.milliseconds ||
+            timer.milliseconds < 0) {
+
+            this.node.warn('GameTimer.getStepOptions: invalid value for ' +
+                           'milliseconds. Found: ' + timer.milliseconds);
+            return null;
+        }
 
         // Make sure update and timer are the same.
         if ('undefined' === typeof timer.update) {
@@ -23685,12 +23754,21 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Matcher.generateMatches: alg must be string.');
         }
         alg = alg.toLowerCase();
-        if (alg !== 'roundrobin' && alg !== 'random') {
+        if (alg === 'roundrobin' || alg === 'random') {
+            if (alg === 'random' &&
+                arguments[2] && arguments[2].replace === true) {
+
+                matches = randomPairs(arguments[1], arguments[2]);
+            }
+            else {
+                matches = pairMatcher(alg, arguments[1], arguments[2]);
+            }
+        }
+        else {
             throw new Error('Matcher.generateMatches: unknown algorithm: ' +
                             alg + '.');
         }
 
-        matches = pairMatcher(alg, arguments[1], arguments[2]);
         this.setMatches(matches);
         return matches;
     };
@@ -24030,6 +24108,7 @@ if (!Array.prototype.indexOf) {
      *   - bye: identifier for dummy competitor. Default: -1.
      *   - skypeBye: flag whether players matched with the dummy
      *        competitor should be added or not. Default: true.
+     *   - rounds: number of rounds to repeat matching. Default
      *
      * @return {array} matches The matches according to the algorithm
      */
@@ -24076,6 +24155,114 @@ if (!Array.prototype.indexOf) {
         }
         return matches;
     }
+
+// TODO: support limited number of rounds.
+
+//     function pairMatcher(alg, n, options) {
+//         var ps, matches, bye;
+//         var i, lenI, j, lenJ;
+//         var roundsLimit, odd;
+//         var skipBye;
+//
+//         if ('number' === typeof n && n > 1) {
+//             ps = J.seq(0, (n-1));
+//         }
+//         else if (J.isArray(n) && n.length > 1) {
+//             ps = n.slice();
+//             n = ps.length;
+//         }
+//         else {
+//             throw new TypeError('pairMatcher.' + alg + ': n must be ' +
+//                                 'number > 1 or array of length > 1.');
+//         }
+//
+//         odd = (n % 2) === 1;
+//         roundsLimit = n-1 ; // (odd && !skipBye) ? n+1 : n;
+//
+//         options = options || {};
+//         if ('number' === typeof options.rounds) {
+//             if (options.rounds <= 0) {
+//                 throw new Error('pairMatcher.' + alg + ': options.rounds ' +
+//                                 'must be a positive number or undefined. ' +
+//                                 'Found: ' + options.rounds);
+//             }
+//             if (options.rounds > roundsLimit) {
+//                 throw new Error('pairMatcher.' + alg + ': ' +
+//                                 'options.rounds cannot be > than ' +
+//                                 roundsLimit + '. Found: ' + options.rounds);
+//             }
+//             roundsLimit = options.rounds;
+//         }
+//
+//         matches = new Array(roundsLimit);
+//
+//         bye = 'undefined' !== typeof options.bye ? options.bye : -1;
+//         skipBye = options.skipBye || false;
+//         if (n % 2 === 1) {
+//             // Make sure we have even numbers.
+//             ps.push(bye);
+//             n += 1;
+//         }
+//         i = -1, lenI = roundsLimit;
+//         for ( ; ++i < lenI ; ) {
+//             // Shuffle list of ids for random.
+//             if (alg === 'random') ps = J.shuffle(ps);
+//             // Create a new array for round i.
+//             matches[i] = [];
+//             j = -1, lenJ = n / 2;
+//             for ( ; ++j < lenJ ; ) {
+//                 if (!skipBye || (ps[j] !== bye && ps[n - 1 - j] !== bye)) {
+//                     // Insert match.
+//                     matches[i].push([ps[j], ps[n - 1 - j]]);
+//                 }
+//             }
+//             // Permutate for next round.
+//             ps.splice(1, 0, ps.pop());
+//         }
+//         return matches;
+//     }
+
+
+// TODO: random with replacement.
+
+//     /**
+//      * ### pairMatcher
+//      *
+//      * Creates tournament schedules for different algorithms
+//      *
+//      * @param {string} alg The name of the algorithm
+//      *
+//      * @param {number|array} n The number of participants (>1) or
+//      *   an array containing the ids of the participants
+//      * @param {object} options Optional. Configuration object
+//      *   contains the following options:
+//      *
+//      *   - rounds: the number
+//      *
+//      * @return {array} matches The matches according to the algorithm
+//      */
+//     function pairMatcherWithReplacement(n, options) {
+//         var matches, i, len;
+//
+//         if ('number' === typeof n && n > 1) {
+//             n = J.seq(0, (n-1));
+//         }
+//         else if (J.isArray(n) && n.length > 1) {
+//             n = n.slice();
+//         }
+//         else {
+//             throw new TypeError('pairMatcherWithReplacement: n must be ' +
+//                                 'number > 1 or array of length > 1.');
+//         }
+//
+//         i = -1, len = n.length;
+//         matches = new Array(len-1);
+//         for ( ; ++i < len ; ) {
+//             m
+//         }
+//
+//         return matches;
+//     }
 
     // ## Closure
 })(
@@ -44502,7 +44689,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    WaitingRoom.version = '1.0.0';
+    WaitingRoom.version = '1.1.0';
     WaitingRoom.description = 'Displays a waiting room for clients.';
 
     WaitingRoom.title = 'Waiting Room';
@@ -44595,6 +44782,13 @@ if (!Array.prototype.indexOf) {
          * Div containing the start date
          */
         this.startDateDiv = null;
+
+        /**
+         * ### WaitingRoom.msgDiv
+         *
+         * Div containing optional messages to display
+         */
+        this.msgDiv = null;
 
         /**
          * ### WaitingRoom.timerDiv
@@ -44869,6 +45063,9 @@ if (!Array.prototype.indexOf) {
         this.bodyDiv.appendChild(this.startDateDiv);
         this.startDateDiv.style.display= 'none';
 
+        this.msgDiv = document.createElement('div');
+        this.bodyDiv.appendChild(this.msgDiv);
+
         if (this.startDate) {
             this.setStartDate(this.startDate);
         }
@@ -44902,7 +45099,7 @@ if (!Array.prototype.indexOf) {
         });
 
         node.on.data('DISPATCH', function(msg) {
-            var data, reportExitCode;
+            var data, notSelected, reportExitCode;
             msg = msg || {};
             data = msg.data || {};
 
@@ -44916,6 +45113,7 @@ if (!Array.prototype.indexOf) {
             }
 
             else if (data.action === 'NotEnoughPlayers') {
+
                 that.bodyDiv.innerHTML =
                     '<h3 align="center" style="color: red">' +
                     'Thank you for your patience.<br>' +
@@ -44928,14 +45126,25 @@ if (!Array.prototype.indexOf) {
             }
 
             else if (data.action === 'NotSelected') {
-                that.bodyDiv.innerHTML = '<h3 align="center">' +
-                    '<span style="color: red"> You were ' +
-                    '<strong>not selected</strong> to start the game.' +
-                    'Thank you for your participation.' +
-                    '</span><br><br>';
+
+                notSelected = '<h3 align="center">' +
+                    '<span style="color: red">Unfortunately, you were ' +
+                    '<strong>not selected</strong> to join the game this time';
+
                 if (false === data.shouldDispatchMoreGames ||
                     that.disconnectIfNotSelected) {
+
+                    that.bodyDiv.innerHTML = notSelected + '. Thank you ' +
+                        'for your participation.</span></h3><br><br>';
+
                     that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
+                }
+                else {
+                    that.msgDiv.innerHTML = notSelected + ', but you ' +
+                        'may join the next one.</span> ' +
+                        '<a class="hand" onclick=' +
+                        'javascript:this.parentElement.innerHTML="">' +
+                        'Ok, I got it.</a></h3><br><br>';
                 }
             }
 
@@ -44999,6 +45208,7 @@ if (!Array.prototype.indexOf) {
     WaitingRoom.prototype.disconnect = function(msg) {
         if (msg) this.disconnectMessage = msg;
         node.socket.disconnect();
+        this.stopTimer();
     };
 
     WaitingRoom.prototype.alertPlayer = function() {

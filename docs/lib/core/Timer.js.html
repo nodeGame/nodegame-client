@@ -2883,33 +2883,35 @@ by adding them after <em>this.update</em>. In IE does not work.</p>
   </div>
   <div class="body"><p>Add an hook to the hook list after performing conformity checks</p>
 
-<p>The first parameter hook can be a string, a function, or an object
+<p>The first parameter can be a string, a function, or an object
 containing an hook property.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">params</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">mixed</span>
-      <span>hook Either the hook to be called or an object containing
- at least the hook to be called and possibly even ctx and name</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">function</span>
+      <span class="dox_type">object</span>
+      <span>hook The hook (string or function),
+  or an object containing a <code>hook</code> property (others: <code>ctx</code> and <code>name</code>)</span>
     </div>
     <div class="dox_tag_title">params</div>
     <div class="dox_tag_detail">
       <span class="dox_type">object</span>
-      <span>ctx A reference to the context wherein the hook is
- called.</span>
+      <span>ctx The context wherein the hook is called.
+  Default: node.game</span>
     </div>
     <div class="dox_tag_title">params</div>
     <div class="dox_tag_detail">
       <span class="dox_type">string</span>
-      <span>name The name of the hook. If not provided, this method
- provides an uniqueKey for the hook</span>
+      <span>name The name of the hook. Default: a random name
+  starting with 'timerHook'</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">mixed</span>
-      <span>The name of the hook, if it was added; false otherwise.</span>
+      <span class="dox_type">string</span>
+      <span>The name of the hook</span>
     </div>
   </div>
 </div>
@@ -3801,16 +3803,6 @@ makes it an object with property 'milliseconds'. Makes sure
         <span class="nx">timer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="nx">prop</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">timer</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timer</span> <span class="p">};</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-
 
 </pre></div>
         </td>
@@ -3819,6 +3811,35 @@ makes it an object with property 'milliseconds'. Makes sure
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
+</div>
+<p>If function, it can return a full object,
+a function, or just the number of milliseconds.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timer</span> <span class="p">};</span>
+
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span> <span class="o">||</span>
+            <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">||</span>
+            <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;GameTimer.getStepOptions: invalid value for &#39;</span> <span class="o">+</span>
+                           <span class="s1">&#39;milliseconds. Found: &#39;</span> <span class="o">+</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
 </div>
 <p>Make sure update and timer are the same.</p>
         </td>
@@ -3898,7 +3919,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any.</p>
         </td>
@@ -3913,7 +3934,7 @@ makes it an object with property 'milliseconds'. Makes sure
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
