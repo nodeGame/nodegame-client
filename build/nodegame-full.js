@@ -18917,7 +18917,7 @@ if (!Array.prototype.indexOf) {
         options = J.clone(options);
         if (options.connectingTimeout) {
             if (!J.isInt(options.connectingTimeout, 0)) {
-                
+
                 throw new TypeError('Socket.setup: options.connectingTimeout ' +
                                     'a positive number or undefined.');
             }
@@ -19018,7 +19018,7 @@ if (!Array.prototype.indexOf) {
         that = this;
         this.connectingTimeout = setTimeout(function() {
             that.node.warn('connection attempt to ' + humanReadableUri +
-                           ' timed out. Disconnected.');            
+                           ' timed out. Disconnected.');
             // False makes sure that SocketDirect will not call  onDisconnect.
             that.socket.disconnect(false);
             that.connecting = false;
@@ -19060,7 +19060,6 @@ if (!Array.prototype.indexOf) {
         this.connecting = false;
         this.connected = false;
     };
-
 
     /**
      * ### Socket.onConnect
@@ -19334,14 +19333,22 @@ if (!Array.prototype.indexOf) {
      * If a game window reference is found, sets the `uriChannel` variable.
      *
      * @param {GameMsg} msg A game-msg
-     * @return {boolean} TRUE, if session was correctly initialized
+     * @param {boolean} force If TRUE, a new session will be created even
+     *    if an existing one is found.
      *
      * @see node.createPlayer
      * @see Socket.registerServer
      * @see GameWindow.setUriChannel
      */
-    Socket.prototype.startSession = function(msg) {
+    Socket.prototype.startSession = function(msg, force) {
+        if (this.session && !force) {
+            throw new Error('Socket.startSession: session already existing. ' +
+                            'Use force parameter to overwrite it.');
+        }
         this.session = msg.session;
+        // We need to first set the session, and then eventually to stop
+        // an ongoing game.
+        if (this.node.game.isStoppable()) this.node.game.stop();        
         this.node.createPlayer(msg.data);
         // msg.text can be undefined if channel is the "mainChannel."
         if (this.node.window && msg.text) {
@@ -20057,11 +20064,13 @@ if (!Array.prototype.indexOf) {
         node.events.ee.stage.clear();
         node.events.ee.step.clear();
 
+        node.socket.eraseBuffer();
+
         // Clear memory.
         this.memory.clear();
 
         // If a _GameWindow_ object is found, clears it.
-        if (node.window) node.window.reset();        
+        if (node.window) node.window.reset();
 
         // Update state/stage levels and game stage.
         this.setStateLevel(constants.stateLevels.STARTING, 'S');
@@ -20069,7 +20078,7 @@ if (!Array.prototype.indexOf) {
         // This command is notifying the server.
         this.setCurrentGameStage(new GameStage());
 
-        // Temporary change:
+        // TODO: check if we need pl and ml again.
         node.game = null;
         node.game = new Game(node);
         node.game.pl = this.pl;
@@ -26271,6 +26280,10 @@ if (!Array.prototype.indexOf) {
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
+            if (msg.from === 'ultimatum') {
+                console.log(msg);
+                debugger
+            }
             node.game.pl.updatePlayer(msg.from, msg.data);
             node.emit('UPDATED_PLIST');
             if (node.game.shouldStep()) {

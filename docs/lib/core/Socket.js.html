@@ -969,7 +969,6 @@ TODO: check if we need it.</p>
     <span class="p">};</span>
 
 
-
 </pre></div>
         </td>
       </tr>
@@ -1667,11 +1666,11 @@ stores the session ids in the session object.</p>
       <span class="dox_type">GameMsg</span>
       <span>A game-msg</span>
     </div>
-    <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
+      <span class="dox_tag_name">force</span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, if session was correctly initialized</span>
+      <span>If TRUE, a new session will be created even
+   if an existing one is found.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -1690,9 +1689,12 @@ stores the session ids in the session object.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startSession</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.startSession: session already existing. &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;Use force parameter to overwrite it.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">session</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">session</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -1701,6 +1703,21 @@ stores the session ids in the session object.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+</div>
+<p>We need to first set the session, and then eventually to stop
+an ongoing game.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">isStoppable</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">createPlayer</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>msg.text can be undefined if channel is the "mainChannel."</p>
         </td>
@@ -1800,7 +1817,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Emit out event, if required.</p>
         </td>
@@ -1822,7 +1839,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Experimental code.</p>
         </td>
@@ -1837,7 +1854,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>End experimental code.</p>
         </td>
@@ -1853,7 +1870,7 @@ and sent out whenever the connection is available again.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Helper methods.</p>
         </td>
