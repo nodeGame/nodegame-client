@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 2.1.0
+- Improved Socket disconnection/reconnection handler.
+- Added timeout for connecting.
+
 ## 2.0.5
 - GameTimer can handle functions that returns functions at initialization.
 
