@@ -1164,10 +1164,6 @@ This options is useful when a player reconnets.</p>
 <p>Does <strong>not</strong> clear <em>node.env</em> variables and any node.player extra
 property.</p>
 
-<p>If additional properties (e.g. widgets) have been added to the game
-object by any of the previous game callbacks, they will not be removed.
-TODO: avoid pollution of the game object.</p>
-
 <p>GameStage is set to 0.0.0 and server is notified.</p>
   </div>
 </div>
@@ -1175,11 +1171,12 @@ TODO: avoid pollution of the game object.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
-
-        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isStoppable</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.stop: game cannot be stopped.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
+
+        <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
 
 </pre></div>
         </td>
@@ -1222,7 +1219,7 @@ TODO: avoid pollution of the game object.</p>
 <p>Clear memory.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">memory</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
 
 
 </pre></div>
@@ -1236,9 +1233,7 @@ TODO: avoid pollution of the game object.</p>
 <p>If a <em>GameWindow</em> object is found, clears it.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
 
 
 </pre></div>

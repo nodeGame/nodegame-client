@@ -244,9 +244,7 @@ through a shared event-emitter object</p>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">=</span> <span class="nx">socket</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;SocketDirect.connect: empty socket.&#39;</span><span class="p">);</span>
@@ -352,12 +350,26 @@ through a shared event-emitter object</p>
   </div>
   <div class="body"><p>Triggers the disconnection from the server</p>
   </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">If</span>
+      <span class="dox_type">boolean</span>
+      <span>FALSE, Socket.onDisconnect will not be called.
+  Default: undefined.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.onDisconnect
+</span>
+    </div>
+  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">SocketDirect</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">notifySocket</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onDisconnect</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">notifySocket</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">onDisconnect</span><span class="p">();</span>
     <span class="p">};</span>
 
 

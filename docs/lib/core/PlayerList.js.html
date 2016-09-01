@@ -821,25 +821,11 @@ TODO remove after transition is complete</p>
   </div>
   <div class="body"><p>Clears the PlayerList and rebuilds the indexes</p>
   </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">confirm</span>
-      <span class="dox_type">boolean</span>
-      <span>Must be TRUE to actually clear the list</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if a player with the specified id is found</span>
-    </div>
-  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">confirm</span><span class="p">);</span>
+     <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+         <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -849,11 +835,11 @@ TODO remove after transition is complete</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
-<p>TODO: check do we need this?</p>
+<p>We need this to recreate the (empty) indexes.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
-    <span class="p">};</span>
+         <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+     <span class="p">};</span>
 
 
 </pre></div>
