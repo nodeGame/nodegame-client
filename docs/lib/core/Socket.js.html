@@ -49,6 +49,9 @@
         <a href="#socket.connecting">Socket.connecting</a>
       </div>
       <div class="heading h3">
+        <a href="#socket.reconnecting">Socket.reconnecting</a>
+      </div>
+      <div class="heading h3">
         <a href="#socket.connectingtimeout">Socket.connectingTimeout</a>
       </div>
       <div class="heading h3">
@@ -350,7 +353,10 @@ Passing options to the <code>connect</code> method will overwrite this property.
 </div>
 
   </div>
-  <div class="body"><p>Socket connection established.</p>
+  <div class="body"><p>Socket connection established</p>
+
+<p>For realiably checking whether the connection is established
+use <code>Socket.isConnected()</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -419,6 +425,38 @@ in one variable with socket states.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="socket.reconnecting">
+  <h3>
+    <a href="#socket.reconnecting" name="socket.reconnecting" class="pilcrow">&#182;</a>
+    Socket.reconnecting
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Flags that a reconnection is in progress</p>
+
+<p>This is useful when <code>Socket.reconnect()</code> triggers a disconnection</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Socket.reconnect
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">reconnecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
 
 </pre></div>
@@ -566,7 +604,7 @@ in case of SocketDirect, it is not an real url.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Experimental Journal.
 TODO: check if we need it.</p>
@@ -581,7 +619,7 @@ TODO: check if we need it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Experimental</p>
         </td>
@@ -614,7 +652,7 @@ TODO: check if we need it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>End Experimental Code.</p>
         </td>
@@ -847,11 +885,11 @@ TODO: check if we need it.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.connet: cannot connet to &#39;</span> <span class="o">+</span>
                             <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39; . No socket defined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_CONNECTING&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;connecting to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;SOCKET_CONNECTING&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
 
 
 </pre></div>
@@ -860,7 +898,7 @@ TODO: check if we need it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Socket Direct might be already connected.</p>
         </td>
@@ -871,19 +909,7 @@ TODO: check if we need it.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">connectingTimeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;connection attempt to &#39;</span> <span class="o">+</span> <span class="nx">humanReadableUri</span> <span class="o">+</span>
                            <span class="s1">&#39; timed out. Disconnected.&#39;</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
-</div>
-<p>False makes sure that SocketDirect will not call  onDisconnect.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">connectingTimeoutMs</span><span class="p">);</span>
     <span class="p">};</span>
@@ -906,6 +932,14 @@ TODO: check if we need it.</p>
   <div class="body"><p>Calls the connect method with previous parameters</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">force</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Forces the process to continue
+  even if a previous reconnection is in progress. Warning: can
+  cause an infinite loop. Default: FALSE</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Socket.connect</span>
@@ -919,12 +953,19 @@ TODO: check if we need it.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Socket.reconnect: cannot find previous uri.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">reconnecting</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Socket.reconnect: socket is already reconnecting. &#39;</span> <span class="o">+</span>
+                     <span class="s1">&#39;Try with force parameter.&#39;</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">reconnecting</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">())</span> <span class="k">this</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">userOptions</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">reconnecting</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -958,7 +999,7 @@ TODO: check if we need it.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disconnect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connected</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">connecting</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()))</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Socket.disconnect: socket is not connected nor &#39;</span> <span class="o">+</span>
                       <span class="s1">&#39;connecting. Try with force parameter.&#39;</span><span class="p">);</span>
             <span class="k">return</span><span class="p">;</span>
@@ -1748,7 +1789,7 @@ an ongoing game.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Socket</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isConnected</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">connected</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">();</span>
     <span class="p">};</span>
 
 
