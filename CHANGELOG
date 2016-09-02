@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 2.2.0
+- Avoiding infinite loop in socket.reconnect.
+- Errors in incoming game commands are turned into warnings.
+
 ## 2.1.0
 - Improved Socket disconnection/reconnection handler.
 - Added timeout for connecting.
