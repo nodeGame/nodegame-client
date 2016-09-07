@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 2.3.1
+- Cleanup.
+
 ## 2.3.0
 - Fixed bug in comparison of game stages of different rounds.
 
