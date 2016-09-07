@@ -360,61 +360,87 @@ describe('GameStage', function() {
             GameStage.compare(stage, '3.2.1').should.be.eql(0);
         });
 
-        it("hash-string should be equal to GameStage object 1", function() {
-            GameStage.compare('3.2.1', stage).should.be.eql(0);
+        it("hash-string should be equal to GameStage object (1)",
+           function() {
+               GameStage.compare('3.2.1', stage).should.be.eql(0);
         });
 
-        it("hash-string should be ahead to its GameStage object 2", function() {
-            GameStage.compare('3.3.1', stage).should.be.eql(1);
+        it("hash-string should be ahead to its GameStage object (2)",
+           function() {
+               GameStage.compare('3.3.1', stage).should.be.eql(-1);
         });
 
-        it("hash-string should be ahead to its GameStage object 3", function() {
-            GameStage.compare('4.2.1', stage).should.be.eql(1);
+        it("hash-string should be ahead to its GameStage object (3)",
+           function() {
+               GameStage.compare('4.2.1', stage).should.be.eql(-1);
         });
 
-        it("hash-string should be ahead to its GameStage object 4", function() {
-            GameStage.compare('3.2.2', stage).should.be.eql(1);
+        it("hash-string should be ahead to its GameStage object (4)",
+           function() {
+               GameStage.compare('3.2.2', stage).should.be.eql(-1);
         });
 
-        it("GameStage object should be behind hash-string 1", function() {
-            GameStage.compare(stage, '3.3.1').should.be.eql(-1);
+        it("GameStage object should be behind hash-string (1)", function() {
+            GameStage.compare(stage, '3.3.1').should.be.eql(1);
         });
 
-        it("GameStage object should be behind hash-string 2", function() {
-            GameStage.compare(stage, '4.2.1').should.be.eql(-1);
+        it("GameStage object should be behind hash-string (2)", function() {
+            GameStage.compare(stage, '4.2.1').should.be.eql(1);
         });
 
-        it("GameStage object should be behind hash-string 3", function() {
-            GameStage.compare(stage, '3.2.2').should.be.eql(-1);
+        it("GameStage object should be behind hash-string (3)", function() {
+            GameStage.compare(stage, '3.2.2').should.be.eql(1);
         });
 
+    });
 
+    describe('#compare() with round differential', function() {
+
+        it("should says that the higher-round within same stage is ahead",
+           function() {
+               GameStage.compare('3.4.1', '3.2.2').should.be.eql(1);
+           });
+
+        it("should says that the higher-round within same stage is ahead (2)",
+           function() {
+               GameStage.compare('3.4.1', '3.5.2').should.be.eql(1);
+           });
+
+        it("should says that stage with higher-round, smaller-stage is behind",
+           function() {
+               GameStage.compare('3.4.1', '2.2.2').should.be.eql(-1);
+           });
+
+        it("should says that stage with higher-round, smaller-stage is behind",
+           function() {
+               GameStage.compare('3.4.1', '2.6.2').should.be.eql(-1);
+           });
     });
 
     describe('#compare() falsy -', function() {
 
         it("GameStage object should be ahead of empty GameStage", function() {
-            GameStage.compare(stage, stage0).should.be.above(0);
+            GameStage.compare(stage, stage0).should.be.eql(-1);
         });
 
         it("comparing a gamestage to nothing should return 1", function() {
-            GameStage.compare(stage).should.be.eql(1);
+            GameStage.compare(stage).should.be.eql(-1);
         });
 
-        it("comparing a gamestage to  should return 1", function() {
-            GameStage.compare(stage, null).should.be.eql(1);
+        it("comparing a gamestage to null should return -1", function() {
+            GameStage.compare(stage, null).should.be.eql(-1);
         });
 
-        it("comparing a gamestage to nothing should return 1", function() {
-            GameStage.compare(stage, undefined).should.be.eql(1);
+        it("comparing a gamestage to nothing should return -1", function() {
+            GameStage.compare(stage, undefined).should.be.eql(-1);
         });
 
-        it("comparing nothing to gamestage should return -1", function() {
-            GameStage.compare(undefined, stage).should.be.eql(-1);
+        it("comparing undefined to gamestage should return 1", function() {
+            GameStage.compare(undefined, stage).should.be.eql(1);
         });
 
-        it("comparing nothing to gamestage should return -1", function() {
-            GameStage.compare(null, stage).should.be.eql(-1);
+        it("comparing null to gamestage should return 1", function() {
+            GameStage.compare(null, stage).should.be.eql(1);
         });
 
     });
