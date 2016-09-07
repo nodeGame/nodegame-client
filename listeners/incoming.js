@@ -45,7 +45,7 @@
         this.info('node: adding incoming listeners.');
 
         /**
-         * ## in.say.PCONNECT
+         * ## in.say.BYE
          *
          * Adds a new player to the player list
          *
