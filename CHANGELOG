@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 2.3.0
+- Fixed bug in comparison of game stages of different rounds.
+
 ## 2.2.0
 - Avoiding infinite loop in socket.reconnect.
 - Errors in incoming game commands are turned into warnings.
