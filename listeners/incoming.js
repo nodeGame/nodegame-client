@@ -71,11 +71,13 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
-            if (!msg.data) return;
-            node.game.pl.add(new Player(msg.data));
-            if (node.game.shouldStep()) {
-                node.game.step();
+            if ('object' !== typeof msg.data) {
+                node.err('received PCONNECT, but invalid data: ' + msg.data);
+                return;
             }
+            if (msg.data instanceof Player) node.game.pl.add(msg.data);
+            else node.game.pl.add(new Player(msg.data));
+            if (node.game.shouldStep()) node.game.step();
             node.emit('UPDATED_PLIST');
         });
 
@@ -88,7 +90,10 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
-            if (!msg.data) return;
+            if ('object' !== typeof msg.data) {
+                node.err('received PDISCONNECT, but invalid data: ' + msg.data);
+                return;
+            }
             node.game.pl.remove(msg.data.id);
             if (node.game.shouldStep()) {
                 node.game.step();
@@ -105,7 +110,10 @@
          * @see Game.ml
          */
         node.events.ng.on( IN + say + 'MCONNECT', function(msg) {
-            if (!msg.data) return;
+            if ('object' !== typeof msg.data) {
+                node.err('received MCONNECT, but invalid data: ' + msg.data);
+                return;
+            }
             node.game.ml.add(new Player(msg.data));
             node.emit('UPDATED_MLIST');
         });
@@ -119,7 +127,10 @@
          * @see Game.ml
          */
         node.events.ng.on( IN + say + 'MDISCONNECT', function(msg) {
-            if (!msg.data) return;
+            if ('object' !== typeof msg.data) {
+                node.err('received MDISCONNECT, but invalid data: ' + msg.data);
+                return;
+            }
             node.game.ml.remove(msg.data.id);
             node.emit('UPDATED_MLIST');
         });
