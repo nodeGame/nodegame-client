@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 2.4.0
+- Avoiding resending SET message on reconnect and willBeDone.
+
 ## 2.3.1
 - Cleanup.
 
