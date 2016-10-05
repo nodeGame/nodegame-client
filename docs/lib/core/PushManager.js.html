@@ -396,7 +396,7 @@ and create a new one.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">startTimer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">gameStage</span><span class="p">,</span> <span class="nx">pushCb</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">offset</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">pushCb</span><span class="p">,</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">offset</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
 
 
@@ -436,12 +436,6 @@ and create a new one.</p>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">offset</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">offsetWaitTime</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span>
-                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span>
-                   <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
-        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="nx">pushCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">pushGame</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span> <span class="p">};</span>
 
 
 </pre></div>
@@ -451,6 +445,30 @@ and create a new one.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>Cloning current stage.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">stage</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
+            <span class="nx">step</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span>
+            <span class="nx">round</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">round</span>
+        <span class="p">};</span>
+
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">);</span>
+
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">pushCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">that</span><span class="p">.</span><span class="nx">pushGame</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span> <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Make sure milliseconds and update are the same.</p>
         </td>
@@ -546,6 +564,11 @@ later check if they manage to step, and if not disconnects them.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
+      <span class="dox_tag_name">stage</span>
+      <span class="dox_type">object</span>
+      <span>The stage to check</span>
+    </div>
+    <div class="dox_tag_detail">
       <span class="dox_tag_name">conf</span>
       <span class="dox_type">object</span>
       <span>Optional. Configuration options.</span>
@@ -559,10 +582,11 @@ later check if they manage to step, and if not disconnects them.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pushGame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">PushManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pushGame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">replyWaitTime</span><span class="p">,</span> <span class="nx">checkPushWaitTime</span><span class="p">;</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
 
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;checking clients&#39;</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: checking clients.&#39;</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
@@ -578,7 +602,23 @@ later check if they manage to step, and if not disconnects them.</p>
         <span class="p">}</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">DONE</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>A client is not DONE and it is still in the same stage level.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">DONE</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">GameStage</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">stage</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push needed&#39;</span><span class="p">);</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;push needed: &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
 
 </pre></div>
@@ -587,17 +627,17 @@ later check if they manage to step, and if not disconnects them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Send push.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PUSH_STEP</span><span class="p">,</span>
                          <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-                             <span class="nx">checkIfPushWorked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">checkPushWaitTime</span><span class="p">);</span>
+                             <span class="nx">checkIfPushWorked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span>
+                                               <span class="nx">checkPushWaitTime</span><span class="p">);</span>
                          <span class="p">},</span>
-                         <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-                         <span class="p">{</span>
+                         <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span>
                              <span class="nx">timeout</span><span class="o">:</span> <span class="nx">replyWaitTime</span><span class="p">,</span>
                              <span class="nx">executeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
                              <span class="nx">target</span><span class="o">:</span> <span class="nx">GAMECOMMAND</span><span class="p">,</span>
@@ -655,6 +695,11 @@ later check if they manage to step, and if not disconnects them.</p>
       <span>The player object containing info about id and sid</span>
     </div>
     <div class="dox_tag_detail">
+      <span class="dox_tag_name">stage</span>
+      <span class="dox_type">GameStage</span>
+      <span>The stage to check</span>
+    </div>
+    <div class="dox_tag_detail">
       <span class="dox_tag_name">milliseconds</span>
       <span class="dox_type">number</span>
       <span>Optional The number of milliseconds to
@@ -664,11 +709,9 @@ later check if they manage to step, and if not disconnects them.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">checkIfPushWorked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">checkIfPushWorked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">stage</span><span class="p">,</span> <span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
-        <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">stage</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">step</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">round</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">round</span>
-        <span class="p">};</span>
+
         <span class="nx">node</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;push-manager: received reply from &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
 
         <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -683,7 +726,7 @@ later check if they manage to step, and if not disconnects them.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Client could have moved to next step, or be DONE
 waiting for a command from server.</p>
@@ -754,7 +797,7 @@ waiting for a command from server.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>No reply to GET, disconnect client.</p>
         </td>
@@ -769,7 +812,6 @@ waiting for a command from server.</p>
                 <span class="nx">sid</span><span class="o">:</span> <span class="nx">p</span><span class="p">.</span><span class="nx">sid</span>
             <span class="p">}</span>
         <span class="p">});</span>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">verbosity</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
     <span class="p">}</span>
 

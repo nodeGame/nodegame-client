@@ -246,6 +246,8 @@
 
         /**
          * ## NODEGAME_GAMECOMMAND: push_step
+         *
+         * If listener is moved to another file, update doc page
          */
         node.events.ng.on(CMD + gcommands.push_step, function() {
             var res, stageLevel;
