@@ -419,9 +419,10 @@ and create a new one.</p>
                                <span class="s1">&#39;object, TRUE, or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">conf</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH.TIMER ************************* &#39;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
-
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;PUSH.TIMER ************************* &#39;</span><span class="p">,</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">createTimer</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;push_clients&#39;</span> <span class="p">});</span>
@@ -455,7 +456,6 @@ and create a new one.</p>
             <span class="nx">round</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">round</span>
         <span class="p">};</span>
 
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;push-manager: starting timer: &#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">stage</span><span class="p">);</span>
 
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
@@ -497,11 +497,17 @@ and create a new one.</p>
 
   </div>
   <div class="body"><p>Clears timer for checking if all clients have finished current step</p>
+
+<p>This function is normally called at every new step.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">PushManager.startTimer
+      <span class="dox_type">PushManager.startTimer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gotoStep
 </span>
     </div>
   </div>
