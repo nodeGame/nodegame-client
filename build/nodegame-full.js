@@ -10496,7 +10496,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '3.0.0';
+    node.version = '3.0.1';
 
 })(window);
 
@@ -14880,7 +14880,7 @@ if (!Array.prototype.indexOf) {
      * @see GameTimer.parseMilliseconds
      */
     PushManager.prototype.startTimer = function(conf) {
-        var gameStage, pushCb, that, offset;
+        var stage, pushCb, that, offset;
         var node;
 
         // Adjust user input.
@@ -14892,9 +14892,10 @@ if (!Array.prototype.indexOf) {
                                'object, TRUE, or undefined. Found: ' + conf);
         }
 
-        console.log('PUSH.TIMER ************************* ', conf);
-
         node = this.node;
+
+        console.log('PUSH.TIMER ************************* ',
+                    node.player.stage, conf);
 
         if (!this.timer) {
             this.timer = node.timer.createTimer({ name: 'push_clients' });
@@ -14909,12 +14910,18 @@ if (!Array.prototype.indexOf) {
         else {
             offset = this.offsetWaitTime;
         }
-        console.log('push-manager: starting timer: ' + offset +
-                   ', ' + node.player.stage);
-        node.silly('push-manager: starting timer: ' + offset +
-                   ', ' + node.player.stage);
+
+        // Cloning current stage.
+        stage = {
+            stage: node.player.stage.stage,
+            step: node.player.stage.step,
+            round: node.player.stage.round
+        };
+
+        node.silly('push-manager: starting timer: ' + offset + ', ' + stage);
+
         that = this;
-        pushCb = function() { that.pushGame.call(that, conf); };
+        pushCb = function() { that.pushGame.call(that, stage, conf); };
 
         // Make sure milliseconds and update are the same.
         this.timer.init({
@@ -14930,7 +14937,10 @@ if (!Array.prototype.indexOf) {
      *
      * Clears timer for checking if all clients have finished current step
      *
+     * This function is normally called at every new step.
+     *
      * @see PushManager.startTimer
+     * @see Game.gotoStep
      */
     PushManager.prototype.clearTimer = function() {
         if (this.timer && !this.timer.isStopped()) {
@@ -14958,14 +14968,16 @@ if (!Array.prototype.indexOf) {
      * not arrive it will disconnect them. If the reply arrives, it will
      * later check if they manage to step, and if not disconnects them.
      *
+     * @param {object} stage The stage to check
      * @param {object} conf Optional. Configuration options.
      *
      * @see checkIfPushWorked
      */
-    PushManager.prototype.pushGame = function(conf) {
+    PushManager.prototype.pushGame = function(stage, conf) {
         var m, node, replyWaitTime, checkPushWaitTime;
         node = this.node;
 
+        console.log('checking clients');
         node.silly('push-manager: checking clients.');
 
         if ('object' === typeof conf) {
@@ -14981,12 +14993,18 @@ if (!Array.prototype.indexOf) {
         }
 
         node.game.pl.each(function(p) {
-            if (p.stageLevel !== DONE) {
+
+            // A client is not DONE and it is still in the same stage level.
+            if (p.stageLevel !== DONE &&
+                GameStage.compare(p.stage, stage) === 0) {
+
+                console.log('push needed');
                 node.warn('push needed: ' + p.id);
                 // Send push.
                 node.get(PUSH_STEP,
                          function(value) {
-                             checkIfPushWorked(node, p, checkPushWaitTime);
+                             checkIfPushWorked(node, p, stage,
+                                               checkPushWaitTime);
                          },
                          p.id, {
                              timeout: replyWaitTime,
@@ -15009,14 +15027,13 @@ if (!Array.prototype.indexOf) {
      *
      * @param {NodeGameClient} node The node instance used to send msg
      * @param {object} p The player object containing info about id and sid
+     * @param {GameStage} stage The stage to check
      * @param {number} milliseconds Optional The number of milliseconds to
      *   wait before checking again the stage of a client. Default 0.
      */
-    function checkIfPushWorked(node, p, milliseconds) {
+    function checkIfPushWorked(node, p, stage, milliseconds) {
         var stage;
-        stage = {
-            stage: p.stage.stage, step: p.stage.step, round: p.stage.round
-        };
+
         node.info('push-manager: received reply from ' + p.id);
 
         setTimeout(function() {
@@ -15065,7 +15082,6 @@ if (!Array.prototype.indexOf) {
                 sid: p.sid
             }
         });
-        node.verbosity = 1000;
         node.socket.send(msg);
     }
 
@@ -20321,7 +20337,7 @@ if (!Array.prototype.indexOf) {
      *   for reconnections)
      *
      * @see Game.execStep
-     * @see GameStage
+     * @see PushManager.clearTimer
      *
      * TODO: harmonize return values
      * TODO: remove some unused comments in the code.
