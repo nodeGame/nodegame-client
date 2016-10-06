@@ -95,9 +95,7 @@
                 return;
             }
             node.game.pl.remove(msg.data.id);
-            if (node.game.shouldStep()) {
-                node.game.step();
-            }
+            if (node.game.shouldStep()) node.game.step();
             node.emit('UPDATED_PLIST');
         });
 
