@@ -47,10 +47,7 @@
         /**
          * ## in.say.BYE
          *
-         * Adds a new player to the player list
-         *
-         * @emit UDATED_PLIST
-         * @see Game.pl
+         * Forces disconnection
          */
         node.events.ng.on( IN + say + 'BYE', function(msg) {
             var force;
@@ -67,18 +64,20 @@
          *
          * Adds a new player to the player list
          *
-         * @emit UDATED_PLIST
+         * @emit UPDATED_PLIST
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
+            var p;
             if ('object' !== typeof msg.data) {
                 node.err('received PCONNECT, but invalid data: ' + msg.data);
                 return;
             }
-            if (msg.data instanceof Player) node.game.pl.add(msg.data);
-            else node.game.pl.add(new Player(msg.data));
+            p = (msg.data instanceof Player) ? node.game.pl.add(msg.data) :
+                node.game.pl.add(new Player(msg.data));
+
+            node.emit('UPDATED_PLIST', 'pconnect', p);
             if (node.game.shouldStep()) node.game.step();
-            node.emit('UPDATED_PLIST');
         });
 
         /**
@@ -90,13 +89,14 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
+            var p;
             if ('object' !== typeof msg.data) {
                 node.err('received PDISCONNECT, but invalid data: ' + msg.data);
                 return;
             }
-            node.game.pl.remove(msg.data.id);
+            p = node.game.pl.remove(msg.data.id);
+            node.emit('UPDATED_PLIST', 'pdisconnect', p);
             if (node.game.shouldStep()) node.game.step();
-            node.emit('UPDATED_PLIST');
         });
 
         /**
@@ -144,7 +144,7 @@
         node.events.ng.on( IN + say + 'PLIST', function(msg) {
             if (!msg.data) return;
             node.game.pl = new PlayerList({}, msg.data);
-            node.emit('UPDATED_PLIST');
+            node.emit('UPDATED_PLIST', 'replace', node.game.pl);
         });
 
         /**
@@ -210,14 +210,11 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            node.game.pl.updatePlayer(msg.from, msg.data);
-            node.emit('UPDATED_PLIST');
-            if (node.game.shouldStep()) {
-                node.game.step();
-            }
-            else if (node.game.shouldEmitPlaying()) {
-                node.emit('PLAYING');
-            }
+            var p;
+            p = node.game.pl.updatePlayer(msg.from, msg.data);
+            node.emit('UPDATED_PLIST', 'pupdate', p);
+            if (node.game.shouldStep()) node.game.step();
+            else if (node.game.shouldEmitPlaying()) node.emit('PLAYING');
         });
 
         /**

@@ -607,10 +607,16 @@ automatically inserted in this object</p>
 </div>
 
   </div>
-  <div class="body"><p>Applies to the PlayerList the constraints defined in the Stager</p>
+  <div class="body"><p>Checks if the current number of players is right</p>
 
-<p>Reads the properties min/max/exactPlayers for the current step
-and checks them with the PlayerList object.</p>
+<p>This function is recreated each step based on the values
+of properties <code>min|max|exactPlayers</code> found in the Stager.</p>
+
+<p>It is used by <code>Game.shouldStep</code> to determine if we go to the
+next step.</p>
+
+<p>Unlike <code>Game.plChangeHandler</code> this method does accept parameters
+and does not execute any callback, but just returns TRUE/FALSE.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
@@ -621,7 +627,15 @@ and checks them with the PlayerList object.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.step
+      <span class="dox_type">Game.shouldStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gotoStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.plChangeHandler
 </span>
     </div>
   </div>
@@ -647,20 +661,55 @@ and checks them with the PlayerList object.</p>
   </div>
   <div class="body"><p>Handles changes in the number of players</p>
 
-<p>Reads the properties min/max/exactPlayers for the current step
-and calls the appropriate callback functions.</p>
+<p>This function is recreated each step based on the values
+of properties <code>min|max|exactPlayers</code> found in the Stager.</p>
+
+<p>Unlike <code>Game.checkPlistSize</code> this method requires input
+parameters and executes the appropriate callback functions
+in case a threshold is hit.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">op</span>
+      <span class="dox_type">string</span>
+      <span>The name of the operation:
+  'pdisconnect', 'pconnect', 'pupdate', 'replace'</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">obj</span>
+      <span class="dox_type">Player</span>
+      <span class="dox_type">PlayerList</span>
+      <span>The object causing the update</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if no player threshold is passed</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.
+      <span class="dox_type">Game.min|max|exactPlayers</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.min|max|exactPlayersCbCalled</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.gotoStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.checkPlistSize
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">};</span>
 
 
 </pre></div>
@@ -2339,12 +2388,111 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
+<p>// Register event handler.
+ handler = function(op, player) {
+     var cb, nPlayers, wrongNumCb, correctNumCb;
+     var minThreshold, maxThreshold, exacThreshold;
+     var that, res;
+     res = true;
+     that = node.game;
+     nPlayers = node.game.pl.size();
+     // Players should count themselves too.
+     if (!node.player.admin) nPlayers++;</p>
+
+
+<div class="highlight"><pre><code> <span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayers</span><span class="p">;</span>
+ <span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayers</span><span class="p">;</span>
+ <span class="nx">exactThreshold</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayers</span><span class="p">;</span>
+
+ <span class="k">if</span> <span class="p">(</span><span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;calling recovery threshold&#39;</span><span class="p">);</span>
+             <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+             <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+             <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+     <span class="c1">// pdisconnect.</span>
+     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pdisconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nx">minThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
+              <span class="nx">nPlayers</span> <span class="o">&lt;</span> <span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
+
+             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;calling disconnect threshold&#39;</span><span class="p">);</span>
+                 <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minCallback</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+             <span class="p">}</span>
+             <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+
+ <span class="k">if</span> <span class="p">(</span><span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pdisconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+             <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxRecoverCb</span><span class="p">);</span>
+             <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nx">maxThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
+             <span class="nx">nPlayers</span> <span class="o">&gt;</span> <span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
+
+             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+                 <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxCallback</span><span class="p">);</span>
+             <span class="p">}</span>
+             <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+
+ <span class="k">if</span> <span class="p">(</span><span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+         <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+         <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactRecoverCb</span><span class="p">);</span>
+         <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+     <span class="p">}</span>
+
+     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">exactThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
+         <span class="nx">nPlayers</span> <span class="o">!==</span> <span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
+
+         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+             <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+             <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactCallback</span><span class="p">);</span>
+         <span class="p">}</span>
+         <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+
+ <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+</code></pre></div>
+
+
+
+<p>};</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+</div>
 <p>Register event handler.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">nPlayers</span><span class="p">,</span> <span class="nx">wrongNumCb</span><span class="p">,</span> <span class="nx">correctNumCb</span><span class="p">;</span>
-                    <span class="kd">var</span> <span class="nx">minThreshold</span><span class="p">,</span> <span class="nx">maxThreshold</span><span class="p">,</span> <span class="nx">exacThreshold</span><span class="p">;</span>
                     <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
                     <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="nx">that</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
@@ -2356,62 +2504,59 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">admin</span><span class="p">)</span> <span class="nx">nPlayers</span><span class="o">++</span><span class="p">;</span>
-                    <span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayers</span><span class="p">;</span>
-                    <span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayers</span><span class="p">;</span>
-                    <span class="nx">exactThreshold</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayers</span><span class="p">;</span>
-
                     <span class="k">if</span> <span class="p">(</span><span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                            <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
-                            <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                        <span class="p">}</span>
-                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">minThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pdisconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">minThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
                                  <span class="nx">nPlayers</span> <span class="o">&lt;</span> <span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
 
-                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
-                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minCallback</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+
+                                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minCallback</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+                                <span class="p">}</span>
+                                <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                             <span class="p">}</span>
-                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">minRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                            <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxRecoverCb</span><span class="p">);</span>
-                            <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                        <span class="p">}</span>
-                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">maxThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
-                                 <span class="nx">nPlayers</span> <span class="o">&gt;</span> <span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">maxThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
+                                <span class="nx">nPlayers</span> <span class="o">&gt;</span> <span class="nx">maxThreshold</span><span class="p">)</span> <span class="p">{</span>
 
-                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
-                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxCallback</span><span class="p">);</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                    <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
+                                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxCallback</span><span class="p">);</span>
+                                <span class="p">}</span>
+                                <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                             <span class="p">}</span>
-                            <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pdisconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">maxRecoverCb</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">maxPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                            <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactRecoverCb</span><span class="p">);</span>
-                            <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                        <span class="p">}</span>
-
-                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">exactThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span>
-                            <span class="nx">nPlayers</span> <span class="o">!==</span> <span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
-
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">nPlayers</span> <span class="o">!==</span> <span class="nx">exactThreshold</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                                 <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onWrongPlayerNum&#39;</span><span class="p">);</span>
@@ -2419,26 +2564,18 @@ DONE for a short time in the new game stage:</p>
                             <span class="p">}</span>
                             <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
+                        <span class="k">else</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">cb</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
+                                <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">exactRecoverCb</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="nx">that</span><span class="p">.</span><span class="nx">exactPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
 
                     <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
                 <span class="p">};</span>
 
-                <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
-</div>
-<p>PRECONNECT needs to verify client is authorized,
-so we don't have to handle it here.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
 
                 <span class="k">this</span><span class="p">.</span><span class="nx">plChangeHandler</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">;</span>
 
@@ -2450,6 +2587,52 @@ so we don't have to handle it here.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+</div>
+<p>node.events.ee.step.on('UPDATED_PLIST', handler);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+</div>
+<p>was:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">handler</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
+                <span class="p">});</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">handler</span><span class="p">(</span><span class="s1">&#39;pdisconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
+                <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+</div>
+<p>PRECONNECT needs to verify client is authorized,
+so we don't have to handle it here.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <p>Check conditions explicitly:
 was:
@@ -2464,7 +2647,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -2480,7 +2663,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -2513,7 +2696,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>Set bounds-checking function:</p>
         </td>
@@ -2528,7 +2711,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>           <span class="k">this</span><span class="p">.</span><span class="nx">minPlayers</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -2547,7 +2730,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>           <span class="k">this</span><span class="p">.</span><span class="nx">minPlayersCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -2567,7 +2750,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -2585,7 +2768,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Update list of stepped steps.</p>
         </td>
@@ -2655,7 +2838,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>Parse input params. // TODO: throws errors.</p>
         </td>
@@ -2675,7 +2858,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Make main callback to get/append the widget.</p>
         </td>
@@ -2694,7 +2877,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>Default id 'container' (as in default.html).</p>
         </td>
@@ -2715,7 +2898,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>Make the step callback.</p>
         </td>
@@ -2738,7 +2921,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Make the done callback to send results.</p>
         </td>
@@ -2761,7 +2944,7 @@ this.plChangeHandler();</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>If it is not timeup, and user did not
 disabled it, check answers.</p>
@@ -2803,7 +2986,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>Update the exit function for this step.</p>
         </td>
@@ -2817,7 +3000,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Make the exit callback (destroy widget by default).</p>
         </td>
@@ -2832,7 +3015,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
 <p>Remove node.game reference.</p>
         </td>
@@ -2857,7 +3040,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
+  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
 </div>
 <p>Update the exit function for this step.</p>
         </td>
@@ -2872,7 +3055,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Sets a default frame, if none was found.</p>
         </td>
@@ -2889,7 +3072,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
 </div>
 <p>Handle frame loading natively, if required.</p>
         </td>
@@ -2921,7 +3104,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
 </div>
 <p>Replacing TRUE with node.game.settings.</p>
         </td>
@@ -2949,7 +3132,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Auto load frame and wrap cb.</p>
         </td>
@@ -3015,7 +3198,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Execute custom callback. Can throw errors.</p>
         </td>
@@ -3029,7 +3212,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
 <p>A non fatal error occurred.</p>
         </td>
@@ -3047,7 +3230,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
 </div>
 <p>Internal listeners will check whether we need to emit PLAYING.</p>
         </td>
@@ -3283,7 +3466,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -3412,7 +3595,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3538,7 +3721,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3684,7 +3867,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -3705,7 +3888,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
+  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -3719,7 +3902,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
+  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -3746,7 +3929,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
+  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -4077,7 +4260,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
+  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>
@@ -4278,7 +4461,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
 </div>
 <p>Adding new globals.</p>
         </td>
@@ -4300,7 +4483,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
 <p>Removing old ones.</p>
         </td>
@@ -4321,7 +4504,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
 </div>
 <p>Updating globals reference.</p>
         </td>
@@ -4462,7 +4645,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
 </div>
 <p>Set willBeDone. TODO: this does not lock screen / stop timer.</p>
         </td>
@@ -4475,7 +4658,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
 </div>
 <p>Temporarily remove the done callback.</p>
         </td>
@@ -4489,7 +4672,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
 </div>
 <p>Call node.done() immediately after PLAYING is emitted.</p>
         </td>
@@ -4506,7 +4689,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
+  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
 </div>
 <p>Temporarily modify plot properties.</p>
         </td>
@@ -4526,7 +4709,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
+  <a class="pilcrow" href="#section-159" id="section-159">&#182;</a>
 </div>
 <p>Call the cb with options as param, if found.</p>
         </td>
@@ -4615,7 +4798,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
 </div>
 <p>Recreate the array to avoid altering the reference.</p>
         </td>
