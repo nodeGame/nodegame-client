@@ -53,6 +53,7 @@
     exports.GameMsgGenerator =
         require('./lib/core/GameMsgGenerator').GameMsgGenerator;
     exports.PushManager = require('./lib/core/PushManager').PushManager;
+    exports.SizeManager = require('./lib/core/SizeManager').SizeManager;
 
     // Sockets.
     exports.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;

@@ -54,6 +54,7 @@ var ng_client = [
     rootDir + "lib/core/GamePlot.js",
     rootDir + "lib/core/GameMsgGenerator.js",
     rootDir + "lib/core/PushManager.js",
+    rootDir + "lib/core/SizeManager.js",
 
     // Stager.
 
