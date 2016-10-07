@@ -28,6 +28,9 @@
         <a href="#sizemanager%20constructor">SizeManager constructor</a>
       </div>
       <div class="heading h3">
+        <a href="#sizemanager.node">SizeManager.node</a>
+      </div>
+      <div class="heading h3">
         <a href="#sizemanager.checksize">SizeManager.checkSize</a>
       </div>
       <div class="heading h3">
@@ -177,15 +180,6 @@ MIT Licensed</p>
       <span class="dox_type">NodeGameClient</span>
       <span>A valid NodeGameClient object</span>
     </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NodeGameClient.game.plot</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NodeGameClient.game.pl
-</span>
-    </div>
   </div>
 </div>
         </td>
@@ -197,16 +191,22 @@ MIT Licensed</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="sizemanager.node">
+  <h3>
+    <a href="#sizemanager.node" name="sizemanager.node" class="pilcrow">&#182;</a>
+    SizeManager.node
+  </h3>
 </div>
-<p>References added for convenience.</p>
+
+  </div>
+  <div class="body"><p>Reference to a nodegame-client instance</p>
+  </div>
+</div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">plot</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">pl</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
 
 
 </pre></div>
@@ -329,7 +329,7 @@ in case a threshold is hit.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">changeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span> <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">changeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
 
 
 </pre></div>
@@ -621,7 +621,6 @@ in case a threshold is hit.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">exactCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
     <span class="p">}</span>
 
 
@@ -667,14 +666,12 @@ in case a threshold is hit.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">handler</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">doPlChangeHandler</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">doPlChangeHandler</span><span class="p">;</span>
 
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">step</span> <span class="o">=</span> <span class="nx">step</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
 
-        <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;minPlayers&#39;</span><span class="p">);</span>
+        <span class="nx">property</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;minPlayers&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">minThresold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -684,7 +681,7 @@ in case a threshold is hit.</p>
             <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;maxPlayers&#39;</span><span class="p">);</span>
+        <span class="nx">property</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;maxPlayers&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -705,7 +702,7 @@ in case a threshold is hit.</p>
             <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">property</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;exactPlayers&#39;</span><span class="p">);</span>
+        <span class="nx">property</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;exactPlayers&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">doPlChangeHandler</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;SizeManager.init: exactPlayers &#39;</span> <span class="o">+</span>
@@ -789,7 +786,7 @@ in case a threshold is hit.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">checkSizeFull</span> <span class="o">=</span>  <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">nPlayers</span><span class="p">,</span> <span class="nx">limit</span><span class="p">;</span>
-        <span class="nx">nPlayers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+        <span class="nx">nPlayers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
 
 
 </pre></div>
@@ -852,7 +849,7 @@ in case a threshold is hit.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">changeHandlerFull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">threshold</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">nPlayers</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">res</span>
+        <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
 
         <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="nx">game</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
@@ -872,7 +869,7 @@ in case a threshold is hit.</p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">admin</span><span class="p">)</span> <span class="nx">nPlayers</span><span class="o">++</span><span class="p">;</span>
 
         <span class="nx">threshold</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">minThreshold</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">minThreshold</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pdisconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">threshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span> <span class="o">||</span> <span class="nx">nPlayers</span> <span class="o">&lt;</span> <span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
 
@@ -940,7 +937,7 @@ in case a threshold is hit.</p>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">threshold</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">exactThreshold</span>
+        <span class="nx">threshold</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">exactThreshold</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">nPlayers</span> <span class="o">!==</span> <span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">exactCbCalled</span><span class="p">)</span> <span class="p">{</span>

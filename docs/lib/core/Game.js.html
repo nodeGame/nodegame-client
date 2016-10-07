@@ -813,7 +813,7 @@ stage are deleted.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">sizeManager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">sizeManager</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">sizeManager</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SizeManager</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
     <span class="p">}</span>
 
 
@@ -1479,7 +1479,7 @@ In this case the PLAYING event got lost.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">PlayerListManager.checkSize</span>
+      <span class="dox_type">SizeManager.checkSize</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -3553,6 +3553,11 @@ method call.</p>
       <span class="dox_type">boolean</span>
       <span>TRUE, if the PLAYING event should be emitted.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">SizeManager.checkSize
+</span>
+    </div>
   </div>
 </div>
         </td>
@@ -3578,7 +3583,7 @@ method call.</p>
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">curGameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">plManager</span><span class="p">.</span><span class="nx">checkSize</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">sizeManager</span><span class="p">.</span><span class="nx">checkSize</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="nx">syncOnLoaded</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">,</span> <span class="s1">&#39;syncOnLoaded&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">syncOnLoaded</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
