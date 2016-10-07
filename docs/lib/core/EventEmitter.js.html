@@ -460,8 +460,9 @@ MIT Licensed</p>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: label is not unique: &#39;</span> <span class="o">+</span>
                                     <span class="nx">label</span><span class="p">);</span>
                 <span class="p">}</span>
+                <span class="nx">label</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">label</span><span class="p">;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">labels</span><span class="p">[</span><span class="nx">label</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="nx">listener</span><span class="p">.</span><span class="nx">__ngid</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">label</span><span class="p">;</span>
+                <span class="nx">listener</span><span class="p">.</span><span class="nx">__ngid</span> <span class="o">=</span> <span class="nx">label</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;EventEmitter.on: label must be &#39;</span> <span class="o">+</span>

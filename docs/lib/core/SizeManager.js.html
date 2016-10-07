@@ -76,6 +76,9 @@
         <a href="#sizemanager.init">SizeManager.init</a>
       </div>
       <div class="heading h3">
+        <a href="#sizemanager.init">SizeManager.init</a>
+      </div>
+      <div class="heading h3">
         <a href="#sizemanager.checksizefull">SizeManager.checkSizeFull</a>
       </div>
       <div class="heading h3">
@@ -638,9 +641,55 @@ in case a threshold is hit.</p>
 </div>
 
   </div>
+  <div class="body"><p>Sets all internal references to null</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">SizeManager.init
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">minThreshold</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">minCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">minRecoveryCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">minCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">maxThreshold</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">maxCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">maxRecoveryCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">maxCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">exactThreshold</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">exactCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoveryCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">exactCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="sizemanager.init">
+  <h3>
+    <a href="#sizemanager.init" name="sizemanager.init" class="pilcrow">&#182;</a>
+    SizeManager.init
+  </h3>
+</div>
+
+  </div>
   <div class="body"><p>Evaluates the requirements for the step and store references internally</p>
 
 <p>If required, it adds a listener to changes in the size of player list.</p>
+
+<p>At the beginning, calls <code>SizeManager.clear</code></p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -658,7 +707,11 @@ in case a threshold is hit.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">SizeManager.changeHandlerFull
+      <span class="dox_type">SizeManager.changeHandlerFull</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">SizeManager.clear
 </span>
     </div>
   </div>
@@ -668,15 +721,16 @@ in case a threshold is hit.</p>
     <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">doPlChangeHandler</span><span class="p">;</span>
 
+        <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+
         <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
         <span class="nx">step</span> <span class="o">=</span> <span class="nx">step</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
-
         <span class="nx">property</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;minPlayers&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">minThresold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">minCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">minRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">minCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">minRecoveryCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
             <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
@@ -685,8 +739,8 @@ in case a threshold is hit.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">maxCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">maxRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">maxCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">maxRecoveryCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">minThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;SizeManager.init: maxPlayers cannot be&#39;</span> <span class="o">+</span>
@@ -711,8 +765,8 @@ in case a threshold is hit.</p>
             <span class="p">}</span>
             <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">exactThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">exactCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">exactCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoveryCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
             <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
@@ -721,19 +775,19 @@ in case a threshold is hit.</p>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">changeHandler</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">changeHandlerFull</span><span class="p">;</span>
 
-
 </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
-<p>Check conditions explicitly:</p>
+<p>Maybe this should be a parameter.
+this.changeHandler('init');</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">changeHandler</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">addListeners</span><span class="p">();</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">checkSize</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">checkSizeFull</span><span class="p">;</span>
         <span class="p">}</span>
@@ -745,7 +799,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Set bounds-checking function.</p>
         </td>
@@ -795,7 +849,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -861,7 +915,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Players should count themselves too.</p>
         </td>
@@ -885,7 +939,7 @@ in case a threshold is hit.</p>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">minCbCalled</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">minRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">minRecoveryCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                 <span class="p">}</span>
 
 </pre></div>
@@ -894,7 +948,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Must stay outside if.</p>
         </td>
@@ -919,7 +973,7 @@ in case a threshold is hit.</p>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;pdisconnect&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">maxCbCalled</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">maxRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">maxRecoveryCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                 <span class="p">}</span>
 
 </pre></div>
@@ -928,7 +982,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Must stay outside if.</p>
         </td>
@@ -950,7 +1004,7 @@ in case a threshold is hit.</p>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">exactCbCalled</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;onCorrectPlayerNum&#39;</span><span class="p">);</span>
-                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoverCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
+                    <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoveryCb</span><span class="p">,</span> <span class="nx">player</span><span class="p">);</span>
                 <span class="p">}</span>
 
 </pre></div>
@@ -959,7 +1013,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Must stay outside if.</p>
         </td>
@@ -1005,10 +1059,10 @@ in case a threshold is hit.</p>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">changehandler</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
-        <span class="p">},</span> <span class="s1">&#39;plManager&#39;</span><span class="p">);</span>
+        <span class="p">},</span> <span class="s1">&#39;plManagerCon&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">changeHandler</span><span class="p">(</span><span class="s1">&#39;pdisconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
-        <span class="p">},</span> <span class="s1">&#39;plManager&#39;</span><span class="p">);</span>
+        <span class="p">},</span> <span class="s1">&#39;plManagerDis&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1041,8 +1095,8 @@ in case a threshold is hit.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="s1">&#39;plManager&#39;</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span><span class="s1">&#39;plManager&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="s1">&#39;plManagerCon&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="s1">&#39;plManagerDis&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1119,8 +1173,8 @@ in case a threshold is hit.</p>
         <span class="p">}</span>
 
         <span class="nx">num</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-        <span class="nx">cb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-        <span class="nx">recoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">recoverCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">===</span> <span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">num</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
@@ -1131,7 +1185,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Recreate the array to avoid altering the reference.</p>
         </td>
@@ -1149,14 +1203,20 @@ in case a threshold is hit.</p>
                                 <span class="nx">num</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SizeManager.init: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span>
                                 <span class="s1">&#39;Players cb must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;function or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">cb</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">recoverCb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">recoverCb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;SizeManager.init: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span>
                                 <span class="s1">&#39;Players recoverCb must be &#39;</span> <span class="o">+</span>
@@ -1195,7 +1255,7 @@ in case a threshold is hit.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>// Register event handler.
  handler = function(op, player) {
