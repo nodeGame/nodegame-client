@@ -85,6 +85,9 @@
         <a href="#sizemanager.changehandlerfull">SizeManager.changeHandlerFull</a>
       </div>
       <div class="heading h3">
+        <a href="#sizemanager.sethandler">SizeManager.setHandler</a>
+      </div>
+      <div class="heading h3">
         <a href="#sizemanager.addlisteners">SizeManager.addListeners</a>
       </div>
       <div class="heading h3">
@@ -730,20 +733,13 @@ in case a threshold is hit.</p>
         <span class="nx">step</span> <span class="o">=</span> <span class="nx">step</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">stage</span><span class="p">;</span>
         <span class="nx">property</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;minPlayers&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">minThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">minCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">minRecoveryCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-
+            <span class="k">this</span><span class="p">.</span><span class="nx">setHandler</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
             <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="nx">property</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;maxPlayers&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">maxThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">maxCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">maxRecoveryCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setHandler</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">minThreshold</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;SizeManager.init: maxPlayers cannot be&#39;</span> <span class="o">+</span>
@@ -766,11 +762,7 @@ in case a threshold is hit.</p>
                                 <span class="s1">&#39;cannot be set if either minPlayers or &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;maxPlayers is set.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="nx">property</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">exactThreshold</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">exactCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoveryCb</span> <span class="o">=</span> <span class="nx">property</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-
+            <span class="k">this</span><span class="p">.</span><span class="nx">setHandler</span><span class="p">(</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
             <span class="nx">doPlChangeHandler</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -1035,6 +1027,47 @@ this.changeHandler('init');</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="sizemanager.sethandler">
+  <h3>
+    <a href="#sizemanager.sethandler" name="sizemanager.sethandler" class="pilcrow">&#182;</a>
+    SizeManager.setHandler
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the desired handler</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">type</span>
+      <span class="dox_type">string</span>
+      <span>One of the available types: 'min', 'max', 'exact'</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">number</span>
+      <span class="dox_type">array</span>
+      <span>value/s for the handler</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">SizeManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">values</span> <span class="o">=</span> <span class="nx">checkMinMaxExactParams</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;Threshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">values</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;Cb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">values</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;RecoveryCb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">values</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="sizemanager.addlisteners">
   <h3>
     <a href="#sizemanager.addlisteners" name="sizemanager.addlisteners" class="pilcrow">&#182;</a>
@@ -1188,7 +1221,7 @@ this.changeHandler('init');</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Recreate the array to avoid altering the reference.</p>
         </td>
