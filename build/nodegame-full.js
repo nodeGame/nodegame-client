@@ -10496,7 +10496,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '3.1.0';
+    node.version = '3.1.1';
 
 })(window);
 
@@ -20945,7 +20945,6 @@ if (!Array.prototype.indexOf) {
 
             // Process options before calling any init function.
             if ('object' === typeof options) {
-debugger
                 processGotoStepOptions(this, options);
             }
             else if (options) {
@@ -25925,7 +25924,7 @@ debugger
         // A done callback can manipulate arguments, add new values to
         // send to server, or even halt the procedure if returning false.
         if (doneCb) {
-            switch(len){
+            switch(len) {
             case 0:
                 args = doneCb.call(game);
                 break;
