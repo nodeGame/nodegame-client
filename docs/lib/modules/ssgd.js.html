@@ -402,7 +402,6 @@ that only those who received it can reply.</p>
             <span class="nx">ee</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentEventEmitter</span><span class="p">();</span>
 
 
-
 </pre></div>
         </td>
       </tr>
@@ -457,12 +456,14 @@ If timeout === -1, the listener is never removed.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
-<p><code>ee.once</code> already removes the listener on execution.</p>
+<p>10.19.2016 Was:
+                        // <code>ee.once</code> already removes it on execution.
+                        if (!executeOnce) {
+                            ee.remove('in.say.DATA', g);
+                        }</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">executeOnce</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
-                        <span class="p">}</span>
+                        <span class="nx">ee</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;in.say.DATA&#39;</span><span class="p">,</span> <span class="nx">g</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">that</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">destroyTimer</span><span class="p">(</span><span class="nx">timer</span><span class="p">);</span>
                         <span class="p">}</span>
