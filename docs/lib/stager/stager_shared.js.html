@@ -52,13 +52,16 @@
         <a href="#addstageblock">addStageBlock</a>
       </div>
       <div class="heading h4">
-        <a href="#addstageblock">addStageBlock</a>
+        <a href="#addblock">addBlock</a>
       </div>
       <div class="heading h4">
         <a href="#checkfinalized">checkFinalized</a>
       </div>
       <div class="heading h4">
         <a href="#checkpositionsparameter">checkPositionsParameter</a>
+      </div>
+      <div class="heading h4">
+        <a href="#addsteptoblock">addStepToBlock</a>
       </div>
       <div class="heading h4">
         <a href="#makedefaultcb">makeDefaultCb</a>
@@ -68,6 +71,9 @@
       </div>
       <div class="heading h4">
         <a href="#makedefaultstep">makeDefaultStep</a>
+      </div>
+      <div class="heading h4">
+        <a href="#unmakedefaultstep">unmakeDefaultStep</a>
       </div>
       <div class="heading h4">
         <a href="#isdefaultstep">isDefaultStep</a>
@@ -300,6 +306,8 @@ MIT Licensed</p>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultCb</span> <span class="o">=</span> <span class="nx">isDefaultCb</span><span class="p">;</span>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">isDefaultStep</span> <span class="o">=</span> <span class="nx">isDefaultStep</span><span class="p">;</span>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">makeDefaultStep</span> <span class="o">=</span> <span class="nx">makeDefaultStep</span><span class="p">;</span>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">unmakeDefaultStep</span> <span class="o">=</span> <span class="nx">unmakeDefaultStep</span><span class="p">;</span>
+    <span class="nx">Stager</span><span class="p">.</span><span class="nx">addStepToBlock</span> <span class="o">=</span> <span class="nx">addStepToBlock</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">BLOCK_DEFAULT</span>     <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_DEFAULT</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">BLOCK_STAGEBLOCK</span>  <span class="o">=</span> <span class="nx">blockTypes</span><span class="p">.</span><span class="nx">BLOCK_STAGEBLOCK</span><span class="p">;</span>
@@ -504,10 +512,10 @@ different things.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="addstageblock">
+<div class="pilwrap" id="addblock">
   <h4>
-    <a href="#addstageblock" name="addstageblock" class="pilcrow">&#182;</a>
-    addStageBlock
+    <a href="#addblock" name="addblock" class="pilcrow">&#182;</a>
+    addBlock
   </h4>
 </div>
 
@@ -529,19 +537,19 @@ different things.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">type</span>
       <span class="dox_type">string</span>
-      <span>The type of the stage block</span>
+      <span>The block type</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">The</span>
+      <span class="dox_tag_name">positions</span>
       <span class="dox_type">string</span>
       <span class="dox_type">number</span>
-      <span>allowed positions for the block</span>
+      <span>The allowed positions for the block</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">cbType</span>
+      <span class="dox_tag_name">type2</span>
       <span class="dox_type">string</span>
-      <span>The type of the currentBlock
-   (BLOCK_STAGE or BLOCK_STEP)</span>
+      <span>The value that the currentBlock variable
+   will be set to (BLOCK_STAGE or BLOCK_STEP)</span>
     </div>
   </div>
 </div>
@@ -553,6 +561,7 @@ different things.</p>
 
         <span class="nx">options</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span> <span class="o">||</span> <span class="nx">J</span><span class="p">.</span><span class="nx">uniqueKey</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">blocksIds</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">positions</span><span class="p">;</span>
 
         <span class="nx">that</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">type2</span><span class="p">;</span>
 
@@ -568,7 +577,7 @@ different things.</p>
 <p>Create the new block, and add it block arrays.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">block</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="nx">block</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="nx">that</span><span class="p">.</span><span class="nx">unfinishedBlocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">block</span><span class="p">);</span>
         <span class="nx">that</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">block</span><span class="p">);</span>
 
@@ -586,8 +595,6 @@ different things.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">that</span><span class="p">.</span><span class="nx">blocksIds</span><span class="p">[</span><span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
-
-
 
 
 </pre></div>
@@ -705,6 +712,93 @@ different things.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="addsteptoblock">
+  <h4>
+    <a href="#addsteptoblock" name="addsteptoblock" class="pilcrow">&#182;</a>
+    addStepToBlock
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a step to a block</p>
+
+<p>Checks if a step with the same id was already added.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">object</span>
+      <span>Reference to Stager object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stage</span>
+      <span class="dox_type">object</span>
+      <span>The block object</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stepId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the step</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">stageId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the stage the step belongs to</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">positions</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">number</span>
+      <span>Optional. Positions allowed for
+   step in the block</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if the step is added to the block</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">addStepToBlock</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">block</span><span class="p">,</span> <span class="nx">stepId</span><span class="p">,</span> <span class="nx">stageId</span><span class="p">,</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">stepInBlock</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Add step, if not already added.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">stepId</span><span class="p">))</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="nx">stepInBlock</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">stageId</span><span class="p">,</span>
+            <span class="nx">item</span><span class="o">:</span> <span class="nx">stepId</span><span class="p">,</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">stepId</span>
+        <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultStep</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">stepId</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nx">makeDefaultStep</span><span class="p">(</span><span class="nx">stepInBlock</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">stepInBlock</span><span class="p">,</span> <span class="nx">positions</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="makedefaultcb">
   <h4>
     <a href="#makedefaultcb" name="makedefaultcb" class="pilcrow">&#182;</a>
@@ -813,11 +907,15 @@ different things.</p>
       <span>The step object to mark. If a string
   is passed, a new step object with default cb is created.</span>
     </div>
+    <div class="dox_tag_title"></div>
+    <div class="dox_tag_detail">
+      <span>param {function} cb Optional A function to create the step cb</span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">function</span>
-      <span>A function flagged as <code>default</code></span>
+      <span class="dox_type">object</span>
+      <span>step the step flagged as <code>default</code></span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -840,6 +938,54 @@ different things.</p>
             <span class="p">};</span>
         <span class="p">}</span>
         <span class="nx">step</span><span class="p">.</span><span class="nx">_defaultStep</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">step</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="unmakedefaultstep">
+  <h4>
+    <a href="#unmakedefaultstep" name="unmakedefaultstep" class="pilcrow">&#182;</a>
+    unmakeDefaultStep
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Removes the flag from a step marked as <code>default</code></p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">step</span>
+      <span class="dox_type">object</span>
+      <span>The step object to unmark.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>step the step without the <code>default</code> flag</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">makeDefaultDefaultStep</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">isDefaultStep
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">unmakeDefaultStep</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">step</span><span class="p">.</span><span class="nx">_defaultStep</span><span class="p">)</span> <span class="nx">step</span><span class="p">.</span><span class="nx">_defaultStep</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">step</span><span class="p">;</span>
     <span class="p">}</span>
 

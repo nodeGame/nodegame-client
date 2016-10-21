@@ -53,6 +53,8 @@ var ng_client = [
     rootDir + "lib/core/GameMsg.js",
     rootDir + "lib/core/GamePlot.js",
     rootDir + "lib/core/GameMsgGenerator.js",
+    rootDir + "lib/core/PushManager.js",
+    rootDir + "lib/core/SizeManager.js",
 
     // Stager.
 
@@ -79,10 +81,14 @@ var ng_client = [
     rootDir + "lib/core/Game.js",
     rootDir + "lib/core/Session.js",
 
-    rootDir + "lib/core/GroupManager.js",
-    rootDir + "lib/core/RoleMapper.js",
+    // rootDir + "lib/core/GroupManager.js",
+    // rootDir + "lib/core/RoleMapper.js",
 
     rootDir + "lib/core/Timer.js",
+
+    // Matcher.
+
+    rootDir + "lib/matcher/Matcher.js",
 
     // NodeGameClient.
 

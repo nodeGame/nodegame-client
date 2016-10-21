@@ -1,6 +1,6 @@
 /**
  * # internal
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for internal messages.
@@ -83,7 +83,6 @@
             else {
                 node.game.willBeDone = true;
             }
-
         });
 
         /**
@@ -96,19 +95,6 @@
                 node.emit('LOADED');
             }
         });
-
-//         /**
-//          * ## WINDOW_LOADED
-//          *
-//          * @emit LOADED
-//          */
-//         this.events.ng.on('WINDOW_LOADED', function() {
-//             var stageLevel;
-//             stageLevel = node.game.getStageLevel();
-//             if (stageLevel === stageLevels.CALLBACK_EXECUTED) {
-//                 node.emit('LOADED');
-//             }
-//         });
 
         /**
          * ## LOADED
@@ -142,10 +128,7 @@
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
-            if (node.game.willBeDone) {
-                done();
-            }
-
+            if (node.game.willBeDone) done();
         });
 
         /**
@@ -153,7 +136,7 @@
          */
         this.events.ng.on(CMD + gcommands.start, function(options) {
             if (!node.game.isStartable()) {
-                node.err('"' + CMD + gcommands.start + '": game cannot ' +
+                node.warn('"' + CMD + gcommands.start + '": game cannot ' +
                          'be started now.');
                 return;
             }
@@ -166,7 +149,7 @@
          */
         this.events.ng.on(CMD + gcommands.pause, function(options) {
             if (!node.game.isPausable()) {
-                node.err('"' + CMD + gcommands.pause + '": game cannot ' +
+                node.warn('"' + CMD + gcommands.pause + '": game cannot ' +
                          'be paused now.');
                 return;
             }
@@ -179,8 +162,8 @@
          */
         this.events.ng.on(CMD + gcommands.resume, function(options) {
             if (!node.game.isResumable()) {
-                node.err('"' + CMD + gcommands.resume + '": game cannot ' +
-                         'be resumed now.');
+                node.warn('"' + CMD + gcommands.resume + '": game cannot ' +
+                          'be resumed now.');
                 return;
             }
             node.emit('BEFORE_GAMECOMMAND', gcommands.resume, options);
@@ -192,8 +175,8 @@
          */
         this.events.ng.on(CMD + gcommands.step, function(options) {
             if (!node.game.isSteppable()) {
-                node.err('"' + CMD + gcommands.step + '": game cannot ' +
-                         'be stepped now.');
+                node.warn('"' + CMD + gcommands.step + '": game cannot ' +
+                          'be stepped now.');
                 return;
             }
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
@@ -205,8 +188,8 @@
          */
         this.events.ng.on(CMD + gcommands.stop, function(options) {
             if (!node.game.isStoppable()) {
-                node.err('"' + CMD + gcommands.stop + '": game cannot ' +
-                         'be stopped now.');
+                node.warn('"' + CMD + gcommands.stop + '": game cannot ' +
+                          'be stopped now.');
                 return;
             }
             node.emit('BEFORE_GAMECOMMAND', gcommands.stop, options);
@@ -219,12 +202,16 @@
         this.events.ng.on(CMD + gcommands.goto_step, function(options) {
             var step;
             if (!node.game.isSteppable()) {
-                node.err('"' + CMD + gcommands.goto_step + '": game cannot ' +
-                         'be stepped now.');
+                node.warn('"' + CMD + gcommands.goto_step + '": game cannot ' +
+                          'be stepped now.');
                 return;
             }
+
             // Adjust parameters.
-            if (options.targetStep) step = options.targetStep;
+            if (options.targetStep) {
+                step = options.targetStep;
+                delete options.targetStep;
+            }
             else {
                 step = options;
                 options = undefined;
@@ -255,6 +242,34 @@
         this.events.ng.on(CMD + gcommands.erase_buffer, function() {
             node.emit('BEFORE_GAMECOMMAND', gcommands.clear_buffer);
             node.socket.eraseBuffer();
+        });
+
+        /**
+         * ## NODEGAME_GAMECOMMAND: push_step
+         *
+         * If listener is moved to another file, update doc page
+         */
+        node.events.ng.on(CMD + gcommands.push_step, function() {
+            var res, stageLevel;
+            node.warn('push_step command. ', node.player.stage);
+
+            // Call timeup, if defined.
+            if (!node.game.timer.isTimeup()) node.game.timer.doTimeup();
+
+            // Force node.done.
+            if (!node.game.willBeDone) {
+                stageLevel = node.game.getStageLevel();
+
+                if (stageLevel !== stageLevels.DONE_CALLED &&
+                    stageLevel !== stageLevels.GETTING_DONE &&
+                    stageLevel !== stageLevels.DONE) {
+
+                    res = node.done();
+                    if (!res) node.emit('DONE');
+                }
+            }
+
+            return 'ok!';
         });
 
         this.conf.internalAdded = true;

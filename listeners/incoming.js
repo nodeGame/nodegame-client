@@ -1,13 +1,9 @@
 /**
  * # incoming
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for incoming messages
- *
- * TODO: PRECONNECT events are not handled, just emitted.
- * Maybe some default support should be given, or some
- * default handlers provided.
  */
 (function(exports, parent) {
 
@@ -34,6 +30,7 @@
      * If executed once, it requires a force flag to re-add the listeners
      *
      * @param {boolean} force Whether to force re-adding the listeners
+     *
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultIncomingListeners = function(force) {
@@ -48,12 +45,9 @@
         this.info('node: adding incoming listeners.');
 
         /**
-         * ## in.say.PCONNECT
+         * ## in.say.BYE
          *
-         * Adds a new player to the player list
-         *
-         * @emit UDATED_PLIST
-         * @see Game.pl
+         * Forces disconnection
          */
         node.events.ng.on( IN + say + 'BYE', function(msg) {
             var force;
@@ -70,16 +64,20 @@
          *
          * Adds a new player to the player list
          *
-         * @emit UDATED_PLIST
+         * @emit UPDATED_PLIST
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PCONNECT', function(msg) {
-            if (!msg.data) return;
-            node.game.pl.add(new Player(msg.data));
-            if (node.game.shouldStep()) {
-                node.game.step();
+            var p;
+            if ('object' !== typeof msg.data) {
+                node.err('received PCONNECT, but invalid data: ' + msg.data);
+                return;
             }
-            node.emit('UPDATED_PLIST');
+            p = (msg.data instanceof Player) ? node.game.pl.add(msg.data) :
+                node.game.pl.add(new Player(msg.data));
+
+            node.emit('UPDATED_PLIST', 'pconnect', p);
+            if (node.game.shouldStep()) node.game.step();
         });
 
         /**
@@ -91,12 +89,14 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PDISCONNECT', function(msg) {
-            if (!msg.data) return;
-            node.game.pl.remove(msg.data.id);
-            if (node.game.shouldStep()) {
-                node.game.step();
+            var p;
+            if ('object' !== typeof msg.data) {
+                node.err('received PDISCONNECT, but invalid data: ' + msg.data);
+                return;
             }
-            node.emit('UPDATED_PLIST');
+            p = node.game.pl.remove(msg.data.id);
+            node.emit('UPDATED_PLIST', 'pdisconnect', p);
+            if (node.game.shouldStep()) node.game.step();
         });
 
         /**
@@ -108,7 +108,10 @@
          * @see Game.ml
          */
         node.events.ng.on( IN + say + 'MCONNECT', function(msg) {
-            if (!msg.data) return;
+            if ('object' !== typeof msg.data) {
+                node.err('received MCONNECT, but invalid data: ' + msg.data);
+                return;
+            }
             node.game.ml.add(new Player(msg.data));
             node.emit('UPDATED_MLIST');
         });
@@ -122,7 +125,10 @@
          * @see Game.ml
          */
         node.events.ng.on( IN + say + 'MDISCONNECT', function(msg) {
-            if (!msg.data) return;
+            if ('object' !== typeof msg.data) {
+                node.err('received MDISCONNECT, but invalid data: ' + msg.data);
+                return;
+            }
             node.game.ml.remove(msg.data.id);
             node.emit('UPDATED_MLIST');
         });
@@ -138,7 +144,7 @@
         node.events.ng.on( IN + say + 'PLIST', function(msg) {
             if (!msg.data) return;
             node.game.pl = new PlayerList({}, msg.data);
-            node.emit('UPDATED_PLIST');
+            node.emit('UPDATED_PLIST', 'replace', node.game.pl);
         });
 
         /**
@@ -184,14 +190,15 @@
          *
          * Adds an entry to the memory object
          *
-         * Creates a message using the fields `text`, `data`, `stage`
-         * and `from` of the incoming set.DATA message. If `data` is
-         * not defined it is set to TRUE.
+         * Decorates incoming msg.data object with the following properties:
+         *
+         *   - player: msg.from
+         *   - stage: msg.stage
          */
         node.events.ng.on( IN + set + 'DATA', function(msg) {
             var o = msg.data;
             o.player = msg.from, o.stage = msg.stage;
-            node.game.memory.insert(o);
+            node.game.memory.add(o);
         });
 
         /**
@@ -203,14 +210,11 @@
          * @see Game.pl
          */
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
-            node.game.pl.updatePlayer(msg.from, msg.data);
-            node.emit('UPDATED_PLIST');
-            if (node.game.shouldStep()) {
-                node.game.step();
-            }
-            else if (node.game.shouldEmitPlaying()) {
-                node.emit('PLAYING');
-            }
+            var p;
+            p = node.game.pl.updatePlayer(msg.from, msg.data);
+            node.emit('UPDATED_PLIST', 'pupdate', p);
+            if (node.game.shouldStep()) node.game.step();
+            else if (node.game.shouldEmitPlaying()) node.emit('PLAYING');
         });
 
         /**
@@ -249,10 +253,10 @@
             feature = msg.text;
             if ('string' !== typeof feature) {
                 node.err('"in.say.SETUP": msg.text must be string: ' +
-                         ferature);
+                         feature);
                 return;
             }
-            if (!node.setup[feature]) {
+            if (!node._setup[feature]) {
                 node.err('"in.say.SETUP": no such setup function: ' +
                          feature);
                 return;
@@ -266,29 +270,33 @@
                          'payload of incoming remote setup message.');
                 return;
             }
+
             node.setup.apply(node, [feature].concat(payload));
         });
 
         /**
          * ## in.say.GAMECOMMAND
          *
-         * Setups a features of nodegame
-         *
-         * @see node.setup
+         * Executes a game command (pause, resume, etc.)
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            // console.log('GM', msg);
-            if ('string' !== typeof msg.text) {
-                node.err('"in.say.GAMECOMMAND": msg.text must be string: ' +
-                         msg.text);
-                return;
-            }
-            if (!parent.constants.gamecommands[msg.text]) {
-                node.err('"in.say.GAMECOMMAND": unknown game command ' +
-                         'received: ' + msg.text);
-                return;
-            }
+            if (!checkGameCommandMsg(msg)) return;
             node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+        });
+
+        /**
+         * ## in.get.GAMECOMMAND
+         *
+         * Executes a game command (pause, resume, etc.) and gives confirmation
+         */
+        node.events.ng.on( IN + get + 'GAMECOMMAND', function(msg) {
+            var res;
+            if (!checkGameCommandMsg(msg)) return;
+            res = node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+            if (!J.isEmpty(res)) {
+                // New key must contain msg.id.
+                node.say(msg.text + '_' + msg.id, msg.from, res);
+            }
         });
 
         /**
@@ -408,11 +416,42 @@
             return 'pong';
         });
 
-
         node.conf.incomingAdded = true;
         node.silly('node: incoming listeners added.');
         return true;
     };
+
+    // ## Helper functions.
+
+    /**
+     * ### checkGameCommandMsg
+     *
+     * Checks that the incoming message contains a valid command and options
+     *
+     * Msg.data contains the options for the command. If string, it will be
+     * parsed with JSUS.parse
+     *
+     * @param {GameMsg} msg The incoming message
+     *
+     * @see JSUS.parse
+     */
+    function checkGameCommandMsg(msg) {
+        if ('string' !== typeof msg.text || msg.text.trim() === '') {
+            node.err('"in.' + msg.action + '.GAMECOMMAND": msg.text must be ' +
+                     'a non-empty string: ' + msg.text);
+            return false;
+        }
+        if (!parent.constants.gamecommands[msg.text]) {
+            node.err('"in.' + msg.action + '.GAMECOMMAND": unknown game  ' +
+                     'command received: ' + msg.text);
+            return false;
+        }
+
+        // Parse msg.data.
+        if ('string' === typeof msg.data) msg.data = J.parse(msg.data);
+
+        return true;
+    }
 
 })(
     'undefined' != typeof node ? node : module.exports,

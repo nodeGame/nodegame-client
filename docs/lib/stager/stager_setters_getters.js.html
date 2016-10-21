@@ -172,8 +172,7 @@ the state.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stateObj</span><span class="p">,</span> <span class="nx">updateRule</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">idx</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">,</span> <span class="nx">blockObj</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">stateObj</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Stager.setState: stateObj must be object.&#39;</span><span class="p">);</span>
@@ -276,7 +275,7 @@ its value)</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
-<p>Add sequence blocks:</p>
+<p>Add sequence:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;sequence&#39;</span><span class="p">))</span> <span class="p">{</span>
@@ -425,7 +424,7 @@ its value)</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
-<p>Set defaultCallback</p>
+<p>Set defaultCallback.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;defaultCallback&#39;</span><span class="p">))</span> <span class="p">{</span>
@@ -445,7 +444,7 @@ its value)</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;cacheReset&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stageObj</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">;</span>
         <span class="p">}</span>
 
 
@@ -456,6 +455,45 @@ its value)</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>Blocks.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;blocks&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">blocksIds</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">idx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">blockObj</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">blockObj</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Save block id into the blocks map.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">this</span><span class="p">.</span><span class="nx">blocksIds</span><span class="p">[</span><span class="nx">blockObj</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">idx</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;currentType&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">currentType</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stateObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;currentBlockType&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span> <span class="o">=</span> <span class="nx">stateObj</span><span class="p">.</span><span class="nx">currentBlockType</span><span class="p">;</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Mark finalized.</p>
         </td>
@@ -507,9 +545,11 @@ onGameover, blocks.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Stager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">finalize</span><span class="p">();</span>
 
-        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">({</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">({</span>
             <span class="nx">steps</span><span class="o">:</span>               <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">,</span>
             <span class="nx">stages</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">,</span>
             <span class="nx">sequence</span><span class="o">:</span>            <span class="k">this</span><span class="p">.</span><span class="nx">sequence</span><span class="p">,</span>
@@ -520,10 +560,31 @@ onGameover, blocks.</p>
             <span class="nx">defaultProperties</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">defaultProperties</span><span class="p">,</span>
             <span class="nx">onInit</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">onInit</span><span class="p">,</span>
             <span class="nx">onGameover</span><span class="o">:</span>          <span class="k">this</span><span class="p">.</span><span class="nx">onGameover</span><span class="p">,</span>
-            <span class="nx">blocks</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">,</span>
             <span class="nx">toSkip</span><span class="o">:</span>              <span class="k">this</span><span class="p">.</span><span class="nx">toSkip</span><span class="p">,</span>
-            <span class="nx">defaultCallback</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span>
+            <span class="nx">defaultCallback</span><span class="o">:</span>     <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">,</span>
+            <span class="nx">cacheReset</span><span class="o">:</span>          <span class="k">this</span><span class="p">.</span><span class="nx">cacheReset</span><span class="p">,</span>
+            <span class="nx">currentType</span><span class="o">:</span>         <span class="k">this</span><span class="p">.</span><span class="nx">currentType</span><span class="p">,</span>
+            <span class="nx">currentBlockType</span><span class="o">:</span>    <span class="k">this</span><span class="p">.</span><span class="nx">currentBlockType</span>
         <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>Cloning blocks separately.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">out</span><span class="p">.</span><span class="nx">blocks</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">out</span><span class="p">.</span><span class="nx">blocks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">blocks</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">clone</span><span class="p">());</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -582,7 +643,7 @@ onGameover, blocks.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Initial default.</p>
         </td>
@@ -681,7 +742,7 @@ in all the steps that have a default callback.</p>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span> <span class="o">=</span> <span class="nx">makeDefaultCb</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
 
-        <span class="k">for</span> <span class="p">(</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultCb</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">cb</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">steps</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultCallback</span><span class="p">;</span>

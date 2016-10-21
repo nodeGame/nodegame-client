@@ -164,7 +164,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Handles a collection of <code>Player</code> objects</p>
@@ -557,11 +557,12 @@ the internal <code>pcounter</code> variable is incremented.</p>
     <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">player</span> <span class="k">instanceof</span> <span class="nx">Player</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.add: player must be object.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.add: player must be object. &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.add: &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;player.id must be string.&#39;</span><span class="p">);</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.add: player.id must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">player</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">player</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Player</span><span class="p">(</span><span class="nx">player</span><span class="p">);</span>
         <span class="p">}</span>
@@ -737,7 +738,8 @@ the internal <code>pcounter</code> variable is incremented.</p>
     <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">player</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.remove: id must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;PlayerList.remove: id must be string. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">player</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
@@ -821,25 +823,11 @@ TODO remove after transition is complete</p>
   </div>
   <div class="body"><p>Clears the PlayerList and rebuilds the indexes</p>
   </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">confirm</span>
-      <span class="dox_type">boolean</span>
-      <span>Must be TRUE to actually clear the list</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if a player with the specified id is found</span>
-    </div>
-  </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">confirm</span><span class="p">);</span>
+     <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+         <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -849,11 +837,11 @@ TODO remove after transition is complete</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
-<p>TODO: check do we need this?</p>
+<p>We need this to recreate the (empty) indexes.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
-    <span class="p">};</span>
+         <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+     <span class="p">};</span>
 
 
 </pre></div>
@@ -916,6 +904,8 @@ TODO remove after transition is complete</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
                 <span class="s1">&#39;PlayerList.updatePlayer: player not found: &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">player</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1300,8 +1290,10 @@ for example: PLAYING, DONE, etc.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">PlayerList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">eol</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">EOL</span> <span class="o">=</span> <span class="nx">eol</span> <span class="o">||</span> <span class="s1">&#39;\n&#39;</span><span class="p">,</span> <span class="nx">stage</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">EOL</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">EOL</span> <span class="o">=</span> <span class="nx">eol</span> <span class="o">||</span> <span class="s1">&#39;\n&#39;</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">stage</span><span class="p">;</span>
             <span class="nx">out</span> <span class="o">+=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
             <span class="nx">stage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">stage</span><span class="p">);</span>
             <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">stage</span> <span class="o">+</span> <span class="nx">EOL</span><span class="p">;</span>

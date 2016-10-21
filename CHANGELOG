@@ -1,6 +1,72 @@
 # nodegame-client change log
 
-## 0.9.10
+## 3.1.1
+- SizeManager.setHandler.
+
+## 3.1.0
+- SizeManager.
+
+## 3.0.1
+- Improved pushManager.
+
+## 3.0.0
+02/10/2016 NodeGame Version Upgrade.
+
+## 2.4.0
+- Avoiding resending SET message on reconnect and willBeDone.
+
+## 2.3.1
+- Cleanup.
+
+## 2.3.0
+- Fixed bug in comparison of game stages of different rounds.
+
+## 2.2.0
+- Avoiding infinite loop in socket.reconnect.
+- Errors in incoming game commands are turned into warnings.
+
+## 2.1.0
+- Improved Socket disconnection/reconnection handler.
+- Added timeout for connecting.
+
+## 2.0.5
+- GameTimer can handle functions that returns functions at initialization.
+
+## 2.0.4
+- Socket.js start session does not set uriChannel if server returns undefined channel (for default channel).
+
+## 2.0.3
+- Fixed wrong reference to node.emit in Socket.js.
+
+## 2.0.2
+- Cleanup debugger statements.
+
+## 2.0.1
+- `node.connect()` parameters are interpreted correctly if channel is omitted.
+
+## 2.0.0
+
+- Push Manager: Unresponsive clients are checked and tried to be pushed to the next stage. If no answer is received within a specified timeout, they are diconnected.
+- Matcher: matching algorithms available: roundrobin
+- `#node.get()` has now an option to specify a different target than DATA.
+- SERVERCOMMAND disconnect
+ - `#node.set()` accepts a third optional parameter specifying the text of the message. This way it is possible to define on.data listeners on receiver.
+ - Stager: steps accept widget property.
+ - The return value of the done callback function changed meaning. If it is strictly equal to FALSE, it stops the procedure. If it is equal to any other value different from undefined, then the return value replacesthe arguments of node.done to be sent to server. For retro-compatibility TRUE is not sent to server (for the moment).
+ - `#Game.getNextStep() returns the next game stage (if no loops are involved).
+ - `#Game.getPreviousStep() returns the past game stage (if no loops are involved).
+ - `#Game.updateGlobals()` globals attributes of step objects are automatically added to the windows object in the browser.
+ - GameDB select queries can now select stages by name/id and not only hash-string (e.g. 3.1.1).
+ - The endpoint of the channel in `#node.connect()` is automatically taken from the name of the game (window.location.pathname), if none is specified (only in the browser). This is consistent with the change in nodegame-server that sets the default value of the endpoint to the game name.
+ - Query parameters are automatically passed to `#node.connect()` when node is executed in the browser. They can still be overridden by passing a configuration object.
+ - `#GameDB.add() replaces the checkings done by on('insert').
+ - Stager: `frame.autoParse` option will parse the DOM of loaded frames to substitute .innerHTML elements properties of elements matching ids or class names.
+ - `#node.timer.randomDone()` and `#node.timer.randomExec accepts context parameter.
+ - Fixed bug for default context of `#node.env()` in Node.js.
+ - Fixed bug with node.done with more than 2 parameters.
+ - Removed prepublish script.
+
+## 1.0.0
 
  - Enhanced stager, builds blocks and randomize blocks, stages, and steps.
  - Optimized EventEmitter.
@@ -52,8 +118,10 @@
  - `#node.get()` syntax changed. Fourth parameters is `options` and contains more options.
  - Removed `node.fs` object. Developers should use native NDDB methods to save to csv format.
  - `#Stager.loop()` and `#Stager.doLoop()` must have a loop function, no default provided.
+ - `#node.setLanguage() takes a second parameter to automatically set W.setUriPrefix to node.lang.path.
+ - Removed property .on from stages and steps.
+ - Added property .exit in stages and steps. It is a callback that is executed before entering the next stage/step.
 
->>>>>>> newstager
 
 ## 0.9.9
 

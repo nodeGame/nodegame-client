@@ -1,40 +1,40 @@
 /**
- * # nodeGame
- * Copyright(c) 2015 Stefano Balietti
+ * # nodegame-client build file
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
- * Social Experiments in the Browser
+ * Builds the different components together in one file for the browser
  *
- * nodeGame is a free, open source, event-driven javascript framework
- * for on line, multiplayer games in the browser.
+ * nodegame.org
+ * ---
  */
 (function(exports) {
 
     // ## Loading libraries
 
-    // ### Dependencies
+    // ### Dependencies.
     exports.JSUS = require('JSUS').JSUS;
     exports.support = exports.JSUS.compatibility();
     exports.NDDB = require('NDDB').NDDB;
 
-    // Costants
+    // Costants.
     exports.constants = require('./lib/modules/variables').constants;
     exports.stepRules = require('./lib/modules/stepRules').stepRules;
 
-    // ErrorManager
+    // ErrorManager.
     require('./lib/core/ErrorManager');
 
-    // Events
+    // Events.
     exports.EventEmitterManager =
         require('./lib/core/EventEmitter').EventEmitterManager;
     exports.EventEmitter = require('./lib/core/EventEmitter').EventEmitter;
 
-    // Stager
+    // Stager.
     exports.Stager = require('./lib/stager/stager_shared.js').Stager;
     exports.Block = require('./lib/stager/Block').Block;
     exports.Stager = require('./lib/stager/Stager').Stager;
 
-    // Stager modules
+    // Stager modules.
 
     // Must be required first.
     require('./lib/stager/stager_stages_steps.js');
@@ -44,7 +44,7 @@
     require('./lib/stager/stager_blocks.js');
     require('./lib/stager/stager_extract_info.js');
 
-    // Core
+    // Core.
     exports.GameStage = require('./lib/core/GameStage').GameStage;
     exports.PlayerList = require('./lib/core/PlayerList').PlayerList;
     exports.Player = require('./lib/core/PlayerList').Player;
@@ -52,24 +52,29 @@
     exports.GamePlot = require('./lib/core/GamePlot').GamePlot;
     exports.GameMsgGenerator =
         require('./lib/core/GameMsgGenerator').GameMsgGenerator;
+    exports.PushManager = require('./lib/core/PushManager').PushManager;
+    exports.SizeManager = require('./lib/core/SizeManager').SizeManager;
 
-    // Sockets
+    // Sockets.
     exports.SocketFactory = require('./lib/core/SocketFactory').SocketFactory;
     exports.Socket = require('./lib/core/Socket').Socket;
 
     require('./lib/sockets/SocketIo.js');
     require('./lib/sockets/SocketDirect.js');
 
-    // Timer
+    // Timer.
     exports.Timer = require('./lib/core/Timer').Timer;
 
-    // Game
+    // Game.
     exports.GameDB = require('./lib/core/GameDB').GameDB;
     exports.GameBit = require('./lib/core/GameDB').GameBit;
     exports.Game = require('./lib/core/Game').Game;
 
-    // Extra (to be tested)
-    exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
+    // Matcher.
+    exports.Matcher = require('./lib/matcher/Matcher').Matcher;
+
+    // Extra (to be tested).
+    // exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
     exports.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
     exports.GameSession = require('./lib/core/Session').GameSession;
 

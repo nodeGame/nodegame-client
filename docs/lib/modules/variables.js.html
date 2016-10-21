@@ -25,6 +25,9 @@
         <a href="#constants">Constants</a>
       </div>
       <div class="heading h3">
+        <a href="#node.constants.nodename">node.constants.nodename</a>
+      </div>
+      <div class="heading h3">
         <a href="#node.constants.verbosity_levels">node.constants.verbosity_levels</a>
       </div>
       <div class="heading h3">
@@ -171,6 +174,35 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre>
 
     <span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="node.constants.nodename">
+  <h3>
+    <a href="#node.constants.nodename" name="node.constants.nodename" class="pilcrow">&#182;</a>
+    node.constants.nodename
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Default nodename if none is specified</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">node.setup.nodename
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">k</span><span class="p">.</span><span class="nx">nodename</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span><span class="p">;</span>
 
 
 </pre></div>
@@ -717,6 +749,7 @@ information carried in the message.</p>
         <span class="nx">stop</span><span class="o">:</span> <span class="s1">&#39;stop&#39;</span><span class="p">,</span>
         <span class="nx">restart</span><span class="o">:</span> <span class="s1">&#39;restart&#39;</span><span class="p">,</span>
         <span class="nx">step</span><span class="o">:</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span>
+        <span class="nx">push_step</span><span class="o">:</span> <span class="s1">&#39;push_step&#39;</span><span class="p">,</span>
         <span class="nx">goto_step</span><span class="o">:</span> <span class="s1">&#39;goto_step&#39;</span><span class="p">,</span>
         <span class="nx">clear_buffer</span><span class="o">:</span> <span class="s1">&#39;clear_buffer&#39;</span><span class="p">,</span>
         <span class="nx">erase_buffer</span><span class="o">:</span> <span class="s1">&#39;erase_buffer&#39;</span>
@@ -778,6 +811,8 @@ information carried in the message.</p>
         <span class="nx">STAGE_INIT</span><span class="o">:</span>    <span class="mi">10</span><span class="p">,</span>  <span class="c1">// calling stage&#39;s init</span>
         <span class="nx">STEP_INIT</span><span class="o">:</span>     <span class="mi">20</span><span class="p">,</span>  <span class="c1">// calling step&#39;s init</span>
         <span class="nx">PLAYING_STEP</span><span class="o">:</span>  <span class="mi">30</span><span class="p">,</span>  <span class="c1">// executing step</span>
+        <span class="nx">STAGE_EXIT</span><span class="o">:</span>    <span class="mi">50</span><span class="p">,</span>  <span class="c1">// calling stage&#39;s cleanup</span>
+        <span class="nx">STEP_EXIT</span><span class="o">:</span>     <span class="mi">60</span><span class="p">,</span>  <span class="c1">// calling step&#39;s clenaup</span>
         <span class="nx">FINISHING</span><span class="o">:</span>     <span class="mi">70</span><span class="p">,</span>  <span class="c1">// calling game&#39;s gameover</span>
         <span class="nx">GAMEOVER</span><span class="o">:</span>     <span class="mi">100</span><span class="p">,</span>  <span class="c1">// game complete</span>
         <span class="nx">RUNTIME_ERROR</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
@@ -839,7 +874,7 @@ information carried in the message.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>will be asynchronously evaluated.</p>
         </td>
@@ -853,13 +888,15 @@ information carried in the message.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>and the step rule evaluated.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
-        <span class="nx">DONE</span><span class="o">:</span>                <span class="mi">100</span> <span class="c1">// Player completed the stage</span>
+        <span class="nx">DONE</span><span class="o">:</span>               <span class="mi">100</span><span class="p">,</span> <span class="c1">// Player completed the stage</span>
+
+        <span class="nx">EXITING</span><span class="o">:</span>            <span class="mi">110</span><span class="p">,</span> <span class="c1">// Cleanup function being called (if found)</span>
     <span class="p">};</span>
 
 

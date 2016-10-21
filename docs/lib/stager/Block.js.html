@@ -46,7 +46,10 @@
         <a href="#block.items">Block.items</a>
       </div>
       <div class="heading h4">
-        <a href="#block.unfinishedentries">Block.unfinishedEntries</a>
+        <a href="#block.itemsids">Block.itemsIds</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block.unfinisheditems">Block.unfinishedItems</a>
       </div>
       <div class="heading h4">
         <a href="#block.index">Block.index</a>
@@ -64,6 +67,12 @@
         <a href="#block.add">Block.add</a>
       </div>
       <div class="heading h4">
+        <a href="#block.remove">Block.remove</a>
+      </div>
+      <div class="heading h4">
+        <a href="#block.removeallitems">Block.removeAllItems</a>
+      </div>
+      <div class="heading h4">
         <a href="#block.hasitem">Block.hasItem</a>
       </div>
       <div class="heading h4">
@@ -77,6 +86,15 @@
       </div>
       <div class="heading h4">
         <a href="#block.restore">Block.restore</a>
+      </div>
+      <div class="heading h2">
+        <a href="#block.size">Block.size</a>
+      </div>
+      <div class="heading h2">
+        <a href="#block.istype%20%7C%20isoftype">Block.isType | isOfType</a>
+      </div>
+      <div class="heading h2">
+        <a href="#block.clone">Block.clone</a>
       </div>
       <div class="heading h2">
         <a href="#helper%20functions">Helper Functions</a>
@@ -104,7 +122,23 @@
 <p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p>Block structure to contain stages and steps of the game sequence.</p>
+  <div class="body"><p>Blocks contain items that can be sorted in the sequence.</p>
+
+<p>Blocks can also contains other block as items, and in this case all
+items are sorted recursevely.</p>
+
+<p>Each item must contain a id (unique within the block), and a type parameter.
+Optionally, a <code>positions</code> parameter, controlling the positions that the item
+can take in the sequence, can be be passed along.</p>
+
+<p>Items is encapsulated in objects of the type:</p>
+
+<p>{ item: item, positions: positions }</p>
+
+<p>and added to the unfinishedItems array.</p>
+
+<p>When the finalized method is called, items are sorted according to the
+<code>positions</code> parameter and moved into the items array.</p>
   </div>
 </div>
         </td>
@@ -193,22 +227,30 @@ The stager class will be added later.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">positions</span>
-      <span class="dox_type">string</span>
-      <span>Optional. Positions within the
-     enclosing Block that this block can occupy</span>
-    </div>
-    <div class="dox_tag_detail">
       <span class="dox_tag_name">options</span>
       <span class="dox_type">object</span>
-      <span>Optional. Configuration object</span>
+      <span>Configuration object</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">Block</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="kd">function</span> <span class="nx">Block</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block constructor: options must be object: &#39;</span> <span class="o">+</span>
+                                <span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block constructor: options.type must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be a non-empty string: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block constructor: options.id must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be a non-empty string: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
 
 
 </pre></div>
@@ -290,8 +332,8 @@ The stager class will be added later.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">positions</span> <span class="o">?</span>
-            <span class="nx">positions</span> <span class="o">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">positions</span> <span class="o">?</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">positions</span> <span class="o">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span>
 
 
 </pre></div>
@@ -330,7 +372,7 @@ The stager class will be added later.</p>
 </div>
 
   </div>
-  <div class="body"><p>The items within this Block</p>
+  <div class="body"><p>The sequence of items within this Block</p>
   </div>
 </div>
         </td>
@@ -344,10 +386,32 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="block.unfinishedentries">
+<div class="pilwrap" id="block.itemsids">
   <h4>
-    <a href="#block.unfinishedentries" name="block.unfinishedentries" class="pilcrow">&#182;</a>
-    Block.unfinishedEntries
+    <a href="#block.itemsids" name="block.itemsids" class="pilcrow">&#182;</a>
+    Block.itemsIds
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>List of the items added to the block so far</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.unfinisheditems">
+  <h4>
+    <a href="#block.unfinisheditems" name="block.unfinisheditems" class="pilcrow">&#182;</a>
+    Block.unfinishedItems
   </h4>
 </div>
 
@@ -357,7 +421,7 @@ The stager class will be added later.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="p">[];</span>
 
 
 </pre></div>
@@ -493,14 +557,177 @@ The stager class will be added later.</p>
                             <span class="s1">&#39;cannot add further items.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">positions</span> <span class="o">||</span> <span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block.add: block &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: item id &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;must be string: &#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">item</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block.add: block &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
+                                <span class="s1">&#39;: item type must be string: &#39;</span> <span class="o">+</span>
+                                <span class="nx">item</span><span class="p">.</span><span class="nx">type</span> <span class="o">||</span> <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Block.add: block &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span>
+                                <span class="s1">&#39;: item was already added to block: &#39;</span> <span class="o">+</span>
+                                <span class="nx">item</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>We cannot set the position as a number here,
+because it might change with future modifications of
+the block. Only on block.finalize the position is fixed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">positions</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">positions</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
             <span class="nx">item</span><span class="o">:</span> <span class="nx">item</span><span class="p">,</span>
             <span class="nx">positions</span><span class="o">:</span> <span class="nx">positions</span>
         <span class="p">});</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Save item's id.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">[</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.remove">
+  <h4>
+    <a href="#block.remove" name="block.remove" class="pilcrow">&#182;</a>
+    Block.remove
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Removes an item from a block</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">itemId</span>
+      <span class="dox_type">string</span>
+      <span>The id of the item to be removed</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The removed item, or undefined if the item
+   does not exist</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">itemId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Block.remove: block already finalized, &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;cannot remove items.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">hasItem</span><span class="p">(</span><span class="nx">itemId</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">itemId</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">[</span><span class="nx">itemId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>Delete from cache as well.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">&amp;&amp;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">itemId</span><span class="p">])</span> <span class="p">{</span>
+
+                    <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">itemId</span><span class="p">];</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Block.remove: item &#39;</span> <span class="o">+</span> <span class="nx">itemId</span> <span class="o">+</span> <span class="s1">&#39; was found in the &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;in the itemsIds list, but could not be removed &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;from block &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.removeallitems">
+  <h4>
+    <a href="#block.removeallitems" name="block.removeallitems" class="pilcrow">&#182;</a>
+    Block.removeAllItems
+  </h4>
+</div>
+
+  </div>
+  <div class="body"><p>Removes all items from a block</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Block.remove
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeAllItems</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">itemId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Block.remove: block already finalized, &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;cannot remove items.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+
     <span class="p">};</span>
 
 
@@ -523,9 +750,9 @@ The stager class will be added later.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">item.</span>
+      <span class="dox_tag_name">itemId</span>
       <span class="dox_type">string</span>
-      <span>The item to check</span>
+      <span>The id of item to check</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -537,8 +764,8 @@ The stager class will be added later.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">item</span><span class="p">];</span>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">itemId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">[</span><span class="nx">itemId</span><span class="p">];</span>
     <span class="p">};</span>
 
 
@@ -568,7 +795,7 @@ The stager class will be added later.</p>
         <span class="kd">var</span> <span class="nx">available</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
@@ -580,14 +807,46 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Remove default step if it is BLOCK_STEP and further steps were added.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isType</span><span class="p">(</span><span class="nx">BLOCK_ENCLOSING_STEPS</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isDefaultStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">item</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>Remove the id of the removed item from the lists of ids.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<p>Update the positions of other steps as needed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">===</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -598,37 +857,22 @@ The stager class will be added later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
-</div>
-<p>If no positions is assigned before we don't need arraydiff</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Creating array of available positions:
-from 0 to nItems accounting for already taken positions.
-available = J.arrayDiff(J.seq(0,this.size()-1), this.takenPositions);</p>
+from 0 to nItems accounting for already taken positions.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">available</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 
 
-
 </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>TODO: this could be done inside the while loop. However, as
 every iterations also other entries are updated, it requires
@@ -636,10 +880,10 @@ multiple calls to J.range.
 Parsing all of the position strings into arrays.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
+            <span class="nx">positions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span> <span class="o">=</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="nx">positions</span><span class="p">,</span> <span class="nx">available</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -650,12 +894,12 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Assigning positions.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -663,13 +907,13 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Select entry with least possibilities of where to go.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortFunction</span><span class="p">);</span>
-            <span class="nx">entry</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">sortFunction</span><span class="p">);</span>
+            <span class="nx">entry</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
             <span class="nx">item</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">item</span><span class="p">;</span>
             <span class="nx">positions</span> <span class="o">=</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">positions</span><span class="p">;</span>
 
@@ -680,7 +924,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>No valid position specified.</p>
         </td>
@@ -698,7 +942,7 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Chose position randomly among possibilities.</p>
         </td>
@@ -714,15 +958,15 @@ Parsing all of the position strings into arrays.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Adjust possible positions in remaining entries.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">removeElement</span><span class="p">(</span><span class="nx">chosenPosition</span><span class="p">,</span>
-                                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">);</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">positions</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
@@ -743,7 +987,7 @@ Parsing all of the position strings into arrays.</p>
 </div>
 
   </div>
-  <div class="body"><p>Gets the next item in a hierarchy of Blocks</p>
+  <div class="body"><p>Gets the next item in a hierarchy of Blocksg</p>
 
 <p>If there is not next item, false is returned.
 If the next item is another Block, next is called recursively.</p>
@@ -813,8 +1057,9 @@ If the next item is another Block, next is called recursively.</p>
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">backup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">classClone</span><span class="p">({</span>
             <span class="nx">takenPositions</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">,</span>
-            <span class="nx">unfinishedEntries</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">,</span>
-            <span class="nx">items</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span>
+            <span class="nx">unfinishedItems</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">,</span>
+            <span class="nx">items</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span>
+            <span class="nx">itemsIds</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span>
         <span class="p">},</span> <span class="mi">3</span><span class="p">);</span>
     <span class="p">};</span>
 
@@ -843,10 +1088,6 @@ index to 0 and finalized to false.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Block.finalize</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
       <span class="dox_type">Block.finalize
 </span>
     </div>
@@ -857,20 +1098,128 @@ index to 0 and finalized to false.</p>
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">items</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.size">
+  <h2>
+    <a href="#block.size" name="block.size" class="pilcrow">&#182;</a>
+    Block.size
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the total number of items inside the block</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The total number of items in the block</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedEntries</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">};</span>
 
 
-    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.istype%20%7C%20isoftype">
+  <h2>
+    <a href="#block.istype%20%7C%20isoftype" name="block.istype%20%7C%20isoftype" class="pilcrow">&#182;</a>
+    Block.isType | isOfType
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if the block is of the specified type</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">type</span>
+      <span class="dox_type">string</span>
+      <span>The type to check</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE if the block is of the specified type</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isType</span> <span class="o">=</span> <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isOfType</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">type</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="block.clone">
+  <h2>
+    <a href="#block.clone" name="block.clone" class="pilcrow">&#182;</a>
+    Block.clone
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a copy of the block</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Block</span>
+      <span>A new instance of block with the same settings and items</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Block</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">block</span><span class="p">;</span>
+        <span class="nx">block</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Block</span><span class="p">({</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span>
+        <span class="p">});</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">positions</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">positions</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">takenPositions</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">takenPositions</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">itemsIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemsIds</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">unfinishedItems</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unfinishedItems</span><span class="p">);</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">finalized</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">finalized</span><span class="p">;</span>
+        <span class="nx">block</span><span class="p">.</span><span class="nx">resetCache</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">block</span><span class="p">;</span>
     <span class="p">};</span>
 
 

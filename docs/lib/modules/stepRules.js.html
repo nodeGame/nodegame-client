@@ -37,6 +37,9 @@
         <a href="#others_sync_step">OTHERS_SYNC_STEP</a>
       </div>
       <div class="heading h2">
+        <a href="#others_sync_stage">OTHERS_SYNC_STAGE</a>
+      </div>
+      <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
     </div>
@@ -83,6 +86,20 @@ context-less in the browser too.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Important! Cannot define DONE = node.constants.stageLevels.DONE;
+It is not defined on browsers then.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
 
 </pre></div>
@@ -181,7 +198,7 @@ but has to wait before going to the next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 <p>If next step is going to be a new stage, wait for others.</p>
         </td>
@@ -213,6 +230,55 @@ step and DONE. My own stage does not matter.</p>
         <span class="nx">stage</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">first</span><span class="p">().</span><span class="nx">stage</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">arePlayersSync</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">,</span>
                                  <span class="s1">&#39;EXACT&#39;</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="others_sync_stage">
+  <h2>
+    <a href="#others_sync_stage" name="others_sync_stage" class="pilcrow">&#182;</a>
+    OTHERS_SYNC_STAGE
+  </h2>
+</div>
+
+
+<p>All the players in the player list must be sync in the <em>last</em>
+step of current stage and DONE. My own stage does not matter.
+Important: to work it assumes that number of steps in current
+stage is the same in all players (including this one).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">OTHERS_SYNC_STAGE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span>
+                                                   <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">stage</span> <span class="o">=</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">first</span><span class="p">().</span><span class="nx">stage</span><span class="p">;</span>
+        <span class="nx">nSteps</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>Manual clone in case there are more steps to go.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nSteps</span> <span class="o">!==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stage</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">stage</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">stage</span><span class="p">,</span>
+                <span class="nx">step</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">step</span> <span class="o">+</span> <span class="p">(</span><span class="nx">nSteps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="nx">round</span><span class="o">:</span> <span class="nx">stage</span><span class="p">.</span><span class="nx">round</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">arePlayersSync</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">,</span>
+                                 <span class="s1">&#39;EXACT&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">};</span>
 
 

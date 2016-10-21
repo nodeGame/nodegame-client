@@ -1,3 +1,5 @@
+"use strict";
+
 var util = require('util');
 should = require('should');
 
@@ -17,6 +19,7 @@ var i, len, tmp, res;
 var stagerState;
 
 var stepRule, globals, properties, init, gameover, done;
+var stagerStage;
 
 var stager = new Stager();
 
@@ -326,9 +329,9 @@ describe('Stager', function() {
         it('should create 2 new blocks', function() {
             stager.blocks.length.should.eql(3);
         });
-        it('should keep extra properties of the step', function() {
-            stager.steps['stage 1'].a.should.eql(1);
-            stager.steps['stage 1'].b.should.eql(2);
+        it('should add extra properties to the stage', function() {
+            stager.stages['stage 1'].a.should.eql(1);
+            stager.stages['stage 1'].b.should.eql(2);
         });
         it('should have empty sequence', function() {
             stager.sequence.length.should.eql(0);
@@ -363,6 +366,61 @@ describe('Stager', function() {
             stager.sequence.length.should.eql(0);
         });
     });
+
+    describe('#next: 1 stage object without steps and cb', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+            tmp = function() { i = 1 };
+            stager.next({ id: 'instructions' });
+
+        });
+        it('should have 1 stage and 1 steps', function() {
+            J.size(stager.stages).should.eql(1);
+            J.size(stager.steps).should.eql(1);
+        });
+        it('should have step and stage correctly named', function() {
+            stager.steps['instructions'].id.should.eql('instructions');
+            stager.stages['instructions'].id.should.eql('instructions');
+        });
+        it('should have the 1 step with default callback', function() {
+            stager.steps['instructions'].cb.should.eql(Stager.defaultCallback);
+        });
+        it('should have empty sequence', function() {
+            stager.sequence.length.should.eql(0);
+        });
+    });
+
+    describe('#next: 1 stage object without steps and cb, step already exiting',
+             function() {
+                 before(function() {
+                     stager = ngc.getStager();
+                     i = null, len = null, res = null, stagerStage = null;
+                     tmp = function() { i = 1 };
+                     stager.addStep({
+                         id: 'instructions',
+                         cb: tmp
+                     });
+                     stager.next({ id: 'instructions' });
+
+                 });
+                 it('should have 1 stage and 1 steps', function() {
+                     J.size(stager.stages).should.eql(1);
+                     J.size(stager.steps).should.eql(1);
+                 });
+                 it('should have step and stage correctly named', function() {
+                     stager.steps['instructions']
+                         .id.should.eql('instructions');
+                     stager.stages['instructions']
+                         .id.should.eql('instructions');
+                 });
+                 it('should have the step callback unchanged', function() {
+                     stager.steps['instructions'].cb.should.eql(tmp);
+                 });
+                 it('should have empty sequence', function() {
+                     stager.sequence.length.should.eql(0);
+                 });
+             });
 
     describe('#next: 3 stages with default step', function() {
         before(function() {
@@ -450,6 +508,42 @@ describe('Stager', function() {
             stager.sequence[0].type.should.eql('doLoop');
         });
     });
+
+   describe('#reset', function() {
+        before(function() {
+            stager = ngc.getStager();
+            tmp = null, i = null, len = null, res = null, stagerStage = null;
+            stager.next('1').next('2');
+        });
+        it('should return stager to be identical to before ' +
+           'being finalized',
+           function() {
+               var stager2;
+               stager2 = ngc.getStager();
+               stager2.next('1').next('2');
+               stager2.should.be.eql(stager);
+
+               stager2.finalize();
+               stager2.reset();
+               stager2.should.be.eql(stager);
+           });
+
+        it('should return stager to be identical to before ' +
+           'being finalized. +gameover',
+           function() {
+               var stager2;
+               stager = ngc.getStager();
+               stager.next('1').next('2').gameover();
+               stager2 = ngc.getStager();
+               stager2.next('1').next('2').gameover();
+               stager2.should.be.eql(stager);
+
+               stager2.finalize();
+               stager2.reset();
+               stager2.should.be.eql(stager);
+           });
+
+   });
 
     describe('#finalize, #reset', function() {
         before(function() {
@@ -835,6 +929,52 @@ describe('Stager', function() {
 
     });
 
+    describe('#extendStep: object (no properties such cb, init..)', function() {
+        before(function() {
+            stager = ngc.getStager();
+            i = null, len = null, res = null, stagerStage = null;
+
+            stager.next('stage 1');
+
+            stager.extendStep('stage 1', {
+                c: 'a',
+                e: 1
+            });
+
+        });
+
+        it('should have added `c`', function() {
+            stager.steps['stage 1'].c.should.eql('a');
+        });
+        it('should have added `e`', function() {
+            stager.steps['stage 1'].e.should.eql(1);
+        });
+
+    });
+
+    describe('#extendStage: object (no properties such cb, init..)',
+             function() {
+                 before(function() {
+                     stager = ngc.getStager();
+                     i = null, len = null, res = null, stagerStage = null;
+
+                     stager.next('stage 1');
+
+                     stager.extendStage('stage 1', {
+                         c: 'a',
+                         e: 1
+                     });
+
+                 });
+
+                 it('should have added `c`', function() {
+                     stager.stages['stage 1'].c.should.eql('a');
+                 });
+                 it('should have added `e`', function() {
+                     stager.stages['stage 1'].e.should.eql(1);
+                 });
+
+             });
 
     describe('#extendAllSteps: update function', function() {
         before(function() {
@@ -1127,6 +1267,58 @@ describe('Stager', function() {
 
     });
 
+    describe('#extendStage: object modifying steps array', function() {
+        before(function() {
+            stager = ngc.getStager();
+            done =  null, i = null, len = null, stagerStage = null;
+            res = [ 'qwe', 'rty' ];
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStage('stage 1', {
+                steps: res
+            });
+
+        });
+        testExtendStepsArray();
+    });
+
+    describe('#extendStage: update function modifying steps array', function() {
+        before(function() {
+            stager = ngc.getStager();
+            done =  null, i = null, len = null, stagerStage = null;
+            res = [ 'qwe', 'rty' ];
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            stager.addStage({
+                id: 'stage 1',
+                cb: tmp,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStage('stage 1', function(o) {
+                o.steps = res;
+                return o;
+            });
+
+        });
+        testExtendStepsArray();
+    });
 
     describe('#extendAllStages: update function', function() {
         before(function() {
@@ -1269,332 +1461,97 @@ describe('Stager', function() {
 
     });
 
-    describe('should fail', function() {
-        beforeEach(function() {
+    describe('#getState, #setState', function() {
+        before(function() {
             stager = ngc.getStager();
+
             i = null, len = null, res = null, stagerStage = null;
-            tmp = function() { console.log('ahah'); };
+            tmp = function() {
+                i = (i || 0) + 1;
+            };
+            done = function(increment) {
+                len = (len || 0) + increment;
+            };
+            stager.addStep({
+                id: 'step 1',
+                cb: tmp,
+                done: done,
+                c: 3,
+                d: 4,
+                e: 5
+            });
+
+            stager.next('stage 1');
+
+            stager.extendStep('step 1', function(o) {
+                o._cb = o.cb;
+                o.cb = function() {
+                    this._cb();
+                    i++;
+                };
+                o._done = o.done;
+                o.done = function(increment) {
+                    this._done((increment-1));
+                    len = len + increment;
+                };
+                o.c = 'a';
+                o.e = undefined;
+                return o;
+            });
+
+            stager.extendStep('stage 1', function(o) {
+                o.__cb = o.cb;
+                o.cb = function() {
+                    if ('undefined' !== typeof this.__cb) i++;
+                    i++;
+                };
+                o.foo = 'foo1';
+                return o;
+            });
+
+            stagerState = stager.getState();
 
         });
-        it('if step method is called but no stage was added before',
-           function() {
-               (function() {
-                   stager.step('step1');
-               }).should.throw();
-           });
-        it('if stage id is not a (non-empty) string', function() {
-            (function() {
-                stager.addStage({ id: null, cb: tmp});
-            }).should.throw();
-            (function() {
-                stager.next('');
-            }).should.throw();
-            (function() {
-                stager.next({
-                    id: {},
-                    cb: tmp
-                });
-            }).should.throw();
-        });
-        it('if step id is not a (non-empty) string', function() {
-            (function() {
-                stager.addStep({ id: null, cb: tmp});
-            }).should.throw();
-            (function() {
-                stager.next({
-                    id: 'stage 1',
-                    steps: [ '' ]
-                });
-            }).should.throw();
-        });
-        it('if stage cb is not a function', function() {
-            (function() {
-                stager.addStage({ id: 'a', cb: null});
-            }).should.throw();
-            (function() {
-                stager.next({
-                    id: 'a',
-                    cb: {}
-                });
-            }).should.throw();
-        });
-        it('if stage steps is not a non-empty array', function() {
-            (function() {
-                stager.next({
-                    id: 'a',
-                    steps: []
-                });
-            }).should.throw();
-            (function() {
-                stager.next({
-                    id: 'a',
-                    steps: null
-                });
-            }).should.throw();
-            (function() {
-                stager.next({
-                    id: 'a',
-                    steps: 'ah'
-                });
-            }).should.throw();
-        });
-        it('if step cb is not a function', function() {
-            (function() {
-                stager.addStep({ id: 'a', cb: 'a'});
-            }).should.throw();
-        });
-        it('if repetition parameter is not a positive number', function() {
-            (function() {
-                stager.repeat('ahah');
-            }).should.throw();
-            (function() {
-                stager.repeat('ahah', -2);
-            }).should.throw();
-            (function() {
-                stager.repeat('ahah', NaN);
-            }).should.throw();
-            (function() {
-                stager.repeat('ahah', {});
-            }).should.throw();
-            (function() {
-                stager.repeat({
-                    id: 'ahah',
-                    cb: function() {}
-                });
-            }).should.throw();
-            (function() {
-                stager.repeat({
-                    id: 'ahah',
-                    cb: function() {}
-                }, -3);
-            }).should.throw();
-        });
-        it('if loop function is not a function', function() {
-            (function() {
-                stager.loop('ahah');
-            }).should.throw();
-            (function() {
-                stager.loop('ahah', -2);
-            }).should.throw();
-            (function() {
-                stager.doLoop('ahah', NaN);
-            }).should.throw();
-            (function() {
-                stager.doLoop('ahah', {});
-            }).should.throw();
-            (function() {
-                stager.loop({
-                    id: 'ahah',
-                    cb: function() {}
-                });
-            }).should.throw();
-            (function() {
-                stager.doLoop({
-                    id: 'ahah',
-                    cb: function() {}
-                }, -3);
-            }).should.throw();
-        });
-        it('if attempting to modify sequence after stager was finalized',
-           function() {
+        it('should export all variables of the stager state', function() {
+            var props, i, len;
 
-               (function() {
-                   stager.next('stage').finalize();
-                   stager.next('ahah');
-               }).should.throw();
-               (function() {
-                   stager.repeat('ahah');
-               }).should.throw();
-               (function() {
-                   stager.loop('ahah');
-               }).should.throw();
-               (function() {
-                   stager.step({ id: 'a', cb: function() {} });
-               }).should.throw();
-           });
-        it('if skip, unskip are called with wrong parameters',
-           function() {
-               (function() {
-                   stager.skip('');
-               }).should.throw();
-               (function() {
-                   stager.skip(4);
-               }).should.throw();
-               (function() {
-                   stager.skip(undefined, '1');
-               }).should.throw();
-               (function() {
-                   stager.unskip('');
-               }).should.throw();
-               (function() {
-                   stager.unskip(4);
-               }).should.throw();
-               (function() {
-                   stager.unskip(undefined, '1');
-               }).should.throw();
-           });
-        it('other fails', function() {
-            (function() {
-                stager.addStep();
-            }).should.throw();
-            (function() {
-                stager.addStage();
-            }).should.throw();
-            (function() {
-                stager.next();
-            }).should.throw();
-            (function() {
-                stager.loop();
-            }).should.throw();
-            (function() {
-                stager.doLoop();
-            }).should.throw();
-            (function() {
-                stager.repeat();
-            }).should.throw();
-        });
-        it('if extendStep|Stage are referencing non-existing steps|stages',
-           function() {
-               (function() {
-                   stager.extendStep('ahah', { a: 1});
-               }).should.throw();
-               (function() {
-                   stager.extendStage('bb', { a: 1});
-               }).should.throw();
-           });
-        it('if extendStep|Stage are called with wrong parameters',
-           function() {
-               stager.next('foo');
-               (function() {
-                   stager.extendStep('foo');
-               }).should.throw();
-               (function() {
-                   stager.extendStep('foo', 1);
-               }).should.throw();
-               (function() {
-                   stager.extendStep('foo', { id: 'fi' });
-               }).should.throw();
-               (function() {
-                   stager.extendStep('foo', { id: undefined });
-               }).should.throw();               (function() {
-                   stager.extendStep(undefined, { a: 1 });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo');
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', 1);
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', { id: 'fi' });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', { cb: function() {} });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', { cb: undefined });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', { steps: undefined });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', { steps: [] });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', { id: undefined });
-               }).should.throw();               (function() {
-                   stager.extendStage(undefined, { a: 1 });
-               }).should.throw();
-           });
-        it('if extendStep|Stage update functions returns a non valid element',
-           function() {
-               (function() {
-                   stager.extendStep('foo', function() {});
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', function() {});
-               }).should.throw();
-               (function() {
-                   stager.extendStep('foo', function() {
-                       return { id: 'a' };
-                   });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', function() {
-                       return { id: 'a' };
-                   });
-               }).should.throw();
-               (function() {
-                   stager.extendStep('foo', function() {
-                       return { id: 'foo', cb: function() {} };
-                   });
-               }).should.throw();
-               (function() {
-                   stager.extendStage('foo', function() {
-                       return { id: 'foo', cb: function() {} };
-                   });
-               }).should.throw();
-           });
-        it('if cloneStep|Stage are referencing non-existing steps|stages',
-           function() {
-               (function() {
-                   stager.cloneStep('ahah', 'a');
-               }).should.throw();
-               (function() {
-                   stager.cloneStage('bb', 'b');
-               }).should.throw();
-           });
+            props = [
+                'steps',
+                'stages',
+                'sequence',
+                'generalNextFunction',
+                'nextFunctions',
+                'defaultStepRule',
+                'defaultGlobals',
+                'defaultProperties',
+                'onInit',
+                'onGameover',
+                'toSkip',
+                'defaultCallback',
+                'blocks',
+                'cacheReset'
+            ];
 
-        it('if cloneStep|Stage are using an already taken id for clone',
-           function() {
-               (function() {
-                   stager.cloneStep('foo', 'foo');
-               }).should.throw();
-               (function() {
-                   stager.cloneStage('foo', 'foo');
-               }).should.throw();
-           });
-        it('if cloneStep|Stage are called with wrong parameters',
-           function() {
-               (function() {
-                   stager.cloneStep(null, 'foo');
-               }).should.throw();
-               (function() {
-                   stager.cloneStep('foo', {});
-               }).should.throw();
-               (function() {
-                   stager.cloneStage(undefined, 'foo');
-               }).should.throw();
-               (function() {
-                   stager.cloneStage('foo', 3);
-               }).should.throw();
-           });
-        it('if stage method is called with object, but stage id is existing',
-           function() {
-               (function() {
-                   stager.createStage({
-                       id: 'myweirdstage',
-                       cb: function() {}
-                   });
-                   stager.stage({
-                       id: 'myweirdstage',
-                       steps: [ '1', '2', '3' ]
-                   });
-               }).should.throw();
-           });
-         it('if step method is called with object, but step id is existing',
-           function() {
-               (function() {
-                   stager.createStep({
-                       id: 'myweirdstep',
-                       cb: function() {}
-                   });
-                   stager.step({
-                       id: 'myweirdstep',
-                       cb: function() {}
-                   });
-               }).should.throw();
-           });
+            i = -1, len = props.length;
+            for ( ; ++i < len ; ) {
+                ('undefined' !== typeof stagerState[props[i]]).should.be.true;
+            }
+
+        });
+
+        it('should recreate a second identical stager', function() {
+            var stager2, state2;
+
+            stager2 = ngc.getStager();
+
+            stager2.setState(stagerState);
+
+            state2 = stager2.getState();
+
+            state2.should.eql(stagerState);
+
+            stager2.should.eql(stager);
+        });
     });
 
     describe('#extendStep: update function', function() {
@@ -1674,44 +1631,66 @@ describe('Stager', function() {
 });
 
 
+// Helper function!
+///////////////////
+
+function testExtendStepsArray() {
+
+    it('should have changed the steps array in the stage', function() {
+        stager.stages['stage 1'].steps.should.eql(res);
+    });
+    it('should have changed the steps in the block', function() {
+        var block;
+        block = stager.blocks[stager.blocks.length -1];
+        block.unfinishedItems[0].item.id.should.eql(res[0]);
+        block.unfinishedItems[1].item.id.should.eql(res[1]);
+    });
+    it('should have assigned changed steps to "stage 1"', function() {
+        var block;
+        block = stager.blocks[stager.blocks.length -1];
+        block.unfinishedItems[0].item.type.should.eql('stage 1');
+        block.unfinishedItems[1].item.type.should.eql('stage 1');
+    });
+}
+
 return;
 
 
-// Simple mode test:
-console.log();
-console.log('SIMPLE MODE');
-console.log('===========');
-stager.addStep(stepWoop);
-stager.addStep(stepBeep);
-
-stager.addStage(stepDurr);
-stager.addStage(stepBlah);
-stager.addStage(stageMain);
-stager.setDefaultGlobals({GLOB: 3.14});
-stager.setDefaultProperties({myProp: 1});
-
-var counter = 0;
-var flag = false;
-
-stager
-    .repeat('main', 2)
-    .loop('durr', function() {
-        if (counter++ >= 3) return false;
-        return true;
-    })
-    .next('blah')
-    .next('durr AS durrurrurr')
-    .gameover()
-;
-
-// Testing extraction:
-console.log("Extraction of 'main':");
-console.log(util.inspect(stager.extractStage('main'), false, 4));
-console.log();
-console.log("Extraction of ['blah', 'durrurrurr', 'blah']:");
-console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']),
-                         false, 4));
-console.log();
+// // Simple mode test:
+// console.log();
+// console.log('SIMPLE MODE');
+// console.log('===========');
+// stager.addStep(stepWoop);
+// stager.addStep(stepBeep);
+//
+// stager.addStage(stepDurr);
+// stager.addStage(stepBlah);
+// stager.addStage(stageMain);
+// stager.setDefaultGlobals({GLOB: 3.14});
+// stager.setDefaultProperties({myProp: 1});
+//
+// var counter = 0;
+// var flag = false;
+//
+// stager
+//     .repeat('main', 2)
+//     .loop('durr', function() {
+//         if (counter++ >= 3) return false;
+//         return true;
+//     })
+//     .next('blah')
+//     .next('durr AS durrurrurr')
+//     .gameover()
+// ;
+//
+// // Testing extraction:
+// console.log("Extraction of 'main':");
+// console.log(util.inspect(stager.extractStage('main'), false, 4));
+// console.log();
+// console.log("Extraction of ['blah', 'durrurrurr', 'blah']:");
+// console.log(util.inspect(stager.extractStage(['blah', 'durrurrurr', 'blah']),
+//                          false, 4));
+// console.log();
 
 /*
   console.log('Sequence (JS object):');
