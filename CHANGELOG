@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 3.2.0
+- node.get timeout erroneously not clering the event listener if executeOnce was set. Fixed.
+- SocketDirect does not stringify/unstringify the messages now. Just passes the plane object.
+
 ## 3.1.1
 - SizeManager.setHandler.
 
