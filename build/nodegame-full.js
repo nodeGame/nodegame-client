@@ -20398,7 +20398,19 @@ if (!Array.prototype.indexOf) {
          *
          * The "role" currently held in this game
          *
-         * If a role is specified, the related execution callback 
+         * If a role is specified, the related execution callback
+         * is executed instead of the default one ('cb').
+         *
+         * @see Game.execStep
+         */
+        this.role = null;
+
+        /**
+         * ### Game.role
+         *
+         * The "role" currently held in this game
+         *
+         * If a role is specified, the related execution callback
          * is executed instead of the default one ('cb').
          *
          * @see Game.execStep
@@ -20900,10 +20912,9 @@ if (!Array.prototype.indexOf) {
                     var remoteOptions;
                     i = -1, len = matches.length;
                     for ( ; ++i < len ; ) {
-                        debugger
                         pid = matches[i].id;
                         remoteOptions = matches[i].options;
-                        
+
                         if (curStep.stage === 0) {
                             node.remoteCommand('start', pid, remoteOptions);
                         }
@@ -21004,9 +21015,8 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Game.gotoStep: options must be object ' +
                                 'or undefined. Found: ' +  options);
         }
-         
+
         // TODO: and partner?
-        debugger
         if (!options || !options.role) {
             role = this.plot.getProperty(nextStep, 'role');
             if (role === 'keep') {
@@ -21056,22 +21066,9 @@ if (!Array.prototype.indexOf) {
             node.socket.clearBuffer();
         }
 
-// TODO: probably remove.        
-//         var role, roles;
-//         roles = this.plot.getProperty(step, 'roles');
-//         role = this.plot.getProperty(step, 'role');
-// 
-//         role = this.role;
-//         if (role) {
-//             roles = this.plot.getProperty(step, 'roles');
-//             if (roles) {
-//                 cb = roles[role];
-//             }
-//             
-//         }
-
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
+
         this.execStep(this.getCurrentGameStage());
         return true;
     };
@@ -21944,6 +21941,8 @@ if (!Array.prototype.indexOf) {
      * Roles are not supposed to be set more than once per step, and
      * an error will be thrown on attempts to overwrite roles.
      *
+     * Updates the reference also in `node.player.role`.
+     *
      * @param {string|null} role The name of the role
      * @param {boolean} force Optional. If TRUE, role can be overwritten
      *
@@ -21981,6 +21980,7 @@ if (!Array.prototype.indexOf) {
                                 'Found: ' + role);
         }
         this.role = role;
+        this.node.player.role = role;
     };
 
     /**
@@ -22024,7 +22024,6 @@ if (!Array.prototype.indexOf) {
                 game.node.done();
             });
         }
-debugger
         // Set role.
         if (options.role) game.setRole(options.role, true);
         // Partner.
