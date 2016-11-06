@@ -49,6 +49,9 @@
         <a href="#game.plot">Game.plot</a>
       </div>
       <div class="heading h3">
+        <a href="#game.role">Game.role</a>
+      </div>
+      <div class="heading h3">
         <a href="#game.timer">Game.timer</a>
       </div>
       <div class="heading h3">
@@ -182,6 +185,12 @@
       </div>
       <div class="heading h3">
         <a href="#game.getproperty">Game.getProperty</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.setrole">Game.setRole</a>
+      </div>
+      <div class="heading h3">
+        <a href="#game.getrole">Game.getRole</a>
       </div>
       <div class="heading h2">
         <a href="#helper%20methods">Helper Methods</a>
@@ -537,6 +546,39 @@ automatically inserted in this object</p>
         <td class="code highlight"><div class="highlight"><pre>
 
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.role">
+  <h3>
+    <a href="#game.role" name="game.role" class="pilcrow">&#182;</a>
+    Game.role
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The "role" currently held in this game</p>
+
+<p>If a role is specified, the related execution callback
+is executed instead of the default one ('cb').</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.execStep
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
 </pre></div>
         </td>
       </tr>
@@ -581,7 +623,7 @@ automatically inserted in this object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Setting to stage 0.0.0 and starting.</p>
         </td>
@@ -862,9 +904,18 @@ just for change of state after the game has started.</p>
       <span>Optional. Configuration object. Fields:
 
 <ul>
-<li>step: true/false. If false, jus call the init function, and
-does not enter the first step. Default, TRUE.</li>
+<li>step: {boolean}. If false, jus call the init function, and
+  does not enter the first step. Default: TRUE.</li>
+<li>startStage: {GameStage}. If set, the game will step into
+  the step <em>after</em> startStage after initing. Default: 0.0.0</li>
+<li>stepOptions: options to pass to the new step (only if step
+  option is not FALSE).</li>
 </ul></span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.step
+</span>
     </div>
   </div>
 </div>
@@ -894,7 +945,7 @@ does not enter the first step. Default, TRUE.</li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Store time.</p>
         </td>
@@ -910,7 +961,7 @@ does not enter the first step. Default, TRUE.</li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Starts from beginning (default) or from a predefined stage
 This options is useful when a player reconnets.</p>
@@ -925,7 +976,7 @@ This options is useful when a player reconnets.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Update GLOBALS.</p>
         </td>
@@ -939,7 +990,7 @@ This options is useful when a player reconnets.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>INIT the game.</p>
         </td>
@@ -957,7 +1008,7 @@ This options is useful when a player reconnets.</p>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;game started.&#39;</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">step</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">step</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">step</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">stepOptions</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1038,7 +1089,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Destroy currently running timers.</p>
         </td>
@@ -1052,7 +1103,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Remove all events registered during the game.</p>
         </td>
@@ -1070,7 +1121,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Clear memory.</p>
         </td>
@@ -1084,7 +1135,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>If a <em>GameWindow</em> object is found, clears it.</p>
         </td>
@@ -1098,7 +1149,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Update state/stage levels and game stage.</p>
         </td>
@@ -1112,7 +1163,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>This command is notifying the server.</p>
         </td>
@@ -1126,7 +1177,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>TODO: check if we need pl and ml again.</p>
         </td>
@@ -1181,7 +1232,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Call gameover callback, if it exists.</p>
         </td>
@@ -1284,7 +1335,7 @@ property.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>If the Stager has a method for accepting messages during a
 pause, pass them to it. Otherwise, buffer the messages
@@ -1310,7 +1361,7 @@ until the game is resumed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>TODO: broadcast?</p>
         </td>
@@ -1373,7 +1424,7 @@ until the game is resumed.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>If the Stager defines an appropriate handler, give it the messages
 that were buffered during the pause.
@@ -1392,7 +1443,7 @@ Otherwise, emit the buffered messages normally.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Reset the Socket's message handler to the default:</p>
         </td>
@@ -1408,7 +1459,7 @@ Otherwise, emit the buffered messages normally.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>TODO: broadcast?</p>
         </td>
@@ -1421,7 +1472,7 @@ Otherwise, emit the buffered messages normally.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Maybe the game was LOADED during the pausing.
 In this case the PLAYING event got lost.</p>
@@ -1623,6 +1674,7 @@ TODO: remove some unused comments in the code.
         <span class="kd">var</span> <span class="nx">curStep</span><span class="p">,</span> <span class="nx">curStepObj</span><span class="p">,</span> <span class="nx">curStageObj</span><span class="p">,</span> <span class="nx">nextStepObj</span><span class="p">,</span> <span class="nx">nextStageObj</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">stageInit</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ev</span><span class="p">,</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">roleMapper</span><span class="p">,</span> <span class="nx">role</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isSteppable</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: game cannot be stepped.&#39;</span><span class="p">);</span>
@@ -1649,7 +1701,7 @@ TODO: remove some unused comments in the code.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>TODO: even if node.game.timer.syncWithStage is on,
 node.done() is not called on logics. So the timer
@@ -1666,7 +1718,7 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Clear push-timer.</p>
         </td>
@@ -1680,7 +1732,7 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Clear the cache of temporary changes to steps.</p>
         </td>
@@ -1698,17 +1750,67 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Sends start / step command to connected clients if option is on.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;syncStepping&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">curStep</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+</div>
+<p>TODO: sends roles here.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+            <span class="nx">roleMapper</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;roleMapper&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">roleMapper</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+</div>
+<p>TODO: parse roleMapper param.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="kd">var</span> <span class="nx">matches</span><span class="p">;</span>
+                <span class="nx">matches</span> <span class="o">=</span> <span class="nx">doMatch</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">roleMapper</span><span class="p">);</span>
+                <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">pid</span><span class="p">;</span>
+                    <span class="kd">var</span> <span class="nx">remoteOptions</span><span class="p">;</span>
+                    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">pid</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">id</span><span class="p">;</span>
+                        <span class="nx">remoteOptions</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">options</span><span class="p">;</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">curStep</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="nx">pid</span><span class="p">,</span> <span class="nx">remoteOptions</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">remoteOptions</span><span class="p">.</span><span class="nx">targetStep</span> <span class="o">=</span> <span class="nx">nextStep</span><span class="p">;</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;goto_step&#39;</span><span class="p">,</span> <span class="nx">pid</span><span class="p">,</span> <span class="nx">remoteOptions</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">})(</span><span class="nx">matches</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;goto_step&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">curStep</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">remoteCommand</span><span class="p">(</span><span class="s1">&#39;goto_step&#39;</span><span class="p">,</span> <span class="s1">&#39;ROOM&#39;</span><span class="p">,</span> <span class="nx">nextStep</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -1719,7 +1821,7 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Calling exit function of the step.</p>
         </td>
@@ -1738,9 +1840,9 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
-<p>Listeners from previous step are cleared (must be after exit).</p>
+<p>Listeners from previous step are cleared (must be done after exit).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
@@ -1752,7 +1854,7 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Emit buffered messages.</p>
         </td>
@@ -1760,6 +1862,19 @@ and we clear also the milliseconds count.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">shouldClearBuffer</span><span class="p">())</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
         <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+</div>
+<p>String STEP.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">nextStep</span><span class="p">)</span> <span class="p">{</span>
 
@@ -1770,7 +1885,7 @@ and we clear also the milliseconds count.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>TODO: see if we can avoid code duplication below.
 Calling exit function of the stage.</p>
@@ -1789,7 +1904,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Clear any event listeners added in the stage exit function.</p>
         </td>
@@ -1805,7 +1920,7 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Emit buffered messages:</p>
         </td>
@@ -1822,79 +1937,13 @@ Calling exit function of the stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>else do nothing</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
-</div>
-<p>TODO maybe update also in case of string.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STEPPING&#39;</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
-</div>
-<p>Check for stage/step existence:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">nextStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nextStageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="nx">nextStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nextStepObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
-</div>
-<p>If we enter a new stage we need to update a few things.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curStageObj</span> <span class="o">||</span> <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
-</div>
-<p>Calling exit function.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">curStageObj</span> <span class="o">&amp;&amp;</span> <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_EXIT</span><span class="p">);</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">EXITING</span><span class="p">);</span>
-
-                    <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-                <span class="p">}</span>
-                <span class="nx">stageInit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span>
 
 
 </pre></div>
@@ -1905,12 +1954,9 @@ Calling exit function of the stage.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
-<p>stageLevel needs to be changed (silent), otherwise it stays
-DONE for a short time in the new game stage:</p>
+<p>Here we start processing the new STEP.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
 
 
 </pre></div>
@@ -1921,18 +1967,11 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
-<p>Process options before calling any init function.</p>
+<p>TODO maybe update also in case of string.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">processGotoStepOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: options must be object &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>  <span class="nx">options</span><span class="p">);</span>
-            <span class="p">}</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;STEPPING&#39;</span><span class="p">);</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">stageInit</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -1942,10 +1981,13 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
-<p>Store time:</p>
+<p>Check for stage/step existence:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">setTimestamp</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">());</span>
+        <span class="nx">nextStageObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nextStageObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">nextStepObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getStep</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nextStepObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1956,13 +1998,10 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
-<p>Clear the previous stage listeners.</p>
+<p>If we enter a new stage we need to update a few things.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_INIT</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">curStageObj</span> <span class="o">||</span> <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
 
 
 </pre></div>
@@ -1973,13 +2012,17 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
-<p>Execute the init function of the stage, if any:</p>
+<p>Calling exit function.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-                <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">curStageObj</span> <span class="o">&amp;&amp;</span> <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_EXIT</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">EXITING</span><span class="p">);</span>
+
+                <span class="nx">curStageObj</span><span class="p">.</span><span class="nx">exit</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
+            <span class="nx">stageInit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
 
 
 </pre></div>
@@ -1990,17 +2033,12 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
-<p>Execute the init function of the step, if any:</p>
+<p>stageLevel needs to be changed (silent), otherwise it stays
+DONE for a short time in the new game stage:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">nextStepObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_INIT</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
-                <span class="nx">nextStepObj</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">PLAYING_STEP</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setCurrentGameStage</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
 
 
 </pre></div>
@@ -2011,10 +2049,16 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
-<p>Updating the globals object.</p>
+<p>Process options before calling any init function. Sets a role also.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">updateGlobals</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">processGotoStepOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: options must be object &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>  <span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
 
 
 </pre></div>
@@ -2025,10 +2069,18 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
-<p>Reads Min/Max/Exact Players properties.</p>
+<p>TODO: and partner?</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">sizeManager</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span> <span class="o">||</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">role</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">===</span> <span class="s1">&#39;keep&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">role</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setRole</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">role</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">setRole</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
 
 </pre></div>
@@ -2039,15 +2091,11 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
-<p>Emit buffered messages:</p>
+<p>TODO: if a role is SET, then the init functions might have
+changed. Maybe not of stage, but of step.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">shouldClearBuffer</span><span class="p">())</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
-            <span class="p">}</span>
-
-        <span class="p">}</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stageInit</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -2057,14 +2105,246 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
+<p>Store time:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">setTimestamp</span><span class="p">(</span><span class="s1">&#39;stage&#39;</span><span class="p">,</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getTime</span><span class="p">());</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+</div>
+<p>Clear the previous stage listeners.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STAGE_INIT</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+</div>
+<p>Execute the init function of the stage, if any:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">nextStageObj</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+</div>
+<p>Execute the init function of the step, if any:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nextStepObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">STEP_INIT</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZING</span><span class="p">);</span>
+            <span class="nx">nextStepObj</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stateLevels</span><span class="p">.</span><span class="nx">PLAYING_STEP</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+</div>
+<p>Updating the globals object.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">updateGlobals</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+</div>
+<p>Reads Min/Max/Exact Players properties.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">sizeManager</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+</div>
+<p>Emit buffered messages:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">shouldClearBuffer</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">clearBuffer</span><span class="p">();</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+</div>
+<p>TODO: probably remove.
+        var role, roles;
+        roles = this.plot.getProperty(step, 'roles');
+        role = this.plot.getProperty(step, 'role');</p>
+
+
+<div class="highlight"><pre><code>    <span class="nx">role</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">role</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">roles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">step</span><span class="p">,</span> <span class="s1">&#39;roles&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">roles</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">];</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+</div>
 <p>Update list of stepped steps.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">_steppedSteps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">);</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">execStep</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+</div>
+<p>TODO: make it a proper class.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">doMatch</span><span class="p">(</span><span class="nx">game</span><span class="p">,</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">matches</span><span class="p">;</span>
+        <span class="nx">matches</span> <span class="o">=</span> <span class="p">[];</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+</div>
+<p>Generates new random matches for this round.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">game</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+        <span class="nx">match</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+</div>
+<p>Resets all roles.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">game</span><span class="p">.</span><span class="nx">roleMapper</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+</div>
+<p>While we have matches, send them to clients.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="nx">game</span><span class="p">.</span><span class="nx">roles</span><span class="p">.</span><span class="nx">BIDDER</span><span class="p">];</span>
+            <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="nx">game</span><span class="p">.</span><span class="nx">roles</span><span class="p">.</span><span class="nx">RESPONDENT</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">game</span><span class="p">.</span><span class="nx">roleMapper</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;BIDDER&#39;</span><span class="p">;</span>
+                <span class="nx">game</span><span class="p">.</span><span class="nx">roleMapper</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;RESPONDENT&#39;</span><span class="p">;</span>
+
+                <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span>
+                    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="s1">&#39;BIDDER&#39;</span><span class="p">,</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span>
+                <span class="p">});</span>
+                <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span>
+                    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="s1">&#39;RESPONDENT&#39;</span><span class="p">,</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">soloId</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">===</span> <span class="s1">&#39;bot&#39;</span> <span class="o">?</span> <span class="nx">id2</span> <span class="o">:</span> <span class="nx">id1</span><span class="p">;</span>
+                <span class="nx">game</span><span class="p">.</span><span class="nx">roleMapper</span><span class="p">[</span><span class="nx">soloId</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SOLO&#39;</span><span class="p">;</span>
+
+                <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">id</span><span class="o">:</span> <span class="nx">soloId</span><span class="p">,</span>
+                    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="s1">&#39;SOLO&#39;</span> <span class="p">}</span>
+                <span class="p">});</span>
+
+            <span class="p">}</span>
+            <span class="nx">match</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Matching completed.&#39;</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+    <span class="p">}</span>
+
 
 
 </pre></div>
@@ -2125,7 +2405,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
 </div>
 <p>Parse input params. // TODO: throws errors.</p>
         </td>
@@ -2145,7 +2425,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <p>Make main callback to get/append the widget.</p>
         </td>
@@ -2164,7 +2444,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Default id 'container' (as in default.html).</p>
         </td>
@@ -2185,7 +2465,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
 </div>
 <p>Make the step callback.</p>
         </td>
@@ -2208,7 +2488,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>Make the done callback to send results.</p>
         </td>
@@ -2231,7 +2511,7 @@ DONE for a short time in the new game stage:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <p>If it is not timeup, and user did not
 disabled it, check answers.</p>
@@ -2273,7 +2553,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <p>Update the exit function for this step.</p>
         </td>
@@ -2287,7 +2567,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>Make the exit callback (destroy widget by default).</p>
         </td>
@@ -2302,7 +2582,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Remove node.game reference.</p>
         </td>
@@ -2327,7 +2607,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>Update the exit function for this step.</p>
         </td>
@@ -2342,7 +2622,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>Sets a default frame, if none was found.</p>
         </td>
@@ -2359,7 +2639,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Handle frame loading natively, if required.</p>
         </td>
@@ -2391,7 +2671,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>Replacing TRUE with node.game.settings.</p>
         </td>
@@ -2419,7 +2699,7 @@ disabled it, check answers.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>Auto load frame and wrap cb.</p>
         </td>
@@ -2485,7 +2765,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>Execute custom callback. Can throw errors.</p>
         </td>
@@ -2499,7 +2779,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>A non fatal error occurred.</p>
         </td>
@@ -2517,7 +2797,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Internal listeners will check whether we need to emit PLAYING.</p>
         </td>
@@ -2753,7 +3033,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -2882,7 +3162,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3008,7 +3288,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
+  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3154,7 +3434,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -3175,7 +3455,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -3189,7 +3469,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -3216,7 +3496,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -3552,7 +3832,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
+  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>
@@ -3753,7 +4033,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
 </div>
 <p>Adding new globals.</p>
         </td>
@@ -3775,7 +4055,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
+  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
 </div>
 <p>Removing old ones.</p>
         </td>
@@ -3796,7 +4076,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
 </div>
 <p>Updating globals reference.</p>
         </td>
@@ -3854,6 +4134,124 @@ method call.</p>
         <span class="nx">gameStage</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">gameStage</span> <span class="o">?</span>
             <span class="nx">gameStage</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">property</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.setrole">
+  <h3>
+    <a href="#game.setrole" name="game.setrole" class="pilcrow">&#182;</a>
+    Game.setRole
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the current role in the game</p>
+
+<p>Roles are not supposed to be set more than once per step, and
+an error will be thrown on attempts to overwrite roles.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">role</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>The name of the role</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">force</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, role can be overwritten</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.role
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">roleObj</span><span class="p">,</span> <span class="nx">prop</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">role</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.setRole: attempt to change role &quot;&#39;</span> <span class="o">+</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">role</span> <span class="o">+</span> <span class="s1">&#39;&quot; to &quot;&#39;</span> <span class="o">+</span> <span class="nx">role</span> <span class="o">+</span> <span class="s1">&#39;&quot; in step: &#39;</span> <span class="o">+</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+            <span class="p">}</span>
+            <span class="nx">roles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;roles&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">roles</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.setRole: no roles specified in &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;current step: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+            <span class="p">}</span>
+            <span class="nx">roleObj</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">roleObj</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.setRole: role &quot;&#39;</span> <span class="o">+</span> <span class="nx">role</span> <span class="o">+</span> <span class="s1">&#39;&quot; not found &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;in current step: &#39;</span> <span class="o">+</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">());</span>
+            <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
+</div>
+<p>Modify plot properties.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">roleObj</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">roleObj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="nx">prop</span><span class="p">,</span> <span class="nx">roleObj</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.setRole: role must be string or null. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="game.getrole">
+  <h3>
+    <a href="#game.getrole" name="game.getrole" class="pilcrow">&#182;</a>
+    Game.getRole
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the current role in the game</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Game.role
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -3938,22 +4336,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
-</div>
-<p>TODO: this is OK if this is a reconnection. But if it is not?
-Temporarily remove the done callback.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-            <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">tmpCache</span><span class="p">(</span><span class="s1">&#39;autoSet&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
 </div>
 <p>Call node.done() immediately after PLAYING is emitted.</p>
         </td>
@@ -3963,6 +4346,18 @@ Temporarily remove the done callback.</p>
             <span class="p">});</span>
         <span class="p">}</span>
 
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+</div>
+<p>Set role.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">role</span><span class="p">)</span> <span class="nx">game</span><span class="p">.</span><span class="nx">setRole</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">role</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -3970,9 +4365,36 @@ Temporarily remove the done callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
-<p>Temporarily modify plot properties.</p>
+<p>Partner.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">partner</span><span class="p">)</span> <span class="nx">game</span><span class="p">.</span><span class="nx">partner</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">partner</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+</div>
+<p>TODO Group.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+</div>
+<p>Temporarily modify plot properties.
+Must be done after setting the role.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">plot</span><span class="p">)</span> <span class="p">{</span>
@@ -3990,7 +4412,7 @@ Temporarily remove the done callback.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>Call the cb with options as param, if found.</p>
         </td>

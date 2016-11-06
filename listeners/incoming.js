@@ -243,7 +243,7 @@
          *
          * Setups a features of nodegame
          *
-         * Unstrigifies the payload before calling `node.setup`.
+         * It unstrigifies the payload before calling `node.setup`.
          *
          * @see node.setup
          * @see JSUS.parse
