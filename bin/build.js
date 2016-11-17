@@ -77,12 +77,17 @@ var ng_client = [
     rootDir + "lib/core/Socket.js",
     rootDir + "lib/sockets/SocketIo.js",
 
+    // Matcher.
+    
+    // TODO: make it conditional!
+    rootDir + "lib/matcher/Matcher.js",
+    rootDir + "lib/matcher/RoleMapper.js",
+    // rootDir + "lib/matcher/GroupManager.js",
+        
     rootDir + "lib/core/GameDB.js",
     rootDir + "lib/core/Game.js",
     rootDir + "lib/core/Session.js",
 
-    // rootDir + "lib/core/GroupManager.js",
-    // rootDir + "lib/core/RoleMapper.js",
 
     rootDir + "lib/core/Timer.js",
 

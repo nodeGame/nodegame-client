@@ -478,23 +478,28 @@ if (!Array.prototype.indexOf) {
  * GPL licenses.
  *
  * Persistent Client-Side Storage
- *
  * ---
  */
-(function(exports){
+(function(exports) {
 
-    var version = '0.5';
+    var version = '5.1';
+    var store, mainStorageType;
 
-    var store = exports.store = function(key, value, options, type) {
-	options = options || {};
-	type = (options.type && options.type in store.types) ? options.type : store.type;
-	if (!type || !store.types[type]) {
-	    store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
-	    return;
-	}
-	store.log('Accessing ' + type + ' storage');
+    mainStorageType = "volatile";
 
-	return store.types[type](key, value, options);
+    store = exports.store = function(key, value, options, type) {
+        options = options || {};
+        type = (options.type && options.type in store.types) ?
+            options.type : store.type;
+
+        if (!type || !store.types[type]) {
+            store.log('Cannot save/load value. Invalid storage type ' +
+                      'selected: ' + type, 'ERR');
+            return;
+        }
+        store.log('Accessing ' + type + ' storage');
+
+        return store.types[type](key, value, options);
     };
 
     // Adding functions and properties to store
@@ -505,164 +510,171 @@ if (!Array.prototype.indexOf) {
     store.types = {};
 
 
-    var mainStorageType = "volatile";
+
 
     //if Object.defineProperty works...
     try {
 
-	Object.defineProperty(store, 'type', {
-	    set: function(type){
-		if ('undefined' === typeof store.types[type]) {
-		    store.log('Cannot set store.type to an invalid type: ' + type);
-		    return false;
-		}
-		mainStorageType = type;
-		return type;
-	    },
-	    get: function(){
-		return mainStorageType;
-	    },
-	    configurable: false,
-	    enumerable: true
-	});
+        Object.defineProperty(store, 'type', {
+            set: function(type) {
+                if ('undefined' === typeof store.types[type]) {
+                    store.log('Cannot set store.type to an invalid type: ' +
+                              type);
+                    return false;
+                }
+                mainStorageType = type;
+                return type;
+            },
+            get: function(){
+                return mainStorageType;
+            },
+            configurable: false,
+            enumerable: true
+        });
     }
     catch(e) {
-	store.type = mainStorageType; // default: memory
+        store.type = mainStorageType; // default: memory
     }
 
     store.addType = function(type, storage) {
-	store.types[type] = storage;
-	store[type] = function(key, value, options) {
-	    options = options || {};
-	    options.type = type;
-	    return store(key, value, options);
-	};
+        store.types[type] = storage;
+        store[type] = function(key, value, options) {
+            options = options || {};
+            options.type = type;
+            return store(key, value, options);
+        };
 
-	if (!store.type || store.type === "volatile") {
-	    store.type = type;
-	}
+        if (!store.type || store.type === "volatile") {
+            store.type = type;
+        }
     };
 
     // TODO: create unit test
     store.onquotaerror = undefined;
     store.error = function() {
-	console.log("shelf quota exceeded");
-	if ('function' === typeof store.onquotaerror) {
-	    store.onquotaerror(null);
-	}
+        console.log("shelf quota exceeded");
+        if ('function' === typeof store.onquotaerror) {
+            store.onquotaerror(null);
+        }
     };
 
     store.log = function(text) {
-	if (store.verbosity > 0) {
-	    console.log('Shelf v.' + version + ': ' + text);
-	}
+        if (store.verbosity > 0) {
+            console.log('Shelf v.' + version + ': ' + text);
+        }
 
     };
 
     store.isPersistent = function() {
-	if (!store.types) return false;
-	if (store.type === "volatile") return false;
-	return true;
+        if (!store.types) return false;
+        if (store.type === "volatile") return false;
+        return true;
     };
 
     //if Object.defineProperty works...
     try {
-	Object.defineProperty(store, 'persistent', {
-	    set: function(){},
-	    get: store.isPersistent,
-	    configurable: false
-	});
+        Object.defineProperty(store, 'persistent', {
+            set: function(){},
+            get: store.isPersistent,
+            configurable: false
+        });
     }
     catch(e) {
-	// safe case
-	store.persistent = false;
+        // safe case
+        store.persistent = false;
     }
 
     store.decycle = function(o) {
-	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-	    o = JSON.decycle(o);
-	}
-	return o;
+        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+            o = JSON.decycle(o);
+        }
+        return o;
     };
 
     store.retrocycle = function(o) {
-	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-	    o = JSON.retrocycle(o);
-	}
-	return o;
+        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+            o = JSON.retrocycle(o);
+        }
+        return o;
     };
 
     store.stringify = function(o) {
-	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
-	}
+        if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
+            throw new Error('JSON.stringify not found. Received non-string' +
+                            'value and could not serialize.');
+        }
 
-	o = store.decycle(o);
-	return JSON.stringify(o);
+        o = store.decycle(o);
+        return JSON.stringify(o);
     };
 
     store.parse = function(o) {
-	if ('undefined' === typeof o) return undefined;
-	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-	    try {
-		o = JSON.parse(o);
-	    }
-	    catch (e) {
-		store.log('Error while parsing a value: ' + e, 'ERR');
-		store.log(o);
-	    }
-	}
+        if ('undefined' === typeof o) return undefined;
+        if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
+            try {
+                o = JSON.parse(o);
+            }
+            catch (e) {
+                store.log('Error while parsing a value: ' + e, 'ERR');
+                store.log(o);
+            }
+        }
 
-	o = store.retrocycle(o);
-	return o;
+        o = store.retrocycle(o);
+        return o;
     };
 
     // ## In-memory storage
-    // ### fallback for all browsers to enable the API even if we can't persist data
+    // ### fallback to enable the API even if we can't persist data
     (function() {
 
-	var memory = {},
-	timeout = {};
+        var memory = {},
+        timeout = {};
 
-	function copy(obj) {
-	    return store.parse(store.stringify(obj));
-	}
+        function copy(obj) {
+            return store.parse(store.stringify(obj));
+        }
 
-	store.addType("volatile", function(key, value, options) {
+        store.addType("volatile", function(key, value, options) {
 
-	    if (!key) {
-		return copy(memory);
-	    }
+            if (!key) {
+                return copy(memory);
+            }
 
-	    if (value === undefined) {
-		return copy(memory[key]);
-	    }
+            if (value === undefined) {
+                return copy(memory[key]);
+            }
 
-	    if (timeout[key]) {
-		clearTimeout(timeout[key]);
-		delete timeout[key];
-	    }
+            if (timeout[key]) {
+                clearTimeout(timeout[key]);
+                delete timeout[key];
+            }
 
-	    if (value === null) {
-		delete memory[key];
-		return null;
-	    }
+            if (value === null) {
+                delete memory[key];
+                return null;
+            }
 
-	    memory[key] = value;
-	    if (options.expires) {
-		timeout[key] = setTimeout(function() {
-		    delete memory[key];
-		    delete timeout[key];
-		}, options.expires);
-	    }
+            memory[key] = value;
+            if (options.expires) {
+                timeout[key] = setTimeout(function() {
+                    delete memory[key];
+                    delete timeout[key];
+                }, options.expires);
+            }
 
-	    return value;
-	});
+            return value;
+        });
     }());
 
-}('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
+}(
+    'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
+        module.exports : this
+));
+
 /**
  * ## Amplify storage for Shelf.js
+ * Copyright 2014 Stefano Balietti
  *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
  *
@@ -672,7 +684,7 @@ if (!Array.prototype.indexOf) {
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
  * - rprefix -> regex
- * -  "__amplify__" -> store.prefix
+ * - "__amplify__" -> store.prefix
  *
  * ---
  */
@@ -908,9 +920,10 @@ if (!Array.prototype.indexOf) {
     }());
 
 }(this));
+
 /**
  * ## Cookie storage for Shelf.js
- * Copyright 2015 Stefano Balietti
+ * Copyright 2014 Stefano Balietti
  *
  * Original library from:
  * See http://code.google.com/p/cookies/
@@ -13106,6 +13119,13 @@ if (!Array.prototype.indexOf) {
         this.role = player.role || null;
 
         /**
+         * ### Player.partner
+         *
+         * The partner of the player
+         */
+        this.partner = player.partner || null;
+        
+        /**
          * ### Player.count
          *
          * The ordinal position of the player in a PlayerList object
@@ -20136,6 +20156,1110 @@ if (!Array.prototype.indexOf) {
 );
 
 /**
+ * # Matcher
+ * Copyright(c) 2016 Stefano Balietti <s.balietti@neu.edu>
+ * MIT Licensed
+ *
+ * Class handling the creation of tournament schedules.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(exports, node) {
+
+    var J = node.JSUS;
+
+    exports.Matcher = Matcher;
+
+    // ## Static methods.
+
+    /**
+     * ### Matcher.bye
+     *
+     * Symbol used to complete matching when partner is missing
+     *
+     * @see Matcher.matches
+     */
+    Matcher.bye = -1;
+
+    /**
+     * ### Matcher.missingId
+     *
+     * Symbol assigned to matching number without valid id
+     *
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.missingId = 'bot';
+
+    /**
+     * ## Matcher.randomAssigner
+     *
+     * Assigns ids to positions randomly.
+     *
+     * @param {array} ids The ids to assign
+     *
+     * @return The sorted array
+     *
+     * @see JSUS.shuffle
+     */
+    Matcher.randomAssigner = function(ids) {
+        return J.shuffle(ids);
+    };
+
+    /**
+     * ### Matcher.linearAssigner
+     *
+     * Assigns ids to positions linearly.
+     *
+     * @param {array} ids The ids to assign
+     *
+     * @return The sorted array
+     */
+    Matcher.linearAssigner = function(ids) {
+        return J.clone(ids);
+    };
+
+    /**
+     * ## Matcher constructor
+     *
+     * Creates a new Matcher object
+     *
+     * @param {object} options Optional. Configuration options
+     */
+    function Matcher(options) {
+
+        /**
+         * ### Matcher.x
+         *
+         * The current round returned by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.x = 0;
+
+        /**
+         * ### Matcher.y
+         *
+         * The next match in current round returned by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.y = 0;
+
+        /**
+         * ### Matcher.matches
+         *
+         * Nested array of matches (with position-numbers)
+         *
+         * Nestes a new array for each round, and within each round
+         * individual matches are also array. For example:
+         *
+         * ```javascript
+         *
+         * // Matching array.
+         * [
+         *
+         *   // First round.
+         *   [ [ p1, p2 ], [ p3, p4 ], ... ],
+         *
+         *   // Second round.
+         *   [ [ p2, p3 ], [ p4, p1 ], ... ],
+         *
+         *   // Further rounds.
+         * ];
+         * ```
+         *
+         * @see Matcher.setMatches
+         */
+        this.matches = null;
+
+        /**
+         * ### Matcher.resolvedMatches
+         *
+         * Nested array of matches (with id-strings)
+         *
+         * Exactly Matcher.matches, but with with ids instead of numbers
+         *
+         * @see Matcher.matches
+         * @see Matcher.setIds
+         * @see Matcher.setAssignerCb
+         * @see Matcher.match
+         */
+        this.resolvedMatches = null;
+
+        /**
+         * ### Matcher.resolvedMatchesById
+         *
+         * Array of maps id to partner, one map per round
+         *
+         * ```javascript
+         *
+         * // Matching array.
+         * [
+         *
+         *   // First round.
+         *   { p1: 'p2', p2: 'p1', p3: 'p4', p4: 'p3',  ... },
+         *
+         *   // Second round.
+         *   { p2: 'p3', p3: 'p2', p4: 'p1', p1: 'p4',  ... },
+         *
+         *   // Further rounds.
+         * ];
+         * ```
+         *
+         * @see Matcher.resolvedMatches
+         * @see Matcher.setIds
+         * @see Matcher.match
+         */
+        this.resolvedMatchesById = null;
+
+        /**
+         * ### Matcher.ids
+         *
+         * Array ids to match
+         *
+         * @see Matcher.setIds
+         */
+        this.ids = null;
+
+        /**
+         * ### Matcher.ids
+         *
+         * Array mapping each ordinal position to an id
+         *
+         * @see Matcher.ids
+         * @see Matcher.assignerCb
+         */
+        this.assignedIds = null;
+
+        /**
+         * ### Matcher.assignerCb
+         *
+         * Callback that assigns ids to positions
+         *
+         * An assigner callback must take as input an array of ids,
+         * reorder them according to some criteria, and return it.
+         * The order of the items in the returned array will be used to
+         * match the numbers in the `matches` array.
+         *
+         * @see Matcher.ids
+         * @see Matcher.matches
+         * @see Matcher.assignedIds
+         */
+        this.assignerCb = Matcher.randomAssigner;
+
+        /**
+         * ## Matcher.missingId
+         *
+         * An id used to replace missing players ids
+         */
+        this.missingId = Matcher.missingId;
+
+        /**
+         * ## Matcher.missingId
+         *
+         * An id used by matching algorithms to complete unfinished matches
+         */
+        this.bye = Matcher.bye;
+
+        // Init.
+        this.init(options);
+    }
+
+    /**
+     * ### Matcher.init
+     *
+     * Inits the Matcher instance
+     *
+     * @param {object} options
+     */
+    Matcher.prototype.init = function(options) {
+        options = options || {};
+
+        if (options.assignerCb) this.setAssignerCb(options.assignerCb);
+        if (options.ids) this.setIds(options.ids);
+        if (options.bye) this.bye = options.bye;
+        if (options.missingId) this.missingId = options.missingId;
+        if ('number' === typeof options.x) {
+            if (options.x < 0) {
+                throw new Error('Matcher.init: options.x cannot be negative.');
+            }
+            this.x = options.x;
+        }
+        if ('number' === typeof options.y) {
+            if (options.y < 0) {
+                throw new Error('Matcher.init: options.y cannot be negative.');
+            }
+            this.y = options.y;
+        }
+    };
+
+    /**
+     * ### Matcher.generateMatches
+     *
+     * Creates a matches array according to the chosen scheduling algorithm
+     *
+     * Throws an error if the selected algorithm is not found.
+     *
+     * @param {string} alg The chosen algorithm. Available: 'roundrobin'.
+     *
+     * @return {array} The array of matches
+     */
+    Matcher.prototype.generateMatches = function(alg) {
+        var matches;
+        if ('string' !== typeof alg) {
+            throw new TypeError('Matcher.generateMatches: alg must be string.');
+        }
+        alg = alg.toLowerCase();
+        if (alg === 'roundrobin' || alg === 'random') {
+            if (alg === 'random' &&
+                arguments[2] && arguments[2].replace === true) {
+
+                matches = randomPairs(arguments[1], arguments[2]);
+            }
+            else {
+                matches = pairMatcher(alg, arguments[1], arguments[2]);
+            }
+        }
+        else {
+            throw new Error('Matcher.generateMatches: unknown algorithm: ' +
+                            alg + '.');
+        }
+
+        this.setMatches(matches);
+        return matches;
+    };
+
+    /**
+     * ### Matcher.setMatches
+     *
+     * Sets the matches for current instance
+     *
+     * Resets resolvedMatches and resolvedMatchesById to null.
+     *
+     * @param {array} The array of matches
+     *
+     * @see this.matches
+     */
+    Matcher.prototype.setMatches = function(matches) {
+        if (!J.isArray(matches) || !matches.length) {
+            throw new TypeError('Matcher.setMatches: matches must be array.');
+        }
+        this.matches = matches;
+        resetResolvedData(this);
+    };
+
+    /**
+     * ### Matcher.setIds
+     *
+     * Sets the ids to be used for the matches
+     *
+     * @param {array} ids Array containing the id of the matches
+     *
+     * @see Matcher.ids
+     */
+    Matcher.prototype.setIds = function(ids) {
+        if (!J.isArray(ids) || !ids.length) {
+            throw new TypeError('Matcher.setIds: ids must be array.');
+        }
+        this.ids = ids;
+        resetResolvedData(this);
+    };
+
+    /**
+     * ### Matcher.assignIds
+     *
+     * Calls the assigner callback to assign ids to positions
+     *
+     * Ids can be overwritten by parameter. If no ids are found,
+     * they will be automatically generated, provided that matches
+     * have been generated first.
+     *
+     * @param {array} ids Optinal. Array containing the id of the matches
+     *   to pass to Matcher.setIds
+     *
+     * @see Matcher.ids
+     * @see Matcher.setIds
+     */
+    Matcher.prototype.assignIds = function(ids) {
+        if ('undefined' !== typeof ids) this.setIds(ids);
+        if (!J.isArray(this.ids) || !this.ids.length) {
+            if (!J.isArray(this.matches) || !this.matches.length) {
+                throw new TypeError('Matcher.assignIds: no ids and no ' +
+                                    'matches found.');
+            }
+            this.ids = J.seq(0, this.matches.length -1, 1, function(i) {
+                return '' + i;
+            });
+        }
+        this.assignedIds = this.assignerCb(this.ids);
+    };
+
+    /**
+     * ### Matcher.setAssignerCb
+     *
+     * Specify a callback to be used to assign existing ids to positions
+     *
+     * @param {function} cb The assigner cb
+     *
+     * @see Matcher.ids
+     * @see Matcher.matches
+     * @see Matcher.assignerCb
+     */
+    Matcher.prototype.setAssignerCb = function(cb) {
+        if ('function' !== typeof cb) {
+            throw new TypeError('Matcher.setAssignerCb: cb must be function.');
+        }
+        this.assignerCb = cb;
+    };
+
+    /**
+     * ### Matcher.match
+     *
+     * Substitutes the ids to the matches
+     *
+     * Populates the objects `resolvedMatchesById` and `resolvedMatches`.
+     *
+     * It requires to have the matches array already set, or an error
+     * will be thrown.
+     *
+     * If the ids have not been assigned, it will do it automatically.
+     *
+     * @param {boolean|array} assignIds Optional. A flag to force to
+     *   re-assign existing ids, or an an array containing new ids to
+     *   assign.
+     *
+     * @see Matcher.assignIds
+     * @see Matcher.resolvedMatchesById
+     * @see Matcher.resolvedMatches
+     *
+     * TODO: creates two lists of matches with bots and without.
+     * TODO: add method getMatchFor(id,x)
+     */
+    Matcher.prototype.match = function(assignIds) {
+        var i, lenI, j, lenJ, pair;
+        var matched, matchedId, id1, id2;
+
+        if (!J.isArray(this.matches) || !this.matches.length) {
+            throw new Error('Matcher.match: no matches found.');
+        }
+
+        // Assign/generate ids if not done before.
+        if (!this.assignedIds || assignIds) {
+            if (J.isArray(assignIds)) this.assignIds(assignIds);
+            else this.assignIds();
+        }
+
+        // Parse the matches array and creates two data structures
+        // where the absolute position becomes the player id.
+        i = -1, lenI = this.matches.length;
+        matched = new Array(lenI);
+        matchedId = new Array(lenI);
+        for ( ; ++i < lenI ; ) {
+            j = -1, lenJ = this.matches[i].length;
+            matched[i] = [];
+            matchedId[i] = {};
+            for ( ; ++j < lenJ ; ) {
+                id1 = null, id2 = null;
+                pair = this.matches[i][j];
+                // Resolve matches.
+                id1 = importMatchItem(i, j,
+                                      pair[0],
+                                      this.assignedIds,
+                                      this.missingId);
+                id2 = importMatchItem(i, j,
+                                      pair[1],
+                                      this.assignedIds,
+                                      this.missingId);
+                // Create resolved matches.
+                matched[i].push([id1, id2]);
+                matchedId[i][id1] = id2;
+                matchedId[i][id2] = id1;
+            }
+        }
+        // Substitute matching-structure.
+        this.resolvedMatches = matched;
+        this.resolvedMatchesById = matchedId;
+        // Set getMatch indexes to 0.
+        this.x = 0;
+        this.y = 0;
+    };
+
+    /**
+     * ### Matcher.getMatch
+     *
+     * Returns the next match, or the specified match
+     *
+     * @param {number} x Optional. The x-th round. Default: the round
+     * @param {number} y Optional. The y-th match within the x-th round
+     *
+     * @return {array} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.y
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.prototype.getMatch = function(x, y) {
+        var nRows, nCols;
+        // Check both x and y.
+        if ('undefined' === typeof x && 'undefined' !== typeof y) {
+            throw new Error('Matcher.getMatch: cannot specify y without x.');
+        }
+        // Check if there is any match yet.
+        if (!J.isArray(this.resolvedMatches) || !this.resolvedMatches.length) {
+            throw new Error('Matcher.getMatch: no resolved matches found.');
+        }
+
+        // Check x.
+        if ('undefined' === typeof x) {
+            x = this.x;
+        }
+        else if ('number' !== typeof x) {
+            throw new TypeError('Matcher.getMatch: x must be number ' +
+                                'or undefined.');
+        }
+        else if (x < 0) {
+            throw new Error('Matcher.getMatch: x cannot be negative');
+        }
+        else if ('undefined' === typeof y) {
+            // Return the whole row.
+            return this.resolvedMatches[x];
+        }
+
+        nRows = this.matches.length - 1;
+        if (x > nRows) return null;
+
+        nCols = this.matches[x].length - 1;
+
+        // Check y.
+        if ('undefined' === typeof y) {
+            y = this.y;
+            if (y < nCols) {
+                this.y++;
+            }
+            else {
+                this.x++;
+                this.y = 0;
+            }
+        }
+        else if ('number' !== typeof y) {
+            throw new TypeError('Matcher.getMatch: y must be number ' +
+                                'or undefined.');
+        }
+        else if (y < 0) {
+            throw new Error('Matcher.getMatch: y cannot be negative');
+        }
+        else if (y > nCols) {
+            return null;
+        }
+        return this.resolvedMatches[x][y];
+    };
+
+    /**
+     * ### Matcher.getMatchObject
+     *
+     * Returns all the matches of the next or requested round as key-value pairs
+     *
+     * @param {number} x Optional. The x-th round. Default: the round
+     *
+     * @return {object} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.resolvedMatchesById
+     */
+    Matcher.prototype.getMatchObject = function(x) {
+        var nRows;
+
+        // Check if there is any match yet.
+        if (!J.isArray(this.resolvedMatches) || !this.resolvedMatches.length) {
+            throw new Error('Matcher.getMatch: no resolved matches found.');
+        }
+
+        // Check x.
+        if ('undefined' === typeof x) {
+            x = this.x;
+            this.x++;
+        }
+        else if ('number' !== typeof x) {
+            throw new TypeError('Matcher.getMatch: x must be number ' +
+                                'or undefined.');
+        }
+        else if (x < 0) {
+            throw new Error('Matcher.getMatch: x cannot be negative');
+        }
+
+        nRows = this.matches.length - 1;
+        if (x > nRows) return null;
+
+        return this.resolvedMatchesById[x];
+    };
+
+    // ## Helper methods.
+
+    /**
+     * ### importMatchItem
+     *
+     * Handles importing items from the matches array
+     *
+     * Items in matches array must be numbers or strings. If numbers
+     * they are translated into an id using the supplied map, otherwise
+     * they are considered as already an id.
+     *
+     * Items that are not numbers neither strings will throw an error.
+     *
+     * @param {number} i The row-id of the item
+     * @param {number} j The position in the row of the item
+     * @param {string|number} item The item to check
+     * @param {array} map The map of positions to ids
+     * @param {string} miss The id of number that cannot be resolved in map
+     *
+     * @return {string} The resolved id of the item
+     */
+    function importMatchItem(i, j, item, map, miss) {
+        if ('number' === typeof item) {
+            return 'undefined' !== typeof map[item] ? map[item] : miss;
+        }
+        else if ('string' === typeof item) {
+            return item;
+        }
+        throw new TypeError('Matcher.match: items can be only string or ' +
+                            'number. Found: ' + item + ' at position ' +
+                            i + ',' + j);
+    }
+
+    /**
+     * ### resetResolvedData
+     *
+     * Resets resolved data of a matcher object
+     *
+     * @param {Matcher} matcher The matcher to reset
+     */
+    function resetResolvedData(matcher) {
+        matcher.resolvedMatches = null;
+        matcher.resolvedMatchesById = null;
+    }
+
+    /**
+     * ### Matcher.roundRobin
+     *
+     *
+     *
+     * @return The round robin matches
+     */
+    Matcher.roundRobin = function(n, options) {
+        return pairMatcher('roundrobin', n, options);
+    };
+
+    /**
+     * ### pairMatcher
+     *
+     * Creates tournament schedules for different algorithms
+     *
+     * @param {string} alg The name of the algorithm
+     *
+     * @param {number|array} n The number of participants (>1) or
+     *   an array containing the ids of the participants
+     * @param {object} options Optional. Configuration object
+     *   contains the following options:
+     *
+     *   - bye: identifier for dummy competitor. Default: -1.
+     *   - skypeBye: flag whether players matched with the dummy
+     *        competitor should be added or not. Default: true.
+     *   - rounds: number of rounds to repeat matching. Default
+     *
+     * @return {array} matches The matches according to the algorithm
+     */
+    function pairMatcher(alg, n, options) {
+        var ps, matches, bye;
+        var i, lenI, j, lenJ;
+        var skipBye;
+
+        if ('number' === typeof n && n > 1) {
+            ps = J.seq(0, (n-1));
+        }
+        else if (J.isArray(n) && n.length > 1) {
+            ps = n.slice();
+            n = ps.length;
+        }
+        else {
+            throw new TypeError('pairMatcher.' + alg + ': n must be ' +
+                                'number > 1 or array of length > 1.');
+        }
+        options = options || {};
+        matches = new Array(n-1);
+        bye = 'undefined' !== typeof options.bye ? options.bye : -1;
+        skipBye = options.skipBye || false;
+        if (n % 2 === 1) {
+            // Make sure we have even numbers.
+            ps.push(bye);
+            n += 1;
+        }
+        i = -1, lenI = n-1;
+        for ( ; ++i < lenI ; ) {
+            // Shuffle list of ids for random.
+            if (alg === 'random') ps = J.shuffle(ps);
+            // Create a new array for round i.
+            matches[i] = [];
+            j = -1, lenJ = n / 2;
+            for ( ; ++j < lenJ ; ) {
+                if (!skipBye || (ps[j] !== bye && ps[n - 1 - j] !== bye)) {
+                    // Insert match.
+                    matches[i].push([ps[j], ps[n - 1 - j]]);
+                }
+            }
+            // Permutate for next round.
+            ps.splice(1, 0, ps.pop());
+        }
+        return matches;
+    }
+
+// TODO: support limited number of rounds.
+
+//     function pairMatcher(alg, n, options) {
+//         var ps, matches, bye;
+//         var i, lenI, j, lenJ;
+//         var roundsLimit, odd;
+//         var skipBye;
+//
+//         if ('number' === typeof n && n > 1) {
+//             ps = J.seq(0, (n-1));
+//         }
+//         else if (J.isArray(n) && n.length > 1) {
+//             ps = n.slice();
+//             n = ps.length;
+//         }
+//         else {
+//             throw new TypeError('pairMatcher.' + alg + ': n must be ' +
+//                                 'number > 1 or array of length > 1.');
+//         }
+//
+//         odd = (n % 2) === 1;
+//         roundsLimit = n-1 ; // (odd && !skipBye) ? n+1 : n;
+//
+//         options = options || {};
+//         if ('number' === typeof options.rounds) {
+//             if (options.rounds <= 0) {
+//                 throw new Error('pairMatcher.' + alg + ': options.rounds ' +
+//                                 'must be a positive number or undefined. ' +
+//                                 'Found: ' + options.rounds);
+//             }
+//             if (options.rounds > roundsLimit) {
+//                 throw new Error('pairMatcher.' + alg + ': ' +
+//                                 'options.rounds cannot be > than ' +
+//                                 roundsLimit + '. Found: ' + options.rounds);
+//             }
+//             roundsLimit = options.rounds;
+//         }
+//
+//         matches = new Array(roundsLimit);
+//
+//         bye = 'undefined' !== typeof options.bye ? options.bye : -1;
+//         skipBye = options.skipBye || false;
+//         if (n % 2 === 1) {
+//             // Make sure we have even numbers.
+//             ps.push(bye);
+//             n += 1;
+//         }
+//         i = -1, lenI = roundsLimit;
+//         for ( ; ++i < lenI ; ) {
+//             // Shuffle list of ids for random.
+//             if (alg === 'random') ps = J.shuffle(ps);
+//             // Create a new array for round i.
+//             matches[i] = [];
+//             j = -1, lenJ = n / 2;
+//             for ( ; ++j < lenJ ; ) {
+//                 if (!skipBye || (ps[j] !== bye && ps[n - 1 - j] !== bye)) {
+//                     // Insert match.
+//                     matches[i].push([ps[j], ps[n - 1 - j]]);
+//                 }
+//             }
+//             // Permutate for next round.
+//             ps.splice(1, 0, ps.pop());
+//         }
+//         return matches;
+//     }
+
+
+// TODO: random with replacement.
+
+//     /**
+//      * ### pairMatcher
+//      *
+//      * Creates tournament schedules for different algorithms
+//      *
+//      * @param {string} alg The name of the algorithm
+//      *
+//      * @param {number|array} n The number of participants (>1) or
+//      *   an array containing the ids of the participants
+//      * @param {object} options Optional. Configuration object
+//      *   contains the following options:
+//      *
+//      *   - rounds: the number
+//      *
+//      * @return {array} matches The matches according to the algorithm
+//      */
+//     function pairMatcherWithReplacement(n, options) {
+//         var matches, i, len;
+//
+//         if ('number' === typeof n && n > 1) {
+//             n = J.seq(0, (n-1));
+//         }
+//         else if (J.isArray(n) && n.length > 1) {
+//             n = n.slice();
+//         }
+//         else {
+//             throw new TypeError('pairMatcherWithReplacement: n must be ' +
+//                                 'number > 1 or array of length > 1.');
+//         }
+//
+//         i = -1, len = n.length;
+//         matches = new Array(len-1);
+//         for ( ; ++i < len ; ) {
+//             m
+//         }
+//
+//         return matches;
+//     }
+
+    // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # RoleMapper
+ * Copyright(c) 2016 Stefano Balietti
+ * MIT Licensed
+ *
+ * `nodeGame` manager of player ids and aliases
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    // ## Global scope
+    var J = parent.JSUS;
+
+    exports.RoleMapper = RoleMapper;
+
+    /**
+     * ## RoleMapper constructor
+     *
+     * Creates a new instance of role mapper
+     */
+    function RoleMapper(node) {
+
+        /**
+         * ### RoleMapper.node
+         *
+         * Reference to the node object
+         */
+        this.node = node;
+        
+        /**
+         * ### RoleMapper.rolesArray
+         *
+         * The array of currently available roles
+         *
+         * @see RoleMapper.setRoles
+         * @see RoleMapper.clearRoles
+         */
+        this.rolesArray = [];
+
+        /**
+         * ### RoleMapper.roles
+         *
+         * The roles list
+         *
+         * @see RoleMapper.setRoles
+         * @see RoleMapper.clearRoles
+         */
+        this.roles = {};
+
+        /**
+         * ### RoleMapper.map
+         *
+         * The map roles-ids
+         */
+        this.map = {};
+
+        /**
+         * ### RoleMapper.matcher
+         *
+         * The matcher object
+         *
+         * TODO: maybe should be moved: (i) at node.game, or
+         * inside the each algorithm
+         */
+        this.matcher = new parent.Matcher();
+    }
+
+    /**
+     * ### RoleMapper.clear
+     *
+     * The roles list
+     *
+     * @see RoleMapper.setRoles
+     * @see RoleMapper.clearRoles
+     */
+    RoleMapper.prototype.clear = function() {
+        this.clearRoles();
+        this.map = {};
+        this.matcher = new parent.Matcher();
+    };
+
+    /**
+     * ### RoleMapper.clearRoles
+     *
+     * TODO: should we just use .clear?
+     */    
+    RoleMapper.prototype.clearRoles = function() {
+        this.rolesArray = [];
+        this.roles = {};
+    };
+
+    
+    /**
+     * ### RoleMapper.setRoles
+     *
+     * Sets the roles
+     *
+     * @param {array} Array of roles (string)
+     *
+     * @see RoleMapper.setRoles
+     * @see RoleMapper.clearRoles
+     */
+    RoleMapper.prototype.setRoles = function(roles) {
+        var rolesObj, role;
+        var i, len;
+        
+        // At least two roles must be defined
+        if (!J.isArray(roles) || roles.length < 2) {
+            throw new TypeError('RoleMapper.setRoles: roles must be array. ' +
+                                'containing at least 2 roles. Found: ' + roles);
+        }
+
+        rolesObj = {};
+        i = -1, len = roles.length;
+        for ( ; ++i < len ; ) {
+            role = roles[i];
+            if ('string' !== typeof role || role.trim() === '') {
+                throw new TypeError('RoleMapper.setRoles: each role must be ' +
+                                    'a non-empty string. Found: ' + role);
+            }
+            rolesObj[role] = '';
+        }
+        // All data validated.
+        this.roles = rolesObj;
+        this.rolesArray = roles;
+    };
+
+    RoleMapper.prototype.roleExists = function(role) {        
+        if ('string' !== typeof role || role.trim() === '') {
+            throw new TypeError('RoleMapper.roleExists: role must be ' +
+                                'a non-empty string. Found: ' + role);
+        }
+        return !!this.roles[role];
+    };
+    
+    RoleMapper.prototype.getRole = function(role) {        
+        if ('string' !== typeof role || role.trim() === '') {
+            throw new TypeError('RoleMapper.getRole: role must be ' +
+                                'a non-empty string. Found: ' + role);
+        }
+        return this.rolesMap[role] || null;
+    };
+
+    /**
+     * ### RoleMapper.match
+     *
+     * Matches roles to ids
+     *
+     * @param {object} settings The settings for the requested map
+     *
+     * @return {object} The roles map
+     */
+    RoleMapper.prototype.match = function(settings) {        
+        var r1, r2, r3;
+        var match, id1, id2, soloId;
+        var matches;
+
+        if ('object' !== typeof settings || settings === null) {
+            throw new TypeError('RoleMapper.map: settings must be ' +
+                                'object. Found: ' + settings);
+        }
+       
+        // TODO: what kind of settings?
+        if (settings.map !== 'random_pairs') {
+            throw new Error('RoleMapper.map: only "random_pairs" supported.');
+        }
+
+        if (!J.isArray(settings.roles)) {
+            throw new TypeError('RoleMapper.map: "random_pairs" requires ' +
+                                'settings.roles to be an array. Found:' +
+                                settings.roles);
+        }
+
+        this.setRoles(settings.roles, 2);
+
+        // TODO: Roles need to be validated differently by each matching alg.
+        
+        r1 = settings.roles[0];
+        r2 = settings.roles[1];
+        r3 = settings.roles[2];
+                
+        // Resets all roles.
+        this.rolesMap = {};
+
+        this.matcher.generateMatches('random', this.node.game.pl.size());
+        this.matcher.setIds(this.node.game.pl.id.getAllKeys());
+
+        matches = [];
+        // Generates new random matches for this round.
+        this.matcher.match(true);
+        match = this.matcher.getMatch();
+
+        // While we have matches, send them to clients.
+        while (match) {
+            id1 = match[0];
+            id2 = match[1];
+            if (id1 !== 'bot' && id2 !== 'bot') {
+                this.map[id1] = r1;
+                this.map[id2] = r2;
+
+                matches.push({
+                    id: id1,
+                    options: { role: r1, partner: id2 }
+                });
+                matches.push({
+                    id: id2,
+                    options: { role: r2, partner: id1 }
+                });
+            }
+            else {
+                if (!r3) {
+                    throw new Error('RoleMapper.map: role3 required, but ' +
+                                    'not found.');
+                }
+                soloId = id1 === 'bot' ? id2 : id1;
+                this.map[soloId] = r3;
+
+                matches.push({
+                    id: soloId,
+                    options: { role: r3 }
+                });
+
+            }
+            match = this.matcher.getMatch();
+        }
+        console.log('Matching completed.');
+
+        // Store reference to last valid settings.
+        this.mapSettings = settings;
+        
+        return matches;
+    };
+      
+    
+//     // XXXX
+//     
+//     (function(game) {
+// 
+//         var matcher, map, roles, rolesArray;
+// 
+//         matcher = new parent.Matcher();
+//         map = {};
+//         roles = {};
+//         rolesArray = [];
+//         return {
+//             setRoles: function(roles) {
+//                 rolesArray = roles;
+//                 var i, len;
+//                 i = -1, len = roles.length;
+//                 for ( ; ++i < len ; ) {
+//                     roles[roles[i]] = '';
+//                 }
+// 
+//             },
+//             roleExists: function(role) {
+//                 return !!roles[role];
+//             },
+//             getRole: function(id) {
+//                 return map[id] || null;
+//             },
+//             map: function(settings) {
+//                 var r1, r2, r3;
+//                 var match, id1, id2, soloId;
+//                 var matches;
+// 
+//                 // TODO: what kind of settings?
+//                 if (settings.map !== 'random_pairs') {
+//                     throw new Error('roleMapper: ' +
+//                                     'only random_pairs supported.');
+//                 }
+// 
+//                 // TODO: integrate with the matcher.
+//                 debugger
+//                 r1 = settings.roles[0];
+//                 r2 = settings.roles[1];
+//                 r3 = settings.roles[2];
+// 
+//                 // Resets all roles.
+//                 map = {};
+// 
+//                 matcher.generateMatches('random', game.pl.size());
+//                 matcher.setIds(game.pl.id.getAllKeys());
+// 
+//                 matches = [];
+//                 // Generates new random matches for this round.
+//                 matcher.match(true)
+//                 match = matcher.getMatch();
+// 
+//                 // While we have matches, send them to clients.
+//                 while (match) {
+//                     id1 = match[0];
+//                     id2 = match[1];
+//                     if (id1 !== 'bot' && id2 !== 'bot') {
+//                         map[id1] = r1;
+//                         map[id2] = r2;
+// 
+//                         matches.push({
+//                             id: id1,
+//                             options: { role: r1, partner: id2 }
+//                         });
+//                         matches.push({
+//                             id: id2,
+//                             options: { role: r2, partner: id1 }
+//                         });
+//                     }
+//                     else {
+//                         soloId = id1 === 'bot' ? id2 : id1;
+//                         map[soloId] = r3;
+// 
+//                         matches.push({
+//                             id: soloId,
+//                             options: { role: r3 }
+//                         });
+// 
+//                     }
+//                     match = matcher.getMatch();
+//                 }
+//                 console.log('Matching completed.');
+// 
+//                 return matches;
+//             }
+//         };
+//     })(this);
+    
+
+    // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
  * # GameDB
  * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
@@ -20266,13 +21390,14 @@ if (!Array.prototype.indexOf) {
     exports.Game = Game;
 
     var GameStage = parent.GameStage,
-    GameDB = parent.GameDB,
-    GamePlot = parent.GamePlot,
-    PlayerList = parent.PlayerList,
-    Stager = parent.Stager,
-    PushManager = parent.PushManager,
-    SizeManager = parent.SizeManager,
-    J = parent.JSUS;
+        GameDB = parent.GameDB,
+        GamePlot = parent.GamePlot,
+        PlayerList = parent.PlayerList,
+        Stager = parent.Stager,
+        PushManager = parent.PushManager,
+        SizeManager = parent.SizeManager,
+        RoleMapper = parent.RoleMapper,
+        J = parent.JSUS;
 
     var constants = parent.constants;
 
@@ -20392,14 +21517,10 @@ if (!Array.prototype.indexOf) {
 //            node.log.apply(node, arguments);
 //        });
 
-
         /**
          * ### Game.role
          *
-         * The "role" currently held in this game
-         *
-         * If a role is specified, some step properties (e.g. `cb`)
-         * are ovewritten.
+         * The "role" currently held in this game (if any)
          *
          * @see Game.gotoStep
          * @see Game.setRole
@@ -20408,104 +21529,27 @@ if (!Array.prototype.indexOf) {
         this.role = null;
 
         /**
-         * ### Game.role
+         * ### Game.partner
          *
-         * The "role" currently held in this game
+         * The id or alias of the "partner" in this game (if any)
          *
-         * If a role is specified, the related execution callback
-         * is executed instead of the default one ('cb').
+         * Some games are played in pairs, this variable holds the id
+         * of the partner player.
+         *
+         * @see Game.setPartner
+         * @see processGotoStepOptions
+         */
+        this.partner = null;
+        
+        /**
+         * ### Game.roleMapper
+         *
+         * Handles assigning roles to players
          *
          * @see Game.execStep
          */
-        this.roleMapper = (function(game) {
-
-            var matcher, map, roles, rolesArray;
-
-            matcher = new parent.Matcher();
-            map = {};
-            roles = {};
-            rolesArray = [];
-            return {
-                setRoles: function(roles) {
-                    rolesArray = roles;
-                    var i, len;
-                    i = -1, len = roles.length;
-                    for ( ; ++i < len ; ) {
-                        roles[roles[i]] = '';
-                    }
-
-                },
-                roleExists: function(role) {
-                    return !!roles[role];
-                },                  
-                getRole: function(id) {
-                    return map[id] || null;
-                },
-                map: function(settings) {
-                    var r1, r2, r3;
-                    var match, id1, id2, soloId;
-                    var matches;
-
-                    // TODO: what kind of settings?
-                    if (settings.map !== 'random_pairs') {
-                        throw new Error('roleMapper: ' +
-                                        'only random_pairs supported.');
-                    }
-
-                    // TODO: integrate with the matcher.
-
-                    r1 = settings.roles[0];
-                    r2 = settings.roles[1];
-                    r3 = settings.roles[2];
-
-                    // Resets all roles.
-                    map = {};
-
-                    matcher.generateMatches('random', game.pl.size());
-                    matcher.setIds(game.pl.id.getAllKeys());
-
-                    matches = [];
-                    // Generates new random matches for this round.
-                    matcher.match(true)
-                    match = matcher.getMatch();
-debugger
-                    // While we have matches, send them to clients.
-                    while (match) {
-                        id1 = match[0];
-                        id2 = match[1];
-                        if (id1 !== 'bot' && id2 !== 'bot') {
-                            map[id1] = r1;
-                            map[id2] = r2;
-
-                            matches.push({
-                                id: id1,
-                                options: { role: r1, partner: id2 }
-                            });
-                            matches.push({
-                                id: id2,
-                                options: { role: r2, partner: id1 }
-                            });
-                        }
-                        else {
-                            soloId = id1 === 'bot' ? id2 : id1;
-                            map[soloId] = r3;
-
-                            matches.push({
-                                id: soloId,
-                                options: { role: r3 }
-                            });
-
-                        }
-                        match = matcher.getMatch();
-                    }
-                    console.log('Matching completed.');
-
-                    return matches;
-                }
-            };
-        })(this);
-
-
+        this.roleMapper = RoleMapper ? new RoleMapper(this.node) : null;
+        
         /**
          * ### Game.timer
          *
@@ -20950,8 +21994,13 @@ debugger
         var curStep, curStepObj, curStageObj, nextStepObj, nextStageObj;
         var stageInit;
         var ev, node;
-        var roleMapper, role;
 
+        var roleMapper, role;
+        var matches;
+        var i, len, pid;
+
+        var remoteOptions;
+                
         if (!this.isSteppable()) {
             throw new Error('Game.gotoStep: game cannot be stepped.');
         }
@@ -20989,30 +22038,32 @@ debugger
         // Sends start / step command to connected clients if option is on.
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
 
-            // TODO: sends roles here.
-
             roleMapper = this.plot.getProperty(nextStep, 'roleMapper');
             if (roleMapper) {
-                // TODO: parse roleMapper param.
-                var matches;
-                matches = this.roleMapper.map(roleMapper);
-                (function(matches) {
-                    var i, len, pid;
-                    var remoteOptions;
-                    i = -1, len = matches.length;
-                    for ( ; ++i < len ; ) {
-                        pid = matches[i].id;
-                        remoteOptions = matches[i].options;
 
-                        if (curStep.stage === 0) {
-                            node.remoteCommand('start', pid, remoteOptions);
-                        }
-                        else {
-                            remoteOptions.targetStep = nextStep;
-                            node.remoteCommand('goto_step', pid, remoteOptions);
-                        }
+                // matches = [
+                //             {
+                //               id: 'playerId',
+                //               options: { ... }
+                //             },
+                //             ...
+                //           ];
+                //
+                matches = this.roleMapper.match(roleMapper);
+                i = -1, len = matches.length;
+                for ( ; ++i < len ; ) {
+                    pid = matches[i].id;
+                    remoteOptions = matches[i].options;
+
+                    if (curStep.stage === 0) {
+                        node.remoteCommand('start', pid, remoteOptions);
                     }
-                })(matches);
+                    else {
+                        remoteOptions.targetStep = nextStep;
+                        node.remoteCommand('goto_step', pid, remoteOptions);
+                    }
+                }
+                
             }
             else {
                 if (curStep.stage === 0) {
@@ -21989,10 +23040,11 @@ debugger
      * @param {boolean} force Optional. If TRUE, role can be overwritten
      *
      * @see Game.role
+     * @see Player.role
      */
     Game.prototype.setRole = function(role, force) {
         var roles, roleObj, prop;
-        if ('string' === typeof role) {
+        if ('string' === typeof role && role.trim() !== '') {
             if (this.role && !force) {
                 throw new Error('Game.setRole: attempt to change role "' +
                                 this.role + '" to "' + role + '" in step: ' +
@@ -22031,9 +23083,54 @@ debugger
      * Returns the current role in the game
      *
      * @see Game.role
+     * @see Player.role
      */
-    Game.prototype.getRole = function(role) {
+    Game.prototype.getRole = function() {
         return this.role;
+    };
+
+    /**
+     * ### Game.setPartner
+     *
+     * Sets the current partner in the game
+     *
+     * Partners are not supposed to be set more than once per step, and
+     * an error will be thrown on attempts to overwrite them.
+     *
+     * Updates the reference also in `node.player.partner`.
+     *
+     * @param {string|null} partner The id or alias of the partner
+     * @param {boolean} force Optional. If TRUE, partner can be overwritten
+     *
+     * @see Game.partner
+     * @see Player.partner
+     */
+    Game.prototype.setPartner = function(partner, force) {
+        if ('string' === typeof partner && partner.trim() !== '') {
+            if (this.partner && !force) {
+                throw new Error('Game.setPartner: attempt to change partner "' +
+                                this.partner + '" to "' + partner +
+                                '" in step: ' + this.getCurrentGameStage());
+            }
+        }
+        else if (partner !== null) {
+            throw new TypeError('Game.setPartner: partner must be a ' +
+                                'non-empty string or null. Found: ' + partner);
+        }
+        this.partner = partner;
+        this.node.player.partner = partner;
+    };
+
+    /**
+     * ### Game.getPartner
+     *
+     * Returns the current partner in the game
+     *
+     * @see Game.partner
+     * @see Player.partner
+     */
+    Game.prototype.getPartner = function() {
+        return this.partner;
     };
 
     // ## Helper Methods
@@ -22069,8 +23166,8 @@ debugger
         // Set role.
         if (options.role) game.setRole(options.role, true);
         // Partner.
-        if (options.partner) game.partner = options.partner;
-        // TODO Group.
+        if (options.partner) game.setPartner(options.partner, true);
+        // TODO: Group ?
 
         // Temporarily modify plot properties.
         // Must be done after setting the role.

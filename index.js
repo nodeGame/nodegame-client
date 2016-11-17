@@ -65,17 +65,16 @@
     // Timer.
     exports.Timer = require('./lib/core/Timer').Timer;
 
+    // Matcher.
+    exports.Matcher = require('./lib/matcher/Matcher').Matcher;
+    exports.RoleMapper = require('./lib/matcher/RoleMapper').RoleMapper;
+    //exports.GroupManager = require('./lib/matcher/GroupManager').GroupManager;
+    
     // Game.
     exports.GameDB = require('./lib/core/GameDB').GameDB;
     exports.GameBit = require('./lib/core/GameDB').GameBit;
     exports.Game = require('./lib/core/Game').Game;
 
-    // Matcher.
-    exports.Matcher = require('./lib/matcher/Matcher').Matcher;
-
-    // RoleMapper.
-    exports.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
-    
     // Extra (to be tested).
     exports.GameSession = require('./lib/core/Session').GameSession;
 
