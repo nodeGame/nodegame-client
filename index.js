@@ -73,9 +73,10 @@
     // Matcher.
     exports.Matcher = require('./lib/matcher/Matcher').Matcher;
 
-    // Extra (to be tested).
-    // exports.GroupManager = require('./lib/core/GroupManager').GroupManager;
+    // RoleMapper.
     exports.RoleMapper = require('./lib/core/RoleMapper').RoleMapper;
+    
+    // Extra (to be tested).
     exports.GameSession = require('./lib/core/Session').GameSession;
 
     // Addons
