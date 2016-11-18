@@ -20765,7 +20765,7 @@ if (!Array.prototype.indexOf) {
      *   - bye: identifier for dummy competitor. Default: -1.
      *   - skypeBye: flag whether players matched with the dummy
      *        competitor should be added or not. Default: true.
-     *   - rounds: number of rounds to repeat matching. Default
+     *   - rounds: number of rounds to repeat matching. Default: ?
      *
      * @return {array} matches The matches according to the algorithm
      */
@@ -21023,25 +21023,49 @@ if (!Array.prototype.indexOf) {
     /**
      * ### RoleMapper.setRoles
      *
-     * Sets the roles
+     * Validates and sets the roles
      *
-     * @param {array} Array of roles (string)
+     * @param {array} roles Array of roles (string)
+     * @param {number} min At least _min_ roles must be specified. Default: 2
+     * @param {number} max At least _max_ roles must be specified. Default: inf
      *
      * @see RoleMapper.setRoles
      * @see RoleMapper.clearRoles
      */
-    RoleMapper.prototype.setRoles = function(roles) {
+    RoleMapper.prototype.setRoles = function(roles, min, max) {
         var rolesObj, role;
         var i, len;
+        var min, max, err;
+
+        if (min && 'number' !== typeof min || min < 2) {
+            throw new TypeError('RoleMapper.setRoles: min must be a number ' +
+                                '> 2 or undefined. Found: ' + min);
+        }
+        min = min || 2;
+        
+        if (max && 'number' !== typeof max || max < min) {
+            throw new TypeError('RoleMapper.setRoles: max must be number ' +
+                                'or undefined. Found: ' + max);
+        }
         
         // At least two roles must be defined
-        if (!J.isArray(roles) || roles.length < 2) {
+        if (!J.isArray(roles)) {
             throw new TypeError('RoleMapper.setRoles: roles must be array. ' +
-                                'containing at least 2 roles. Found: ' + roles);
+                                'Found: ' + roles);
+        }
+
+        len = roles.length;
+        // At least two roles must be defined
+        if (len < min || len > max) {
+            err = 'RoleMapper.setRoles: roles must contain at least ' +
+                min + ' roles';
+            if (max) err += ' and no more than ' + max;
+            err += '. Found: ' + len;
+            throw new Error(err);
         }
 
         rolesObj = {};
-        i = -1, len = roles.length;
+        i = -1;
         for ( ; ++i < len ; ) {
             role = roles[i];
             if ('string' !== typeof role || role.trim() === '') {
@@ -21078,33 +21102,45 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} settings The settings for the requested map
      *
-     * @return {object} The roles map
+     * @return {array} Array of matches ready to be sent out as remote options.
      */
     RoleMapper.prototype.match = function(settings) {        
-        var r1, r2, r3;
-        var match, id1, id2, soloId;
-        var matches;
-
+        
+        // String is turned into object. Might still fail.
+        if ("string" === typeof settings) settings = { match: settings };
+        
         if ('object' !== typeof settings || settings === null) {
             throw new TypeError('RoleMapper.map: settings must be ' +
                                 'object. Found: ' + settings);
         }
        
-        // TODO: what kind of settings?
-        if (settings.map !== 'random_pairs') {
-            throw new Error('RoleMapper.map: only "random_pairs" supported.');
+        if (settings.match !== 'random_pairs') {
+            throw new Error('RoleMapper.match: only "random_pairs" match ' +
+                            "supported. Found: " + settings.match);
         }
 
+        return randomPairs.call(this, settings);
+    };
+
+    /**
+     * ## randomPairs
+     */
+    function randomPairs(settings) {
+        var r1, r2, r3;
+        var match, id1, id2, soloId;
+        var matches, opts1, opts2, sayPartner;
+
         if (!J.isArray(settings.roles)) {
-            throw new TypeError('RoleMapper.map: "random_pairs" requires ' +
+            throw new TypeError('RoleMapper.match: "random_pairs" requires ' +
                                 'settings.roles to be an array. Found:' +
                                 settings.roles);
         }
 
+        sayPartner = 'undefined' === typeof settings.sayPartner ?
+            true : !!settings.sayPartner;
+        
         this.setRoles(settings.roles, 2);
 
-        // TODO: Roles need to be validated differently by each matching alg.
-        
         r1 = settings.roles[0];
         r2 = settings.roles[1];
         r3 = settings.roles[2];
@@ -21115,6 +21151,7 @@ if (!Array.prototype.indexOf) {
         this.matcher.generateMatches('random', this.node.game.pl.size());
         this.matcher.setIds(this.node.game.pl.id.getAllKeys());
 
+        // TODO: determine size of array beforehand.
         matches = [];
         // Generates new random matches for this round.
         this.matcher.match(true);
@@ -21125,21 +21162,28 @@ if (!Array.prototype.indexOf) {
             id1 = match[0];
             id2 = match[1];
             if (id1 !== 'bot' && id2 !== 'bot') {
+
+                // Create role map.
                 this.map[id1] = r1;
                 this.map[id2] = r2;
 
-                matches.push({
-                    id: id1,
-                    options: { role: r1, partner: id2 }
-                });
-                matches.push({
-                    id: id2,
-                    options: { role: r2, partner: id1 }
-                });
+                // Prepare options to send to players.
+                opts1 = { id: id1, options: { role: r1 } };
+                opts2 = { id: id2, options: { role: r2 } };
+
+                // If partner must be communicated, add option.
+                if (sayPartner) {
+                    opts1.options.partner = id2;
+                    opts2.options.partner = id1;
+                }
+
+                // Add options to array.
+                matches.push(opts1);
+                matches.push(opts2);
             }
             else {
                 if (!r3) {
-                    throw new Error('RoleMapper.map: role3 required, but ' +
+                    throw new Error('RoleMapper.match: role3 required, but ' +
                                     'not found.');
                 }
                 soloId = id1 === 'bot' ? id2 : id1;
@@ -21153,14 +21197,13 @@ if (!Array.prototype.indexOf) {
             }
             match = this.matcher.getMatch();
         }
-        console.log('Matching completed.');
-
+      
         // Store reference to last valid settings.
         this.mapSettings = settings;
-        
+
         return matches;
-    };
-      
+    }
+    
     
 //     // XXXX
 //     
@@ -21995,7 +22038,7 @@ if (!Array.prototype.indexOf) {
         var stageInit;
         var ev, node;
 
-        var roleMapper, role;
+        var matcherOptions, role;
         var matches;
         var i, len, pid;
 
@@ -22038,18 +22081,22 @@ if (!Array.prototype.indexOf) {
         // Sends start / step command to connected clients if option is on.
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
 
-            roleMapper = this.plot.getProperty(nextStep, 'roleMapper');
-            if (roleMapper) {
+            matcherOptions = this.plot.getProperty(nextStep, 'matcher');
+            if (matcherOptions) {
 
                 // matches = [
                 //             {
                 //               id: 'playerId',
-                //               options: { ... }
+                //               options: {
+                //                  role: "A", // optional.
+                //                  partner: "XXX", // or object.
+                //                  group: "xxx"
+                //               }
                 //             },
                 //             ...
                 //           ];
                 //
-                matches = this.roleMapper.match(roleMapper);
+                matches = this.roleMapper.match(matcherOptions);
                 i = -1, len = matches.length;
                 for ( ; ++i < len ; ) {
                     pid = matches[i].id;
@@ -25821,7 +25868,7 @@ if (!Array.prototype.indexOf) {
      *   - bye: identifier for dummy competitor. Default: -1.
      *   - skypeBye: flag whether players matched with the dummy
      *        competitor should be added or not. Default: true.
-     *   - rounds: number of rounds to repeat matching. Default
+     *   - rounds: number of rounds to repeat matching. Default: ?
      *
      * @return {array} matches The matches according to the algorithm
      */
