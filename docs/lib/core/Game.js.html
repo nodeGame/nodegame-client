@@ -55,7 +55,7 @@
         <a href="#game.partner">Game.partner</a>
       </div>
       <div class="heading h3">
-        <a href="#game.rolemapper">Game.roleMapper</a>
+        <a href="#game.matcher">Game.matcher</a>
       </div>
       <div class="heading h3">
         <a href="#game.timer">Game.timer</a>
@@ -278,7 +278,7 @@ MIT Licensed</p>
         <span class="nx">Stager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Stager</span><span class="p">,</span>
         <span class="nx">PushManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">PushManager</span><span class="p">,</span>
         <span class="nx">SizeManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">SizeManager</span><span class="p">,</span>
-        <span class="nx">RoleMapper</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">RoleMapper</span><span class="p">,</span>
+        <span class="nx">MatcherManager</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">MatcherManager</span><span class="p">,</span>
         <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
@@ -638,15 +638,17 @@ of the partner player.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="game.rolemapper">
+<div class="pilwrap" id="game.matcher">
   <h3>
-    <a href="#game.rolemapper" name="game.rolemapper" class="pilcrow">&#182;</a>
-    Game.roleMapper
+    <a href="#game.matcher" name="game.matcher" class="pilcrow">&#182;</a>
+    Game.matcher
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Handles assigning roles to players</p>
+  <div class="body"><p>Handles assigning matching tasks</p>
+
+<p>Assigns roles to players, players to players, etc.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -658,7 +660,7 @@ of the partner player.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">roleMapper</span> <span class="o">=</span> <span class="nx">RoleMapper</span> <span class="o">?</span> <span class="k">new</span> <span class="nx">RoleMapper</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span> <span class="o">=</span> <span class="nx">MatcherManager</span> <span class="o">?</span> <span class="k">new</span> <span class="nx">MatcherManager</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1932,7 +1934,7 @@ and we clear also the milliseconds count.</p>
           ];</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">matches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roleMapper</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">matcherOptions</span><span class="p">);</span>
+                <span class="nx">matches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">matcherOptions</span><span class="p">);</span>
                 <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                     <span class="nx">pid</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">id</span><span class="p">;</span>

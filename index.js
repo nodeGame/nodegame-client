@@ -67,9 +67,10 @@
 
     // Matcher.
     exports.Matcher = require('./lib/matcher/Matcher').Matcher;
-    exports.RoleMapper = require('./lib/matcher/RoleMapper').RoleMapper;
+    exports.MatcherManager =
+        require('./lib/matcher/MatcherManager').MatcherManager;
     //exports.GroupManager = require('./lib/matcher/GroupManager').GroupManager;
-    
+
     // Game.
     exports.GameDB = require('./lib/core/GameDB').GameDB;
     exports.GameBit = require('./lib/core/GameDB').GameBit;

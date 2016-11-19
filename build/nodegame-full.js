@@ -20916,7 +20916,7 @@ if (!Array.prototype.indexOf) {
 );
 
 /**
- * # RoleMapper
+ * # MatcherManager
  * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
@@ -20929,87 +20929,86 @@ if (!Array.prototype.indexOf) {
     // ## Global scope
     var J = parent.JSUS;
 
-    exports.RoleMapper = RoleMapper;
+    exports.MatcherManager = MatcherManager;
 
     /**
-     * ## RoleMapper constructor
+     * ## MatcherManager constructor
      *
      * Creates a new instance of role mapper
      */
-    function RoleMapper(node) {
+    function MatcherManager(node) {
 
         /**
-         * ### RoleMapper.node
+         * ### MatcherManager.node
          *
          * Reference to the node object
          */
         this.node = node;
         
         /**
-         * ### RoleMapper.rolesArray
+         * ### MatcherManager.rolesArray
          *
          * The array of currently available roles
          *
-         * @see RoleMapper.setRoles
-         * @see RoleMapper.clearRoles
+         * @see MatcherManager.setRoles
+         * @see MatcherManager.clearRoles
          */
         this.rolesArray = [];
 
         /**
-         * ### RoleMapper.roles
+         * ### MatcherManager.roles
          *
          * The roles list
          *
-         * @see RoleMapper.setRoles
-         * @see RoleMapper.clearRoles
+         * @see MatcherManager.setRoles
+         * @see MatcherManager.clearRoles
          */
         this.roles = {};
 
         /**
-         * ### RoleMapper.map
+         * ### MatcherManager.map
          *
          * The map roles-ids
          */
         this.map = {};
 
         /**
-         * ### RoleMapper.matcher
+         * ### MatcherManager.matcher
          *
          * The matcher object
          *
-         * TODO: maybe should be moved: (i) at node.game, or
-         * inside the each algorithm
+         * @see Matcher
          */
         this.matcher = new parent.Matcher();
     }
 
     /**
-     * ### RoleMapper.clear
+     * ### MatcherManager.clear
      *
      * The roles list
      *
-     * @see RoleMapper.setRoles
-     * @see RoleMapper.clearRoles
+     * @see MatcherManager.setRoles
+     * @see MatcherManager.clearRoles
      */
-    RoleMapper.prototype.clear = function() {
+    MatcherManager.prototype.clear = function() {
         this.clearRoles();
         this.map = {};
         this.matcher = new parent.Matcher();
     };
 
     /**
-     * ### RoleMapper.clearRoles
+     * ### MatcherManager.clearRoles
      *
      * TODO: should we just use .clear?
      */    
-    RoleMapper.prototype.clearRoles = function() {
+    MatcherManager.prototype.clearRoles = function() {
         this.rolesArray = [];
         this.roles = {};
     };
 
     
     /**
-     * ### RoleMapper.setRoles
+     * ### MatcherManager.setRoles
      *
      * Validates and sets the roles
      *
@@ -21017,35 +21016,35 @@ if (!Array.prototype.indexOf) {
      * @param {number} min At least _min_ roles must be specified. Default: 2
      * @param {number} max At least _max_ roles must be specified. Default: inf
      *
-     * @see RoleMapper.setRoles
-     * @see RoleMapper.clearRoles
+     * @see MatcherManager.setRoles
+     * @see MatcherManager.clearRoles
      */
-    RoleMapper.prototype.setRoles = function(roles, min, max) {
+    MatcherManager.prototype.setRoles = function(roles, min, max) {
         var rolesObj, role;
         var i, len;
         var min, max, err;
 
         if (min && 'number' !== typeof min || min < 2) {
-            throw new TypeError('RoleMapper.setRoles: min must be a number ' +
-                                '> 2 or undefined. Found: ' + min);
+            throw new TypeError('MatcherManager.setRoles: min must be a ' +
+                                'number > 2 or undefined. Found: ' + min);
         }
         min = min || 2;
         
         if (max && 'number' !== typeof max || max < min) {
-            throw new TypeError('RoleMapper.setRoles: max must be number ' +
-                                'or undefined. Found: ' + max);
+            throw new TypeError('MatcherManager.setRoles: max must ' +
+                                'be number or undefined. Found: ' + max);
         }
         
         // At least two roles must be defined
         if (!J.isArray(roles)) {
-            throw new TypeError('RoleMapper.setRoles: roles must be array. ' +
-                                'Found: ' + roles);
+            throw new TypeError('MatcherManager.setRoles: roles must ' +
+                                'be array. Found: ' + roles);
         }
 
         len = roles.length;
         // At least two roles must be defined
         if (len < min || len > max) {
-            err = 'RoleMapper.setRoles: roles must contain at least ' +
+            err = 'MatcherManager.setRoles: roles must contain at least ' +
                 min + ' roles';
             if (max) err += ' and no more than ' + max;
             err += '. Found: ' + len;
@@ -21057,8 +21056,9 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             role = roles[i];
             if ('string' !== typeof role || role.trim() === '') {
-                throw new TypeError('RoleMapper.setRoles: each role must be ' +
-                                    'a non-empty string. Found: ' + role);
+                throw new TypeError('MatcherManager.setRoles: each role ' +
+                                    'must be a non-empty string. Found: ' +
+                                    role);
             }
             rolesObj[role] = '';
         }
@@ -21067,24 +21067,24 @@ if (!Array.prototype.indexOf) {
         this.rolesArray = roles;
     };
 
-    RoleMapper.prototype.roleExists = function(role) {        
+    MatcherManager.prototype.roleExists = function(role) {        
         if ('string' !== typeof role || role.trim() === '') {
-            throw new TypeError('RoleMapper.roleExists: role must be ' +
+            throw new TypeError('MatcherManager.roleExists: role must be ' +
                                 'a non-empty string. Found: ' + role);
         }
         return !!this.roles[role];
     };
     
-    RoleMapper.prototype.getRole = function(role) {        
+    MatcherManager.prototype.getRole = function(role) {        
         if ('string' !== typeof role || role.trim() === '') {
-            throw new TypeError('RoleMapper.getRole: role must be ' +
+            throw new TypeError('MatcherManager.getRole: role must be ' +
                                 'a non-empty string. Found: ' + role);
         }
         return this.rolesMap[role] || null;
     };
 
     /**
-     * ### RoleMapper.match
+     * ### MatcherManager.match
      *
      * Matches roles to ids
      *
@@ -21092,18 +21092,18 @@ if (!Array.prototype.indexOf) {
      *
      * @return {array} Array of matches ready to be sent out as remote options.
      */
-    RoleMapper.prototype.match = function(settings) {        
+    MatcherManager.prototype.match = function(settings) {        
         
         // String is turned into object. Might still fail.
         if ("string" === typeof settings) settings = { match: settings };
         
         if ('object' !== typeof settings || settings === null) {
-            throw new TypeError('RoleMapper.map: settings must be ' +
+            throw new TypeError('MatcherManager.map: settings must be ' +
                                 'object. Found: ' + settings);
         }
        
         if (settings.match !== 'random_pairs') {
-            throw new Error('RoleMapper.match: only "random_pairs" match ' +
+            throw new Error('MatcherManager.match: only "random_pairs" match ' +
                             "supported. Found: " + settings.match);
         }
 
@@ -21182,8 +21182,8 @@ if (!Array.prototype.indexOf) {
             }
             else if (doRoles) {
                 if (!r3) {
-                    throw new Error('RoleMapper.match: role3 required, but ' +
-                                    'not found.');
+                    throw new Error('MatcherManager.match: role3 required, ' +
+                                    'but not found.');
                 }
                 soloId = id1 === 'bot' ? id2 : id1;
                 this.map[soloId] = r3;
@@ -21202,99 +21202,7 @@ if (!Array.prototype.indexOf) {
 
         return matches;
     }
-    
-    
-//     // XXXX
-//     
-//     (function(game) {
-// 
-//         var matcher, map, roles, rolesArray;
-// 
-//         matcher = new parent.Matcher();
-//         map = {};
-//         roles = {};
-//         rolesArray = [];
-//         return {
-//             setRoles: function(roles) {
-//                 rolesArray = roles;
-//                 var i, len;
-//                 i = -1, len = roles.length;
-//                 for ( ; ++i < len ; ) {
-//                     roles[roles[i]] = '';
-//                 }
-// 
-//             },
-//             roleExists: function(role) {
-//                 return !!roles[role];
-//             },
-//             getRole: function(id) {
-//                 return map[id] || null;
-//             },
-//             map: function(settings) {
-//                 var r1, r2, r3;
-//                 var match, id1, id2, soloId;
-//                 var matches;
-// 
-//                 // TODO: what kind of settings?
-//                 if (settings.map !== 'random_pairs') {
-//                     throw new Error('roleMapper: ' +
-//                                     'only random_pairs supported.');
-//                 }
-// 
-//                 // TODO: integrate with the matcher.
-//                 debugger
-//                 r1 = settings.roles[0];
-//                 r2 = settings.roles[1];
-//                 r3 = settings.roles[2];
-// 
-//                 // Resets all roles.
-//                 map = {};
-// 
-//                 matcher.generateMatches('random', game.pl.size());
-//                 matcher.setIds(game.pl.id.getAllKeys());
-// 
-//                 matches = [];
-//                 // Generates new random matches for this round.
-//                 matcher.match(true)
-//                 match = matcher.getMatch();
-// 
-//                 // While we have matches, send them to clients.
-//                 while (match) {
-//                     id1 = match[0];
-//                     id2 = match[1];
-//                     if (id1 !== 'bot' && id2 !== 'bot') {
-//                         map[id1] = r1;
-//                         map[id2] = r2;
-// 
-//                         matches.push({
-//                             id: id1,
-//                             options: { role: r1, partner: id2 }
-//                         });
-//                         matches.push({
-//                             id: id2,
-//                             options: { role: r2, partner: id1 }
-//                         });
-//                     }
-//                     else {
-//                         soloId = id1 === 'bot' ? id2 : id1;
-//                         map[soloId] = r3;
-// 
-//                         matches.push({
-//                             id: soloId,
-//                             options: { role: r3 }
-//                         });
-// 
-//                     }
-//                     match = matcher.getMatch();
-//                 }
-//                 console.log('Matching completed.');
-// 
-//                 return matches;
-//             }
-//         };
-//     })(this);
-    
-
+   
     // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -21438,7 +21346,7 @@ if (!Array.prototype.indexOf) {
         Stager = parent.Stager,
         PushManager = parent.PushManager,
         SizeManager = parent.SizeManager,
-        RoleMapper = parent.RoleMapper,
+        MatcherManager = parent.MatcherManager,
         J = parent.JSUS;
 
     var constants = parent.constants;
@@ -21584,13 +21492,15 @@ if (!Array.prototype.indexOf) {
         this.partner = null;
 
         /**
-         * ### Game.roleMapper
+         * ### Game.matcher
          *
-         * Handles assigning roles to players
+         * Handles assigning matching tasks
+         *
+         * Assigns roles to players, players to players, etc.
          *
          * @see Game.execStep
          */
-        this.roleMapper = RoleMapper ? new RoleMapper(this.node) : null;
+        this.matcher = MatcherManager ? new MatcherManager(this.node) : null;
 
         /**
          * ### Game.timer
@@ -22103,7 +22013,7 @@ if (!Array.prototype.indexOf) {
                 //             ...
                 //           ];
                 //
-                matches = this.roleMapper.match(matcherOptions);
+                matches = this.matcher.match(matcherOptions);
                 i = -1, len = matches.length;
                 for ( ; ++i < len ; ) {
                     pid = matches[i].id;
