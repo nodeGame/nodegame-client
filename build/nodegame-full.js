@@ -478,28 +478,23 @@ if (!Array.prototype.indexOf) {
  * GPL licenses.
  *
  * Persistent Client-Side Storage
+ *
  * ---
  */
-(function(exports) {
+(function(exports){
 
-    var version = '5.1';
-    var store, mainStorageType;
+    var version = '0.5';
 
-    mainStorageType = "volatile";
+    var store = exports.store = function(key, value, options, type) {
+	options = options || {};
+	type = (options.type && options.type in store.types) ? options.type : store.type;
+	if (!type || !store.types[type]) {
+	    store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
+	    return;
+	}
+	store.log('Accessing ' + type + ' storage');
 
-    store = exports.store = function(key, value, options, type) {
-        options = options || {};
-        type = (options.type && options.type in store.types) ?
-            options.type : store.type;
-
-        if (!type || !store.types[type]) {
-            store.log('Cannot save/load value. Invalid storage type ' +
-                      'selected: ' + type, 'ERR');
-            return;
-        }
-        store.log('Accessing ' + type + ' storage');
-
-        return store.types[type](key, value, options);
+	return store.types[type](key, value, options);
     };
 
     // Adding functions and properties to store
@@ -510,171 +505,164 @@ if (!Array.prototype.indexOf) {
     store.types = {};
 
 
-
+    var mainStorageType = "volatile";
 
     //if Object.defineProperty works...
     try {
 
-        Object.defineProperty(store, 'type', {
-            set: function(type) {
-                if ('undefined' === typeof store.types[type]) {
-                    store.log('Cannot set store.type to an invalid type: ' +
-                              type);
-                    return false;
-                }
-                mainStorageType = type;
-                return type;
-            },
-            get: function(){
-                return mainStorageType;
-            },
-            configurable: false,
-            enumerable: true
-        });
+	Object.defineProperty(store, 'type', {
+	    set: function(type){
+		if ('undefined' === typeof store.types[type]) {
+		    store.log('Cannot set store.type to an invalid type: ' + type);
+		    return false;
+		}
+		mainStorageType = type;
+		return type;
+	    },
+	    get: function(){
+		return mainStorageType;
+	    },
+	    configurable: false,
+	    enumerable: true
+	});
     }
     catch(e) {
-        store.type = mainStorageType; // default: memory
+	store.type = mainStorageType; // default: memory
     }
 
     store.addType = function(type, storage) {
-        store.types[type] = storage;
-        store[type] = function(key, value, options) {
-            options = options || {};
-            options.type = type;
-            return store(key, value, options);
-        };
+	store.types[type] = storage;
+	store[type] = function(key, value, options) {
+	    options = options || {};
+	    options.type = type;
+	    return store(key, value, options);
+	};
 
-        if (!store.type || store.type === "volatile") {
-            store.type = type;
-        }
+	if (!store.type || store.type === "volatile") {
+	    store.type = type;
+	}
     };
 
     // TODO: create unit test
     store.onquotaerror = undefined;
     store.error = function() {
-        console.log("shelf quota exceeded");
-        if ('function' === typeof store.onquotaerror) {
-            store.onquotaerror(null);
-        }
+	console.log("shelf quota exceeded");
+	if ('function' === typeof store.onquotaerror) {
+	    store.onquotaerror(null);
+	}
     };
 
     store.log = function(text) {
-        if (store.verbosity > 0) {
-            console.log('Shelf v.' + version + ': ' + text);
-        }
+	if (store.verbosity > 0) {
+	    console.log('Shelf v.' + version + ': ' + text);
+	}
 
     };
 
     store.isPersistent = function() {
-        if (!store.types) return false;
-        if (store.type === "volatile") return false;
-        return true;
+	if (!store.types) return false;
+	if (store.type === "volatile") return false;
+	return true;
     };
 
     //if Object.defineProperty works...
     try {
-        Object.defineProperty(store, 'persistent', {
-            set: function(){},
-            get: store.isPersistent,
-            configurable: false
-        });
+	Object.defineProperty(store, 'persistent', {
+	    set: function(){},
+	    get: store.isPersistent,
+	    configurable: false
+	});
     }
     catch(e) {
-        // safe case
-        store.persistent = false;
+	// safe case
+	store.persistent = false;
     }
 
     store.decycle = function(o) {
-        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-            o = JSON.decycle(o);
-        }
-        return o;
+	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+	    o = JSON.decycle(o);
+	}
+	return o;
     };
 
     store.retrocycle = function(o) {
-        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-            o = JSON.retrocycle(o);
-        }
-        return o;
+	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+	    o = JSON.retrocycle(o);
+	}
+	return o;
     };
 
     store.stringify = function(o) {
-        if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-            throw new Error('JSON.stringify not found. Received non-string' +
-                            'value and could not serialize.');
-        }
+	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
+	    throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
+	}
 
-        o = store.decycle(o);
-        return JSON.stringify(o);
+	o = store.decycle(o);
+	return JSON.stringify(o);
     };
 
     store.parse = function(o) {
-        if ('undefined' === typeof o) return undefined;
-        if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-            try {
-                o = JSON.parse(o);
-            }
-            catch (e) {
-                store.log('Error while parsing a value: ' + e, 'ERR');
-                store.log(o);
-            }
-        }
+	if ('undefined' === typeof o) return undefined;
+	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
+	    try {
+		o = JSON.parse(o);
+	    }
+	    catch (e) {
+		store.log('Error while parsing a value: ' + e, 'ERR');
+		store.log(o);
+	    }
+	}
 
-        o = store.retrocycle(o);
-        return o;
+	o = store.retrocycle(o);
+	return o;
     };
 
     // ## In-memory storage
-    // ### fallback to enable the API even if we can't persist data
+    // ### fallback for all browsers to enable the API even if we can't persist data
     (function() {
 
-        var memory = {},
-        timeout = {};
+	var memory = {},
+	timeout = {};
 
-        function copy(obj) {
-            return store.parse(store.stringify(obj));
-        }
+	function copy(obj) {
+	    return store.parse(store.stringify(obj));
+	}
 
-        store.addType("volatile", function(key, value, options) {
+	store.addType("volatile", function(key, value, options) {
 
-            if (!key) {
-                return copy(memory);
-            }
+	    if (!key) {
+		return copy(memory);
+	    }
 
-            if (value === undefined) {
-                return copy(memory[key]);
-            }
+	    if (value === undefined) {
+		return copy(memory[key]);
+	    }
 
-            if (timeout[key]) {
-                clearTimeout(timeout[key]);
-                delete timeout[key];
-            }
+	    if (timeout[key]) {
+		clearTimeout(timeout[key]);
+		delete timeout[key];
+	    }
 
-            if (value === null) {
-                delete memory[key];
-                return null;
-            }
+	    if (value === null) {
+		delete memory[key];
+		return null;
+	    }
 
-            memory[key] = value;
-            if (options.expires) {
-                timeout[key] = setTimeout(function() {
-                    delete memory[key];
-                    delete timeout[key];
-                }, options.expires);
-            }
+	    memory[key] = value;
+	    if (options.expires) {
+		timeout[key] = setTimeout(function() {
+		    delete memory[key];
+		    delete timeout[key];
+		}, options.expires);
+	    }
 
-            return value;
-        });
+	    return value;
+	});
     }());
 
-}(
-    'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
-        module.exports : this
-));
-
+}('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Amplify storage for Shelf.js
- * Copyright 2014 Stefano Balietti
  *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
  *
@@ -684,7 +672,7 @@ if (!Array.prototype.indexOf) {
  * - JSON.parse -> store.parse (cyclic objects)
  * - store.name -> store.prefix (check)
  * - rprefix -> regex
- * - "__amplify__" -> store.prefix
+ * -  "__amplify__" -> store.prefix
  *
  * ---
  */
@@ -920,10 +908,9 @@ if (!Array.prototype.indexOf) {
     }());
 
 }(this));
-
 /**
  * ## Cookie storage for Shelf.js
- * Copyright 2014 Stefano Balietti
+ * Copyright 2015 Stefano Balietti
  *
  * Original library from:
  * See http://code.google.com/p/cookies/
@@ -14332,7 +14319,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see GamePlot.cache
      */
-    GamePlot.prototype.getProperty = function(gameStage, property) {
+    GamePlot.prototype.getProperty = function(gameStage, property, notFound) {
         var stepObj, stageObj, defaultProps, found, res;
 
         if ('string' !== typeof property) {
@@ -14387,8 +14374,9 @@ if (!Array.prototype.indexOf) {
             return res;
         }
 
-        // Not found.
-        return null;
+        // Not found.        
+        if (arguments.length < 3) notFound = null;
+        return notFound;
     };
 
     /**
@@ -21641,7 +21629,7 @@ if (!Array.prototype.indexOf) {
          * @see Game.pause
          * @see Game.resume
          */
-        this.pauseCounter = 0
+        this.pauseCounter = 0;
 
         /**
          * ### Game.willBeDone
@@ -22045,14 +22033,22 @@ if (!Array.prototype.indexOf) {
      * TODO: remove some unused comments in the code.
      */
     Game.prototype.gotoStep = function(nextStep, options) {
-        var curStep, curStepObj, curStageObj, nextStepObj, nextStageObj;
-        var stageInit;
-        var ev, node;
+        var node;
 
-        var matcherOptions, role;
-        var matches;
+        // Steps references.
+        var curStep, curStepObj, curStageObj, nextStepObj, nextStageObj;
+
+        // Flags that we need to execute the stage init function.
+        var stageInit;
+
+        // Step init callback.
+        var stepInitCb;
+
+        // Variable related to matching roles and partners.
+        var matcherOptions, matches, role, partner;
         var i, len, pid;
 
+        // Sent to every client (if syncStepping and if necessary).
         var remoteOptions;
                 
         if (!this.isSteppable()) {
@@ -22111,7 +22107,13 @@ if (!Array.prototype.indexOf) {
                 i = -1, len = matches.length;
                 for ( ; ++i < len ; ) {
                     pid = matches[i].id;
-                    remoteOptions = matches[i].options;
+                    remoteOptions = { plot: {} };
+                    if ('undefined' !== typeof matches[i].options.role) {
+                        remoteOptions.plot.role = matches[i].options.role;
+                    }
+                    if ('undefined' !== typeof matches[i].options.partner) {
+                        remoteOptions.plot.partner = matches[i].options.partner;
+                    }
 
                     if (curStep.stage === 0) {
                         node.remoteCommand('start', pid, remoteOptions);
@@ -22207,26 +22209,30 @@ if (!Array.prototype.indexOf) {
 
         // Process options before calling any init function. Sets a role also.
         if ('object' === typeof options) {
-            processGotoStepOptions(this, options);
+            processGotoStepOptions(this, options);        
         }
         else if (options) {
             throw new TypeError('Game.gotoStep: options must be object ' +
                                 'or undefined. Found: ' +  options);
         }
 
-        // TODO: and partner?
-        if (!options || !options.role) {
-            role = this.plot.getProperty(nextStep, 'role');
-            if (role === 'keep') {
-                if (this.role) this.setRole(this.role, true);
-            }
-            else {
-                this.setRole(null);
-            }
-        }
+        // Update `role` and `partner` and in the step **only if**
+        // role and partner are not specified in the options already.
+        // By default `role` and `partner` are set to NULL at the 
+        // beginning of each step.
+        role = this.plot.getProperty(nextStep, 'role');
+        if (!role) role = null;
+        else if (role === true) role = this.role;
+        else if ('function' === typeof role) role = role.call(this);
+        this.setRole(role, true);
+        
+        partner = this.plot.getProperty(nextStep, 'partner');
+        if (!partner) partner = null;
+        else if (partner === true) partner = this.partner;
+        else if ('function' === typeof partner) partner= partner.call(this);
+        this.setPartner(partner, true);
+        
 
-        // TODO: if a role is SET, then the init functions might have
-        // changed. Maybe not of stage, but of step.
         if (stageInit) {
             // Store time:
             this.node.timer.setTimestamp('stage', (new Date()).getTime());
@@ -22243,11 +22249,15 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        // Execute the init function of the step, if any:
-        if (nextStepObj.hasOwnProperty('init')) {
+        // Important! A role might have changed the init function.
+        stepInitCb = this.role ?
+            this.plot.getProperty(nextStep, 'init') : nextStepObj.init;
+
+        // Execute the init function of the step, if any.
+        if (stepInitCb) {
             this.setStateLevel(constants.stateLevels.STEP_INIT);
             this.setStageLevel(constants.stageLevels.INITIALIZING);
-            nextStepObj.init.call(node.game);
+            stepInitCb.call(node.game);
         }
 
         this.setStateLevel(constants.stateLevels.PLAYING_STEP);
@@ -22259,10 +22269,8 @@ if (!Array.prototype.indexOf) {
         // Reads Min/Max/Exact Players properties.
         this.sizeManager.init(nextStep);
 
-        // Emit buffered messages:
-        if (node.socket.shouldClearBuffer()) {
-            node.socket.clearBuffer();
-        }
+        // Emit buffered messages.
+        if (node.socket.shouldClearBuffer()) node.socket.clearBuffer();        
 
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
@@ -22285,9 +22293,7 @@ if (!Array.prototype.indexOf) {
         var widget, widgetObj, widgetRoot;
         var widgetCb, widgetExit, widgetDone;
         var doneCb, origDoneCb, exitCb, origExitCb;
-        var frame, uri, frameOptions;
-        var frameLoadMode, frameStoreMode;
-        var frameAutoParse, frameAutoParsePrefix;
+        var frame, uri, frameOptions, frameAutoParse;
 
         if ('object' !== typeof step) {
             throw new Error('Game.execStep: step must be object.');
@@ -23071,23 +23077,27 @@ if (!Array.prototype.indexOf) {
      * Returns the requested step property from the game plot
      *
      * @param {string} property The name of the property
-     * @param {GameStage} gameStage Optional. The reference game stage.
-     *   Default: Game.currentGameStage()
+     * @param {mixed} notFound Optional. The return value in case the
+     *   requested property is not found. Default: null
      *
      * @return {mixed} The value of the requested step property
      *
      * @see GamePlot.getProperty
      */
-    Game.prototype.getProperty = function(property, gameStage) {
-        gameStage = 'undefined' !== typeof gameStage ?
-            gameStage : this.getCurrentGameStage();
-        return this.plot.getProperty(gameStage, property);
+    Game.prototype.getProperty = function(property, notFound) {
+        var gs;
+        gs = this.getCurrentGameStage();
+        if (arguments.length < 2) return this.plot.getProperty(gs, property);
+        return this.plot.getProperty(gs, property, notFound);        
     };
 
     /**
      * ### Game.setRole
      *
      * Sets the current role in the game
+     *
+     * When a role is set, all the properties of a role overwrite
+     * the current step properties.
      *
      * Roles are not supposed to be set more than once per step, and
      * an error will be thrown on attempts to overwrite roles.
@@ -23110,8 +23120,9 @@ if (!Array.prototype.indexOf) {
             }
             roles = this.getProperty('roles');
             if (!roles) {
-                throw new Error('Game.setRole: no roles specified in ' +
-                                'current step: ' + this.getCurrentGameStage());
+                throw new Error('Game.setRole: trying to set role "' + role +
+                                '", but \'roles\' not found in current step: ' +
+                                this.getCurrentGameStage());
             }
             roleObj = roles[role];
             if (!roleObj) {
@@ -23221,11 +23232,6 @@ if (!Array.prototype.indexOf) {
                 game.node.done();
             });
         }
-        // Set role.
-        if (options.role) game.setRole(options.role, true);
-        // Partner.
-        if (options.partner) game.setPartner(options.partner, true);
-        // TODO: Group ?
 
         // Temporarily modify plot properties.
         // Must be done after setting the role.
@@ -23237,6 +23243,7 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // TODO: rename cb.
         // Call the cb with options as param, if found.
         if (options.cb) {
             if ('function' === typeof options.cb) {
