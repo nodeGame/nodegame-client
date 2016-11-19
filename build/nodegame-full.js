@@ -10496,7 +10496,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '3.2.1';
+    node.version = '3.5.0';
 
 })(window);
 
@@ -14374,7 +14374,7 @@ if (!Array.prototype.indexOf) {
             return res;
         }
 
-        // Not found.        
+        // Not found.
         if (arguments.length < 3) notFound = null;
         return notFound;
     };
@@ -21582,7 +21582,7 @@ if (!Array.prototype.indexOf) {
          * @see processGotoStepOptions
          */
         this.partner = null;
-        
+
         /**
          * ### Game.roleMapper
          *
@@ -21591,7 +21591,7 @@ if (!Array.prototype.indexOf) {
          * @see Game.execStep
          */
         this.roleMapper = RoleMapper ? new RoleMapper(this.node) : null;
-        
+
         /**
          * ### Game.timer
          *
@@ -22050,7 +22050,7 @@ if (!Array.prototype.indexOf) {
 
         // Sent to every client (if syncStepping and if necessary).
         var remoteOptions;
-                
+
         if (!this.isSteppable()) {
             throw new Error('Game.gotoStep: game cannot be stepped.');
         }
@@ -22107,13 +22107,9 @@ if (!Array.prototype.indexOf) {
                 i = -1, len = matches.length;
                 for ( ; ++i < len ; ) {
                     pid = matches[i].id;
-                    remoteOptions = { plot: {} };
-                    if ('undefined' !== typeof matches[i].options.role) {
-                        remoteOptions.plot.role = matches[i].options.role;
-                    }
-                    if ('undefined' !== typeof matches[i].options.partner) {
-                        remoteOptions.plot.partner = matches[i].options.partner;
-                    }
+                    // TODO: This should if we have more components
+                    // trying to modify the plot in remoteOptions.
+                    remoteOptions = { plot: matches[i].options };
 
                     if (curStep.stage === 0) {
                         node.remoteCommand('start', pid, remoteOptions);
@@ -22123,7 +22119,7 @@ if (!Array.prototype.indexOf) {
                         node.remoteCommand('goto_step', pid, remoteOptions);
                     }
                 }
-                
+
             }
             else {
                 if (curStep.stage === 0) {
@@ -22209,7 +22205,7 @@ if (!Array.prototype.indexOf) {
 
         // Process options before calling any init function. Sets a role also.
         if ('object' === typeof options) {
-            processGotoStepOptions(this, options);        
+            processGotoStepOptions(this, options);
         }
         else if (options) {
             throw new TypeError('Game.gotoStep: options must be object ' +
@@ -22218,20 +22214,20 @@ if (!Array.prototype.indexOf) {
 
         // Update `role` and `partner` and in the step **only if**
         // role and partner are not specified in the options already.
-        // By default `role` and `partner` are set to NULL at the 
+        // By default `role` and `partner` are set to NULL at the
         // beginning of each step.
         role = this.plot.getProperty(nextStep, 'role');
         if (!role) role = null;
         else if (role === true) role = this.role;
         else if ('function' === typeof role) role = role.call(this);
         this.setRole(role, true);
-        
+
         partner = this.plot.getProperty(nextStep, 'partner');
         if (!partner) partner = null;
         else if (partner === true) partner = this.partner;
         else if ('function' === typeof partner) partner= partner.call(this);
         this.setPartner(partner, true);
-        
+
 
         if (stageInit) {
             // Store time:
@@ -22270,7 +22266,7 @@ if (!Array.prototype.indexOf) {
         this.sizeManager.init(nextStep);
 
         // Emit buffered messages.
-        if (node.socket.shouldClearBuffer()) node.socket.clearBuffer();        
+        if (node.socket.shouldClearBuffer()) node.socket.clearBuffer();
 
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
@@ -23088,7 +23084,7 @@ if (!Array.prototype.indexOf) {
         var gs;
         gs = this.getCurrentGameStage();
         if (arguments.length < 2) return this.plot.getProperty(gs, property);
-        return this.plot.getProperty(gs, property, notFound);        
+        return this.plot.getProperty(gs, property, notFound);
     };
 
     /**
