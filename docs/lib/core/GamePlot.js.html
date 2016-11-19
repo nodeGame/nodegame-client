@@ -2028,7 +2028,7 @@ game stage.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProperty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">property</span><span class="p">,</span> <span class="nx">notFound</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">stepObj</span><span class="p">,</span> <span class="nx">stageObj</span><span class="p">,</span> <span class="nx">defaultProps</span><span class="p">,</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
@@ -2161,7 +2161,8 @@ game stage.</p>
 <p>Not found.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="nx">notFound</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">notFound</span><span class="p">;</span>
     <span class="p">};</span>
 
 
