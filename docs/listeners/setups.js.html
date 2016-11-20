@@ -468,7 +468,7 @@ the window object in the browser enviroment.</p>
 </div>
 
   </div>
-  <div class="body"><p>Defines global variables to be stored in <code>node.env[myvar]</code></p>
+  <div class="body"><p>Setups environmental variables to be accessible in <code>node.env</code></p>
   </div>
 </div>
         </td>
@@ -482,7 +482,7 @@ the window object in the browser enviroment.</p>
             <span class="p">}</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_env</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>

@@ -181,7 +181,7 @@
         /**
          * ### setup("env")
          *
-         * Defines global variables to be stored in `node.env[myvar]`
+         * Setups environmental variables to be accessible in `node.env`
          */
         this.registerSetup('env', function(conf) {
             var i;
@@ -192,7 +192,7 @@
             }
             for (i in conf) {
                 if (conf.hasOwnProperty(i)) {
-                    this.env[i] = conf[i];
+                    this._env[i] = conf[i];
                 }
             }
             return conf;
