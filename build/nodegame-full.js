@@ -20682,6 +20682,24 @@ if (!Array.prototype.indexOf) {
         return this.resolvedMatchesById[x];
     };
 
+    /**
+     * ### Matcher.clear
+     *
+     * Clears the matcher as it would be a newly created object
+     */
+    Matcher.prototype.clear = function() {
+        this.x = 0;
+        this.y = 0;
+        this.matches = null;
+        this.resolvedMatches = null;
+        this.resolvedMatchesById = null;
+        this.ids = null;
+        this.assignedIds = null;
+        this.assignerCb = Matcher.randomAssigner;
+        this.missingId = Matcher.missingId;
+        this.bye = Matcher.bye;
+    };
+
     // ## Helper methods.
 
     /**
@@ -20920,7 +20938,7 @@ if (!Array.prototype.indexOf) {
  * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` manager of player ids and aliases
+ * Hadnles matching roles to players and players to players.
  */
 (function(exports, parent) {
 
@@ -20944,7 +20962,17 @@ if (!Array.prototype.indexOf) {
          * Reference to the node object
          */
         this.node = node;
-        
+
+        /**
+         * ### MatcherManager.roles
+         *
+         * List of available roles
+         *
+         * @see MatcherManager.setRoles
+         * @see MatcherManager.clearRoles
+         */
+        this.roles = {};
+
         /**
          * ### MatcherManager.rolesArray
          *
@@ -20956,21 +20984,11 @@ if (!Array.prototype.indexOf) {
         this.rolesArray = [];
 
         /**
-         * ### MatcherManager.roles
-         *
-         * The roles list
-         *
-         * @see MatcherManager.setRoles
-         * @see MatcherManager.clearRoles
-         */
-        this.roles = {};
-
-        /**
          * ### MatcherManager.map
          *
          * The map roles-ids
          */
-        this.map = {};
+        this.rolesMap = {};
 
         /**
          * ### MatcherManager.matcher
@@ -20985,28 +21003,28 @@ if (!Array.prototype.indexOf) {
     /**
      * ### MatcherManager.clear
      *
-     * The roles list
+     * Clears current matches and roles
+     *
+     * @param {string} mod Optional. Modifies what must be cleared.
+     *    Values: 'roles', 'matches', 'all'. Default: 'all'
      *
      * @see MatcherManager.setRoles
      * @see MatcherManager.clearRoles
      */
-    MatcherManager.prototype.clear = function() {
-        this.clearRoles();
-        this.map = {};
-        this.matcher = new parent.Matcher();
+    MatcherManager.prototype.clear = function(mod) {
+        switch(mod) {
+        case 'roles':
+            this.clearRoles();
+            break;
+        case 'matches':
+            this.matcher.clear();
+            break;
+        default:
+            this.clearRoles();
+            this.matcher.clear();
+        }
     };
 
-    /**
-     * ### MatcherManager.clearRoles
-     *
-     * TODO: should we just use .clear?
-     */    
-    MatcherManager.prototype.clearRoles = function() {
-        this.rolesArray = [];
-        this.roles = {};
-    };
-
-    
     /**
      * ### MatcherManager.setRoles
      *
@@ -21029,12 +21047,12 @@ if (!Array.prototype.indexOf) {
                                 'number > 2 or undefined. Found: ' + min);
         }
         min = min || 2;
-        
+
         if (max && 'number' !== typeof max || max < min) {
             throw new TypeError('MatcherManager.setRoles: max must ' +
                                 'be number or undefined. Found: ' + max);
         }
-        
+
         // At least two roles must be defined
         if (!J.isArray(roles)) {
             throw new TypeError('MatcherManager.setRoles: roles must ' +
@@ -21067,15 +21085,15 @@ if (!Array.prototype.indexOf) {
         this.rolesArray = roles;
     };
 
-    MatcherManager.prototype.roleExists = function(role) {        
+    MatcherManager.prototype.roleExists = function(role) {
         if ('string' !== typeof role || role.trim() === '') {
             throw new TypeError('MatcherManager.roleExists: role must be ' +
                                 'a non-empty string. Found: ' + role);
         }
         return !!this.roles[role];
     };
-    
-    MatcherManager.prototype.getRole = function(role) {        
+
+    MatcherManager.prototype.getRole = function(role) {
         if ('string' !== typeof role || role.trim() === '') {
             throw new TypeError('MatcherManager.getRole: role must be ' +
                                 'a non-empty string. Found: ' + role);
@@ -21092,16 +21110,16 @@ if (!Array.prototype.indexOf) {
      *
      * @return {array} Array of matches ready to be sent out as remote options.
      */
-    MatcherManager.prototype.match = function(settings) {        
-        
+    MatcherManager.prototype.match = function(settings) {
+
         // String is turned into object. Might still fail.
-        if ("string" === typeof settings) settings = { match: settings };
-        
+        if ('string' === typeof settings) settings = { match: settings };
+
         if ('object' !== typeof settings || settings === null) {
-            throw new TypeError('MatcherManager.map: settings must be ' +
-                                'object. Found: ' + settings);
+            throw new TypeError('MatcherManager.match: settings must be ' +
+                                'object or string. Found: ' + settings);
         }
-       
+
         if (settings.match !== 'random_pairs') {
             throw new Error('MatcherManager.match: only "random_pairs" match ' +
                             "supported. Found: " + settings.match);
@@ -21110,8 +21128,19 @@ if (!Array.prototype.indexOf) {
         return randomPairs.call(this, settings);
     };
 
+
+    // ## Helper Methods
+
     /**
      * ## randomPairs
+     *
+     * Matches players and/or roles in random pairs
+     *
+     * Supports odd number of players, if 3 roles are given in settings.
+     *
+     * @param {object} settings The settings object
+     *
+     * @return {array} The array of matches.
      */
     function randomPairs(settings) {
         var r1, r2, r3;
@@ -21121,7 +21150,7 @@ if (!Array.prototype.indexOf) {
         sayPartner = 'undefined' === typeof settings.sayPartner ?
             true : !!settings.sayPartner;
 
-        
+
         doRoles = !!settings.roles;
         if (doRoles) {
             this.setRoles(settings.roles, 2); // TODO: pass the alg name?
@@ -21129,7 +21158,7 @@ if (!Array.prototype.indexOf) {
             r1 = settings.roles[0];
             r2 = settings.roles[1];
             r3 = settings.roles[2];
-            
+
             // Resets all roles.
             this.rolesMap = {};
         }
@@ -21175,7 +21204,7 @@ if (!Array.prototype.indexOf) {
                     opts1 = { id: id1, options: { partner: id2 } };
                     opts2 = { id: id2, options: { partner: id1 } };
                 }
-                
+
                 // Add options to array.
                 matches.push(opts1);
                 matches.push(opts2);
@@ -21196,13 +21225,13 @@ if (!Array.prototype.indexOf) {
             }
             match = this.matcher.getMatch();
         }
-      
+
         // Store reference to last valid settings.
         this.mapSettings = settings;
 
         return matches;
     }
-   
+
     // ## Closure
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -25719,6 +25748,24 @@ if (!Array.prototype.indexOf) {
         if (x > nRows) return null;
 
         return this.resolvedMatchesById[x];
+    };
+
+    /**
+     * ### Matcher.clear
+     *
+     * Clears the matcher as it would be a newly created object
+     */
+    Matcher.prototype.clear = function() {
+        this.x = 0;
+        this.y = 0;
+        this.matches = null;
+        this.resolvedMatches = null;
+        this.resolvedMatchesById = null;
+        this.ids = null;
+        this.assignedIds = null;
+        this.assignerCb = Matcher.randomAssigner;
+        this.missingId = Matcher.missingId;
+        this.bye = Matcher.bye;
     };
 
     // ## Helper methods.

@@ -99,6 +99,9 @@
       <div class="heading h3">
         <a href="#matcher.getmatchobject">Matcher.getMatchObject</a>
       </div>
+      <div class="heading h3">
+        <a href="#matcher.clear">Matcher.clear</a>
+      </div>
       <div class="heading h2">
         <a href="#helper%20methods.">Helper methods.</a>
       </div>
@@ -134,7 +137,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#x61;&#105;&#x6C;&#116;o:&#x73;&#x2E;&#98;&#x61;&#x6C;&#105;e&#116;&#x74;&#105;&#x40;&#x6E;&#101;&#x75;&#46;&#x65;d&#117;">&#x73;&#x2E;&#98;&#x61;&#x6C;&#105;e&#116;&#x74;&#105;&#x40;&#x6E;&#101;&#x75;&#46;&#x65;d&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#x61;&#x69;&#108;&#116;&#111;:s&#46;&#98;&#x61;&#x6C;&#105;&#x65;&#x74;&#116;&#105;&#x40;&#x6E;&#101;&#x75;&#x2E;&#101;&#x64;&#117;">s&#46;&#98;&#x61;&#x6C;&#105;&#x65;&#x74;&#116;&#105;&#x40;&#x6E;&#101;&#x75;&#x2E;&#101;&#x64;&#117;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -1431,6 +1434,39 @@ where the absolute position becomes the player id.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.clear">
+  <h3>
+    <a href="#matcher.clear" name="matcher.clear" class="pilcrow">&#182;</a>
+    Matcher.clear
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Clears the matcher as it would be a newly created object</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">randomAssigner</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">bye</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">bye</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap" id="helper%20methods.">
   <h2>
@@ -1661,7 +1697,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Make sure we have even numbers.</p>
         </td>
@@ -1678,7 +1714,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Shuffle list of ids for random.</p>
         </td>
@@ -1691,7 +1727,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Create a new array for round i.</p>
         </td>
@@ -1707,7 +1743,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Insert match.</p>
         </td>
@@ -1722,7 +1758,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Permutate for next round.</p>
         </td>
@@ -1739,7 +1775,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>TODO: support limited number of rounds.</p>
         </td>
@@ -1752,7 +1788,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code><span class="kd">function</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
@@ -1832,7 +1868,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>TODO: random with replacement.</p>
         </td>
@@ -1845,7 +1881,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code><span class="cm">/**</span>
