@@ -37,16 +37,22 @@
         <a href="#matchermanager.rolesarray">MatcherManager.rolesArray</a>
       </div>
       <div class="heading h3">
-        <a href="#matchermanager.map">MatcherManager.map</a>
+        <a href="#matchermanager.rolesmap">MatcherManager.rolesMap</a>
       </div>
       <div class="heading h3">
         <a href="#matchermanager.matcher">MatcherManager.matcher</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matchermanager.lastsettings">MatcherManager.lastSettings</a>
       </div>
       <div class="heading h3">
         <a href="#matchermanager.clear">MatcherManager.clear</a>
       </div>
       <div class="heading h3">
         <a href="#matchermanager.setroles">MatcherManager.setRoles</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matchermanager.roleexists">MatcherManager.roleExists</a>
       </div>
       <div class="heading h3">
         <a href="#matchermanager.match">MatcherManager.match</a>
@@ -224,10 +230,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="matchermanager.map">
+<div class="pilwrap" id="matchermanager.rolesmap">
   <h3>
-    <a href="#matchermanager.map" name="matchermanager.map" class="pilcrow">&#182;</a>
-    MatcherManager.map
+    <a href="#matchermanager.rolesmap" name="matchermanager.rolesmap" class="pilcrow">&#182;</a>
+    MatcherManager.rolesMap
   </h3>
 </div>
 
@@ -267,6 +273,28 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Matcher</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matchermanager.lastsettings">
+  <h3>
+    <a href="#matchermanager.lastsettings" name="matchermanager.lastsettings" class="pilcrow">&#182;</a>
+    MatcherManager.lastSettings
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the last settings parsed</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastSettings</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 
 
@@ -391,7 +419,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -409,7 +437,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -440,7 +468,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>All data validated.</p>
         </td>
@@ -449,20 +477,45 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">;</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matchermanager.roleexists">
+  <h3>
+    <a href="#matchermanager.roleexists" name="matchermanager.roleexists" class="pilcrow">&#182;</a>
+    MatcherManager.roleExists
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if the requested role exists</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">role</span>
+      <span class="dox_type">string</span>
+      <span>The role to check</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">MatcherManager.roles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">roleExists</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span> <span class="o">||</span> <span class="nx">role</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.roleExists: role must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;a non-empty string. Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">];</span>
-    <span class="p">};</span>
-
-    <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span> <span class="o">||</span> <span class="nx">role</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getRole: role must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;a non-empty string. Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -508,7 +561,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>String is turned into object. Might still fail.</p>
         </td>
@@ -605,7 +658,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Resets all roles.</p>
         </td>
@@ -620,7 +673,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>TODO: This part needs to change / be conditional, depending if
 we do roundrobin, or not.
@@ -638,7 +691,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Generates new random matches for this round.</p>
         </td>
@@ -652,7 +705,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>///////////////////////////////////////////////////////////////</p>
         </td>
@@ -665,7 +718,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>TODO: determine size of array beforehand.</p>
         </td>
@@ -679,7 +732,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>While we have matches, send them to clients.</p>
         </td>
@@ -697,7 +750,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Create role map.</p>
         </td>
@@ -713,7 +766,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -729,7 +782,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -750,7 +803,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Add options to array.</p>
         </td>
@@ -782,12 +835,12 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Store reference to last valid settings.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">mapSettings</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastSettings</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
     <span class="p">}</span>
