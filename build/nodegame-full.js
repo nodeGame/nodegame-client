@@ -14655,6 +14655,50 @@ if (!Array.prototype.indexOf) {
         return this.stager.sequence.length === 0;
     };
 
+    /**
+     * ### GamePlot.getRound
+     *
+     * Returns the current/remaining/past/total round number in a game stage
+     *
+     * @param {mixed} gs The game stage of reference
+     * @param {string} mod Optional. Modifies the return value.
+     *
+     *   - 'current': current round number (default)
+     *   - 'total': total number of rounds
+     *   - 'remaining': number of rounds remaining (excluding current round)
+     *   - 'past': number of rounds already past  (excluding current round)
+     *
+     * @return {number|null} The requested information, or null if
+     *   the number of rounds is not known (e.g. if the stage is a loop)
+     *
+     * @see GamePlot.getSequenceObject
+     */
+    GamePlot.prototype.getRound = function(gs, mod) {
+        var seqObj;
+        gs = new GameStage(gs);
+        if (gs.stage === 0) return null;
+
+        seqObj = this.getSequenceObject(gs);
+        if (!seqObj) return null;
+
+        if (!mod || mod === 'current') return gs.round;
+        if (mod === 'past') return gs.round - 1;
+
+        if (mod === 'total') {
+            if (seqObj.type === 'repeat') return seqObj.num;
+            else if (seqObj.type === 'plain') return 1;
+            else return null;
+        }        
+        if (mod === 'remaining') {
+            if (seqObj.type === 'repeat') return seqObj.num - gs.round;
+            else if (seqObj.type === 'plain') return 1;
+            else return null;
+        }
+
+        throw new TypeError('GamePlot.getRound: mod must be a known string ' +
+                            'or undefined. Found: ' + mod);        
+    };
+
     // ## Helper Methods
 
     /**
@@ -21235,6 +21279,7 @@ if (!Array.prototype.indexOf) {
         }
 
         if (!matches || !matches.length) {
+            debugger
             throw new Error('MatcheManager.match: "' + settings.match +
                             '" did not return matches.');
         }
@@ -21262,7 +21307,7 @@ if (!Array.prototype.indexOf) {
         var match, id1, id2, soloId;
         var matches, opts1, opts2, sayPartner, doRoles;
 
-        var pl;
+        var game;
         var nRounds;
 
         sayPartner = 'undefined' === typeof settings.sayPartner ?
@@ -21282,13 +21327,11 @@ if (!Array.prototype.indexOf) {
             r3 = settings.roles[2];
         }
 
-        pl = this.node.game.pl;
-debugger
+        game = this.node.game;
         // Algorithm: random.
         if (settings.match === 'random') {
-            this.matcher.generateMatches('random', pl.size());
-            this.matcher.setIds(pl.id.getAllKeys());
-
+            this.matcher.generateMatches('random', game.pl.size());
+            this.matcher.setIds(game.pl.id.getAllKeys());
             // Generates new random matches for this round.
             this.matcher.match(true);
         }
@@ -21296,11 +21339,26 @@ debugger
         // Algorithm: round robin.
         else {
             if (!this.matcher.matches) {
-                nRounds = settings.rounds || this.node.game.getRound('total');
-                this.matcher.generateMatches('roundrobin', pl.size(), {
+                if ('undefined' !== typeof settings.rounds) {
+                    if ('number' !== typeof settings.rounds ||
+                        settings.rounds < 1) {
+                        
+                        throw new TypeError('MatcherManager.match: ' +
+                                            'settings.rounds must be a ' +
+                                            'number > 1 or undefined. Found: ' +
+                                            settings.rounds);
+                    }
+                    nRounds = settings.rounds;
+                }
+                else {
+                    // TODO: rounds param does not event work now!!
+                    nRounds = game.plot.getRound(game.getNextStep(), 'total');
+                }
+
+                this.matcher.generateMatches('roundrobin', game.pl.size(), {
                     rounds: nRounds
                 });
-                this.matcher.setIds(pl.id.getAllKeys());
+                this.matcher.setIds(game.pl.id.getAllKeys());
                 // Generates matches;
                 this.matcher.match(true);
             }
@@ -23174,30 +23232,10 @@ debugger
      * @return {number|null} The requested information, or null if
      *   the number of rounds is not known (e.g. if the stage is a loop)
      *
-     * @see GamePlot.getSequenceObject
+     * @see GamePlot.getRound
      */
     Game.prototype.getRound = function(mod) {
-        var gs, seqObj;
-        gs = this.getCurrentGameStage();
-        if (gs.stage === 0) return null;
-
-        if (!mod || mod === 'current') return gs.round;
-        if (mod === 'past') return gs.round - 1;
-
-        seqObj = this.plot.getSequenceObject(gs);
-        if (mod === 'total') {
-            if (seqObj.type === 'repeat') return seqObj.num;
-            else if (seqObj.type === 'plain') return 1;
-            else return null;
-        }        
-        if (mod === 'remaining') {
-            if (seqObj.type === 'repeat') return seqObj.num - gs.round;
-            else if (seqObj.type === 'plain') return 1;
-            else return null;
-        }
-
-        throw new TypeError('Game.getRound: mod must be a known string or ' +
-                            'undefined. Found: ' + mod);        
+        return this.plot.getRound(this.getCurrentGameStage(), mod);
     };
 
     /**
