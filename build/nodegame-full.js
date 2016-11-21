@@ -10312,9 +10312,16 @@ if (!Array.prototype.indexOf) {
      * @param {array} The reference to the original database
      */
     function NDDBIndex(idx, nddb) {
+        // The name of the index.
         this.idx = idx;
+        // Reference to the whole nddb database.
         this.nddb = nddb;
+        // Map indexed-item to a position in the original database.
         this.resolve = {};
+        // List of all keys in `resolve` object.
+        this.keys = [];
+        // Map indexed-item to a position in `keys` array (for fast deletion).
+        this.resolveKeys = {};
     }
 
     /**
@@ -10327,6 +10334,8 @@ if (!Array.prototype.indexOf) {
      */
     NDDBIndex.prototype._add = function(idx, dbidx) {
         this.resolve[idx] = dbidx;
+        this.resolveKeys[idx] = this.keys.length;
+        this.keys.push('' + idx);
     };
 
     /**
@@ -10338,6 +10347,8 @@ if (!Array.prototype.indexOf) {
      */
     NDDBIndex.prototype._remove = function(idx) {
         delete this.resolve[idx];
+        this.keys.splice(this.resolveKeys[idx],1);
+        delete this.resolveKeys[idx];
     };
 
     /**
@@ -10348,7 +10359,7 @@ if (!Array.prototype.indexOf) {
      * @return {number} The number of elements in the index
      */
     NDDBIndex.prototype.size = function() {
-        return J.size(this.resolve);
+        return this.keys.length;
     };
 
     /**
@@ -10441,7 +10452,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDBIndex.getAllKeyElements
      */
     NDDBIndex.prototype.getAllKeys = function() {
-        return J.keys(this.resolve);
+        return this.keys;
     };
 
     /**
@@ -10454,11 +10465,12 @@ if (!Array.prototype.indexOf) {
      * @see NDDBIndex.getAllKeys
      */
     NDDBIndex.prototype.getAllKeyElements = function() {
-        var out = {}, idx;
-        for (idx in this.resolve) {
-            if (this.resolve.hasOwnProperty(idx)) {
-                out[idx] = this.nddb.db[this.resolve[idx]];
-            }
+        var out, idx, i, len;
+        out = {};
+        i = -1, len = this.keys.length;
+        for ( ; ++i < len ; ) {
+            idx = this.keys[i];
+            out[idx] = this.nddb.db[this.resolve[idx]];
         }
         return out;
     };
@@ -20239,7 +20251,7 @@ if (!Array.prototype.indexOf) {
          *
          * Nested array of matches (with position-numbers)
          *
-         * Nestes a new array for each round, and within each round
+         * Nests a new array for each round, and within each round
          * individual matches are also array. For example:
          *
          * ```javascript
@@ -20389,7 +20401,8 @@ if (!Array.prototype.indexOf) {
      *
      * Throws an error if the selected algorithm is not found.
      *
-     * @param {string} alg The chosen algorithm. Available: 'roundrobin'.
+     * @param {string} alg The chosen algorithm. Available: 'roundrobin',
+     *   'random'
      *
      * @return {array} The array of matches
      */
@@ -20400,14 +20413,15 @@ if (!Array.prototype.indexOf) {
         }
         alg = alg.toLowerCase();
         if (alg === 'roundrobin' || alg === 'random') {
-            if (alg === 'random' &&
-                arguments[2] && arguments[2].replace === true) {
-
-                matches = randomPairs(arguments[1], arguments[2]);
-            }
-            else {
+// TODO: check.
+//             if (alg === 'random' &&
+//                 arguments[2] && arguments[2].replace === true) {
+// 
+//                 matches = randomPairs(arguments[1], arguments[2]);
+//             }
+//             else {
                 matches = pairMatcher(alg, arguments[1], arguments[2]);
-            }
+//             }
         }
         else {
             throw new Error('Matcher.generateMatches: unknown algorithm: ' +
@@ -21167,6 +21181,7 @@ if (!Array.prototype.indexOf) {
         // we do roundrobin, or not.
         // Here we do a new random pair match each time.
         //////////////////////////////////////////////////////////////////
+debugger
         this.matcher.generateMatches('random', this.node.game.pl.size());
         this.matcher.setIds(this.node.game.pl.id.getAllKeys());
 
@@ -21186,8 +21201,8 @@ if (!Array.prototype.indexOf) {
 
                 if (doRoles) {
                     // Create role map.
-                    this.map[id1] = r1;
-                    this.map[id2] = r2;
+                    this.rolesMap[id1] = r1;
+                    this.rolesMap[id2] = r2;
 
                     if (!sayPartner) {
                         // Prepare options to send to players.
@@ -21215,7 +21230,7 @@ if (!Array.prototype.indexOf) {
                                     'but not found.');
                 }
                 soloId = id1 === 'bot' ? id2 : id1;
-                this.map[soloId] = r3;
+                this.rolesMap[soloId] = r3;
 
                 matches.push({
                     id: soloId,
@@ -25307,7 +25322,7 @@ if (!Array.prototype.indexOf) {
          *
          * Nested array of matches (with position-numbers)
          *
-         * Nestes a new array for each round, and within each round
+         * Nests a new array for each round, and within each round
          * individual matches are also array. For example:
          *
          * ```javascript
@@ -25457,7 +25472,8 @@ if (!Array.prototype.indexOf) {
      *
      * Throws an error if the selected algorithm is not found.
      *
-     * @param {string} alg The chosen algorithm. Available: 'roundrobin'.
+     * @param {string} alg The chosen algorithm. Available: 'roundrobin',
+     *   'random'
      *
      * @return {array} The array of matches
      */
@@ -25468,14 +25484,15 @@ if (!Array.prototype.indexOf) {
         }
         alg = alg.toLowerCase();
         if (alg === 'roundrobin' || alg === 'random') {
-            if (alg === 'random' &&
-                arguments[2] && arguments[2].replace === true) {
-
-                matches = randomPairs(arguments[1], arguments[2]);
-            }
-            else {
+// TODO: check.
+//             if (alg === 'random' &&
+//                 arguments[2] && arguments[2].replace === true) {
+// 
+//                 matches = randomPairs(arguments[1], arguments[2]);
+//             }
+//             else {
                 matches = pairMatcher(alg, arguments[1], arguments[2]);
-            }
+//             }
         }
         else {
             throw new Error('Matcher.generateMatches: unknown algorithm: ' +
@@ -28896,6 +28913,8 @@ if (!Array.prototype.indexOf) {
          *
          * @see node.game.plot
          * @see Stager.setState
+         *
+         * TODO: check if all options work as described.
          */
         this.registerSetup('plot', function(stagerState, rule, gameStage) {
             var plot, prop;
@@ -30333,7 +30352,7 @@ if (!Array.prototype.indexOf) {
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
-     *   Default: 'gn_header'
+     *   Default: 'ng_header'
      * @param {boolean} force Optional. Will create the header even if an
      *   existing one is found. Default: FALSE
      *
@@ -31608,6 +31627,11 @@ if (!Array.prototype.indexOf) {
                 this.window.generateFrame(root, frameName, force);
             }
 
+            // Uri prefix.
+            if ('undefined' !== typeof conf.uriPrefix) {
+                this.window.setUriPrefix(conf.uriPrefix);
+            }
+
             // Load.
             if (conf.load) {
                 if ('object' === typeof conf.load) {
@@ -31626,11 +31650,6 @@ if (!Array.prototype.indexOf) {
                 this.window.loadFrame(url, cb, options);
             }
 
-            // Uri prefix.
-            if ('undefined' !== typeof conf.uriPrefix) {
-                this.window.setUriPrefix(conf.uriPrefix);
-            }
-
             // Clear and destroy.
             if (conf.clear) this.window.clearFrame();
             if (conf.destroy) this.window.destroyFrame();
@@ -31646,7 +31665,7 @@ if (!Array.prototype.indexOf) {
          * @see node.setup
          */
         node.registerSetup('header', function(conf) {
-            var frameName, force, root, rootName;
+            var headerName, force, root, rootName;
             if (!conf) return;
 
             // Generate.
@@ -31660,7 +31679,7 @@ if (!Array.prototype.indexOf) {
                         }
                         rootName = conf.generate.root;
                         force = conf.generate.force;
-                        frameName = conf.generate.name;
+                        headerName = conf.generate.name;
                     }
                 }
                 else {
@@ -31672,12 +31691,12 @@ if (!Array.prototype.indexOf) {
                 root = this.window.getElementById(rootName);
                 if (!root) root = this.window.getScreen();
                 if (!root) {
-                    node.warn('node.setup.frame: could not find valid ' +
-                              'root element to generate new frame.');
+                    node.warn('node.setup.header: could not find valid ' +
+                              'root element to generate new header.');
                     return;
                 }
 
-                this.window.generateFrame(root, frameName, force);
+                this.window.generateHeader(root, headerName, force);
             }
 
             // Position.
@@ -32096,7 +32115,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    WaitScreen.version = '0.7.0';
+    WaitScreen.version = '0.8.0';
     WaitScreen.description = 'Show a standard waiting screen';
 
     // ## Helper functions
@@ -32394,12 +32413,8 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof text) {
             throw new TypeError('WaitScreen.updateText: text must be string.');
         }
-        if (append) {
-            this.waitingDiv.appendChild(document.createTextNode(text));
-        }
-        else {
-            this.waitingDiv.innerHTML = text;
-        }
+        if (append) this.waitingDiv.innerHTML += text;
+        else this.waitingDiv.innerHTML = text;
     };
 
     /**

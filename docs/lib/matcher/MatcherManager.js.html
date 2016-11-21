@@ -702,8 +702,8 @@ Here we do a new random pair match each time.
 <p>Create role map.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
 
@@ -764,7 +764,7 @@ Here we do a new random pair match each time.
                                     <span class="s1">&#39;but not found.&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">soloId</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">===</span> <span class="s1">&#39;bot&#39;</span> <span class="o">?</span> <span class="nx">id2</span> <span class="o">:</span> <span class="nx">id1</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">soloId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r3</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">soloId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r3</span><span class="p">;</span>
 
                 <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
                     <span class="nx">id</span><span class="o">:</span> <span class="nx">soloId</span><span class="p">,</span>
