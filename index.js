@@ -66,6 +66,7 @@
     exports.Timer = require('./lib/core/Timer').Timer;
 
     // Matcher.
+    exports.Roler = require('./lib/matcher/Roler').Roler;
     exports.Matcher = require('./lib/matcher/Matcher').Matcher;
     exports.MatcherManager =
         require('./lib/matcher/MatcherManager').MatcherManager;

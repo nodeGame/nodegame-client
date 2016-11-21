@@ -80,6 +80,7 @@ var ng_client = [
     // Matcher.
 
     // TODO: make it conditional!
+    rootDir + "lib/matcher/Roler.js",
     rootDir + "lib/matcher/Matcher.js",
     rootDir + "lib/matcher/MatcherManager.js",
     // rootDir + "lib/matcher/GroupManager.js",
