@@ -193,6 +193,9 @@
         <a href="#game.getproperty">Game.getProperty</a>
       </div>
       <div class="heading h3">
+        <a href="#game.getround">Game.getRound</a>
+      </div>
+      <div class="heading h3">
         <a href="#game.setrole">Game.setRole</a>
       </div>
       <div class="heading h3">
@@ -4188,6 +4191,78 @@ method call.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="game.getround">
+  <h3>
+    <a href="#game.getround" name="game.getround" class="pilcrow">&#182;</a>
+    Game.getRound
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the current/remaining/past/total round number in current stage</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">mod</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Modifies the return value.
+
+<ul>
+<li>'current': current round number (default)</li>
+<li>'total': total number of rounds</li>
+<li>'remaining': number of rounds remaining (excluding current round)</li>
+<li>'past': number of rounds already past  (excluding current round)</li>
+</ul></span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span class="dox_type">null</span>
+      <span>The requested information, or null if
+  the number of rounds is not known (e.g. if the stage is a loop)</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.getSequenceObject
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Game</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRound</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">gs</span><span class="p">,</span> <span class="nx">seqObj</span><span class="p">;</span>
+        <span class="nx">gs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">gs</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mod</span> <span class="o">||</span> <span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;current&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;past&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="nx">seqObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getSequenceObject</span><span class="p">(</span><span class="nx">gs</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;total&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;plain&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;remaining&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span> <span class="o">-</span> <span class="nx">gs</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;plain&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">else</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Game.getRound: mod must be a known string or &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">mod</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="game.setrole">
   <h3>
     <a href="#game.setrole" name="game.setrole" class="pilcrow">&#182;</a>
@@ -4260,7 +4335,7 @@ an error will be thrown on attempts to overwrite roles.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <p>Modify plot properties.</p>
         </td>
@@ -4495,7 +4570,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>Call node.done() immediately after PLAYING is emitted.</p>
         </td>
@@ -4512,7 +4587,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
 </div>
 <p>Temporarily modify plot properties.
 Must be done after setting the role.</p>
@@ -4533,7 +4608,7 @@ Must be done after setting the role.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
 </div>
 <p>TODO: rename cb.
 Call the cb with options as param, if found.</p>

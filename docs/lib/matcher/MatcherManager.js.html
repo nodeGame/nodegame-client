@@ -40,6 +40,9 @@
         <a href="#matchermanager.lastsettings">MatcherManager.lastSettings</a>
       </div>
       <div class="heading h3">
+        <a href="#matchermanager.lastmatches">MatcherManager.lastMatches</a>
+      </div>
+      <div class="heading h3">
         <a href="#matchermanager.clear">MatcherManager.clear</a>
       </div>
       <div class="heading h3">
@@ -224,6 +227,29 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">lastSettings</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matchermanager.lastmatches">
+  <h3>
+    <a href="#matchermanager.lastmatches" name="matchermanager.lastmatches" class="pilcrow">&#182;</a>
+    MatcherManager.lastMatches
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the last matches</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
     <span class="p">}</span>
 
 
@@ -286,6 +312,8 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Parses a conf object and returns the desired matches of roles and players</p>
 
+<p>Stores a reference of last matches.</p>
+
 <p>Returned matches are in a format which is ready to be sent out as
 remote options. That is:</p>
 
@@ -314,11 +342,17 @@ remote options. That is:</p>
       <span class="dox_type">array</span>
       <span>Array of matches ready to be sent out as remote options.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">MatcherManager.lastMatches
+</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">matches</span><span class="p">;</span>
 
 
 </pre></div>
@@ -327,7 +361,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
 <p>String is turned into object. Might still fail.</p>
         </td>
@@ -339,12 +373,25 @@ remote options. That is:</p>
                                 <span class="s1">&#39;object or string. Found: &#39;</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">!==</span> <span class="s1">&#39;random_pairs&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;MatcherManager.match: only &quot;random_pairs&quot; match &#39;</span> <span class="o">+</span>
-                            <span class="s2">&quot;supported. Found: &quot;</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">match</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">===</span> <span class="s1">&#39;random_pairs&#39;</span> <span class="o">||</span>
+            <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">===</span> <span class="s1">&#39;round_robin&#39;</span> <span class="o">||</span>
+             <span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">===</span> <span class="s1">&#39;roundrobin&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="nx">matches</span> <span class="o">=</span> <span class="nx">randomPairs</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;MatcherManager.match: only &quot;random_pairs&quot; and &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;&quot;round_robin&quot; algorithms supported. Found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">settings</span><span class="p">.</span><span class="nx">match</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">randomPairs</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">matches</span> <span class="o">||</span> <span class="o">!</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;MatcheManager.match: &quot;&#39;</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">+</span>
+                            <span class="s1">&#39;&quot; did not return matches.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatches</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -405,6 +452,9 @@ remote options. That is:</p>
         <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">opts1</span><span class="p">,</span> <span class="nx">opts2</span><span class="p">,</span> <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
 
+        <span class="kd">var</span> <span class="nx">pl</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">nRounds</span><span class="p">;</span>
+
         <span class="nx">sayPartner</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span> <span class="o">?</span>
             <span class="kc">true</span> <span class="o">:</span> <span class="o">!!</span><span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span><span class="p">;</span>
 
@@ -419,10 +469,9 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
-<p>Resets all roles.
-this.roler.rolesMap = {};</p>
+<p>Resets all roles.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
@@ -434,24 +483,7 @@ this.roler.rolesMap = {};</p>
             <span class="nx">r3</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
         <span class="p">}</span>
 
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
-</div>
-<p>TODO: This part needs to change / be conditional, depending if
-we do roundrobin, or not.
-Here we do a new random pair match each time.
-////////////////////////////////////////////////////////////////</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
-
+        <span class="nx">pl</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -461,11 +493,13 @@ Here we do a new random pair match each time.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
-<p>Generates new random matches for this round.</p>
+<p>Algorithm: random.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-        <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+
 
 </pre></div>
         </td>
@@ -475,9 +509,11 @@ Here we do a new random pair match each time.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
-<p>///////////////////////////////////////////////////////////////</p>
+<p>Generates new random matches for this round.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
 
 
 </pre></div>
@@ -487,6 +523,43 @@ Here we do a new random pair match each time.
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>Algorithm: round robin.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">nRounds</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getRound</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">(),</span> <span class="p">{</span>
+                    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">nRounds</span>
+                <span class="p">});</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>Generates matches;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>TODO: determine size of array beforehand.</p>
         </td>
@@ -500,7 +573,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>While we have matches, send them to clients.</p>
         </td>
@@ -518,7 +591,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Create role map.</p>
         </td>
@@ -534,7 +607,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -550,7 +623,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -571,7 +644,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Add options to array.</p>
         </td>
@@ -603,7 +676,7 @@ Here we do a new random pair match each time.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Store reference to last valid settings.</p>
         </td>

@@ -20927,7 +20927,6 @@ if (!Array.prototype.indexOf) {
      * Creates tournament schedules for different algorithms
      *
      * @param {string} alg The name of the algorithm
-     *
      * @param {number|array} n The number of participants (>1) or
      *   an array containing the ids of the participants
      * @param {object} options Optional. Configuration object
@@ -21136,7 +21135,7 @@ if (!Array.prototype.indexOf) {
          * @see Roler
          */
         this.roler = new parent.Roler();
-     
+
         /**
          * ### MatcherManager.matcher
          *
@@ -21152,6 +21151,14 @@ if (!Array.prototype.indexOf) {
          * Reference to the last settings parsed
          */
         this.lastSettings = null;
+
+        /**
+         * ### MatcherManager.lastMatches
+         *
+         * Reference to the last matches
+         */
+        this.lastMatches = null;
+
     }
 
     /**
@@ -21181,6 +21188,8 @@ if (!Array.prototype.indexOf) {
      *
      * Parses a conf object and returns the desired matches of roles and players
      *
+     * Stores a reference of last matches.
+     *
      * Returned matches are in a format which is ready to be sent out as
      * remote options. That is:
      *
@@ -21194,13 +21203,16 @@ if (!Array.prototype.indexOf) {
      *             }
      *         },
      *         // More matches...
-     *     ];     
+     *     ];
      *
      * @param {object} settings The settings for the requested map
      *
      * @return {array} Array of matches ready to be sent out as remote options.
+     *
+     * @see MatcherManager.lastMatches
      */
     MatcherManager.prototype.match = function(settings) {
+        var matches;
 
         // String is turned into object. Might still fail.
         if ('string' === typeof settings) settings = { match: settings };
@@ -21210,12 +21222,25 @@ if (!Array.prototype.indexOf) {
                                 'object or string. Found: ' + settings);
         }
 
-        if (settings.match !== 'random_pairs') {
-            throw new Error('MatcherManager.match: only "random_pairs" match ' +
-                            "supported. Found: " + settings.match);
+        if (settings.match === 'random_pairs' ||
+            (settings.match === 'round_robin' ||
+             settings.match === 'roundrobin')) {
+
+            matches = randomPairs.call(this, settings);
+        }
+        else {
+            throw new Error('MatcherManager.match: only "random_pairs" and ' +
+                            '"round_robin" algorithms supported. Found: ' +
+                            settings.match);
         }
 
-        return randomPairs.call(this, settings);
+        if (!matches || !matches.length) {
+            throw new Error('MatcheManager.match: "' + settings.match +
+                            '" did not return matches.');
+        }
+
+        this.lastMatches = matches;
+        return matches;
     };
 
 
@@ -21237,6 +21262,9 @@ if (!Array.prototype.indexOf) {
         var match, id1, id2, soloId;
         var matches, opts1, opts2, sayPartner, doRoles;
 
+        var pl;
+        var nRounds;
+
         sayPartner = 'undefined' === typeof settings.sayPartner ?
             true : !!settings.sayPartner;
 
@@ -21245,7 +21273,6 @@ if (!Array.prototype.indexOf) {
         if (doRoles) {
 
             // Resets all roles.
-            // this.roler.rolesMap = {};
             this.roler.clear();
 
             this.roler.setRoles(settings.roles, 2); // TODO: pass the alg name?
@@ -21255,17 +21282,31 @@ if (!Array.prototype.indexOf) {
             r3 = settings.roles[2];
         }
 
-        // TODO: This part needs to change / be conditional, depending if
-        // we do roundrobin, or not.
-        // Here we do a new random pair match each time.
-        //////////////////////////////////////////////////////////////////
-        this.matcher.generateMatches('random', this.node.game.pl.size());
-        this.matcher.setIds(this.node.game.pl.id.getAllKeys());
+        pl = this.node.game.pl;
+debugger
+        // Algorithm: random.
+        if (settings.match === 'random') {
+            this.matcher.generateMatches('random', pl.size());
+            this.matcher.setIds(pl.id.getAllKeys());
 
-        // Generates new random matches for this round.
-        this.matcher.match(true);
+            // Generates new random matches for this round.
+            this.matcher.match(true);
+        }
+
+        // Algorithm: round robin.
+        else {
+            if (!this.matcher.matches) {
+                nRounds = settings.rounds || this.node.game.getRound('total');
+                this.matcher.generateMatches('roundrobin', pl.size(), {
+                    rounds: nRounds
+                });
+                this.matcher.setIds(pl.id.getAllKeys());
+                // Generates matches;
+                this.matcher.match(true);
+            }
+        }
+
         match = this.matcher.getMatch();
-        /////////////////////////////////////////////////////////////////
 
         // TODO: determine size of array beforehand.
         matches = [];
@@ -23116,6 +23157,47 @@ if (!Array.prototype.indexOf) {
         gs = this.getCurrentGameStage();
         if (arguments.length < 2) return this.plot.getProperty(gs, property);
         return this.plot.getProperty(gs, property, notFound);
+    };
+
+    /**
+     * ### Game.getRound
+     *
+     * Returns the current/remaining/past/total round number in current stage
+     *
+     * @param {string} mod Optional. Modifies the return value.
+     *
+     *   - 'current': current round number (default)
+     *   - 'total': total number of rounds
+     *   - 'remaining': number of rounds remaining (excluding current round)
+     *   - 'past': number of rounds already past  (excluding current round)
+     *
+     * @return {number|null} The requested information, or null if
+     *   the number of rounds is not known (e.g. if the stage is a loop)
+     *
+     * @see GamePlot.getSequenceObject
+     */
+    Game.prototype.getRound = function(mod) {
+        var gs, seqObj;
+        gs = this.getCurrentGameStage();
+        if (gs.stage === 0) return null;
+
+        if (!mod || mod === 'current') return gs.round;
+        if (mod === 'past') return gs.round - 1;
+
+        seqObj = this.plot.getSequenceObject(gs);
+        if (mod === 'total') {
+            if (seqObj.type === 'repeat') return seqObj.num;
+            else if (seqObj.type === 'plain') return 1;
+            else return null;
+        }        
+        if (mod === 'remaining') {
+            if (seqObj.type === 'repeat') return seqObj.num - gs.round;
+            else if (seqObj.type === 'plain') return 1;
+            else return null;
+        }
+
+        throw new TypeError('Game.getRound: mod must be a known string or ' +
+                            'undefined. Found: ' + mod);        
     };
 
     /**
@@ -25924,7 +26006,6 @@ if (!Array.prototype.indexOf) {
      * Creates tournament schedules for different algorithms
      *
      * @param {string} alg The name of the algorithm
-     *
      * @param {number|array} n The number of participants (>1) or
      *   an array containing the ids of the participants
      * @param {object} options Optional. Configuration object
