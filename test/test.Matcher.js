@@ -213,6 +213,206 @@ describe('Matcher', function() {
         });
     });
 
+  describe('#generateMatches("roundrobin", 4, { cycle: "repeat" })',
+           function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 4, { cycle: "repeat" });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, 3 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ],
+                [ [ 0, 1 ], [ 2, 3 ] ],
+                [ [ 0, 3 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ],
+                [ [ 0, 1 ], [ 2, 3 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 3, { cycle: "repeat" })',
+             function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 3, { cycle: "repeat" });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, -1 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ],
+                [ [ 0, 1 ], [ 2, -1 ] ],
+                [ [ 0, -1 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ],
+                [ [ 0, 1 ], [ 2, -1 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 4, { cycle: "repeat_invert" })',
+           function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 4, {
+                cycle: "repeat_invert"
+            });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, 3 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ],
+                [ [ 0, 1 ], [ 2, 3 ] ],
+                [ [ 3, 0 ], [ 2, 1 ] ],
+                [ [ 2, 0 ], [ 1, 3 ] ],
+                [ [ 1, 0 ], [ 3, 2 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 3, { cycle: "repeat_invert" })',
+             function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 3, {
+                cycle: "repeat_invert"
+            });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, -1 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ],
+                [ [ 0, 1 ], [ 2, -1 ] ],
+                [ [ -1, 0 ], [ 2, 1 ] ],
+                [ [ 2, 0 ], [ 1, -1 ] ],
+                [ [ 1, 0 ], [ -1, 2 ] ]
+            ]);
+        });
+    });
+
+  describe('#generateMatches("roundrobin", 4, { cycle: "mirror" })',
+           function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 4, { cycle: "mirror" });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, 3 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ],
+                [ [ 0, 1 ], [ 2, 3 ] ],
+                [ [ 0, 1 ], [ 2, 3 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ],
+                [ [ 0, 3 ], [ 1, 2 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 3, { cycle: "mirror" })',
+             function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 3, { cycle: "mirror" });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, -1 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ],
+                [ [ 0, 1 ], [ 2, -1 ] ],
+                [ [ 0, 1 ], [ 2, -1 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ],
+                [ [ 0, -1 ], [ 1, 2 ] ]
+            ]);
+        });
+    });
+
+  describe('#generateMatches("roundrobin", 4, { cycle: "mirror_invert" })',
+           function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 4, {
+                cycle: "mirror_invert"
+            });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, 3 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ],
+                [ [ 0, 1 ], [ 2, 3 ] ],
+                [ [ 1, 0 ], [ 3, 2 ] ],
+                [ [ 2, 0 ], [ 1, 3 ] ],
+                [ [ 3, 0 ], [ 2, 1 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 3, { cycle: "mirror_invert" })',
+             function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 3, {
+                cycle: "mirror_invert"
+            });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, -1 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ],
+                [ [ 0, 1 ], [ 2, -1 ] ],
+                [ [ 1, 0 ], [ -1, 2 ] ],
+                [ [ 2, 0 ], [ 1, -1 ] ],
+                [ [ -1, 0 ], [ 2, 1 ] ]
+            ]);
+        });
+    });
+
     describe('#setIds', function() {
         before(function() {
             matcher = new Matcher();
@@ -326,7 +526,6 @@ describe('Matcher', function() {
             ]);
         });
     });
-
 
     describe('#getMatch(x,y) 2/2', function() {
         it('should return single matches', function() {
