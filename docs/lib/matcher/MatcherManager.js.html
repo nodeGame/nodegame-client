@@ -449,10 +449,12 @@ remote options. That is:</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">randomPairs</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">r3</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
+
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">opts1</span><span class="p">,</span> <span class="nx">opts2</span><span class="p">,</span> <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">game</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">n</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">nRounds</span><span class="p">;</span>
 
         <span class="nx">sayPartner</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span> <span class="o">?</span>
@@ -484,6 +486,8 @@ remote options. That is:</p>
         <span class="p">}</span>
 
         <span class="nx">game</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">;</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+
 
 </pre></div>
         </td>
@@ -493,12 +497,17 @@ remote options. That is:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
-<p>Algorithm: random.</p>
+<p>Settings the number of rounds.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">nRounds</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">nRounds</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getRound</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getNextStep</span><span class="p">(),</span> <span class="s1">&#39;total&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nRounds</span> <span class="o">&gt;</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">nRounds</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
 
 </pre></div>
         </td>
@@ -507,6 +516,37 @@ remote options. That is:</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>Algorithm: random.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">rounds</span><span class="o">:</span> <span class="nx">nRounds</span><span class="p">,</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>cycle: settings.cycle,</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">skipBye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">skipBye</span><span class="p">,</span>
+                <span class="nx">bye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">bye</span>
+            <span class="p">});</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Generates new random matches for this round.</p>
         </td>
@@ -521,62 +561,13 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
-</div>
-<p>Algorithm: round robin.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">||</span>
-                        <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-
-                        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.match: &#39;</span> <span class="o">+</span>
-                                            <span class="s1">&#39;settings.rounds must be a &#39;</span> <span class="o">+</span>
-                                            <span class="s1">&#39;number &gt; 1 or undefined. Found: &#39;</span> <span class="o">+</span>
-                                            <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
-                    <span class="p">}</span>
-                    <span class="nx">nRounds</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">rounds</span><span class="p">;</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
-</div>
-<p>TODO: rounds param does not event work now!!</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                    <span class="nx">nRounds</span> <span class="o">=</span> <span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getRound</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">getNextStep</span><span class="p">(),</span> <span class="s1">&#39;total&#39;</span><span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">(),</span> <span class="p">{</span>
-                    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">nRounds</span>
-                <span class="p">});</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
-<p>Generates matches;</p>
+<p>Algorithm: round robin (but only if not already initialized
+or if reInit = true).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
-
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">matches</span> <span class="o">||</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">reInit</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -585,6 +576,54 @@ remote options. That is:</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Make a manual copy of settings object, and generate matches.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">rounds</span><span class="o">:</span> <span class="nx">nRounds</span><span class="p">,</span>
+                <span class="nx">cycle</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">cycle</span><span class="p">,</span>
+                <span class="nx">skipBye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">skipBye</span><span class="p">,</span>
+                <span class="nx">bye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">bye</span>
+            <span class="p">});</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>Generates matches;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>Get all the matches for round x, and increments x.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">roundMatches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>TODO: determine size of array beforehand.</p>
         </td>
@@ -598,12 +637,14 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>While we have matches, send them to clients.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">while</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">roundMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">match</span> <span class="o">=</span> <span class="nx">roundMatches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
             <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span><span class="p">)</span> <span class="p">{</span>
@@ -616,7 +657,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Create role map.</p>
         </td>
@@ -632,7 +673,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -648,7 +689,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -669,7 +710,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Add options to array.</p>
         </td>
@@ -691,7 +732,6 @@ remote options. That is:</p>
                 <span class="p">});</span>
 
             <span class="p">}</span>
-            <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
         <span class="p">}</span>
 
 
@@ -701,7 +741,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Store reference to last valid settings.</p>
         </td>

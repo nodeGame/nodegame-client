@@ -137,7 +137,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#x61;i&#x6C;&#x74;&#x6F;:&#x73;.&#x62;&#x61;&#108;&#x69;&#x65;&#116;&#116;&#105;&#x40;&#110;&#101;&#x75;&#x2E;&#101;&#100;&#117;">&#x73;.&#x62;&#x61;&#108;&#x69;&#x65;&#116;&#116;&#105;&#x40;&#110;&#101;&#x75;&#x2E;&#101;&#100;&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="ma&#105;&#108;&#x74;&#x6F;:&#x73;&#46;&#98;&#x61;&#x6C;&#x69;&#x65;&#x74;&#116;&#105;&#x40;&#110;&#101;&#x75;&#x2E;&#101;du">&#x73;&#46;&#98;&#x61;&#x6C;&#x69;&#x65;&#x74;&#116;&#105;&#x40;&#110;&#101;&#x75;&#x2E;&#101;du</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -1314,6 +1314,8 @@ where the absolute position becomes the player id.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x cannot be negative&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -1758,10 +1760,10 @@ they are considered as already an id.</p>
                                  <span class="s1">&#39;must be a positive number or undefined. &#39;</span> <span class="o">+</span>
                                  <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
              <span class="p">}</span>
-             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
                  <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
-                                 <span class="s1">&#39;options.rounds cannot be &gt; than &#39;</span> <span class="o">+</span>
-                                 <span class="nx">n</span> <span class="o">+</span> <span class="s1">&#39;. Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
+                                 <span class="s1">&#39;options.rounds cannot be greater than &#39;</span> <span class="o">+</span>
+                                 <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;. Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
              <span class="p">}</span>
 
 </pre></div>
