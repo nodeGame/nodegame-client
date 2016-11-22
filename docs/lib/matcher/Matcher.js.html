@@ -137,7 +137,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#x69;l&#x74;&#111;:&#115;&#x2E;&#x62;&#x61;&#x6C;&#x69;&#101;&#116;t&#x69;&#64;&#110;&#101;&#117;&#x2E;ed&#117;">&#115;&#x2E;&#x62;&#x61;&#x6C;&#x69;&#101;&#116;t&#x69;&#64;&#110;&#101;&#117;&#x2E;ed&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;a&#x69;&#x6C;&#116;&#x6F;:s&#x2E;&#98;&#x61;&#108;&#105;&#101;&#116;t&#x69;&#64;&#110;e&#x75;&#x2E;&#101;&#x64;&#117;">s&#x2E;&#98;&#x61;&#108;&#105;&#101;&#116;t&#x69;&#64;&#110;e&#x75;&#x2E;&#101;&#x64;&#117;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -1847,7 +1847,6 @@ they are considered as already an id.</p>
      <span class="p">}</span>
 
 
-
 </pre></div>
         </td>
       </tr>
@@ -1855,69 +1854,6 @@ they are considered as already an id.</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
-</div>
-<p>IS OLD FUNCTION.
-    function pairMatcher(alg, n, options) {
-        var ps, matches, bye;
-        var i, lenI, j, lenJ;
-        var skipBye;</p>
-
-
-<div class="highlight"><pre><code>    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">ps</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-        <span class="nx">n</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: n must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-    <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-    <span class="nx">dede</span>
-    <span class="nx">bye</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="nx">skipBye</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Make sure we have even numbers.</span>
-        <span class="nx">ps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">bye</span><span class="p">);</span>
-        <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Shuffle list of ids for random.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ps</span><span class="p">);</span>
-        <span class="c1">// Create a new array for round i.</span>
-        <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span> <span class="o">&amp;&amp;</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span><span class="p">))</span> <span class="p">{</span>
-                <span class="c1">// Insert match.</span>
-                <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]]);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="c1">// Permutate for next round.</span>
-        <span class="nx">ps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>TODO: random with replacement.</p>
         </td>
@@ -1930,7 +1866,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code><span class="cm">/**</span>
