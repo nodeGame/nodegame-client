@@ -154,6 +154,65 @@ describe('Matcher', function() {
         });
     });
 
+    describe('#generateMatches("roundrobin", 4, { rounds: 2 })', function() {
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 4, { rounds: 2 });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, 3 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ 3, 1 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 3, { rounds: 2 })', function() {
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 3, { rounds: 2 });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array', function() {
+            matcher.matches.should.be.eql([
+                [ [ 0, -1 ], [ 1, 2 ] ],
+                [ [ 0, 2 ], [ -1, 1 ] ]
+            ]);
+        });
+    });
+
+    describe('#generateMatches("roundrobin", 3, {skipBye: true, rounds: 2 })',
+             function() {
+
+        before(function() {
+            matcher = new Matcher();
+            matcher.generateMatches('roundrobin', 3, {
+                skipBye: true,
+                rounds: 2
+            });
+        });
+
+        it('should create the matches array', function() {
+            J.isArray(matcher.matches).should.be.true;
+        });
+
+        it('should create the matches array skipping bye', function() {
+            matcher.matches.should.be.eql([
+                [ [ 1, 2 ] ],
+                [ [ 0, 2 ] ]
+            ]);
+        });
+    });
+
     describe('#setIds', function() {
         before(function() {
             matcher = new Matcher();
@@ -441,6 +500,11 @@ describe('Matcher', function() {
             }).should.throw();
         });
 
+        it('generateMatches() has wrong rounds number ', function() {
+            (function() {
+                matcher.generateMatches('roundrobin', 4, { rounds: 5 });
+            }).should.throw();
+        });
         it('generateMatches() has unkwnon algorithm ', function() {
             (function() {
                 matcher.generateMatches('aa');
