@@ -567,7 +567,8 @@ remote options. That is:</p>
 or if reInit = true).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">matches</span> <span class="o">||</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">reInit</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">matches</span> <span class="o">||</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">reInit</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -580,13 +581,13 @@ or if reInit = true).</p>
 <p>Make a manual copy of settings object, and generate matches.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">rounds</span><span class="o">:</span> <span class="nx">nRounds</span><span class="p">,</span>
-                <span class="nx">cycle</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">cycle</span><span class="p">,</span>
-                <span class="nx">skipBye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">skipBye</span><span class="p">,</span>
-                <span class="nx">bye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">bye</span>
-            <span class="p">});</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">rounds</span><span class="o">:</span> <span class="nx">nRounds</span><span class="p">,</span>
+                    <span class="nx">cycle</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">cycle</span><span class="p">,</span>
+                    <span class="nx">skipBye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">skipBye</span><span class="p">,</span>
+                    <span class="nx">bye</span><span class="o">:</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">bye</span>
+                <span class="p">});</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
 
 </pre></div>
         </td>
@@ -599,7 +600,11 @@ or if reInit = true).</p>
 <p>Generates matches;</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">hasNext</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span> <span class="p">{</span> <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">0</span> <span class="p">});</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
 
