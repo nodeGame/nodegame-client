@@ -619,7 +619,7 @@ or if reInit = true).</p>
 <p>Get all the matches for round x, and increments x.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">roundMatches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+        <span class="nx">roundMatches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">x</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
 
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">roundMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
