@@ -451,7 +451,7 @@ remote options. That is:</p>
         <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">r3</span><span class="p">;</span>
 
         <span class="kd">var</span> <span class="nx">ii</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">opts1</span><span class="p">,</span> <span class="nx">opts2</span><span class="p">,</span> <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
 
         <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">n</span><span class="p">;</span>
@@ -603,7 +603,7 @@ or if reInit = true).</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">hasNext</span><span class="p">())</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span> <span class="p">{</span> <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">0</span> <span class="p">});</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span> <span class="p">{</span> <span class="nx">x</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="kc">null</span> <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -619,7 +619,9 @@ or if reInit = true).</p>
 <p>Get all the matches for round x, and increments x.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">roundMatches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">x</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="nx">nMatchesIdx</span> <span class="o">=</span> <span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">x</span> <span class="o">?</span>
+            <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">roundMatches</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="nx">nMatchesIdx</span><span class="p">);</span>
 
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">roundMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
