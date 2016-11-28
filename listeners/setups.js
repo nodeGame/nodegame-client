@@ -405,6 +405,8 @@
          *
          * @see node.game.plot
          * @see Stager.setState
+         *
+         * TODO: check if all options work as described.
          */
         this.registerSetup('plot', function(stagerState, rule, gameStage) {
             var plot, prop;

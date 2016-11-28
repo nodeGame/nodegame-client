@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RoleMapper.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "lib/matcher/RoleMapper.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#rolemapper">RoleMapper</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global%20scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#rolemapper%20constructor">RoleMapper constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.node">RoleMapper.node</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.rolesarray">RoleMapper.rolesArray</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.roles">RoleMapper.roles</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.map">RoleMapper.map</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.matcher">RoleMapper.matcher</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.clear">RoleMapper.clear</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.clearroles">RoleMapper.clearRoles</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.setroles">RoleMapper.setRoles</a>
+      </div>
+      <div class="heading h3">
+        <a href="#rolemapper.match">RoleMapper.match</a>
+      </div>
+      <div class="heading h2">
+        <a href="#randompairs">randomPairs</a>
+      </div>
+      <div class="heading h2">
+        <a href="#closure">Closure</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper">
+  <h1>
+    <a href="#rolemapper" name="rolemapper" class="pilcrow">&#182;</a>
+    RoleMapper
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2016 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><p><code>nodeGame</code> manager of player ids and aliases</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global%20scope">
+  <h2>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">RoleMapper</span> <span class="o">=</span> <span class="nx">RoleMapper</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper%20constructor">
+  <h2>
+    <a href="#rolemapper%20constructor" name="rolemapper%20constructor" class="pilcrow">&#182;</a>
+    RoleMapper constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instance of role mapper</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">RoleMapper</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.node">
+  <h3>
+    <a href="#rolemapper.node" name="rolemapper.node" class="pilcrow">&#182;</a>
+    RoleMapper.node
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the node object</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+        
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.rolesarray">
+  <h3>
+    <a href="#rolemapper.rolesarray" name="rolemapper.rolesarray" class="pilcrow">&#182;</a>
+    RoleMapper.rolesArray
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The array of currently available roles</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.setRoles</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.clearRoles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.roles">
+  <h3>
+    <a href="#rolemapper.roles" name="rolemapper.roles" class="pilcrow">&#182;</a>
+    RoleMapper.roles
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The roles list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.setRoles</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.clearRoles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.map">
+  <h3>
+    <a href="#rolemapper.map" name="rolemapper.map" class="pilcrow">&#182;</a>
+    RoleMapper.map
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The map roles-ids</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.matcher">
+  <h3>
+    <a href="#rolemapper.matcher" name="rolemapper.matcher" class="pilcrow">&#182;</a>
+    RoleMapper.matcher
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The matcher object</p>
+
+<p>TODO: maybe should be moved: (i) at node.game, or
+inside the each algorithm</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Matcher</span><span class="p">();</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.clear">
+  <h3>
+    <a href="#rolemapper.clear" name="rolemapper.clear" class="pilcrow">&#182;</a>
+    RoleMapper.clear
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The roles list</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.setRoles</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.clearRoles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">RoleMapper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clearRoles</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Matcher</span><span class="p">();</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.clearroles">
+  <h3>
+    <a href="#rolemapper.clearroles" name="rolemapper.clearroles" class="pilcrow">&#182;</a>
+    RoleMapper.clearRoles
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>TODO: should we just use .clear?</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">RoleMapper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearRoles</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">};</span>
+
+    
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.setroles">
+  <h3>
+    <a href="#rolemapper.setroles" name="rolemapper.setroles" class="pilcrow">&#182;</a>
+    RoleMapper.setRoles
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Validates and sets the roles</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">roles</span>
+      <span class="dox_type">array</span>
+      <span>Array of roles (string)</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">min</span>
+      <span class="dox_type">number</span>
+      <span>At least <em>min</em> roles must be specified. Default: 2</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">max</span>
+      <span class="dox_type">number</span>
+      <span>At least <em>max</em> roles must be specified. Default: inf</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.setRoles</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">RoleMapper.clearRoles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">RoleMapper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRoles</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">roles</span><span class="p">,</span> <span class="nx">min</span><span class="p">,</span> <span class="nx">max</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">rolesObj</span><span class="p">,</span> <span class="nx">role</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">min</span><span class="p">,</span> <span class="nx">max</span><span class="p">,</span> <span class="nx">err</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">min</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">min</span> <span class="o">||</span> <span class="nx">min</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.setRoles: min must be a number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;&gt; 2 or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">min</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">min</span> <span class="o">=</span> <span class="nx">min</span> <span class="o">||</span> <span class="mi">2</span><span class="p">;</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nx">max</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">max</span> <span class="o">||</span> <span class="nx">max</span> <span class="o">&lt;</span> <span class="nx">min</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.setRoles: max must be number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">max</span><span class="p">);</span>
+        <span class="p">}</span>
+        
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>At least two roles must be defined</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">roles</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.setRoles: roles must be array. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">roles</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>At least two roles must be defined</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&lt;</span> <span class="nx">min</span> <span class="o">||</span> <span class="nx">len</span> <span class="o">&gt;</span> <span class="nx">max</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;RoleMapper.setRoles: roles must contain at least &#39;</span> <span class="o">+</span>
+                <span class="nx">min</span> <span class="o">+</span> <span class="s1">&#39; roles&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">max</span><span class="p">)</span> <span class="nx">err</span> <span class="o">+=</span> <span class="s1">&#39; and no more than &#39;</span> <span class="o">+</span> <span class="nx">max</span><span class="p">;</span>
+            <span class="nx">err</span> <span class="o">+=</span> <span class="s1">&#39;. Found: &#39;</span> <span class="o">+</span> <span class="nx">len</span><span class="p">;</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">rolesObj</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">role</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span> <span class="o">||</span> <span class="nx">role</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.setRoles: each role must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;a non-empty string. Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>All data validated.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="nx">rolesObj</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">RoleMapper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">roleExists</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>        
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span> <span class="o">||</span> <span class="nx">role</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.roleExists: role must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;a non-empty string. Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">];</span>
+    <span class="p">};</span>
+    
+    <span class="nx">RoleMapper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>        
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span> <span class="o">||</span> <span class="nx">role</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.getRole: role must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;a non-empty string. Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="rolemapper.match">
+  <h3>
+    <a href="#rolemapper.match" name="rolemapper.match" class="pilcrow">&#182;</a>
+    RoleMapper.match
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Matches roles to ids</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">settings</span>
+      <span class="dox_type">object</span>
+      <span>The settings for the requested map</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>Array of matches ready to be sent out as remote options.</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">RoleMapper</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>        
+        
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>String is turned into object. Might still fail.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;string&quot;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">)</span> <span class="nx">settings</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">match</span><span class="o">:</span> <span class="nx">settings</span> <span class="p">};</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">settings</span> <span class="o">||</span> <span class="nx">settings</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;RoleMapper.map: settings must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;object. Found: &#39;</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">);</span>
+        <span class="p">}</span>
+       
+        <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">match</span> <span class="o">!==</span> <span class="s1">&#39;random_pairs&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;RoleMapper.match: only &quot;random_pairs&quot; match &#39;</span> <span class="o">+</span>
+                            <span class="s2">&quot;supported. Found: &quot;</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">match</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">randomPairs</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="randompairs">
+  <h2>
+    <a href="#randompairs" name="randompairs" class="pilcrow">&#182;</a>
+    randomPairs
+  </h2>
+</div>
+
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">randomPairs</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">r3</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">opts1</span><span class="p">,</span> <span class="nx">opts2</span><span class="p">,</span> <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
+
+        <span class="nx">sayPartner</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span> <span class="o">?</span>
+            <span class="kc">true</span> <span class="o">:</span> <span class="o">!!</span><span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span><span class="p">;</span>
+
+        
+        <span class="nx">doRoles</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoles</span><span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// TODO: pass the alg name?</span>
+
+            <span class="nx">r1</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="nx">r2</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="nx">r3</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+            
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>Resets all roles.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>TODO: This part needs to change / be conditional, depending if
+we do roundrobin, or not.
+Here we do a new random pair match each time.
+////////////////////////////////////////////////////////////////</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Generates new random matches for this round.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>///////////////////////////////////////////////////////////////</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>TODO: determine size of array beforehand.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">matches</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>While we have matches, send them to clients.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+</div>
+<p>Create role map.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>Prepare options to send to players.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span> <span class="p">}</span> <span class="p">};</span>
+                        <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Prepare options to send to players.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span><span class="p">,</span><span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
+                        <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span><span class="p">,</span><span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+                <span class="p">}</span>
+                
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>Add options to array.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">opts1</span><span class="p">);</span>
+                <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">opts2</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">r3</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;RoleMapper.match: role3 required, but &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;not found.&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">soloId</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">===</span> <span class="s1">&#39;bot&#39;</span> <span class="o">?</span> <span class="nx">id2</span> <span class="o">:</span> <span class="nx">id1</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">soloId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r3</span><span class="p">;</span>
+
+                <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">id</span><span class="o">:</span> <span class="nx">soloId</span><span class="p">,</span>
+                    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r3</span> <span class="p">}</span>
+                <span class="p">});</span>
+
+            <span class="p">}</span>
+            <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+        <span class="p">}</span>
+      
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<p>Store reference to last valid settings.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">mapSettings</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="c1">// XXXX</span>
+
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">matcher</span><span class="p">,</span> <span class="nx">map</span><span class="p">,</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">rolesArray</span><span class="p">;</span>
+
+    <span class="nx">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">Matcher</span><span class="p">();</span>
+    <span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">rolesArray</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">setRoles</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">roles</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">rolesArray</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">roles</span><span class="p">[</span><span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+
+        <span class="p">},</span>
+        <span class="nx">roleExists</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">!!</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">];</span>
+        <span class="p">},</span>
+        <span class="nx">getRole</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">map</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">r3</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">matches</span><span class="p">;</span>
+
+            <span class="c1">// TODO: what kind of settings?</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span><span class="p">.</span><span class="nx">map</span> <span class="o">!==</span> <span class="s1">&#39;random_pairs&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;roleMapper: &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;only random_pairs supported.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="c1">// TODO: integrate with the matcher.</span>
+            <span class="kr">debugger</span>
+            <span class="nx">r1</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="nx">r2</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="nx">r3</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+
+            <span class="c1">// Resets all roles.</span>
+            <span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="nx">matcher</span><span class="p">.</span><span class="nx">generateMatches</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">size</span><span class="p">());</span>
+            <span class="nx">matcher</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">());</span>
+
+            <span class="nx">matches</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="c1">// Generates new random matches for this round.</span>
+            <span class="nx">matcher</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+            <span class="nx">match</span> <span class="o">=</span> <span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+
+            <span class="c1">// While we have matches, send them to clients.</span>
+            <span class="k">while</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="s1">&#39;bot&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">map</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
+                    <span class="nx">map</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
+
+                    <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                        <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span>
+                        <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span>
+                    <span class="p">});</span>
+                    <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                        <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span>
+                        <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">soloId</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">===</span> <span class="s1">&#39;bot&#39;</span> <span class="o">?</span> <span class="nx">id2</span> <span class="o">:</span> <span class="nx">id1</span><span class="p">;</span>
+                    <span class="nx">map</span><span class="p">[</span><span class="nx">soloId</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r3</span><span class="p">;</span>
+
+                    <span class="nx">matches</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                        <span class="nx">id</span><span class="o">:</span> <span class="nx">soloId</span><span class="p">,</span>
+                        <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r3</span> <span class="p">}</span>
+                    <span class="p">});</span>
+
+                <span class="p">}</span>
+                <span class="nx">match</span> <span class="o">=</span> <span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Matching completed.&#39;</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">})(</span><span class="k">this</span><span class="p">);</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="closure">
+  <h2>
+    <a href="#closure" name="closure" class="pilcrow">&#182;</a>
+    Closure
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="p">})(</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

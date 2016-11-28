@@ -8815,7 +8815,7 @@ if (!Array.prototype.indexOf) {
         if (this.db.length && this.query.query.length) {
             if (doNotReset && 'boolean' !== typeof doNotReset) {
                 this.throwErr('TypeError', 'fetch',
-                              'doNotReset must be undefined or boolean.');
+                              'doNotReset must be undefined or boolean');
             }
             db = this.db.filter(this.query.get.call(this.query));
             if (!doNotReset) this.query.reset();
@@ -9878,7 +9878,7 @@ if (!Array.prototype.indexOf) {
         var nddbid;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
             this.throwErr('TypeError', 'insert', 'object or function ' +
-                          'expected, ' + typeof o + ' received.');
+                          'expected, ' + typeof o + ' received');
         }
 
         // Check / create a global index.
@@ -10312,9 +10312,16 @@ if (!Array.prototype.indexOf) {
      * @param {array} The reference to the original database
      */
     function NDDBIndex(idx, nddb) {
+        // The name of the index.
         this.idx = idx;
+        // Reference to the whole nddb database.
         this.nddb = nddb;
+        // Map indexed-item to a position in the original database.
         this.resolve = {};
+        // List of all keys in `resolve` object.
+        this.keys = [];
+        // Map indexed-item to a position in `keys` array (for fast deletion).
+        this.resolveKeys = {};
     }
 
     /**
@@ -10327,17 +10334,26 @@ if (!Array.prototype.indexOf) {
      */
     NDDBIndex.prototype._add = function(idx, dbidx) {
         this.resolve[idx] = dbidx;
+        // We add it to the keys array only if it a new index.
+        // If it is an already existing element, we don't care
+        // if it changing position in the original db.
+        if ('undefined' === typeof this.resolveKeys[idx]) {
+            this.resolveKeys[idx] = this.keys.length;
+            this.keys.push('' + idx);
+        }
     };
 
     /**
      * ### NDDBIndex._remove
      *
-     * Adds an item to the index
+     * Removes an item from index
      *
      * @param {mixed} idx The id to remove from the index
      */
     NDDBIndex.prototype._remove = function(idx) {
         delete this.resolve[idx];
+        this.keys.splice(this.resolveKeys[idx], 1);
+        delete this.resolveKeys[idx];
     };
 
     /**
@@ -10348,7 +10364,7 @@ if (!Array.prototype.indexOf) {
      * @return {number} The number of elements in the index
      */
     NDDBIndex.prototype.size = function() {
-        return J.size(this.resolve);
+        return this.keys.length;
     };
 
     /**
@@ -10389,7 +10405,7 @@ if (!Array.prototype.indexOf) {
         o = this.nddb.db[dbidx];
         if ('undefined' === typeof o) return;
         this.nddb.db.splice(dbidx, 1);
-        delete this.resolve[idx];
+        this._remove(idx);
         this.nddb.emit('remove', o);
         this.nddb._autoUpdate();
         return o;
@@ -10441,7 +10457,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDBIndex.getAllKeyElements
      */
     NDDBIndex.prototype.getAllKeys = function() {
-        return J.keys(this.resolve);
+        return this.keys.slice(0);
     };
 
     /**
@@ -10454,11 +10470,12 @@ if (!Array.prototype.indexOf) {
      * @see NDDBIndex.getAllKeys
      */
     NDDBIndex.prototype.getAllKeyElements = function() {
-        var out = {}, idx;
-        for (idx in this.resolve) {
-            if (this.resolve.hasOwnProperty(idx)) {
-                out[idx] = this.nddb.db[this.resolve[idx]];
-            }
+        var out, idx, i, len;
+        out = {};
+        i = -1, len = this.keys.length;
+        for ( ; ++i < len ; ) {
+            idx = this.keys[i];
+            out[idx] = this.nddb.db[this.resolve[idx]];
         }
         return out;
     };
@@ -10496,7 +10513,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '3.2.1';
+    node.version = '3.5.0';
 
 })(window);
 
@@ -13106,6 +13123,13 @@ if (!Array.prototype.indexOf) {
         this.role = player.role || null;
 
         /**
+         * ### Player.partner
+         *
+         * The partner of the player
+         */
+        this.partner = player.partner || null;
+        
+        /**
          * ### Player.count
          *
          * The ordinal position of the player in a PlayerList object
@@ -14312,7 +14336,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see GamePlot.cache
      */
-    GamePlot.prototype.getProperty = function(gameStage, property) {
+    GamePlot.prototype.getProperty = function(gameStage, property, notFound) {
         var stepObj, stageObj, defaultProps, found, res;
 
         if ('string' !== typeof property) {
@@ -14368,7 +14392,8 @@ if (!Array.prototype.indexOf) {
         }
 
         // Not found.
-        return null;
+        if (arguments.length < 3) notFound = null;
+        return notFound;
     };
 
     /**
@@ -14628,6 +14653,50 @@ if (!Array.prototype.indexOf) {
      */
     GamePlot.prototype.isFlexibleMode = function() {
         return this.stager.sequence.length === 0;
+    };
+
+    /**
+     * ### GamePlot.getRound
+     *
+     * Returns the current/remaining/past/total round number in a game stage
+     *
+     * @param {mixed} gs The game stage of reference
+     * @param {string} mod Optional. Modifies the return value.
+     *
+     *   - 'current': current round number (default)
+     *   - 'total': total number of rounds
+     *   - 'remaining': number of rounds remaining (excluding current round)
+     *   - 'past': number of rounds already past  (excluding current round)
+     *
+     * @return {number|null} The requested information, or null if
+     *   the number of rounds is not known (e.g. if the stage is a loop)
+     *
+     * @see GamePlot.getSequenceObject
+     */
+    GamePlot.prototype.getRound = function(gs, mod) {
+        var seqObj;
+        gs = new GameStage(gs);
+        if (gs.stage === 0) return null;
+
+        seqObj = this.getSequenceObject(gs);
+        if (!seqObj) return null;
+
+        if (!mod || mod === 'current') return gs.round;
+        if (mod === 'past') return gs.round - 1;
+
+        if (mod === 'total') {
+            if (seqObj.type === 'repeat') return seqObj.num;
+            else if (seqObj.type === 'plain') return 1;
+            else return null;
+        }        
+        if (mod === 'remaining') {
+            if (seqObj.type === 'repeat') return seqObj.num - gs.round;
+            else if (seqObj.type === 'plain') return 1;
+            else return null;
+        }
+
+        throw new TypeError('GamePlot.getRound: mod must be a known string ' +
+                            'or undefined. Found: ' + mod);        
     };
 
     // ## Helper Methods
@@ -20136,6 +20205,1231 @@ if (!Array.prototype.indexOf) {
 );
 
 /**
+ * # Roler
+ * Copyright(c) 2016 Stefano Balietti
+ * MIT Licensed
+ *
+ * Handles matching roles to players.
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    // ## Global scope
+    var J = parent.JSUS;
+
+    exports.Roler = Roler;
+
+    /**
+     * ## Roler constructor
+     *
+     * Creates a new instance of role mapper
+     */
+    function Roler() {
+
+        /**
+         * ### Roler.roles
+         *
+         * List of available roles
+         *
+         * @see Roler.setRoles
+         * @see Roler.clear
+         */
+        this.roles = {};
+
+        /**
+         * ### Roler.rolesArray
+         *
+         * The array of currently available roles
+         *
+         * @see Roler.setRoles
+         * @see Roler.clearRoles
+         */
+        this.rolesArray = [];
+
+        /**
+         * ### Roler.map
+         *
+         * The map roles-ids
+         */
+        this.map = {};
+    }
+
+    /**
+     * ### Roler.clear
+     *
+     * Clears the roles list
+     */
+    Roler.prototype.clear = function() {
+        this.rolesArray = [];
+        this.roles = {};
+        this.map = {};
+    };
+
+    /**
+     * ### Roler.setRoles
+     *
+     * Validates and sets the roles
+     *
+     * @param {array} roles Array of roles (string)
+     * @param {number} min At least _min_ roles must be specified. Default: 2
+     * @param {number} max At least _max_ roles must be specified. Default: inf
+     *
+     * @see Roler.setRoles
+     * @see Roler.clearRoles
+     */
+    Roler.prototype.setRoles = function(roles, min, max) {
+        var rolesObj, role;
+        var i, len;
+        var min, max, err;
+
+        if (min && 'number' !== typeof min || min < 2) {
+            throw new TypeError('Roler.setRoles: min must be a ' +
+                                'number > 2 or undefined. Found: ' + min);
+        }
+        min = min || 2;
+
+        if (max && 'number' !== typeof max || max < min) {
+            throw new TypeError('Roler.setRoles: max must ' +
+                                'be number or undefined. Found: ' + max);
+        }
+
+        // At least two roles must be defined
+        if (!J.isArray(roles)) {
+            throw new TypeError('Roler.setRoles: roles must ' +
+                                'be array. Found: ' + roles);
+        }
+
+        len = roles.length;
+        // At least two roles must be defined
+        if (len < min || len > max) {
+            err = 'Roler.setRoles: roles must contain at least ' +
+                min + ' roles';
+            if (max) err += ' and no more than ' + max;
+            err += '. Found: ' + len;
+            throw new Error(err);
+        }
+
+        rolesObj = {};
+        i = -1;
+        for ( ; ++i < len ; ) {
+            role = roles[i];
+            if ('string' !== typeof role || role.trim() === '') {
+                throw new TypeError('Roler.setRoles: each role ' +
+                                    'must be a non-empty string. Found: ' +
+                                    role);
+            }
+            rolesObj[role] = '';
+        }
+        // All data validated.
+        this.roles = rolesObj;
+        this.rolesArray = roles;
+    };
+
+    /**
+     * ### Roler.roleExists
+     *
+     * Returns TRUE if the requested role exists
+     *
+     * @param {string} role The role to check
+     *
+     * @see Roler.roles
+     */
+    Roler.prototype.roleExists = function(role) {
+        if ('string' !== typeof role || role.trim() === '') {
+            throw new TypeError('Roler.roleExists: role must be ' +
+                                'a non-empty string. Found: ' + role);
+        }
+        return !!this.roles[role];
+    };
+
+
+    // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # Matcher
+ * Copyright(c) 2016 Stefano Balietti <s.balietti@neu.edu>
+ * MIT Licensed
+ *
+ * Class handling the creation of tournament schedules.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(exports, node) {
+
+    var J = node.JSUS;
+
+    exports.Matcher = Matcher;
+
+    // ## Static methods.
+
+    /**
+     * ### Matcher.bye
+     *
+     * Symbol used to complete matching when partner is missing
+     *
+     * @see Matcher.matches
+     */
+    Matcher.bye = -1;
+
+    /**
+     * ### Matcher.missingId
+     *
+     * Symbol assigned to matching number without valid id
+     *
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.missingId = 'bot';
+
+    /**
+     * ## Matcher.randomAssigner
+     *
+     * Assigns ids to positions randomly.
+     *
+     * @param {array} ids The ids to assign
+     *
+     * @return The sorted array
+     *
+     * @see JSUS.shuffle
+     */
+    Matcher.randomAssigner = function(ids) {
+        return J.shuffle(ids);
+    };
+
+    /**
+     * ### Matcher.linearAssigner
+     *
+     * Assigns ids to positions linearly.
+     *
+     * @param {array} ids The ids to assign
+     *
+     * @return The sorted array
+     */
+    Matcher.linearAssigner = function(ids) {
+        return J.clone(ids);
+    };
+
+    /**
+     * ## Matcher constructor
+     *
+     * Creates a new Matcher object
+     *
+     * @param {object} options Optional. Configuration options
+     */
+    function Matcher(options) {
+
+        /**
+         * ### Matcher.x
+         *
+         * The current round returned by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.x = 0;
+
+        /**
+         * ### Matcher.y
+         *
+         * The next match in current round returned by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.y = 0;
+
+        /**
+         * ### Matcher.matches
+         *
+         * Nested array of matches (with position-numbers)
+         *
+         * Nests a new array for each round, and within each round
+         * individual matches are also array. For example:
+         *
+         * ```javascript
+         *
+         * // Matching array.
+         * [
+         *
+         *   // First round.
+         *   [ [ p1, p2 ], [ p3, p4 ], ... ],
+         *
+         *   // Second round.
+         *   [ [ p2, p3 ], [ p4, p1 ], ... ],
+         *
+         *   // Further rounds.
+         * ];
+         * ```
+         *
+         * @see Matcher.setMatches
+         */
+        this.matches = null;
+
+        /**
+         * ### Matcher.resolvedMatches
+         *
+         * Nested array of matches (with id-strings)
+         *
+         * Exactly Matcher.matches, but with with ids instead of numbers
+         *
+         * @see Matcher.matches
+         * @see Matcher.setIds
+         * @see Matcher.setAssignerCb
+         * @see Matcher.match
+         */
+        this.resolvedMatches = null;
+
+        /**
+         * ### Matcher.resolvedMatchesById
+         *
+         * Array of maps id to partner, one map per round
+         *
+         * ```javascript
+         *
+         * // Matching array.
+         * [
+         *
+         *   // First round.
+         *   { p1: 'p2', p2: 'p1', p3: 'p4', p4: 'p3',  ... },
+         *
+         *   // Second round.
+         *   { p2: 'p3', p3: 'p2', p4: 'p1', p1: 'p4',  ... },
+         *
+         *   // Further rounds.
+         * ];
+         * ```
+         *
+         * @see Matcher.resolvedMatches
+         * @see Matcher.setIds
+         * @see Matcher.match
+         */
+        this.resolvedMatchesById = null;
+
+        /**
+         * ### Matcher.ids
+         *
+         * Array ids to match
+         *
+         * @see Matcher.setIds
+         */
+        this.ids = null;
+
+        /**
+         * ### Matcher.ids
+         *
+         * Array mapping each ordinal position to an id
+         *
+         * @see Matcher.ids
+         * @see Matcher.assignerCb
+         */
+        this.assignedIds = null;
+
+        /**
+         * ### Matcher.assignerCb
+         *
+         * Callback that assigns ids to positions
+         *
+         * An assigner callback must take as input an array of ids,
+         * reorder them according to some criteria, and return it.
+         * The order of the items in the returned array will be used to
+         * match the numbers in the `matches` array.
+         *
+         * @see Matcher.ids
+         * @see Matcher.matches
+         * @see Matcher.assignedIds
+         */
+        this.assignerCb = Matcher.randomAssigner;
+
+        /**
+         * ## Matcher.missingId
+         *
+         * An id used to replace missing players ids
+         */
+        this.missingId = Matcher.missingId;
+
+        /**
+         * ## Matcher.missingId
+         *
+         * An id used by matching algorithms to complete unfinished matches
+         */
+        this.bye = Matcher.bye;
+
+        // Init.
+        this.init(options);
+    }
+
+    /**
+     * ### Matcher.init
+     *
+     * Inits the Matcher instance
+     *
+     * @param {object} options
+     */
+    Matcher.prototype.init = function(options) {
+        options = options || {};
+
+        if (options.assignerCb) this.setAssignerCb(options.assignerCb);
+        if (options.ids) this.setIds(options.ids);
+        if (options.bye) this.bye = options.bye;
+        if (options.missingId) this.missingId = options.missingId;
+        if ('number' === typeof options.x) {
+            if (options.x < 0) {
+                throw new Error('Matcher.init: options.x cannot be negative.');
+            }
+            this.x = options.x;
+        }
+        if ('number' === typeof options.y) {
+            if (options.y < 0) {
+                throw new Error('Matcher.init: options.y cannot be negative.');
+            }
+            this.y = options.y;
+        }
+    };
+
+    /**
+     * ### Matcher.generateMatches
+     *
+     * Creates a matches array according to the chosen scheduling algorithm
+     *
+     * Throws an error if the selected algorithm is not found.
+     *
+     * @param {string} alg The chosen algorithm. Available: 'roundrobin',
+     *   'random'
+     *
+     * @return {array} The array of matches
+     */
+    Matcher.prototype.generateMatches = function(alg) {
+        var matches;
+        if ('string' !== typeof alg) {
+            throw new TypeError('Matcher.generateMatches: alg must be string.');
+        }
+        alg = alg.toLowerCase();
+        if (alg === 'roundrobin' || alg === 'random') {
+// TODO: check.
+//             if (alg === 'random' &&
+//                 arguments[2] && arguments[2].replace === true) {
+//
+//                 matches = randomPairs(arguments[1], arguments[2]);
+//             }
+//             else {
+                matches = pairMatcher(alg, arguments[1], arguments[2]);
+//             }
+        }
+        else {
+            throw new Error('Matcher.generateMatches: unknown algorithm: ' +
+                            alg + '.');
+        }
+
+        this.setMatches(matches);
+        return matches;
+    };
+
+    /**
+     * ### Matcher.setMatches
+     *
+     * Sets the matches for current instance
+     *
+     * Resets resolvedMatches and resolvedMatchesById to null.
+     *
+     * @param {array} The array of matches
+     *
+     * @see this.matches
+     */
+    Matcher.prototype.setMatches = function(matches) {
+        if (!J.isArray(matches) || !matches.length) {
+            throw new TypeError('Matcher.setMatches: matches must be array.');
+        }
+        this.matches = matches;
+        resetResolvedData(this);
+    };
+
+    /**
+     * ### Matcher.setIds
+     *
+     * Sets the ids to be used for the matches
+     *
+     * @param {array} ids Array containing the id of the matches
+     *
+     * @see Matcher.ids
+     */
+    Matcher.prototype.setIds = function(ids) {
+        if (!J.isArray(ids) || !ids.length) {
+            throw new TypeError('Matcher.setIds: ids must be array.');
+        }
+        this.ids = ids;
+        resetResolvedData(this);
+    };
+
+    /**
+     * ### Matcher.assignIds
+     *
+     * Calls the assigner callback to assign ids to positions
+     *
+     * Ids can be overwritten by parameter. If no ids are found,
+     * they will be automatically generated, provided that matches
+     * have been generated first.
+     *
+     * @param {array} ids Optinal. Array containing the id of the matches
+     *   to pass to Matcher.setIds
+     *
+     * @see Matcher.ids
+     * @see Matcher.setIds
+     */
+    Matcher.prototype.assignIds = function(ids) {
+        if ('undefined' !== typeof ids) this.setIds(ids);
+        if (!J.isArray(this.ids) || !this.ids.length) {
+            if (!J.isArray(this.matches) || !this.matches.length) {
+                throw new TypeError('Matcher.assignIds: no ids and no ' +
+                                    'matches found.');
+            }
+            this.ids = J.seq(0, this.matches.length -1, 1, function(i) {
+                return '' + i;
+            });
+        }
+        this.assignedIds = this.assignerCb(this.ids);
+    };
+
+    /**
+     * ### Matcher.setAssignerCb
+     *
+     * Specify a callback to be used to assign existing ids to positions
+     *
+     * @param {function} cb The assigner cb
+     *
+     * @see Matcher.ids
+     * @see Matcher.matches
+     * @see Matcher.assignerCb
+     */
+    Matcher.prototype.setAssignerCb = function(cb) {
+        if ('function' !== typeof cb) {
+            throw new TypeError('Matcher.setAssignerCb: cb must be function.');
+        }
+        this.assignerCb = cb;
+    };
+
+    /**
+     * ### Matcher.match
+     *
+     * Substitutes the ids to the matches
+     *
+     * Populates the objects `resolvedMatchesById` and `resolvedMatches`.
+     *
+     * It requires to have the matches array already set, or an error
+     * will be thrown.
+     *
+     * If the ids have not been assigned, it will do it automatically.
+     *
+     * @param {boolean|array} assignIds Optional. A flag to force to
+     *   re-assign existing ids, or an an array containing new ids to
+     *   assign.
+     *
+     * @see Matcher.assignIds
+     * @see Matcher.resolvedMatchesById
+     * @see Matcher.resolvedMatches
+     *
+     * TODO: creates two lists of matches with bots and without.
+     * TODO: add method getMatchFor(id,x)
+     */
+    Matcher.prototype.match = function(assignIds) {
+        var i, lenI, j, lenJ, pair;
+        var matched, matchedId, id1, id2;
+
+        if (!J.isArray(this.matches) || !this.matches.length) {
+            throw new Error('Matcher.match: no matches found.');
+        }
+
+        // Assign/generate ids if not done before.
+        if (!this.assignedIds || assignIds) {
+            if (J.isArray(assignIds)) this.assignIds(assignIds);
+            else this.assignIds();
+        }
+
+        // Parse the matches array and creates two data structures
+        // where the absolute position becomes the player id.
+        i = -1, lenI = this.matches.length;
+        matched = new Array(lenI);
+        matchedId = new Array(lenI);
+        for ( ; ++i < lenI ; ) {
+            j = -1, lenJ = this.matches[i].length;
+            matched[i] = [];
+            matchedId[i] = {};
+            for ( ; ++j < lenJ ; ) {
+                id1 = null, id2 = null;
+                pair = this.matches[i][j];
+                // Resolve matches.
+                id1 = importMatchItem(i, j,
+                                      pair[0],
+                                      this.assignedIds,
+                                      this.missingId);
+                id2 = importMatchItem(i, j,
+                                      pair[1],
+                                      this.assignedIds,
+                                      this.missingId);
+                // Create resolved matches.
+                matched[i].push([id1, id2]);
+                matchedId[i][id1] = id2;
+                matchedId[i][id2] = id1;
+            }
+        }
+        // Substitute matching-structure.
+        this.resolvedMatches = matched;
+        this.resolvedMatchesById = matchedId;
+        // Set getMatch indexes to 0.
+        this.x = 0;
+        this.y = 0;
+    };
+
+    /**
+     * ### Matcher.getMatch
+     *
+     * Returns the next match, or the specified match
+     *
+     * @param {number} x Optional. The x-th round. Default: the round
+     * @param {number} y Optional. The y-th match within the x-th round
+     *
+     * @return {array} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.y
+     * @see Matcher.resolvedMatches
+     */
+    Matcher.prototype.getMatch = function(x, y) {
+        var nRows, nCols;
+        // Check both x and y.
+        if ('undefined' === typeof x && 'undefined' !== typeof y) {
+            throw new Error('Matcher.getMatch: cannot specify y without x.');
+        }
+        // Check if there is any match yet.
+        if (!J.isArray(this.resolvedMatches) || !this.resolvedMatches.length) {
+            throw new Error('Matcher.getMatch: no resolved matches found.');
+        }
+
+        // Check x.
+        if ('undefined' === typeof x) {
+            x = this.x;
+        }
+        else if ('number' !== typeof x) {
+            throw new TypeError('Matcher.getMatch: x must be number ' +
+                                'or undefined.');
+        }
+        else if (x < 0) {
+            throw new Error('Matcher.getMatch: x cannot be negative');
+        }
+        else if ('undefined' === typeof y) {
+            // Return the whole row.
+            return this.resolvedMatches[x];
+        }
+
+        nRows = this.matches.length - 1;
+        if (x > nRows) return null;
+
+        nCols = this.matches[x].length - 1;
+
+        // Check y.
+        if ('undefined' === typeof y) {
+            y = this.y;
+            if (y < nCols) {
+                this.y++;
+            }
+            else {
+                this.x++;
+                this.y = 0;
+            }
+        }
+        else if ('number' !== typeof y) {
+            throw new TypeError('Matcher.getMatch: y must be number ' +
+                                'or undefined.');
+        }
+        else if (y < 0) {
+            throw new Error('Matcher.getMatch: y cannot be negative');
+        }
+        else if (y > nCols) {
+            return null;
+        }
+        return this.resolvedMatches[x][y];
+    };
+
+    /**
+     * ### Matcher.getMatchObject
+     *
+     * Returns all the matches of the next or requested round as key-value pairs
+     *
+     * @param {number} x Optional. The x-th round. Default: the round
+     *
+     * @return {object} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.resolvedMatchesById
+     */
+    Matcher.prototype.getMatchObject = function(x) {
+        var nRows;
+
+        // Check if there is any match yet.
+        if (!J.isArray(this.resolvedMatches) || !this.resolvedMatches.length) {
+            throw new Error('Matcher.getMatch: no resolved matches found.');
+        }
+
+        // Check x.
+        if ('undefined' === typeof x) {
+            x = this.x;
+            this.x++;
+        }
+        else if ('number' !== typeof x) {
+            throw new TypeError('Matcher.getMatch: x must be number ' +
+                                'or undefined.');
+        }
+        else if (x < 0) {
+            throw new Error('Matcher.getMatch: x cannot be negative');
+        }
+
+        nRows = this.matches.length - 1;
+        if (x > nRows) return null;
+
+        return this.resolvedMatchesById[x];
+    };
+
+    /**
+     * ### Matcher.clear
+     *
+     * Clears the matcher as it would be a newly created object
+     */
+    Matcher.prototype.clear = function() {
+        this.x = 0;
+        this.y = 0;
+        this.matches = null;
+        this.resolvedMatches = null;
+        this.resolvedMatchesById = null;
+        this.ids = null;
+        this.assignedIds = null;
+        this.assignerCb = Matcher.randomAssigner;
+        this.missingId = Matcher.missingId;
+        this.bye = Matcher.bye;
+    };
+
+    // ## Helper methods.
+
+    /**
+     * ### importMatchItem
+     *
+     * Handles importing items from the matches array
+     *
+     * Items in matches array must be numbers or strings. If numbers
+     * they are translated into an id using the supplied map, otherwise
+     * they are considered as already an id.
+     *
+     * Items that are not numbers neither strings will throw an error.
+     *
+     * @param {number} i The row-id of the item
+     * @param {number} j The position in the row of the item
+     * @param {string|number} item The item to check
+     * @param {array} map The map of positions to ids
+     * @param {string} miss The id of number that cannot be resolved in map
+     *
+     * @return {string} The resolved id of the item
+     */
+    function importMatchItem(i, j, item, map, miss) {
+        if ('number' === typeof item) {
+            return 'undefined' !== typeof map[item] ? map[item] : miss;
+        }
+        else if ('string' === typeof item) {
+            return item;
+        }
+        throw new TypeError('Matcher.match: items can be only string or ' +
+                            'number. Found: ' + item + ' at position ' +
+                            i + ',' + j);
+    }
+
+    /**
+     * ### resetResolvedData
+     *
+     * Resets resolved data of a matcher object
+     *
+     * @param {Matcher} matcher The matcher to reset
+     */
+    function resetResolvedData(matcher) {
+        matcher.resolvedMatches = null;
+        matcher.resolvedMatchesById = null;
+    }
+
+    /**
+     * ### Matcher.roundRobin
+     *
+     *
+     *
+     * @return The round robin matches
+     */
+    Matcher.roundRobin = function(n, options) {
+        return pairMatcher('roundrobin', n, options);
+    };
+
+    /**
+     * ### pairMatcher
+     *
+     * Creates tournament schedules for different algorithms
+     *
+     * @param {string} alg The name of the algorithm
+     * @param {number|array} n The number of participants (>1) or
+     *   an array containing the ids of the participants
+     * @param {object} options Optional. Configuration object
+     *   contains the following options:
+     *
+     *   - bye: identifier for dummy competitor. Default: -1.
+     *   - skypeBye: flag whether players matched with the dummy
+     *        competitor should be added or not. Default: true.
+     *   - rounds: number of rounds to repeat matching. Default: ?
+     *
+     * @return {array} matches The matches according to the algorithm
+     */
+    function pairMatcher(alg, n, options) {
+        var ps, matches, bye;
+        var i, lenI, j, lenJ;
+        var skipBye;
+
+        if ('number' === typeof n && n > 1) {
+            ps = J.seq(0, (n-1));
+        }
+        else if (J.isArray(n) && n.length > 1) {
+            ps = n.slice();
+            n = ps.length;
+        }
+        else {
+            throw new TypeError('pairMatcher.' + alg + ': n must be ' +
+                                'number > 1 or array of length > 1.');
+        }
+        options = options || {};
+        matches = new Array(n-1);
+        bye = 'undefined' !== typeof options.bye ? options.bye : -1;
+        skipBye = options.skipBye || false;
+        if (n % 2 === 1) {
+            // Make sure we have even numbers.
+            ps.push(bye);
+            n += 1;
+        }
+        i = -1, lenI = n-1;
+        for ( ; ++i < lenI ; ) {
+            // Shuffle list of ids for random.
+            if (alg === 'random') ps = J.shuffle(ps);
+            // Create a new array for round i.
+            matches[i] = [];
+            j = -1, lenJ = n / 2;
+            for ( ; ++j < lenJ ; ) {
+                if (!skipBye || (ps[j] !== bye && ps[n - 1 - j] !== bye)) {
+                    // Insert match.
+                    matches[i].push([ps[j], ps[n - 1 - j]]);
+                }
+            }
+            // Permutate for next round.
+            ps.splice(1, 0, ps.pop());
+        }
+        return matches;
+    }
+
+// TODO: support limited number of rounds.
+
+//     function pairMatcher(alg, n, options) {
+//         var ps, matches, bye;
+//         var i, lenI, j, lenJ;
+//         var roundsLimit, odd;
+//         var skipBye;
+//
+//         if ('number' === typeof n && n > 1) {
+//             ps = J.seq(0, (n-1));
+//         }
+//         else if (J.isArray(n) && n.length > 1) {
+//             ps = n.slice();
+//             n = ps.length;
+//         }
+//         else {
+//             throw new TypeError('pairMatcher.' + alg + ': n must be ' +
+//                                 'number > 1 or array of length > 1.');
+//         }
+//
+//         odd = (n % 2) === 1;
+//         roundsLimit = n-1 ; // (odd && !skipBye) ? n+1 : n;
+//
+//         options = options || {};
+//         if ('number' === typeof options.rounds) {
+//             if (options.rounds <= 0) {
+//                 throw new Error('pairMatcher.' + alg + ': options.rounds ' +
+//                                 'must be a positive number or undefined. ' +
+//                                 'Found: ' + options.rounds);
+//             }
+//             if (options.rounds > roundsLimit) {
+//                 throw new Error('pairMatcher.' + alg + ': ' +
+//                                 'options.rounds cannot be > than ' +
+//                                 roundsLimit + '. Found: ' + options.rounds);
+//             }
+//             roundsLimit = options.rounds;
+//         }
+//
+//         matches = new Array(roundsLimit);
+//
+//         bye = 'undefined' !== typeof options.bye ? options.bye : -1;
+//         skipBye = options.skipBye || false;
+//         if (n % 2 === 1) {
+//             // Make sure we have even numbers.
+//             ps.push(bye);
+//             n += 1;
+//         }
+//         i = -1, lenI = roundsLimit;
+//         for ( ; ++i < lenI ; ) {
+//             // Shuffle list of ids for random.
+//             if (alg === 'random') ps = J.shuffle(ps);
+//             // Create a new array for round i.
+//             matches[i] = [];
+//             j = -1, lenJ = n / 2;
+//             for ( ; ++j < lenJ ; ) {
+//                 if (!skipBye || (ps[j] !== bye && ps[n - 1 - j] !== bye)) {
+//                     // Insert match.
+//                     matches[i].push([ps[j], ps[n - 1 - j]]);
+//                 }
+//             }
+//             // Permutate for next round.
+//             ps.splice(1, 0, ps.pop());
+//         }
+//         return matches;
+//     }
+
+
+// TODO: random with replacement.
+
+//     /**
+//      * ### pairMatcher
+//      *
+//      * Creates tournament schedules for different algorithms
+//      *
+//      * @param {string} alg The name of the algorithm
+//      *
+//      * @param {number|array} n The number of participants (>1) or
+//      *   an array containing the ids of the participants
+//      * @param {object} options Optional. Configuration object
+//      *   contains the following options:
+//      *
+//      *   - rounds: the number
+//      *
+//      * @return {array} matches The matches according to the algorithm
+//      */
+//     function pairMatcherWithReplacement(n, options) {
+//         var matches, i, len;
+//
+//         if ('number' === typeof n && n > 1) {
+//             n = J.seq(0, (n-1));
+//         }
+//         else if (J.isArray(n) && n.length > 1) {
+//             n = n.slice();
+//         }
+//         else {
+//             throw new TypeError('pairMatcherWithReplacement: n must be ' +
+//                                 'number > 1 or array of length > 1.');
+//         }
+//
+//         i = -1, len = n.length;
+//         matches = new Array(len-1);
+//         for ( ; ++i < len ; ) {
+//             m
+//         }
+//
+//         return matches;
+//     }
+
+    // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # MatcherManager
+ * Copyright(c) 2016 Stefano Balietti
+ * MIT Licensed
+ *
+ * Handles matching roles to players and players to players.
+ */
+(function(exports, parent) {
+
+    "use strict";
+
+    // ## Global scope
+    var J = parent.JSUS;
+
+    exports.MatcherManager = MatcherManager;
+
+    /**
+     * ## MatcherManager constructor
+     *
+     * Creates a new instance of role mapper
+     */
+    function MatcherManager(node) {
+
+        /**
+         * ### MatcherManager.node
+         *
+         * Reference to the node object
+         */
+        this.node = node;
+
+        /**
+         * ### MatcherManager.roler
+         *
+         * The roler object
+         *
+         * @see Roler
+         */
+        this.roler = new parent.Roler();
+
+        /**
+         * ### MatcherManager.matcher
+         *
+         * The matcher object
+         *
+         * @see Matcher
+         */
+        this.matcher = new parent.Matcher();
+
+        /**
+         * ### MatcherManager.lastSettings
+         *
+         * Reference to the last settings parsed
+         */
+        this.lastSettings = null;
+
+        /**
+         * ### MatcherManager.lastMatches
+         *
+         * Reference to the last matches
+         */
+        this.lastMatches = null;
+
+    }
+
+    /**
+     * ### MatcherManager.clear
+     *
+     * Clears current matches and roles
+     *
+     * @param {string} mod Optional. Modifies what must be cleared.
+     *    Values: 'roles', 'matches', 'all'. Default: 'all'
+     */
+    MatcherManager.prototype.clear = function(mod) {
+        switch(mod) {
+        case 'roles':
+            this.roler.clear();
+            break;
+        case 'matches':
+            this.matcher.clear();
+            break;
+        default:
+            this.roler.clear();
+            this.matcher.clear();
+        }
+    };
+
+    /**
+     * ### MatcherManager.match
+     *
+     * Parses a conf object and returns the desired matches of roles and players
+     *
+     * Stores a reference of last matches.
+     *
+     * Returned matches are in a format which is ready to be sent out as
+     * remote options. That is:
+     *
+     *     matches = [
+     *         {
+     *             id: 'playerId',
+     *             options: {
+     *                 role: "A", // optional.
+     *                 partner: "XXX", // or object.
+     *                 group: "yyy"
+     *             }
+     *         },
+     *         // More matches...
+     *     ];
+     *
+     * @param {object} settings The settings for the requested map
+     *
+     * @return {array} Array of matches ready to be sent out as remote options.
+     *
+     * @see MatcherManager.lastMatches
+     */
+    MatcherManager.prototype.match = function(settings) {
+        var matches;
+
+        // String is turned into object. Might still fail.
+        if ('string' === typeof settings) settings = { match: settings };
+
+        if ('object' !== typeof settings || settings === null) {
+            throw new TypeError('MatcherManager.match: settings must be ' +
+                                'object or string. Found: ' + settings);
+        }
+
+        if (settings.match === 'random_pairs' ||
+            (settings.match === 'round_robin' ||
+             settings.match === 'roundrobin')) {
+
+            matches = randomPairs.call(this, settings);
+        }
+        else {
+            throw new Error('MatcherManager.match: only "random_pairs" and ' +
+                            '"round_robin" algorithms supported. Found: ' +
+                            settings.match);
+        }
+
+        if (!matches || !matches.length) {
+            debugger
+            throw new Error('MatcheManager.match: "' + settings.match +
+                            '" did not return matches.');
+        }
+
+        this.lastMatches = matches;
+        return matches;
+    };
+
+
+    // ## Helper Methods
+
+    /**
+     * ## randomPairs
+     *
+     * Matches players and/or roles in random pairs
+     *
+     * Supports odd number of players, if 3 roles are given in settings.
+     *
+     * @param {object} settings The settings object
+     *
+     * @return {array} The array of matches.
+     */
+    function randomPairs(settings) {
+        var r1, r2, r3;
+        var match, id1, id2, soloId;
+        var matches, opts1, opts2, sayPartner, doRoles;
+
+        var game;
+        var nRounds;
+
+        sayPartner = 'undefined' === typeof settings.sayPartner ?
+            true : !!settings.sayPartner;
+
+
+        doRoles = !!settings.roles;
+        if (doRoles) {
+
+            // Resets all roles.
+            this.roler.clear();
+
+            this.roler.setRoles(settings.roles, 2); // TODO: pass the alg name?
+
+            r1 = settings.roles[0];
+            r2 = settings.roles[1];
+            r3 = settings.roles[2];
+        }
+
+        game = this.node.game;
+        // Algorithm: random.
+        if (settings.match === 'random') {
+            this.matcher.generateMatches('random', game.pl.size());
+            this.matcher.setIds(game.pl.id.getAllKeys());
+            // Generates new random matches for this round.
+            this.matcher.match(true);
+        }
+
+        // Algorithm: round robin.
+        else {
+            if (!this.matcher.matches) {
+                if ('undefined' !== typeof settings.rounds) {
+                    if ('number' !== typeof settings.rounds ||
+                        settings.rounds < 1) {
+                        
+                        throw new TypeError('MatcherManager.match: ' +
+                                            'settings.rounds must be a ' +
+                                            'number > 1 or undefined. Found: ' +
+                                            settings.rounds);
+                    }
+                    nRounds = settings.rounds;
+                }
+                else {
+                    // TODO: rounds param does not event work now!!
+                    nRounds = game.plot.getRound(game.getNextStep(), 'total');
+                }
+
+                this.matcher.generateMatches('roundrobin', game.pl.size(), {
+                    rounds: nRounds
+                });
+                this.matcher.setIds(game.pl.id.getAllKeys());
+                // Generates matches;
+                this.matcher.match(true);
+            }
+        }
+
+        match = this.matcher.getMatch();
+
+        // TODO: determine size of array beforehand.
+        matches = [];
+
+        // While we have matches, send them to clients.
+        while (match) {
+            id1 = match[0];
+            id2 = match[1];
+            if (id1 !== 'bot' && id2 !== 'bot') {
+
+                if (doRoles) {
+                    // Create role map.
+                    this.roler.map[id1] = r1;
+                    this.roler.map[id2] = r2;
+
+                    if (!sayPartner) {
+                        // Prepare options to send to players.
+                        opts1 = { id: id1, options: { role: r1 } };
+                        opts2 = { id: id2, options: { role: r2 } };
+                    }
+                    else {
+                        // Prepare options to send to players.
+                        opts1 = { id: id1, options: { role: r1,partner: id2 } };
+                        opts2 = { id: id2, options: { role: r2,partner: id1 } };
+                    }
+                }
+                else {
+                    opts1 = { id: id1, options: { partner: id2 } };
+                    opts2 = { id: id2, options: { partner: id1 } };
+                }
+
+                // Add options to array.
+                matches.push(opts1);
+                matches.push(opts2);
+            }
+            else if (doRoles) {
+                if (!r3) {
+                    throw new Error('MatcherManager.match: role3 required, ' +
+                                    'but not found.');
+                }
+                soloId = id1 === 'bot' ? id2 : id1;
+                this.roler.map[soloId] = r3;
+
+                matches.push({
+                    id: soloId,
+                    options: { role: r3 }
+                });
+
+            }
+            match = this.matcher.getMatch();
+        }
+
+        // Store reference to last valid settings.
+        this.lastSettings = settings;
+
+        return matches;
+    }
+
+    // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
  * # GameDB
  * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
@@ -20266,13 +21560,14 @@ if (!Array.prototype.indexOf) {
     exports.Game = Game;
 
     var GameStage = parent.GameStage,
-    GameDB = parent.GameDB,
-    GamePlot = parent.GamePlot,
-    PlayerList = parent.PlayerList,
-    Stager = parent.Stager,
-    PushManager = parent.PushManager,
-    SizeManager = parent.SizeManager,
-    J = parent.JSUS;
+        GameDB = parent.GameDB,
+        GamePlot = parent.GamePlot,
+        PlayerList = parent.PlayerList,
+        Stager = parent.Stager,
+        PushManager = parent.PushManager,
+        SizeManager = parent.SizeManager,
+        MatcherManager = parent.MatcherManager,
+        J = parent.JSUS;
 
     var constants = parent.constants;
 
@@ -20393,6 +21688,41 @@ if (!Array.prototype.indexOf) {
 //        });
 
         /**
+         * ### Game.role
+         *
+         * The "role" currently held in this game (if any)
+         *
+         * @see Game.gotoStep
+         * @see Game.setRole
+         * @see processGotoStepOptions
+         */
+        this.role = null;
+
+        /**
+         * ### Game.partner
+         *
+         * The id or alias of the "partner" in this game (if any)
+         *
+         * Some games are played in pairs, this variable holds the id
+         * of the partner player.
+         *
+         * @see Game.setPartner
+         * @see processGotoStepOptions
+         */
+        this.partner = null;
+
+        /**
+         * ### Game.matcher
+         *
+         * Handles assigning matching tasks
+         *
+         * Assigns roles to players, players to players, etc.
+         *
+         * @see Game.execStep
+         */
+        this.matcher = MatcherManager ? new MatcherManager(this.node) : null;
+
+        /**
          * ### Game.timer
          *
          * Default game timer synced with stager 'timer' property
@@ -20429,7 +21759,7 @@ if (!Array.prototype.indexOf) {
          * @see Game.pause
          * @see Game.resume
          */
-        this.pauseCounter = 0
+        this.pauseCounter = 0;
 
         /**
          * ### Game.willBeDone
@@ -20498,8 +21828,14 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} options Optional. Configuration object. Fields:
      *
-     *   - step: true/false. If false, jus call the init function, and
-     *     does not enter the first step. Default, TRUE.
+     *   - step: {boolean}. If false, jus call the init function, and
+     *       does not enter the first step. Default: TRUE.
+     *   - startStage: {GameStage}. If set, the game will step into
+     *       the step _after_ startStage after initing. Default: 0.0.0
+     *   - stepOptions: options to pass to the new step (only if step
+     *       option is not FALSE).
+     *
+     * @see Game.step
      */
     Game.prototype.start = function(options) {
         var onInit, node, startStage;
@@ -20544,7 +21880,7 @@ if (!Array.prototype.indexOf) {
 
         node.log('game started.');
 
-        if (options.step !== false) this.step();
+        if (options.step !== false) this.step(options.stepOptions);
     };
 
     /**
@@ -20827,9 +22163,23 @@ if (!Array.prototype.indexOf) {
      * TODO: remove some unused comments in the code.
      */
     Game.prototype.gotoStep = function(nextStep, options) {
+        var node;
+
+        // Steps references.
         var curStep, curStepObj, curStageObj, nextStepObj, nextStageObj;
+
+        // Flags that we need to execute the stage init function.
         var stageInit;
-        var ev, node;
+
+        // Step init callback.
+        var stepInitCb;
+
+        // Variable related to matching roles and partners.
+        var matcherOptions, matches, role, partner;
+        var i, len, pid;
+
+        // Sent to every client (if syncStepping and if necessary).
+        var remoteOptions;
 
         if (!this.isSteppable()) {
             throw new Error('Game.gotoStep: game cannot be stepped.');
@@ -20867,11 +22217,47 @@ if (!Array.prototype.indexOf) {
 
         // Sends start / step command to connected clients if option is on.
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
-            if (curStep.stage === 0) {
-                node.remoteCommand('start', 'ROOM');
+
+            matcherOptions = this.plot.getProperty(nextStep, 'matcher');
+            if (matcherOptions) {
+
+                // matches = [
+                //             {
+                //               id: 'playerId',
+                //               options: {
+                //                  role: "A", // optional.
+                //                  partner: "XXX", // or object.
+                //                  group: "xxx"
+                //               }
+                //             },
+                //             ...
+                //           ];
+                //
+                matches = this.matcher.match(matcherOptions);
+                i = -1, len = matches.length;
+                for ( ; ++i < len ; ) {
+                    pid = matches[i].id;
+                    // TODO: This should if we have more components
+                    // trying to modify the plot in remoteOptions.
+                    remoteOptions = { plot: matches[i].options };
+
+                    if (curStep.stage === 0) {
+                        node.remoteCommand('start', pid, remoteOptions);
+                    }
+                    else {
+                        remoteOptions.targetStep = nextStep;
+                        node.remoteCommand('goto_step', pid, remoteOptions);
+                    }
+                }
+
             }
             else {
-                node.remoteCommand('goto_step', 'ROOM', nextStep);
+                if (curStep.stage === 0) {
+                    node.remoteCommand('start', 'ROOM');
+                }
+                else {
+                    node.remoteCommand('goto_step', 'ROOM', nextStep);
+                }
             }
         }
 
@@ -20883,13 +22269,15 @@ if (!Array.prototype.indexOf) {
             curStepObj.exit.call(this);
         }
 
-        // Listeners from previous step are cleared (must be after exit).
+        // Listeners from previous step are cleared (must be done after exit).
         node.events.ee.step.clear();
 
         // Emit buffered messages.
         if (node.socket.shouldClearBuffer()) {
             node.socket.clearBuffer();
         }
+
+        // String STEP.
 
         if ('string' === typeof nextStep) {
 
@@ -20915,81 +22303,100 @@ if (!Array.prototype.indexOf) {
             // else do nothing
             return null;
         }
-        else {
-            // TODO maybe update also in case of string.
-            node.emit('STEPPING');
 
-            // Check for stage/step existence:
-            nextStageObj = this.plot.getStage(nextStep);
-            if (!nextStageObj) return false;
-            nextStepObj = this.plot.getStep(nextStep);
-            if (!nextStepObj) return false;
+        // Here we start processing the new STEP.
 
-            // If we enter a new stage we need to update a few things.
-            if (!curStageObj || nextStageObj.id !== curStageObj.id) {
+        // TODO maybe update also in case of string.
+        node.emit('STEPPING');
 
-                // Calling exit function.
-                if (curStageObj && curStageObj.exit) {
-                    this.setStateLevel(constants.stateLevels.STAGE_EXIT);
-                    this.setStageLevel(constants.stageLevels.EXITING);
+        // Check for stage/step existence:
+        nextStageObj = this.plot.getStage(nextStep);
+        if (!nextStageObj) return false;
+        nextStepObj = this.plot.getStep(nextStep);
+        if (!nextStepObj) return false;
 
-                    curStageObj.exit.call(this);
-                }
-                stageInit = true;
+        // If we enter a new stage we need to update a few things.
+        if (!curStageObj || nextStageObj.id !== curStageObj.id) {
+
+            // Calling exit function.
+            if (curStageObj && curStageObj.exit) {
+                this.setStateLevel(constants.stateLevels.STAGE_EXIT);
+                this.setStageLevel(constants.stageLevels.EXITING);
+
+                curStageObj.exit.call(this);
             }
-
-            // stageLevel needs to be changed (silent), otherwise it stays
-            // DONE for a short time in the new game stage:
-            this.setStageLevel(constants.stageLevels.UNINITIALIZED, 'S');
-            this.setCurrentGameStage(nextStep);
-
-            // Process options before calling any init function.
-            if ('object' === typeof options) {
-                processGotoStepOptions(this, options);
-            }
-            else if (options) {
-                throw new TypeError('Game.gotoStep: options must be object ' +
-                                    'or undefined. Found: ' +  options);
-            }
-
-            if (stageInit) {
-                // Store time:
-                this.node.timer.setTimestamp('stage', (new Date()).getTime());
-
-                // Clear the previous stage listeners.
-                node.events.ee.stage.clear();
-
-                this.setStateLevel(constants.stateLevels.STAGE_INIT);
-                this.setStageLevel(constants.stageLevels.INITIALIZING);
-
-                // Execute the init function of the stage, if any:
-                if (nextStageObj.hasOwnProperty('init')) {
-                    nextStageObj.init.call(node.game);
-                }
-            }
-
-            // Execute the init function of the step, if any:
-            if (nextStepObj.hasOwnProperty('init')) {
-                this.setStateLevel(constants.stateLevels.STEP_INIT);
-                this.setStageLevel(constants.stageLevels.INITIALIZING);
-                nextStepObj.init.call(node.game);
-            }
-
-            this.setStateLevel(constants.stateLevels.PLAYING_STEP);
-            this.setStageLevel(constants.stageLevels.INITIALIZED);
-
-            // Updating the globals object.
-            this.updateGlobals(nextStep);
-
-            // Reads Min/Max/Exact Players properties.
-            this.sizeManager.init(nextStep);
-
-            // Emit buffered messages:
-            if (node.socket.shouldClearBuffer()) {
-                node.socket.clearBuffer();
-            }
-
+            stageInit = true;
         }
+
+        // stageLevel needs to be changed (silent), otherwise it stays
+        // DONE for a short time in the new game stage:
+        this.setStageLevel(constants.stageLevels.UNINITIALIZED, 'S');
+        this.setCurrentGameStage(nextStep);
+
+        // Process options before calling any init function. Sets a role also.
+        if ('object' === typeof options) {
+            processGotoStepOptions(this, options);
+        }
+        else if (options) {
+            throw new TypeError('Game.gotoStep: options must be object ' +
+                                'or undefined. Found: ' +  options);
+        }
+
+        // Update `role` and `partner` and in the step **only if**
+        // role and partner are not specified in the options already.
+        // By default `role` and `partner` are set to NULL at the
+        // beginning of each step.
+        role = this.plot.getProperty(nextStep, 'role');
+        if (!role) role = null;
+        else if (role === true) role = this.role;
+        else if ('function' === typeof role) role = role.call(this);
+        this.setRole(role, true);
+
+        partner = this.plot.getProperty(nextStep, 'partner');
+        if (!partner) partner = null;
+        else if (partner === true) partner = this.partner;
+        else if ('function' === typeof partner) partner= partner.call(this);
+        this.setPartner(partner, true);
+
+
+        if (stageInit) {
+            // Store time:
+            this.node.timer.setTimestamp('stage', (new Date()).getTime());
+
+            // Clear the previous stage listeners.
+            node.events.ee.stage.clear();
+
+            this.setStateLevel(constants.stateLevels.STAGE_INIT);
+            this.setStageLevel(constants.stageLevels.INITIALIZING);
+
+            // Execute the init function of the stage, if any:
+            if (nextStageObj.hasOwnProperty('init')) {
+                nextStageObj.init.call(node.game);
+            }
+        }
+
+        // Important! A role might have changed the init function.
+        stepInitCb = this.role ?
+            this.plot.getProperty(nextStep, 'init') : nextStepObj.init;
+
+        // Execute the init function of the step, if any.
+        if (stepInitCb) {
+            this.setStateLevel(constants.stateLevels.STEP_INIT);
+            this.setStageLevel(constants.stageLevels.INITIALIZING);
+            stepInitCb.call(node.game);
+        }
+
+        this.setStateLevel(constants.stateLevels.PLAYING_STEP);
+        this.setStageLevel(constants.stageLevels.INITIALIZED);
+
+        // Updating the globals object.
+        this.updateGlobals(nextStep);
+
+        // Reads Min/Max/Exact Players properties.
+        this.sizeManager.init(nextStep);
+
+        // Emit buffered messages.
+        if (node.socket.shouldClearBuffer()) node.socket.clearBuffer();
 
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
@@ -21012,9 +22419,7 @@ if (!Array.prototype.indexOf) {
         var widget, widgetObj, widgetRoot;
         var widgetCb, widgetExit, widgetDone;
         var doneCb, origDoneCb, exitCb, origExitCb;
-        var frame, uri, frameOptions;
-        var frameLoadMode, frameStoreMode;
-        var frameAutoParse, frameAutoParsePrefix;
+        var frame, uri, frameOptions, frameAutoParse;
 
         if ('object' !== typeof step) {
             throw new Error('Game.execStep: step must be object.');
@@ -21798,17 +23203,150 @@ if (!Array.prototype.indexOf) {
      * Returns the requested step property from the game plot
      *
      * @param {string} property The name of the property
-     * @param {GameStage} gameStage Optional. The reference game stage.
-     *   Default: Game.currentGameStage()
+     * @param {mixed} notFound Optional. The return value in case the
+     *   requested property is not found. Default: null
      *
      * @return {mixed} The value of the requested step property
      *
      * @see GamePlot.getProperty
      */
-    Game.prototype.getProperty = function(property, gameStage) {
-        gameStage = 'undefined' !== typeof gameStage ?
-            gameStage : this.getCurrentGameStage();
-        return this.plot.getProperty(gameStage, property);
+    Game.prototype.getProperty = function(property, notFound) {
+        var gs;
+        gs = this.getCurrentGameStage();
+        if (arguments.length < 2) return this.plot.getProperty(gs, property);
+        return this.plot.getProperty(gs, property, notFound);
+    };
+
+    /**
+     * ### Game.getRound
+     *
+     * Returns the current/remaining/past/total round number in current stage
+     *
+     * @param {string} mod Optional. Modifies the return value.
+     *
+     *   - 'current': current round number (default)
+     *   - 'total': total number of rounds
+     *   - 'remaining': number of rounds remaining (excluding current round)
+     *   - 'past': number of rounds already past  (excluding current round)
+     *
+     * @return {number|null} The requested information, or null if
+     *   the number of rounds is not known (e.g. if the stage is a loop)
+     *
+     * @see GamePlot.getRound
+     */
+    Game.prototype.getRound = function(mod) {
+        return this.plot.getRound(this.getCurrentGameStage(), mod);
+    };
+
+    /**
+     * ### Game.setRole
+     *
+     * Sets the current role in the game
+     *
+     * When a role is set, all the properties of a role overwrite
+     * the current step properties.
+     *
+     * Roles are not supposed to be set more than once per step, and
+     * an error will be thrown on attempts to overwrite roles.
+     *
+     * Updates the reference also in `node.player.role`.
+     *
+     * @param {string|null} role The name of the role
+     * @param {boolean} force Optional. If TRUE, role can be overwritten
+     *
+     * @see Game.role
+     * @see Player.role
+     */
+    Game.prototype.setRole = function(role, force) {
+        var roles, roleObj, prop;
+        if ('string' === typeof role && role.trim() !== '') {
+            if (this.role && !force) {
+                throw new Error('Game.setRole: attempt to change role "' +
+                                this.role + '" to "' + role + '" in step: ' +
+                                this.getCurrentGameStage());
+            }
+            roles = this.getProperty('roles');
+            if (!roles) {
+                throw new Error('Game.setRole: trying to set role "' + role +
+                                '", but \'roles\' not found in current step: ' +
+                                this.getCurrentGameStage());
+            }
+            roleObj = roles[role];
+            if (!roleObj) {
+                throw new Error('Game.setRole: role "' + role + '" not found ' +
+                                'in current step: ' +
+                                this.getCurrentGameStage());
+            }
+
+            // Modify plot properties.
+            for (prop in roleObj) {
+                if (roleObj.hasOwnProperty(prop)) {
+                    this.plot.tmpCache(prop, roleObj[prop]);
+                }
+            }
+        }
+        else if (role !== null) {
+            throw new TypeError('Game.setRole: role must be string or null. ' +
+                                'Found: ' + role);
+        }
+        this.role = role;
+        this.node.player.role = role;
+    };
+
+    /**
+     * ### Game.getRole
+     *
+     * Returns the current role in the game
+     *
+     * @see Game.role
+     * @see Player.role
+     */
+    Game.prototype.getRole = function() {
+        return this.role;
+    };
+
+    /**
+     * ### Game.setPartner
+     *
+     * Sets the current partner in the game
+     *
+     * Partners are not supposed to be set more than once per step, and
+     * an error will be thrown on attempts to overwrite them.
+     *
+     * Updates the reference also in `node.player.partner`.
+     *
+     * @param {string|null} partner The id or alias of the partner
+     * @param {boolean} force Optional. If TRUE, partner can be overwritten
+     *
+     * @see Game.partner
+     * @see Player.partner
+     */
+    Game.prototype.setPartner = function(partner, force) {
+        if ('string' === typeof partner && partner.trim() !== '') {
+            if (this.partner && !force) {
+                throw new Error('Game.setPartner: attempt to change partner "' +
+                                this.partner + '" to "' + partner +
+                                '" in step: ' + this.getCurrentGameStage());
+            }
+        }
+        else if (partner !== null) {
+            throw new TypeError('Game.setPartner: partner must be a ' +
+                                'non-empty string or null. Found: ' + partner);
+        }
+        this.partner = partner;
+        this.node.player.partner = partner;
+    };
+
+    /**
+     * ### Game.getPartner
+     *
+     * Returns the current partner in the game
+     *
+     * @see Game.partner
+     * @see Player.partner
+     */
+    Game.prototype.getPartner = function() {
+        return this.partner;
     };
 
     // ## Helper Methods
@@ -21836,10 +23374,6 @@ if (!Array.prototype.indexOf) {
         var prop;
 
         if (options.willBeDone) {
-            // TODO: this is OK if this is a reconnection. But if it is not?
-            // Temporarily remove the done callback.
-            game.plot.tmpCache('done', null);
-            game.plot.tmpCache('autoSet', null);
             // Call node.done() immediately after PLAYING is emitted.
             game.node.once('PLAYING', function() {
                 game.node.done();
@@ -21847,6 +23381,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Temporarily modify plot properties.
+        // Must be done after setting the role.
         if (options.plot) {
             for (prop in options.plot) {
                 if (options.plot.hasOwnProperty(prop)) {
@@ -21855,6 +23390,7 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // TODO: rename cb.
         // Call the cb with options as param, if found.
         if (options.cb) {
             if ('function' === typeof options.cb) {
@@ -23983,7 +25519,7 @@ if (!Array.prototype.indexOf) {
          *
          * Nested array of matches (with position-numbers)
          *
-         * Nestes a new array for each round, and within each round
+         * Nests a new array for each round, and within each round
          * individual matches are also array. For example:
          *
          * ```javascript
@@ -24133,7 +25669,8 @@ if (!Array.prototype.indexOf) {
      *
      * Throws an error if the selected algorithm is not found.
      *
-     * @param {string} alg The chosen algorithm. Available: 'roundrobin'.
+     * @param {string} alg The chosen algorithm. Available: 'roundrobin',
+     *   'random'
      *
      * @return {array} The array of matches
      */
@@ -24144,14 +25681,15 @@ if (!Array.prototype.indexOf) {
         }
         alg = alg.toLowerCase();
         if (alg === 'roundrobin' || alg === 'random') {
-            if (alg === 'random' &&
-                arguments[2] && arguments[2].replace === true) {
-
-                matches = randomPairs(arguments[1], arguments[2]);
-            }
-            else {
+// TODO: check.
+//             if (alg === 'random' &&
+//                 arguments[2] && arguments[2].replace === true) {
+//
+//                 matches = randomPairs(arguments[1], arguments[2]);
+//             }
+//             else {
                 matches = pairMatcher(alg, arguments[1], arguments[2]);
-            }
+//             }
         }
         else {
             throw new Error('Matcher.generateMatches: unknown algorithm: ' +
@@ -24426,6 +25964,24 @@ if (!Array.prototype.indexOf) {
         return this.resolvedMatchesById[x];
     };
 
+    /**
+     * ### Matcher.clear
+     *
+     * Clears the matcher as it would be a newly created object
+     */
+    Matcher.prototype.clear = function() {
+        this.x = 0;
+        this.y = 0;
+        this.matches = null;
+        this.resolvedMatches = null;
+        this.resolvedMatchesById = null;
+        this.ids = null;
+        this.assignedIds = null;
+        this.assignerCb = Matcher.randomAssigner;
+        this.missingId = Matcher.missingId;
+        this.bye = Matcher.bye;
+    };
+
     // ## Helper methods.
 
     /**
@@ -24488,7 +26044,6 @@ if (!Array.prototype.indexOf) {
      * Creates tournament schedules for different algorithms
      *
      * @param {string} alg The name of the algorithm
-     *
      * @param {number|array} n The number of participants (>1) or
      *   an array containing the ids of the participants
      * @param {object} options Optional. Configuration object
@@ -24497,7 +26052,7 @@ if (!Array.prototype.indexOf) {
      *   - bye: identifier for dummy competitor. Default: -1.
      *   - skypeBye: flag whether players matched with the dummy
      *        competitor should be added or not. Default: true.
-     *   - rounds: number of rounds to repeat matching. Default
+     *   - rounds: number of rounds to repeat matching. Default: ?
      *
      * @return {array} matches The matches according to the algorithm
      */
@@ -26649,7 +28204,7 @@ if (!Array.prototype.indexOf) {
          *
          * Setups a features of nodegame
          *
-         * Unstrigifies the payload before calling `node.setup`.
+         * It unstrigifies the payload before calling `node.setup`.
          *
          * @see node.setup
          * @see JSUS.parse
@@ -27554,6 +29109,8 @@ if (!Array.prototype.indexOf) {
          *
          * @see node.game.plot
          * @see Stager.setState
+         *
+         * TODO: check if all options work as described.
          */
         this.registerSetup('plot', function(stagerState, rule, gameStage) {
             var plot, prop;
@@ -28991,7 +30548,7 @@ if (!Array.prototype.indexOf) {
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
-     *   Default: 'gn_header'
+     *   Default: 'ng_header'
      * @param {boolean} force Optional. Will create the header even if an
      *   existing one is found. Default: FALSE
      *
@@ -30266,6 +31823,11 @@ if (!Array.prototype.indexOf) {
                 this.window.generateFrame(root, frameName, force);
             }
 
+            // Uri prefix.
+            if ('undefined' !== typeof conf.uriPrefix) {
+                this.window.setUriPrefix(conf.uriPrefix);
+            }
+
             // Load.
             if (conf.load) {
                 if ('object' === typeof conf.load) {
@@ -30284,11 +31846,6 @@ if (!Array.prototype.indexOf) {
                 this.window.loadFrame(url, cb, options);
             }
 
-            // Uri prefix.
-            if ('undefined' !== typeof conf.uriPrefix) {
-                this.window.setUriPrefix(conf.uriPrefix);
-            }
-
             // Clear and destroy.
             if (conf.clear) this.window.clearFrame();
             if (conf.destroy) this.window.destroyFrame();
@@ -30304,7 +31861,7 @@ if (!Array.prototype.indexOf) {
          * @see node.setup
          */
         node.registerSetup('header', function(conf) {
-            var frameName, force, root, rootName;
+            var headerName, force, root, rootName;
             if (!conf) return;
 
             // Generate.
@@ -30318,7 +31875,7 @@ if (!Array.prototype.indexOf) {
                         }
                         rootName = conf.generate.root;
                         force = conf.generate.force;
-                        frameName = conf.generate.name;
+                        headerName = conf.generate.name;
                     }
                 }
                 else {
@@ -30330,12 +31887,12 @@ if (!Array.prototype.indexOf) {
                 root = this.window.getElementById(rootName);
                 if (!root) root = this.window.getScreen();
                 if (!root) {
-                    node.warn('node.setup.frame: could not find valid ' +
-                              'root element to generate new frame.');
+                    node.warn('node.setup.header: could not find valid ' +
+                              'root element to generate new header.');
                     return;
                 }
 
-                this.window.generateFrame(root, frameName, force);
+                this.window.generateHeader(root, headerName, force);
             }
 
             // Position.
@@ -30754,7 +32311,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    WaitScreen.version = '0.7.0';
+    WaitScreen.version = '0.8.0';
     WaitScreen.description = 'Show a standard waiting screen';
 
     // ## Helper functions
@@ -31052,12 +32609,8 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof text) {
             throw new TypeError('WaitScreen.updateText: text must be string.');
         }
-        if (append) {
-            this.waitingDiv.appendChild(document.createTextNode(text));
-        }
-        else {
-            this.waitingDiv.innerHTML = text;
-        }
+        if (append) this.waitingDiv.innerHTML += text;
+        else this.waitingDiv.innerHTML = text;
     };
 
     /**

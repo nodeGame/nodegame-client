@@ -94,10 +94,16 @@
         <a href="#matcher.match">Matcher.match</a>
       </div>
       <div class="heading h3">
+        <a href="#matcher.hasnext">Matcher.hasNext</a>
+      </div>
+      <div class="heading h3">
         <a href="#matcher.getmatch">Matcher.getMatch</a>
       </div>
       <div class="heading h3">
         <a href="#matcher.getmatchobject">Matcher.getMatchObject</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matcher.clear">Matcher.clear</a>
       </div>
       <div class="heading h2">
         <a href="#helper%20methods.">Helper methods.</a>
@@ -113,6 +119,9 @@
       </div>
       <div class="heading h3">
         <a href="#pairmatcher">pairMatcher</a>
+      </div>
+      <div class="heading h3">
+        <a href="#hasorgetnext">hasOrGetNext</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -134,7 +143,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#x61;&#105;&#x6C;t&#111;:s&#46;&#x62;&#97;&#108;&#x69;&#x65;&#x74;&#116;&#105;&#64;&#110;&#x65;&#117;&#x2E;&#101;d&#x75;">s&#46;&#x62;&#97;&#108;&#x69;&#x65;&#x74;&#116;&#105;&#64;&#110;&#x65;&#117;&#x2E;&#101;d&#x75;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#97;&#x69;&#x6C;&#x74;&#x6F;:&#115;&#x2E;&#x62;&#97;&#x6C;&#x69;&#101;t&#116;&#x69;&#64;&#x6E;&#x65;&#x75;&#x2E;&#x65;&#x64;&#x75;">&#115;&#x2E;&#x62;&#97;&#x6C;&#x69;&#101;t&#116;&#x69;&#64;&#x6E;&#x65;&#x75;&#x2E;&#x65;&#x64;&#x75;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -414,7 +423,7 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Nested array of matches (with position-numbers)</p>
 
-<p>Nestes a new array for each round, and within each round
+<p>Nests a new array for each round, and within each round
 individual matches are also array. For example:</p>
 
 
@@ -777,7 +786,8 @@ match the numbers in the <code>matches</code> array.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">alg</span>
       <span class="dox_type">string</span>
-      <span>The chosen algorithm. Available: 'roundrobin'.</span>
+      <span>The chosen algorithm. Available: 'roundrobin',
+  'random'</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -796,14 +806,7 @@ match the numbers in the <code>matches</code> array.</p>
         <span class="p">}</span>
         <span class="nx">alg</span> <span class="o">=</span> <span class="nx">alg</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;roundrobin&#39;</span> <span class="o">||</span> <span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">replace</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
-
-                <span class="nx">matches</span> <span class="o">=</span> <span class="nx">randomPairs</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">matches</span> <span class="o">=</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-            <span class="p">}</span>
+            <span class="nx">matches</span> <span class="o">=</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.generateMatches: unknown algorithm: &#39;</span> <span class="o">+</span>
@@ -1178,6 +1181,67 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="matcher.hasnext">
+  <h3>
+    <a href="#matcher.hasnext" name="matcher.hasnext" class="pilcrow">&#182;</a>
+    Matcher.hasNext
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if there is next match to be returned by getMatch</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The x-th round. Default: Matcher.x</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The y-th match within the x-th round
+   Default: Matcher.y</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">bolean</span>
+      <span>TRUE, if there exists a next match</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.x</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.y</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">hasOrGetNext
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasNext</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hasNext&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="matcher.getmatch">
   <h3>
     <a href="#matcher.getmatch" name="matcher.getmatch" class="pilcrow">&#182;</a>
@@ -1193,12 +1257,13 @@ where the absolute position becomes the player id.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">x</span>
       <span class="dox_type">number</span>
-      <span>Optional. The x-th round. Default: the round</span>
+      <span>Optional. The x-th round. Default: Matcher.x</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">y</span>
       <span class="dox_type">number</span>
-      <span>Optional. The y-th match within the x-th round</span>
+      <span>Optional. The y-th match within the x-th round
+   Default: Matcher.y</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1216,7 +1281,11 @@ where the absolute position becomes the player id.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.resolvedMatches
+      <span class="dox_type">Matcher.resolvedMatches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">hasOrGetNext
 </span>
     </div>
   </div>
@@ -1224,114 +1293,7 @@ where the absolute position becomes the player id.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">nRows</span><span class="p">,</span> <span class="nx">nCols</span><span class="p">;</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
-</div>
-<p>Check both x and y.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: cannot specify y without x.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
-</div>
-<p>Check if there is any match yet.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: no resolved matches found.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
-</div>
-<p>Check x.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x must be number &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: x cannot be negative&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
-</div>
-<p>Return the whole row.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
-        <span class="p">}</span>
-
-        <span class="nx">nRows</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-
-        <span class="nx">nCols</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">[</span><span class="nx">x</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
-</div>
-<p>Check y.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="o">++</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="o">++</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y must be number &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y cannot be negative&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatch&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1387,7 +1349,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Check if there is any match yet.</p>
         </td>
@@ -1403,7 +1365,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Check x.</p>
         </td>
@@ -1424,6 +1386,39 @@ where the absolute position becomes the player id.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.clear">
+  <h3>
+    <a href="#matcher.clear" name="matcher.clear" class="pilcrow">&#182;</a>
+    Matcher.clear
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Clears the matcher as it would be a newly created object</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">randomAssigner</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">bye</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">bye</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1620,7 +1615,7 @@ they are considered as already an id.</p>
 <li>bye: identifier for dummy competitor. Default: -1.</li>
 <li>skypeBye: flag whether players matched with the dummy
    competitor should be added or not. Default: true.</li>
-<li>rounds: number of rounds to repeat matching. Default</li>
+<li>rounds: number of rounds to repeat matching. Default: ?</li>
 </ul></span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -1633,27 +1628,105 @@ they are considered as already an id.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">ps</span><span class="p">,</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">bye</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">skipBye</span><span class="p">;</span>
+     <span class="kd">function</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+         <span class="kd">var</span> <span class="nx">ps</span><span class="p">,</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">bye</span><span class="p">;</span>
+         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">jj</span><span class="p">;</span>
+         <span class="kd">var</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">;</span>
+         <span class="kd">var</span> <span class="nx">roundsLimit</span><span class="p">,</span> <span class="nx">cycle</span><span class="p">,</span> <span class="nx">cycleI</span><span class="p">,</span> <span class="nx">skipBye</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">ps</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: n must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-        <span class="nx">bye</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="nx">skipBye</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+         <span class="p">}</span>
+         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">ps</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+             <span class="nx">n</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="k">else</span> <span class="p">{</span>
+             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: n must be &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
+         <span class="p">}</span>
+         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+         <span class="nx">bye</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+         <span class="nx">skipBye</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>Make sure we have even numbers.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+         <span class="k">if</span> <span class="p">((</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">ps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">bye</span><span class="p">);</span>
+             <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+         <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>Limit rounds.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">)</span> <span class="p">{</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: options.rounds &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;must be a positive number or undefined. &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
+             <span class="p">}</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;options.rounds cannot be greater than &#39;</span> <span class="o">+</span>
+                                 <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;. Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
+             <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Here roundsLimit does not depend on n (must be smaller).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+             <span class="nx">roundsLimit</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="k">else</span> <span class="p">{</span>
+             <span class="nx">roundsLimit</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+         <span class="p">}</span>
+
+         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">cycle</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">cycle</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">cycle</span><span class="p">;</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span> <span class="o">!==</span> <span class="s1">&#39;mirror_invert&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">cycle</span> <span class="o">!==</span> <span class="s1">&#39;mirror&#39;</span> <span class="o">&amp;&amp;</span>
+                 <span class="nx">cycle</span> <span class="o">!==</span> <span class="s1">&#39;repeat_invert&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">cycle</span> <span class="o">!==</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="p">{</span>
+
+                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: options.cycle &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;must be equal to &quot;mirror&quot;/&quot;mirror_invert&quot;, &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;&quot;repeat&quot;/&quot;repeat_invert&quot; or undefined . &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">cycle</span><span class="p">);</span>
+             <span class="p">}</span>
+
+             <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">roundsLimit</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+         <span class="p">}</span>
+         <span class="k">else</span> <span class="p">{</span>
+             <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">roundsLimit</span><span class="p">);</span>
+         <span class="p">}</span>
+
+         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">roundsLimit</span><span class="p">;</span>
+         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -1663,14 +1736,10 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
-<p>Make sure we have even numbers.</p>
+<p>Shuffle list of ids for random.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">ps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">bye</span><span class="p">);</span>
-            <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ps</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -1680,10 +1749,11 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
-<p>Shuffle list of ids for random.</p>
+<p>Create a new array for round i.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ps</span><span class="p">);</span>
+             <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+             <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">skipBye</span> <span class="o">?</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -1693,13 +1763,19 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
-<p>Create a new array for round i.</p>
+<p>Check if new need to cycle.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-            <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span> <span class="o">&amp;&amp;</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span><span class="p">))</span> <span class="p">{</span>
+             <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span> <span class="o">===</span> <span class="s1">&#39;mirror&#39;</span> <span class="o">||</span> <span class="nx">cycle</span> <span class="o">===</span> <span class="s1">&#39;mirror_invert&#39;</span><span class="p">)</span> <span class="p">{</span>
+                     <span class="nx">cycleI</span> <span class="o">=</span> <span class="p">(</span><span class="nx">roundsLimit</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span><span class="nx">i</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                 <span class="p">}</span>
+                 <span class="k">else</span> <span class="p">{</span>
+                     <span class="nx">cycleI</span> <span class="o">=</span> <span class="nx">i</span><span class="o">+</span><span class="nx">roundsLimit</span><span class="p">;</span>
+                 <span class="p">}</span>
+                 <span class="nx">matches</span><span class="p">[</span><span class="nx">cycleI</span><span class="p">]</span> <span class="o">=</span> <span class="nx">skipBye</span> <span class="o">?</span>
+                     <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+             <span class="p">}</span>
 
 </pre></div>
         </td>
@@ -1709,12 +1785,16 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
-<p>Insert match.</p>
+<p>Counter jj is updated only if not skipBye,
+otherwise we create holes in the matches array.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]]);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
+             <span class="nx">jj</span> <span class="o">=</span> <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                 <span class="nx">id1</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+                 <span class="nx">id2</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">];</span>
+                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">bye</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="nx">bye</span><span class="p">))</span> <span class="p">{</span>
+                     <span class="nx">jj</span><span class="o">++</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -1724,14 +1804,10 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
-<p>Permutate for next round.</p>
+<p>Insert match.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">ps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
-    <span class="p">}</span>
-
+                     <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">jj</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span> <span class="p">];</span>
 
 </pre></div>
         </td>
@@ -1741,10 +1817,23 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
-<p>TODO: support limited number of rounds.</p>
+<p>Insert cycle match (if any).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-
+                     <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="p">{</span>
+                         <span class="nx">matches</span><span class="p">[</span><span class="nx">cycleI</span><span class="p">][</span><span class="nx">jj</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span> <span class="p">];</span>
+                     <span class="p">}</span>
+                     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span> <span class="o">===</span> <span class="s1">&#39;repeat_invert&#39;</span><span class="p">)</span> <span class="p">{</span>
+                         <span class="nx">matches</span><span class="p">[</span><span class="nx">cycleI</span><span class="p">][</span><span class="nx">jj</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">id1</span> <span class="p">];</span>
+                     <span class="p">}</span>
+                     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span> <span class="o">===</span> <span class="s1">&#39;mirror&#39;</span><span class="p">)</span> <span class="p">{</span>
+                         <span class="nx">matches</span><span class="p">[</span><span class="nx">cycleI</span><span class="p">][</span><span class="nx">jj</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span> <span class="p">];</span>
+                     <span class="p">}</span>
+                     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">cycle</span> <span class="o">===</span> <span class="s1">&#39;mirror_invert&#39;</span><span class="p">)</span> <span class="p">{</span>
+                         <span class="nx">matches</span><span class="p">[</span><span class="nx">cycleI</span><span class="p">][</span><span class="nx">jj</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">id1</span> <span class="p">];</span>
+                     <span class="p">}</span>
+                 <span class="p">}</span>
+             <span class="p">}</span>
 
 </pre></div>
         </td>
@@ -1754,75 +1843,13 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
-
-<div class="highlight"><pre><code><span class="kd">function</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="nx">alg</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">ps</span><span class="p">,</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">bye</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">roundsLimit</span><span class="p">,</span> <span class="nx">odd</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">skipBye</span><span class="p">;</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">ps</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-        <span class="nx">n</span> <span class="o">=</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: n must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="nx">odd</span> <span class="o">=</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="nx">roundsLimit</span> <span class="o">=</span> <span class="nx">n</span><span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="c1">// (odd &amp;&amp; !skipBye) ? n+1 : n;</span>
-
-    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: options.rounds &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;must be a positive number or undefined. &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span> <span class="o">&gt;</span> <span class="nx">roundsLimit</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;pairMatcher.&#39;</span> <span class="o">+</span> <span class="nx">alg</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;options.rounds cannot be &gt; than &#39;</span> <span class="o">+</span>
-                            <span class="nx">roundsLimit</span> <span class="o">+</span> <span class="s1">&#39;. Found: &#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">roundsLimit</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">rounds</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">roundsLimit</span><span class="p">);</span>
-
-    <span class="nx">bye</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bye</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-    <span class="nx">skipBye</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Make sure we have even numbers.</span>
-        <span class="nx">ps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">bye</span><span class="p">);</span>
-        <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">roundsLimit</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Shuffle list of ids for random.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">alg</span> <span class="o">===</span> <span class="s1">&#39;random&#39;</span><span class="p">)</span> <span class="nx">ps</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="nx">ps</span><span class="p">);</span>
-        <span class="c1">// Create a new array for round i.</span>
-        <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">skipBye</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span> <span class="o">&amp;&amp;</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">bye</span><span class="p">))</span> <span class="p">{</span>
-                <span class="c1">// Insert match.</span>
-                <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">push</span><span class="p">([</span><span class="nx">ps</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">ps</span><span class="p">[</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="nx">j</span><span class="p">]]);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="c1">// Permutate for next round.</span>
-        <span class="nx">ps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
+<p>Permutate for next round.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+             <span class="nx">ps</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ps</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
+         <span class="p">}</span>
+         <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
+     <span class="p">}</span>
 
 
 
@@ -1830,13 +1857,71 @@ they are considered as already an id.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="hasorgetnext">
+  <h3>
+    <a href="#hasorgetnext" name="hasorgetnext" class="pilcrow">&#182;</a>
+    hasOrGetNext
+  </h3>
 </div>
-<p>TODO: random with replacement.</p>
+
+  </div>
+  <div class="body"><p>Returns TRUE or the match if there is next match</p>
+
+<p>If in <code>get</code> mode it also updates the x and y indexes.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">m</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method invoking it</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">get</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if the method should return the match</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The x-th round. Default: Matcher.x</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The y-th match within the x-th round
+   Default: Matcher.y</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">array</span>
+      <span class="dox_type">null</span>
+      <span>TRUE or the next match (if found),
+  FALSE or null (if not found)</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.x</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.y</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatches
+</span>
+    </div>
+  </div>
+</div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">hasOrGetNext</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">get</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">match</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1847,50 +1932,134 @@ they are considered as already an id.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
-
-<div class="highlight"><pre><code><span class="cm">/**</span>
-<span class="cm"> * ### pairMatcher</span>
-<span class="cm"> *</span>
-<span class="cm"> * Creates tournament schedules for different algorithms</span>
-<span class="cm"> *</span>
-<span class="cm"> * @param {string} alg The name of the algorithm</span>
-<span class="cm"> *</span>
-<span class="cm"> * @param {number|array} n The number of participants (&gt;1) or</span>
-<span class="cm"> *   an array containing the ids of the participants</span>
-<span class="cm"> * @param {object} options Optional. Configuration object</span>
-<span class="cm"> *   contains the following options:</span>
-<span class="cm"> *</span>
-<span class="cm"> *   - rounds: the number</span>
-<span class="cm"> *</span>
-<span class="cm"> * @return {array} matches The matches according to the algorithm</span>
-<span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">pairMatcherWithReplacement</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">n</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">seq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;pairMatcherWithReplacement: n must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;number &gt; 1 or array of length &gt; 1.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="nx">matches</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="nx">m</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
+<p>Check both x and y.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.&#39;</span> <span class="o">+</span> <span class="nx">m</span> <span class="o">+</span> <span class="s1">&#39;: cannot specify y without x.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+</div>
+<p>Check if there is any match yet.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.&#39;</span> <span class="o">+</span> <span class="nx">m</span> <span class="o">+</span> <span class="s1">&#39;: no resolved matches found.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+</div>
+<p>Check x.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.&#39;</span> <span class="o">+</span> <span class="nx">m</span> <span class="o">+</span> <span class="s1">&#39;: x must be number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.&#39;</span> <span class="o">+</span> <span class="nx">m</span> <span class="o">+</span> <span class="s1">&#39;: x cannot be negative. Found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">x</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="o">++</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+</div>
+<p>Return the whole row.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">nRows</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">nRows</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">nCols</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+</div>
+<p>Check y.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="o">++</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y must be number &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y cannot be negative&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">nCols</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
 
 
 </pre></div>

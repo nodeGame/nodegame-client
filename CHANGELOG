@@ -1,5 +1,13 @@
 # nodegame-client change log
 
+## 3.5.0 (changelog not fully updated)...
+- Introduced role: the same step can have sub-step properties organized in roles. Current role saved in: `node.game.role`.
+- Introduce partner: the ID (or full obj) of another client.
+- New step properties: role, partner, roles, matcher.
+- Backward incompatible: `#Game.getProperty(property, notFound)`. The second parameter is a value that should be returned in case the property is not found (was a gameStage).
+- `#GamePlot.getProperty(gameStage, property, notFound)`. Third parameter can specify what value should be returned when the property is not found.
+- `#Game.setRole(role, force)`, `#Game.setPartner(role, force)`;
+
 ## 3.2.1
 - node.get timeout erroneously not clering the event listener if executeOnce was set. Fixed.
 - SocketDirect does not stringify/unstringify the messages now. Just passes the plane object.
