@@ -21,8 +21,8 @@ describe('Matcher', function() {
         });
 
         it('should create a new instance of Matcher', function() {
-            matcher.x.should.eql(0);
-            matcher.y.should.eql(0);
+            (null === matcher.x).should.eql(true);
+            (null === matcher.y).should.eql(true);
             (null === matcher.matches).should.eql(true);
             (null === matcher.resolvedMatches).should.eql(true);
             (null === matcher.resolvedMatchesById).should.eql(true);
@@ -538,17 +538,20 @@ describe('Matcher', function() {
         });
 
         it('should return null if out of bounds', function() {
-            (null === matcher.getMatch(0, 2)).should.be.true
-            (null === matcher.getMatch(3)).should.be.true
+            (null === matcher.getMatch(0, 2)).should.be.true;
+            (null === matcher.getMatch(3)).should.be.true;
         });
 
-        it('should not change x and y', function() {
-            matcher.x.should.eql(0);
+        it('should change x and y', function() {
+            matcher.x.should.eql(3);
             matcher.y.should.eql(0);
         });
     });
 
     describe('#getMatch - no params -', function() {
+        before(function() {
+            matcher.init({ x: null, y: null });
+        });
         it('should return single matches', function() {
             matcher.getMatch().should.eql([ 'c', 'bot' ]);
             matcher.getMatch().should.eql([ 'a', 'b' ]);
@@ -559,7 +562,7 @@ describe('Matcher', function() {
         });
 
         it('should return null if out of bounds', function() {
-            (null === matcher.getMatch()).should.be.true
+            (null === matcher.getMatch()).should.be.true;
         });
 
         it('should change x and y', function() {
@@ -608,7 +611,7 @@ describe('Matcher', function() {
 
     describe('#getMatchObject()', function() {
         before(function() {
-            matcher.init({x: 0, y: 0});
+            matcher.init({x: null, y: null});
         });
         it('should return entire row', function() {
             matcher.getMatchObject().should.eql({
