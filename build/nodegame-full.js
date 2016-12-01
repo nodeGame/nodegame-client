@@ -1504,12 +1504,16 @@ if (!Array.prototype.indexOf) {
      * but it works on a larger share of browsers.
      *
      * @param {object} o The variable to check.
+     *
      * @see Array.isArray
      */
-    ARRAY.isArray = function(o) {
-        if (!o) return false;
-        return Object.prototype.toString.call(o) === '[object Array]';
-    };
+    ARRAY.isArray = (function(f) {
+        if ('function' === typeof f) return f;
+        else return function(o) {
+            if (!o) return false;
+            return Object.prototype.toString.call(o) === '[object Array]';
+        };
+    })(Array.isArray);
 
     /**
      * ## ARRAY.seq
@@ -1578,26 +1582,32 @@ if (!Array.prototype.indexOf) {
      *
      * Executes a callback on each element of the array
      *
-     * If an error occurs returns FALSE.
-     *
      * @param {array} array The array to loop in
-     * @param {Function} func The callback for each element in the array
+     * @param {function} func The callback for each element in the array
      * @param {object} context Optional. The context of execution of the
      *   callback. Defaults ARRAY.each
      *
-     * @return {boolean} TRUE, if execution was successful
+     * @see Array.forEach
      */
-    ARRAY.each = function(array, func, context) {
-        if ('object' !== typeof array) return false;
-        if (!func) return false;
-
-        context = context || this;
-        var i, len = array.length;
-        for (i = 0 ; i < len; i++) {
-            func.call(context, array[i]);
-        }
-        return true;
-    };
+    ARRAY.each = (function(f) {
+        if ('function' === typeof f) return f;
+        else return function(array, func, context) {
+            var i, len;
+            if (!Array.isArray(array)) {
+                throw new TypeError('JSUS.each: array must be an array. ' +
+                                    'Found: ' + array);
+            }
+            if ('function' !== typeof func) {
+                throw new TypeError('JSUS.each: func must be function. ' +
+                                    'Found: ' + func);
+            }
+            context = context || this;
+            len = array.length;
+            for (i = 0 ; i < len; i++) {
+                func.call(context, array[i], i, array);
+            }
+        };
+    })(Array.forEach);
 
     /**
      * ## ARRAY.map
@@ -1691,11 +1701,9 @@ if (!Array.prototype.indexOf) {
     /**
      * ## ARRAY.inArray
      *
-     * Returns TRUE if the element is contained in the array,
-     * FALSE otherwise
+     * Returns TRUE if the element is contained in the array
      *
-     * For objects, deep equality comparison is performed
-     * through JSUS.equals.
+     * For objects, deep comparison is performed through JSUS.equals.
      *
      * @param {mixed} needle The element to search in the array
      * @param {array} haystack The array to search in
@@ -1703,24 +1711,42 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE, if the element is contained in the array
      *
      * @see JSUS.equals
+     * @see indexOf
      */
     ARRAY.inArray = function(needle, haystack) {
-        var func, i, len;
-        if (!haystack) return false;
-        func = JSUS.equals;
-        len = haystack.length;
-        for (i = 0; i < len; i++) {
-            if (func.call(this, needle, haystack[i])) {
-                return true;
-            }
-        }
-        return false;
+        return indexOf('inArray', needle, haystack, 'first') !== -1;
     };
 
     ARRAY.in_array = function(needle, haystack) {
         console.log('***ARRAY.in_array is deprecated. ' +
                     'Use ARRAY.inArray instead.***');
         return ARRAY.inArray(needle, haystack);
+    };
+
+
+    /**
+     * ### ARRAY.indexOf
+     *
+     * Returns the index or indexes at which an element is found in an array
+     *
+     * For objects, deep comparison is performed through JSUS.equals.
+     *
+     * @param {mixed} needle The element to compare
+     * @param {array} haystack The array to search
+     * @param {string} mod The type of of search to perform. Valid values:
+     *   'first', 'last', 'all'.
+     * @param {number} Optional expectedN The expected number of elements
+     *   to find in the array (used to pre-initialized return array)
+     *
+     * @return {number|array} The index of the position of the element
+     *   in the array, or -1 if not found; if mod is equal to 'all'
+     *   an array containing all indexes found is returned
+     *
+     * @see JSUS.equals
+     * @see indexOf
+     */
+    ARRAY.indexOf = function(needle, haystack, mod, N) {
+        return indexOf('indexOf', needle, haystack, mod, N);
     };
 
     /**
@@ -1896,7 +1922,6 @@ if (!Array.prototype.indexOf) {
 
         return ARRAY._latinSquare(S, N, false);
     };
-
 
     /**
      * ## ARRAY.generateCombinations
@@ -2151,23 +2176,27 @@ if (!Array.prototype.indexOf) {
      *
      * Does not modify original array.
      *
-     * Comparison is done with `JSUS.equals`.
+     * Comparison is done with `JSUS.inArray`.
      *
      * @param {array} array The array from which eliminates duplicates
      *
      * @return {array} A copy of the array without duplicates
      *
-     * @see JSUS.equals
+     * @see JSUS.inArray
      */
     ARRAY.distinct = function(array) {
-        var out = [];
-        if (!array) return out;
-
-        ARRAY.each(array, function(e) {
-            if (!ARRAY.inArray(e, out)) {
-                out.push(e);
+        var out, i, len;
+        if (!ARRAY.isArray(array)) {
+            throw new TypeError('JSUS.distinct: array must be an array. ' +
+                                'Found: ' + array);
+        }
+        out = [];
+        i = -1, len = array.length;
+        for ( ; ++i < len ; ) {
+            if (!ARRAY.inArray(array[i], out)) {
+                out.push(array[i]);
             }
-        });
+        }
         return out;
     };
 
@@ -2202,6 +2231,115 @@ if (!Array.prototype.indexOf) {
     };
 
     JSUS.extend(ARRAY);
+
+
+    // ## Helper functions.
+
+    /**
+     * ### indexOf
+     *
+     * Returns all the indexes at which an element is found in an array
+     *
+     * It is optimized to check types.
+     * Notice: it is a little faster than Array.prototype.indexOf().
+     *
+     * @param {string} method The name of the invoking method
+     * @param {mixed} needle The element to compare
+     * @param {array} haystack The array to search
+     * @param {string} mod Optional. The type of of search to perform.
+     *    Valid values: 'first', 'last', 'all'.
+     * @param {number} Optional. expectedN The expected number of elements
+     *   to find in the array (used to pre-initialized return array)
+     *
+     * @return {number|array} The index of the position of the element
+     *   in the array, or -1 if not found; if mod is equal to 'all'
+     *   an array containing all indexes found is returned
+     */
+    function indexOf(method, needle, haystack, mod, expectedN) {
+        var i, len, idx, out;
+        if (!ARRAY.isArray(haystack)) {
+            throw new TypeError('JSUS.' + method + ': haystack must be ' +
+                                'array. Found: ' + haystack);
+        }
+        mod = mod || 'first';
+        len = haystack.length;
+        if ('number' === typeof needle && isNaN(needle)) {
+            if (mod === 'first') {
+                for (i = 0; i < len; i++) {
+                    if (isNaN(haystack[i])) return i;
+                }
+                return -1;
+            }
+            else if (mod === 'last') {
+                for (i = (len-1); i > -1; i--) {
+                    if (isNaN(haystack[i])) return i;
+                }
+                return -1;
+            }
+            if (mod === 'all') {
+                idx = 0;
+                out = new Array(expectedN || 0);
+                for (i = 0; i < len; i++) {
+                    if (isNaN(haystack[i])) out[idx++] = i;
+                }
+                return idx === 0 ? [] : out;
+            }
+        }
+        else if ('string' === typeof needle ||
+                 'number' === typeof needle ||
+                 'undefined' === typeof needle ||
+                 null === needle) {
+
+            if (mod === 'first') {
+                for (i = 0; i < len; i++) {
+                    if (needle === haystack[i]) return i;
+                }
+                return -1;
+            }
+            else if (mod === 'last') {
+                for (i = (len-1); i > -1; i--) {
+                    if (needle === haystack[i]) return i;
+                }
+                return -1;
+            }
+            else if (mod === 'all') {
+                idx = 0;
+                out = new Array(expectedN || 0);
+                for (i = 0; i < len; i++) {
+                    if (needle === haystack[i]) out[idx++] = i;
+                }
+                return idx === 0 ? [] : out;
+            }
+        }
+        else {
+            if (mod === 'first') {
+                for (i = 0; i < len; i++) {
+                    if (JSUS.equals(needle, haystack[i])) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            else if (mod === 'last') {
+                for (i = (len-1); i > -1; i--) {
+                    if (JSUS.equals(needle, haystack[i])) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            else if (mod === 'all') {
+                idx = 0;
+                out = new Array(expectedN || 0);
+                for (i = 0; i < len; i++) {
+                    if (JSUS.equals(needle, haystack[i])) {
+                        out[idx++] = i;
+                    }
+                }
+                return idx === 0 ? [] : out;
+            }
+        }
+    }
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 
@@ -3990,21 +4128,33 @@ if (!Array.prototype.indexOf) {
     /**
      * ## OBJ.isEmpty
      *
-     * Returns TRUE if an object has no own properties
+     * Returns TRUE if an element has no own properties
      *
-     * Does not check properties of the prototype chain.
+     * Supports other types:
      *
-     * @param {object} o The object to check
+     *   - undefined: TRUE
+     *   - null: TRUE
+     *   - string: TRUE if string === '' or if contains only spaces
+     *   - number: FALSE if different from 0
+     *   - function: FALSE
+     *   - array: TRUE, if it contains zero elements
+     *   - object: TRUE, if it does not contain **own** properties
      *
-     * @return {boolean} TRUE, if the object has no properties
+     * Notice: for object, it is much faster than Object.keys(o).length === 0,
+     * because it does not pull out all keys. Own properties must be enumerable.
+     *
+     * @param {mixed} o The object (or other type) to check
+     *
+     * @return {boolean} TRUE, if the object is empty
      */
     OBJ.isEmpty = function(o) {
         var key;
-        if ('undefined' === typeof o) return true;
+        if (!o) return true;
+        if ('string' === typeof o) return o.trim() === '';
+        if ('number' === typeof o) return false;
+        if ('function' === typeof o) return false;
         for (key in o) {
-            if (o.hasOwnProperty(key)) {
-                return false;
-            }
+            if (o.hasOwnProperty(key)) return false;
         }
         return true;
     };
@@ -28355,7 +28505,10 @@ if (!Array.prototype.indexOf) {
          *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
-         * - Replies to the sender with with the return values of the emit call
+         * - Replies to sender with the return values of emit, only if
+         *     the return value is not "empty"
+         *
+         * @see JSUS.isEmpty
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;

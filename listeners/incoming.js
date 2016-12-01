@@ -170,7 +170,10 @@
          *
          * - Validates the msg.text field
          * - Emits a get.<msg.text> event
-         * - Replies to the sender with with the return values of the emit call
+         * - Replies to sender with the return values of emit, only if
+         *     the return value is not "empty"
+         *
+         * @see JSUS.isEmpty
          */
         node.events.ng.on( IN + get + 'DATA', function(msg) {
             var res;
