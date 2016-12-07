@@ -52,7 +52,7 @@
         <a href="#matchermanager.getmatchfor">MatcherManager.getMatchFor</a>
       </div>
       <div class="heading h3">
-        <a href="#matchermanager.getmatchfor">MatcherManager.getMatchFor</a>
+        <a href="#matchermanager.getrolefor">MatcherManager.getRoleFor</a>
       </div>
       <div class="heading h3">
         <a href="#matchermanager.getiterationround">MatcherManager.getIterationRound</a>
@@ -425,7 +425,22 @@ remote options. That is:</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
       <span class="dox_type">string</span>
-      <span>The id for which a match is found</span>
+      <span>The id to search a match for</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">round</span>
+      <span class="dox_type">number</span>
+      <span>Optional. Specifies a round other
+  than current (will be normalized if there are more
+  rounds than matches)</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>The current match for the id, or null
+   if the id is not found</span>
     </div>
   </div>
 </div>
@@ -448,22 +463,37 @@ remote options. That is:</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="matchermanager.getmatchfor">
+<div class="pilwrap" id="matchermanager.getrolefor">
   <h3>
-    <a href="#matchermanager.getmatchfor" name="matchermanager.getmatchfor" class="pilcrow">&#182;</a>
-    MatcherManager.getMatchFor
+    <a href="#matchermanager.getrolefor" name="matchermanager.getrolefor" class="pilcrow">&#182;</a>
+    MatcherManager.getRoleFor
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Returns the current match for the specified id</p>
+  <div class="body"><p>Returns the current role for the specified id</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
       <span class="dox_type">string</span>
-      <span>The id for which a match is found</span>
+      <span>The id to search a role for</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">round</span>
+      <span class="dox_type">number</span>
+      <span>Optional. Specifies a round other
+  than current (will be normalized if there are more
+  rounds than matches) [<strong><em>Currently not supported</em></strong>]</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>The role currently hold by id, or null
+   if the id is not found</span>
     </div>
   </div>
 </div>
@@ -471,9 +501,10 @@ remote options. That is:</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRoleFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">().</span><span class="nx">round</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***MatcherManager.getRoleFor: round parameter &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;currently not supported.***&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatchFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -498,7 +529,7 @@ remote options. That is:</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
-      <span>The iteration round</span>
+      <span>The current iteration round</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
