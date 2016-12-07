@@ -37,13 +37,28 @@
         <a href="#roler.map">Roler.map</a>
       </div>
       <div class="heading h3">
+        <a href="#roler.mapbyrole">Roler.mapByRole</a>
+      </div>
+      <div class="heading h3">
         <a href="#roler.clear">Roler.clear</a>
       </div>
       <div class="heading h3">
         <a href="#roler.setroles">Roler.setRoles</a>
       </div>
       <div class="heading h3">
+        <a href="#roler.setrolefor">Roler.setRoleFor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.setrolefor">Roler.setRoleFor</a>
+      </div>
+      <div class="heading h3">
         <a href="#roler.roleexists">Roler.roleExists</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.hasrole">Roler.hasRole</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.getrolefor">Roler.getRoleFor</a>
       </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
@@ -133,6 +148,8 @@ MIT Licensed</p>
 
   </div>
   <div class="body"><p>List of available roles</p>
+
+<p>Also contains which ids are associated to the role.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -174,7 +191,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.clearRoles
+      <span class="dox_type">Roler.clear
 </span>
     </div>
   </div>
@@ -198,12 +215,41 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>The map roles-ids</p>
+  <div class="body"><p>The map ids-roles</p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.mapbyrole">
+  <h3>
+    <a href="#roler.mapbyrole" name="roler.mapbyrole" class="pilcrow">&#182;</a>
+    Roler.mapByRole
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Maps ids to a position in the roles array (role must be known)</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_map</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">}</span>
 
 
@@ -221,7 +267,7 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Clears the roles list</p>
+  <div class="body"><p>Clears the roles lists</p>
   </div>
 </div>
         </td>
@@ -230,6 +276,7 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">mapByRole</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">};</span>
 
 
@@ -272,7 +319,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.clearRoles
+      <span class="dox_type">Roler.clear
 </span>
     </div>
   </div>
@@ -283,6 +330,20 @@ MIT Licensed</p>
         <span class="kd">var</span> <span class="nx">rolesObj</span><span class="p">,</span> <span class="nx">role</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">min</span><span class="p">,</span> <span class="nx">max</span><span class="p">,</span> <span class="nx">err</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Clear previousd data.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">min</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">min</span> <span class="o">||</span> <span class="nx">min</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.setRoles: min must be a &#39;</span> <span class="o">+</span>
@@ -302,7 +363,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -320,7 +381,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -342,7 +403,7 @@ MIT Licensed</p>
                                     <span class="s1">&#39;must be a non-empty string. Found: &#39;</span> <span class="o">+</span>
                                     <span class="nx">role</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="p">}</span>
 
 </pre></div>
@@ -351,13 +412,155 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>All data validated.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="nx">rolesObj</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.setrolefor">
+  <h3>
+    <a href="#roler.setrolefor" name="roler.setrolefor" class="pilcrow">&#182;</a>
+    Roler.setRoleFor
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the current role for the given id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">role</span>
+      <span class="dox_type">string</span>
+      <span>The role to check</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.roles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRoleFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: id must be string. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: role must be string. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: unknown role: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Id to role.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>Save reference of numeric position in roles array to role.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_map</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>Add the id to the roles array.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.setrolefor">
+  <h3>
+    <a href="#roler.setrolefor" name="roler.setrolefor" class="pilcrow">&#182;</a>
+    Roler.setRoleFor
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the current role for the given id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">role</span>
+      <span class="dox_type">string</span>
+      <span>The role to check</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.roles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeRoleFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: id must be string. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: role must be string or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">role</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.removeRoleFor: could find any role &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;assigned to id: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: unknown role: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">splice</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_map</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span>
     <span class="p">};</span>
 
 
@@ -401,6 +604,110 @@ MIT Licensed</p>
         <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">];</span>
     <span class="p">};</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.hasrole">
+  <h3>
+    <a href="#roler.hasrole" name="roler.hasrole" class="pilcrow">&#182;</a>
+    Roler.hasRole
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns TRUE if a given id is currently holding the specified role</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">id</span>
+      <span class="dox_type">string</span>
+      <span>The id to check</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">role</span>
+      <span class="dox_type">string</span>
+      <span>The role to check</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>True if id has given role</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.map
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.hasRole: id must be string. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.hasRole: role must be string. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">role</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">===</span> <span class="nx">role</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.getrolefor">
+  <h3>
+    <a href="#roler.getrolefor" name="roler.getrolefor" class="pilcrow">&#182;</a>
+    Roler.getRoleFor
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the role currently hold by an id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">id</span>
+      <span class="dox_type">string</span>
+      <span>The id to check</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>The role currently hold, or null
+   if the id is not found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.map
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRoleFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.hasRole: id must be string. Found: &#39;</span> <span class="o">+</span>
+                                <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
 
 
 </pre></div>
