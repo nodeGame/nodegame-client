@@ -672,6 +672,13 @@ describe('Matcher', function() {
             matcher.getMatchFor('bot').should.eql([ 'c', 'a', 'b' ]);
         });
 
+        it('should return one specific match', function() {
+            matcher.getMatchFor('a', 0).should.eql('b');
+            matcher.getMatchFor('b', 2).should.eql('bot');
+            matcher.getMatchFor('c', 1).should.eql('b');
+            matcher.getMatchFor('bot', 1).should.eql('a');
+        });
+
         it('should return null if id is not existing', function() {
             (null === matcher.getMatchFor('foo')).should.be.true
         });
