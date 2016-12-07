@@ -672,8 +672,8 @@ describe('Matcher', function() {
             matcher.getMatchFor('bot').should.eql([ 'c', 'a', 'b' ]);
         });
 
-        it('should return null if out of bounds', function() {
-            (null === matcher.getMatchObject(3)).should.be.true
+        it('should return null if id is not existing', function() {
+            (null === matcher.getMatchFor('foo')).should.be.true
         });
 
         it('should not change x and y', function() {
@@ -808,6 +808,28 @@ describe('Matcher', function() {
         it('getMatch() is called before matches are resolved ', function() {
             (function() {
                 matcher.getMatch(1, 1);
+            }).should.throw();
+        });
+
+        it('getMatchFor() is called before matches are resolved ', function() {
+            (function() {
+                matcher.getMatchFor('a');
+            }).should.throw();
+        });
+        it('getMatchFor() id is not string ', function() {
+            (function() {
+                matcher.setMatches([
+                    [ [ 0, 3 ], [ 1, 2 ] ],
+                    [ [ 0, 2 ], [ 3, 1 ] ],
+                    [ [ 0, 1 ], [ 2, 3 ] ]
+                ]);
+                matcher.match([ 'a','b','c','d' ]);
+                matcher.getMatchFor(123);
+            }).should.throw();
+        });
+        it('getMatchFor() x is < 0 ', function() {
+            (function() {
+                matcher.getMatchFor('a', -1);
             }).should.throw();
         });
     });
