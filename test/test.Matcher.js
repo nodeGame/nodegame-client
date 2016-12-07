@@ -25,7 +25,7 @@ describe('Matcher', function() {
             (null === matcher.y).should.eql(true);
             (null === matcher.matches).should.eql(true);
             (null === matcher.resolvedMatches).should.eql(true);
-            (null === matcher.resolvedMatchesById).should.eql(true);
+            (null === matcher.resolvedMatchesObj).should.eql(true);
             (null === matcher.assignedIds).should.eql(true);
             matcher.assignerCb.should.eql(Matcher.randomAssigner);
             matcher.missingId.should.eql('bot');
@@ -426,7 +426,7 @@ describe('Matcher', function() {
 
         it('should reset resolved data', function() {
             (null === matcher.resolvedMatches).should.be.true;
-            (null === matcher.resolvedMatchesById).should.be.true;
+            (null === matcher.resolvedMatchesObj).should.be.true;
         });
     });
 
@@ -475,7 +475,7 @@ describe('Matcher', function() {
         });
 
         it('should match ids to positions - resolvedMatchesById', function() {
-            matcher.resolvedMatchesById.should.eql([
+            matcher.resolvedMatchesObj.should.eql([
                 { a: 'b', b: 'a' },
                 { c: 'b', b: 'c' },
                 { c: 'a', a: 'c' }
@@ -519,7 +519,7 @@ describe('Matcher', function() {
         });
 
         it('should match ids to positions - resolvedMatchesById', function() {
-            matcher.resolvedMatchesById.should.eql([
+            matcher.resolvedMatchesObj.should.eql([
                 { c: 'bot', bot: 'c', a: 'b', b: 'a' },
                 { c: 'b', b: 'c', bot: 'a', a: 'bot' },
                 { c: 'a', a: 'c', b: 'bot', bot: 'b' }
@@ -588,7 +588,7 @@ describe('Matcher', function() {
         });
     });
 
-    describe('#getMatchObject(x)', function() {
+    describe('#getMatchObject(x) 1/2', function() {
         it('should return entire row', function() {
             matcher.getMatchObject(0).should.eql({
                 c: 'bot', bot: 'c', a: 'b', b: 'a' });
@@ -608,17 +608,46 @@ describe('Matcher', function() {
         });
     });
 
-
-    describe('#getMatchObject()', function() {
+    describe('#getMatchObject() 2/2 after init', function() {
         before(function() {
             matcher.init({x: null, y: null});
         });
+        it('should return matches as singles object', function() {
+            matcher.getMatchObject().should.eql({
+                c: 'bot', bot: 'c' });
+            matcher.getMatchObject().should.eql({
+                a: 'b', b: 'a' });
+            matcher.getMatchObject().should.eql({
+                c: 'b', b: 'c' });
+            matcher.getMatchObject().should.eql({
+                bot: 'a', a: 'bot' });
+            matcher.getMatchObject().should.eql({
+                c: 'a', a: 'c' });
+            matcher.getMatchObject().should.eql({
+                b: 'bot', bot: 'b' });
+        });
+
+        it('should return matches as singles object values passed', function() {
+            matcher.getMatchObject(0,0).should.eql({
+                c: 'bot', bot: 'c' });
+            matcher.getMatchObject(0,1).should.eql({
+                a: 'b', b: 'a' });
+            matcher.getMatchObject(1,0).should.eql({
+                c: 'b', b: 'c' });
+            matcher.getMatchObject(1,1).should.eql({
+                bot: 'a', a: 'bot' });
+            matcher.getMatchObject(2,0).should.eql({
+                c: 'a', a: 'c' });
+            matcher.getMatchObject(2,1).should.eql({
+                b: 'bot', bot: 'b' });
+        });
+
         it('should return entire row', function() {
-            matcher.getMatchObject().should.eql({
+            matcher.getMatchObject(0).should.eql({
                 c: 'bot', bot: 'c', a: 'b', b: 'a' });
-            matcher.getMatchObject().should.eql({
+            matcher.getMatchObject(1).should.eql({
                 c: 'b', b: 'c', bot: 'a', a: 'bot' });
-            matcher.getMatchObject().should.eql({
+            matcher.getMatchObject(2).should.eql({
                 c: 'a', a: 'c', b: 'bot', bot: 'b' });
         });
 
@@ -627,6 +656,26 @@ describe('Matcher', function() {
         });
 
         it('should change x and y', function() {
+            matcher.x.should.eql(3);
+            matcher.y.should.eql(0);
+        });
+    });
+
+    describe('#getMatchFor(x)', function() {
+        it('should return entire row', function() {
+            matcher.getMatchObject(0).should.eql({
+                c: 'bot', bot: 'c', a: 'b', b: 'a' });
+            matcher.getMatchObject(1).should.eql({
+                c: 'b', b: 'c', bot: 'a', a: 'bot' });
+            matcher.getMatchObject(2).should.eql({
+                c: 'a', a: 'c', b: 'bot', bot: 'b' });
+        });
+
+        it('should return null if out of bounds', function() {
+            (null === matcher.getMatchObject(3)).should.be.true
+        });
+
+        it('should not change x and y', function() {
             matcher.x.should.eql(3);
             matcher.y.should.eql(0);
         });

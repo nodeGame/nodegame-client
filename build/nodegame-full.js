@@ -1582,32 +1582,26 @@ if (!Array.prototype.indexOf) {
      *
      * Executes a callback on each element of the array
      *
+     * If an error occurs returns FALSE.
+     *
      * @param {array} array The array to loop in
-     * @param {function} func The callback for each element in the array
+     * @param {Function} func The callback for each element in the array
      * @param {object} context Optional. The context of execution of the
      *   callback. Defaults ARRAY.each
      *
-     * @see Array.forEach
+     * @return {boolean} TRUE, if execution was successful
      */
-    ARRAY.each = (function(f) {
-        if ('function' === typeof f) return f;
-        else return function(array, func, context) {
-            var i, len;
-            if (!Array.isArray(array)) {
-                throw new TypeError('JSUS.each: array must be an array. ' +
-                                    'Found: ' + array);
-            }
-            if ('function' !== typeof func) {
-                throw new TypeError('JSUS.each: func must be function. ' +
-                                    'Found: ' + func);
-            }
-            context = context || this;
-            len = array.length;
-            for (i = 0 ; i < len; i++) {
-                func.call(context, array[i], i, array);
-            }
-        };
-    })(Array.forEach);
+    ARRAY.each = function(array, func, context) {
+        if ('object' !== typeof array) return false;
+        if (!func) return false;
+
+        context = context || this;
+        var i, len = array.length;
+        for (i = 0 ; i < len; i++) {
+            func.call(context, array[i]);
+        }
+        return true;
+    };
 
     /**
      * ## ARRAY.map
@@ -1701,9 +1695,11 @@ if (!Array.prototype.indexOf) {
     /**
      * ## ARRAY.inArray
      *
-     * Returns TRUE if the element is contained in the array
+     * Returns TRUE if the element is contained in the array,
+     * FALSE otherwise
      *
-     * For objects, deep comparison is performed through JSUS.equals.
+     * For objects, deep equality comparison is performed
+     * through JSUS.equals.
      *
      * @param {mixed} needle The element to search in the array
      * @param {array} haystack The array to search in
@@ -1711,42 +1707,24 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE, if the element is contained in the array
      *
      * @see JSUS.equals
-     * @see indexOf
      */
     ARRAY.inArray = function(needle, haystack) {
-        return indexOf('inArray', needle, haystack, 'first') !== -1;
+        var func, i, len;
+        if (!haystack) return false;
+        func = JSUS.equals;
+        len = haystack.length;
+        for (i = 0; i < len; i++) {
+            if (func.call(this, needle, haystack[i])) {
+                return true;
+            }
+        }
+        return false;
     };
 
     ARRAY.in_array = function(needle, haystack) {
         console.log('***ARRAY.in_array is deprecated. ' +
                     'Use ARRAY.inArray instead.***');
         return ARRAY.inArray(needle, haystack);
-    };
-
-
-    /**
-     * ### ARRAY.indexOf
-     *
-     * Returns the index or indexes at which an element is found in an array
-     *
-     * For objects, deep comparison is performed through JSUS.equals.
-     *
-     * @param {mixed} needle The element to compare
-     * @param {array} haystack The array to search
-     * @param {string} mod The type of of search to perform. Valid values:
-     *   'first', 'last', 'all'.
-     * @param {number} Optional expectedN The expected number of elements
-     *   to find in the array (used to pre-initialized return array)
-     *
-     * @return {number|array} The index of the position of the element
-     *   in the array, or -1 if not found; if mod is equal to 'all'
-     *   an array containing all indexes found is returned
-     *
-     * @see JSUS.equals
-     * @see indexOf
-     */
-    ARRAY.indexOf = function(needle, haystack, mod, N) {
-        return indexOf('indexOf', needle, haystack, mod, N);
     };
 
     /**
@@ -2176,27 +2154,23 @@ if (!Array.prototype.indexOf) {
      *
      * Does not modify original array.
      *
-     * Comparison is done with `JSUS.inArray`.
+     * Comparison is done with `JSUS.equals`.
      *
      * @param {array} array The array from which eliminates duplicates
      *
      * @return {array} A copy of the array without duplicates
      *
-     * @see JSUS.inArray
+     * @see JSUS.equals
      */
     ARRAY.distinct = function(array) {
-        var out, i, len;
-        if (!ARRAY.isArray(array)) {
-            throw new TypeError('JSUS.distinct: array must be an array. ' +
-                                'Found: ' + array);
-        }
-        out = [];
-        i = -1, len = array.length;
-        for ( ; ++i < len ; ) {
-            if (!ARRAY.inArray(array[i], out)) {
-                out.push(array[i]);
+        var out = [];
+        if (!array) return out;
+
+        ARRAY.each(array, function(e) {
+            if (!ARRAY.inArray(e, out)) {
+                out.push(e);
             }
-        }
+        });
         return out;
     };
 
@@ -2231,115 +2205,6 @@ if (!Array.prototype.indexOf) {
     };
 
     JSUS.extend(ARRAY);
-
-
-    // ## Helper functions.
-
-    /**
-     * ### indexOf
-     *
-     * Returns all the indexes at which an element is found in an array
-     *
-     * It is optimized to check types.
-     * Notice: it is a little faster than Array.prototype.indexOf().
-     *
-     * @param {string} method The name of the invoking method
-     * @param {mixed} needle The element to compare
-     * @param {array} haystack The array to search
-     * @param {string} mod Optional. The type of of search to perform.
-     *    Valid values: 'first', 'last', 'all'.
-     * @param {number} Optional. expectedN The expected number of elements
-     *   to find in the array (used to pre-initialized return array)
-     *
-     * @return {number|array} The index of the position of the element
-     *   in the array, or -1 if not found; if mod is equal to 'all'
-     *   an array containing all indexes found is returned
-     */
-    function indexOf(method, needle, haystack, mod, expectedN) {
-        var i, len, idx, out;
-        if (!ARRAY.isArray(haystack)) {
-            throw new TypeError('JSUS.' + method + ': haystack must be ' +
-                                'array. Found: ' + haystack);
-        }
-        mod = mod || 'first';
-        len = haystack.length;
-        if ('number' === typeof needle && isNaN(needle)) {
-            if (mod === 'first') {
-                for (i = 0; i < len; i++) {
-                    if (isNaN(haystack[i])) return i;
-                }
-                return -1;
-            }
-            else if (mod === 'last') {
-                for (i = (len-1); i > -1; i--) {
-                    if (isNaN(haystack[i])) return i;
-                }
-                return -1;
-            }
-            if (mod === 'all') {
-                idx = 0;
-                out = new Array(expectedN || 0);
-                for (i = 0; i < len; i++) {
-                    if (isNaN(haystack[i])) out[idx++] = i;
-                }
-                return idx === 0 ? [] : out;
-            }
-        }
-        else if ('string' === typeof needle ||
-                 'number' === typeof needle ||
-                 'undefined' === typeof needle ||
-                 null === needle) {
-
-            if (mod === 'first') {
-                for (i = 0; i < len; i++) {
-                    if (needle === haystack[i]) return i;
-                }
-                return -1;
-            }
-            else if (mod === 'last') {
-                for (i = (len-1); i > -1; i--) {
-                    if (needle === haystack[i]) return i;
-                }
-                return -1;
-            }
-            else if (mod === 'all') {
-                idx = 0;
-                out = new Array(expectedN || 0);
-                for (i = 0; i < len; i++) {
-                    if (needle === haystack[i]) out[idx++] = i;
-                }
-                return idx === 0 ? [] : out;
-            }
-        }
-        else {
-            if (mod === 'first') {
-                for (i = 0; i < len; i++) {
-                    if (JSUS.equals(needle, haystack[i])) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            else if (mod === 'last') {
-                for (i = (len-1); i > -1; i--) {
-                    if (JSUS.equals(needle, haystack[i])) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            else if (mod === 'all') {
-                idx = 0;
-                out = new Array(expectedN || 0);
-                for (i = 0; i < len; i++) {
-                    if (JSUS.equals(needle, haystack[i])) {
-                        out[idx++] = i;
-                    }
-                }
-                return idx === 0 ? [] : out;
-            }
-        }
-    }
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 
@@ -4128,9 +3993,9 @@ if (!Array.prototype.indexOf) {
     /**
      * ## OBJ.isEmpty
      *
-     * Returns TRUE if an element has no own properties
+     * Returns TRUE if an object has no own properties (supports other types)
      *
-     * Supports other types:
+     * Map of input-type and return values:
      *
      *   - undefined: TRUE
      *   - null: TRUE
@@ -4153,9 +4018,7 @@ if (!Array.prototype.indexOf) {
         if ('string' === typeof o) return o.trim() === '';
         if ('number' === typeof o) return false;
         if ('function' === typeof o) return false;
-        for (key in o) {
-            if (o.hasOwnProperty(key)) return false;
-        }
+        for (key in o) if (o.hasOwnProperty(key)) return false;
         return true;
     };
 
@@ -7620,7 +7483,8 @@ if (!Array.prototype.indexOf) {
      * the entry does not need to be indexed.
      *
      * @param {string} idx The name of index
-     * @param {function} func The hashing function
+     * @param {function} func Optional. The hashing function. Default: a
+     *   function that returns the property named after the index
      *
      * @see NDDB.isReservedWord
      * @see NDDB.rebuildIndexes
@@ -7632,8 +7496,12 @@ if (!Array.prototype.indexOf) {
         if (this.isReservedWord(idx)) {
             this.throwErr('TypeError', 'index', 'idx is reserved word: ' + idx);
         }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'index', 'func must be function');
+        if ('undefined' === typeof func) {
+            func = function(item) { return item[idx]; };
+        }
+        else if ('function' !== typeof func) {
+            this.throwErr('TypeError', 'index', 'func must be function or ' +
+                          'undefined. Found: ' + func);
         }
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
     };
@@ -7651,7 +7519,8 @@ if (!Array.prototype.indexOf) {
      * callback returns _undefined_ the entry will be ignored.
      *
      * @param {string} idx The name of index
-     * @param {function} func The hashing function
+     * @param {function} func Optional. The hashing function. Default: a
+     *   function that returns the property named after the index
      *
      * @see NDDB.hash
      * @see NDDB.isReservedWord
@@ -7665,8 +7534,12 @@ if (!Array.prototype.indexOf) {
         if (this.isReservedWord(idx)) {
             this.throwErr('TypeError', 'view', 'idx is reserved word: ' + idx);
         }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'view', 'func must be function');
+        if ('undefined' === typeof func) {
+            func = function(item) { return item[idx]; };
+        }
+        else if ('function' !== typeof func) {
+            this.throwErr('TypeError', 'view', 'func must be function or ' +
+                          'undefined. Found: ' + func);
         }
         // Create a copy of the current settings, without the views
         // functions, else we create an infinite loop in the constructor.
@@ -7689,7 +7562,8 @@ if (!Array.prototype.indexOf) {
      * the entry does not belong to any view of the index.
      *
      * @param {string} idx The name of index
-     * @param {function} func The hashing function
+     * @param {function} func Optional. The hashing function. Default: a
+     *   function that returns the property named after the index
      *
      * @see NDDB.view
      * @see NDDB.isReservedWord
@@ -7702,10 +7576,15 @@ if (!Array.prototype.indexOf) {
         if (this.isReservedWord(idx)) {
             this.throwErr('TypeError', 'hash', 'idx is reserved word: ' + idx);
         }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'hash', 'func must be function');
+        if ('undefined' === typeof func) {
+            func = function(item) { return item[idx]; };
         }
-        this.__H[idx] = func, this[idx] = {};
+        else if ('function' !== typeof func) {
+            this.throwErr('TypeError', 'hash', 'func must be function or ' +
+                          'undefined. Found: ' + func);
+        }
+        this[idx] = {};
+        this.__H[idx] = func;
     };
 
     /**
@@ -21645,6 +21524,11 @@ if (!Array.prototype.indexOf) {
                     this.roler.map[id1] = r1;
                     this.roler.map[id2] = r2;
 
+                    // Dirty hack.
+                    game.roles = {};
+                    game.roles[r1] = id1;
+                    game.roles[r2] = id2;
+
                     if (!sayPartner) {
                         // Prepare options to send to players.
                         opts1 = { id: id1, options: { role: r1 } };
@@ -33497,12 +33381,16 @@ if (!Array.prototype.indexOf) {
      *   Default: 5
      * @param {string} id Optional The id of the span
      *
-     * @return {object} The span with the loading dots
+     * @return {object} An object containing two properties: the span element
+     *   and a method stop, that clears the interval
      *
      * @see GameWindow.getLoadingDots
      */
     GameWindow.prototype.addLoadingDots = function(root, len, id) {
-        return root.appendChild(this.getLoadingDots(len, id).span);
+        var ld;
+        ld = this.getLoadingDots(len, id);
+        root.appendChild(ld.span);
+        return ld;
     };
 
      /**
@@ -45034,7 +44922,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualRound
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Display information about rounds and/or stage in the game
@@ -45054,7 +44942,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualRound.version = '0.6.0';
+    VisualRound.version = '0.7.0';
     VisualRound.description = 'Display number of current round and/or stage.' +
         'Can also display countdown and total number of rounds and/or stages.';
 
@@ -45415,8 +45303,6 @@ if (!Array.prototype.indexOf) {
     VisualRound.prototype.updateInformation = function() {
         var stage, len;
 
-        // TODO CHECK: was:
-        // stage = this.gamePlot.getStage(node.player.stage);
         stage = node.player.stage;
 
         // Game not started.
@@ -45427,17 +45313,14 @@ if (!Array.prototype.indexOf) {
         }
         // Flexible mode.
         else if (this.options.flexibleMode) {
-            // Was:
-            // if (stage) {
-                if (stage.id === this.oldStageId) {
-                    this.curRound += 1;
-                }
-                else if (stage.id) {
-                    this.curRound = 1;
-                    this.curStage += 1;
-                }
-                this.oldStageId = stage.id;
-            // }
+            if (stage.id === this.oldStageId) {
+                this.curRound += 1;
+            }
+            else if (stage.id) {
+                this.curRound = 1;
+                this.curStage += 1;
+            }
+            this.oldStageId = stage.id;
         }
         // Normal mode.
         else {
@@ -46304,7 +46187,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualTimer.version = '0.8.0';
+    VisualTimer.version = '0.8.1';
     VisualTimer.description = 'Display a timer for the game. Timer can ' +
         'trigger events. Only for countdown smaller than 1h.';
 
@@ -46807,6 +46690,9 @@ if (!Array.prototype.indexOf) {
                     options.update = that.update;
                     options.timeup = undefined;
                     that.startTiming(options);
+                }
+                else {
+                    that.setToZero();
                 }
             }
         });

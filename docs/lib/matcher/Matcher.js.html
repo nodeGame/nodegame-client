@@ -55,13 +55,19 @@
         <a href="#matcher.resolvedmatches">Matcher.resolvedMatches</a>
       </div>
       <div class="heading h3">
-        <a href="#matcher.resolvedmatchesbyid">Matcher.resolvedMatchesById</a>
+        <a href="#matcher.resolvedmatchesobj">Matcher.resolvedMatchesObj</a>
       </div>
       <div class="heading h3">
         <a href="#matcher.ids">Matcher.ids</a>
       </div>
       <div class="heading h3">
         <a href="#matcher.ids">Matcher.ids</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matcher.idsmap">Matcher.idsMap</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matcher.assignedidsmap">Matcher.assignedIdsMap</a>
       </div>
       <div class="heading h3">
         <a href="#matcher.assignercb">Matcher.assignerCb</a>
@@ -100,6 +106,9 @@
         <a href="#matcher.getmatch">Matcher.getMatch</a>
       </div>
       <div class="heading h3">
+        <a href="#matcher.getmatchfor">Matcher.getMatchFor</a>
+      </div>
+      <div class="heading h3">
         <a href="#matcher.getmatchobject">Matcher.getMatchObject</a>
       </div>
       <div class="heading h3">
@@ -115,10 +124,10 @@
         <a href="#resetresolveddata">resetResolvedData</a>
       </div>
       <div class="heading h3">
-        <a href="#matcher.roundrobin">Matcher.roundRobin</a>
-      </div>
-      <div class="heading h3">
         <a href="#pairmatcher">pairMatcher</a>
+      </div>
+      <div class="heading h2">
+        <a href="#fetchmatch">fetchMatch</a>
       </div>
       <div class="heading h3">
         <a href="#hasorgetnext">hasOrGetNext</a>
@@ -143,7 +152,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#105;&#x6C;&#x74;&#x6F;:&#115;.&#x62;&#x61;&#108;&#105;&#x65;&#116;&#x74;&#x69;&#64;&#110;e&#x75;&#x2E;&#101;d&#117;">&#115;.&#x62;&#x61;&#108;&#105;&#x65;&#116;&#x74;&#x69;&#64;&#110;e&#x75;&#x2E;&#101;d&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#97;&#x69;&#x6C;&#116;&#x6F;:&#x73;&#46;&#98;&#97;&#108;&#105;&#101;&#x74;&#x74;&#105;&#64;n&#101;&#117;&#46;&#x65;&#x64;&#x75;">&#x73;&#46;&#98;&#97;&#108;&#105;&#101;&#x74;&#x74;&#105;&#64;n&#101;&#117;&#46;&#x65;&#x64;&#x75;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -162,6 +171,21 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>Object containing methods to fetch a match in the requested format.
+Will be initialized later.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">fetchMatch</span><span class="p">;</span>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Matcher</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">;</span>
 
@@ -323,6 +347,32 @@ MIT Licensed</p>
         </td>
       </tr>
       <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code><span class="cm">/**</span>
+<span class="cm"> * ### Matcher.roundRobin</span>
+<span class="cm"> *</span>
+<span class="cm"> * TODO: check if we need this.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @return The round robin matches</span>
+<span class="cm"> */</span>
+<span class="nx">Matcher</span><span class="p">.</span><span class="nx">roundRobin</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="matcher%20constructor">
@@ -472,6 +522,9 @@ individual matches are also array. For example:</p>
   <div class="body"><p>Nested array of matches (with id-strings)</p>
 
 <p>Exactly Matcher.matches, but with with ids instead of numbers</p>
+
+<p>This method is used both by getMatch and getMatchObject (if
+a single match is requested).</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -504,10 +557,10 @@ individual matches are also array. For example:</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="matcher.resolvedmatchesbyid">
+<div class="pilwrap" id="matcher.resolvedmatchesobj">
   <h3>
-    <a href="#matcher.resolvedmatchesbyid" name="matcher.resolvedmatchesbyid" class="pilcrow">&#182;</a>
-    Matcher.resolvedMatchesById
+    <a href="#matcher.resolvedmatchesobj" name="matcher.resolvedmatchesobj" class="pilcrow">&#182;</a>
+    Matcher.resolvedMatchesObj
   </h3>
 </div>
 
@@ -548,7 +601,7 @@ individual matches are also array. For example:</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -611,6 +664,68 @@ individual matches are also array. For example:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.idsmap">
+  <h3>
+    <a href="#matcher.idsmap" name="matcher.idsmap" class="pilcrow">&#182;</a>
+    Matcher.idsMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Map ids to match</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.setIds
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">idsMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.assignedidsmap">
+  <h3>
+    <a href="#matcher.assignedidsmap" name="matcher.assignedidsmap" class="pilcrow">&#182;</a>
+    Matcher.assignedIdsMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Map ids to ordinal position in matches</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.idsMap</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.assignedIds
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIdsMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -705,7 +820,7 @@ match the numbers in the <code>matches</code> array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Init.</p>
         </td>
@@ -848,7 +963,7 @@ match the numbers in the <code>matches</code> array.</p>
   </div>
   <div class="body"><p>Sets the matches for current instance</p>
 
-<p>Resets resolvedMatches and resolvedMatchesById to null.</p>
+<p>Resets resolvedMatches and resolvedMatchesObj to null.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -868,7 +983,8 @@ match the numbers in the <code>matches</code> array.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setMatches: matches must be array.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setMatches: matches must be a &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-empty array. Found: &#39;</span> <span class="o">+</span> <span class="nx">matches</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">;</span>
         <span class="nx">resetResolvedData</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
@@ -900,7 +1016,11 @@ match the numbers in the <code>matches</code> array.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.ids
+      <span class="dox_type">Matcher.ids</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.idsMap
 </span>
     </div>
   </div>
@@ -908,8 +1028,39 @@ match the numbers in the <code>matches</code> array.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setIds: ids must be array.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.setIds: ids must be a non-empty &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;array. Found: &#39;</span> <span class="o">+</span> <span class="nx">ids</span><span class="p">);</span>
+        <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>Keep track of all ids.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">idsMap</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<p>TODO: validate? Duplicated ids are fine?</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">idsMap</span><span class="p">[</span><span class="nx">ids</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="nx">ids</span><span class="p">;</span>
         <span class="nx">resetResolvedData</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
@@ -941,7 +1092,7 @@ have been generated first.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">ids</span>
       <span class="dox_type">array</span>
-      <span>Optinal. Array containing the id of the matches
+      <span>Optional. Array containing the id of the matches
   to pass to Matcher.setIds</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -950,7 +1101,15 @@ have been generated first.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.setIds
+      <span class="dox_type">Matcher.setIds</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.assignedIds</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.assignedIdsMap
 </span>
     </div>
   </div>
@@ -958,6 +1117,7 @@ have been generated first.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">assignIds</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">ids</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setIds</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
@@ -969,6 +1129,23 @@ have been generated first.</p>
             <span class="p">});</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ids</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+</div>
+<p>Map all ids to its position.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIdsMap</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">assignedIdsMap</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
 
@@ -1036,7 +1213,7 @@ have been generated first.</p>
   </div>
   <div class="body"><p>Substitutes the ids to the matches</p>
 
-<p>Populates the objects <code>resolvedMatchesById</code> and <code>resolvedMatches</code>.</p>
+<p>Populates the objects <code>resolvedMatchesObj</code> and <code>resolvedMatches</code>.</p>
 
 <p>It requires to have the matches array already set, or an error
 will be thrown.</p>
@@ -1059,14 +1236,13 @@ will be thrown.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.resolvedMatchesById</span>
+      <span class="dox_type">Matcher.resolvedMatchesObj</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Matcher.resolvedMatches
 
 TODO: creates two lists of matches with bots and without.
-TODO: add method getMatchFor(id,x)
 </span>
     </div>
   </div>
@@ -1088,7 +1264,7 @@ TODO: add method getMatchFor(id,x)
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Assign/generate ids if not done before.</p>
         </td>
@@ -1105,7 +1281,7 @@ TODO: add method getMatchFor(id,x)
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Parse the matches array and creates two data structures
 where the absolute position becomes the player id.</p>
@@ -1128,7 +1304,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Resolve matches.</p>
         </td>
@@ -1148,7 +1324,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Create resolved matches.</p>
         </td>
@@ -1165,13 +1341,13 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Substitute matching-structure.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="nx">matched</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="nx">matchedId</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span> <span class="o">=</span> <span class="nx">matchedId</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -1179,7 +1355,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Set getMatch indexes to 0.</p>
         </td>
@@ -1246,7 +1422,7 @@ where the absolute position becomes the player id.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasNext</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hasNext&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;hasNext&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1276,7 +1452,7 @@ where the absolute position becomes the player id.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">y</span>
       <span class="dox_type">number</span>
-      <span>Optional. The y-th match within the x-th round
+      <span>Optional. The y-th match within the x-th round.
    Default: Matcher.y</span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -1307,7 +1483,75 @@ where the absolute position becomes the player id.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatch&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatch&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matcher.getmatchfor">
+  <h3>
+    <a href="#matcher.getmatchfor" name="matcher.getmatchfor" class="pilcrow">&#182;</a>
+    Matcher.getMatchFor
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the id/s of the next or the x-th match for the specified id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">id</span>
+      <span class="dox_type">string</span>
+      <span>The id to get the matches for</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The x-th round. Default: Matcher.x</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>The next or requested match, or null if not found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.x</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.y</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.resolvedMatches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">hasOrGetNext
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatchFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatchFor: id must be string. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found:&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">idsMap</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">idsMap</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatchFor: unknown id: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatchFor&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1332,7 +1576,13 @@ where the absolute position becomes the player id.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">x</span>
       <span class="dox_type">number</span>
-      <span>Optional. The x-th round. Default: the round</span>
+      <span>Optional. The x-th round. Default: Matcher.x</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The y-th match within the x-th round.
+   Default: Matcher.y</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1346,14 +1596,16 @@ where the absolute position becomes the player id.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.resolvedMatchesById
+      <span class="dox_type">Matcher.resolvedMatchesObj
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatchObject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatchObject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">hasOrGetNext</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatchObject&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
         <span class="kd">var</span> <span class="nx">nRows</span><span class="p">;</span>
 
 
@@ -1363,7 +1615,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Check if there is any match yet.</p>
         </td>
@@ -1379,7 +1631,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Check x.</p>
         </td>
@@ -1409,7 +1661,7 @@ where the absolute position becomes the player id.</p>
         <span class="nx">nRows</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
     <span class="p">};</span>
 
 
@@ -1437,9 +1689,11 @@ where the absolute position becomes the player id.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">matches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">ids</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">idsMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">assignedIdsMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">assignerCb</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">randomAssigner</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">bye</span> <span class="o">=</span> <span class="nx">Matcher</span><span class="p">.</span><span class="nx">bye</span><span class="p">;</span>
@@ -1564,39 +1818,10 @@ they are considered as already an id.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">resetResolvedData</span><span class="p">(</span><span class="nx">matcher</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">matcher</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">matcher</span><span class="p">.</span><span class="nx">assignedIds</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">matcher</span><span class="p">.</span><span class="nx">assignedIdsMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="matcher.roundrobin">
-  <h3>
-    <a href="#matcher.roundrobin" name="matcher.roundrobin" class="pilcrow">&#182;</a>
-    Matcher.roundRobin
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span>The round robin matches</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Matcher</span><span class="p">.</span><span class="nx">roundRobin</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">};</span>
 
 
 </pre></div>
@@ -1681,7 +1906,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Make sure we have even numbers.</p>
         </td>
@@ -1698,7 +1923,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Limit rounds.</p>
         </td>
@@ -1721,7 +1946,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Here roundsLimit does not depend on n (must be smaller).</p>
         </td>
@@ -1758,7 +1983,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>Shuffle list of ids for random.</p>
         </td>
@@ -1771,7 +1996,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Create a new array for round i.</p>
         </td>
@@ -1785,7 +2010,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Check if new need to cycle.</p>
         </td>
@@ -1807,7 +2032,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Counter jj is updated only if not skipBye,
 otherwise we create holes in the matches array.</p>
@@ -1826,7 +2051,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Insert match.</p>
         </td>
@@ -1839,7 +2064,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Insert cycle match (if any).</p>
         </td>
@@ -1865,7 +2090,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Permutate for next round.</p>
         </td>
@@ -1875,6 +2100,112 @@ otherwise we create holes in the matches array.</p>
          <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
      <span class="p">}</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="fetchmatch">
+  <h2>
+    <a href="#fetchmatch" name="fetchmatch" class="pilcrow">&#182;</a>
+    fetchMatch
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Maps method names to a return function to execute in case of success</p>
+
+<ul>
+<li>0: hasNext -> returns true
+<ul><li>1: getMatch -> returns an array, or array of arrays</li>
+<li>2: getMatchFor -> returns a string</li>
+<li>3: getMatchObject -> returns an object</li></ul></li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">hasOrGetNext
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">fetchMatch</span> <span class="o">=</span> <span class="p">[</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+</div>
+<p>hasNext.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">},</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+</div>
+<p>getMatch.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">?</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
+        <span class="p">},</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+</div>
+<p>getMatchFor.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">];</span>
+            <span class="k">else</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">rs</span>
+        <span class="p">},</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+</div>
+<p>getMatchObject.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="p">{};</span>
+                <span class="nx">match</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+                <span class="nx">res</span><span class="p">[</span><span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+                <span class="nx">res</span><span class="p">[</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">];</span>
 
 
 </pre></div>
@@ -1937,14 +2268,18 @@ otherwise we create holes in the matches array.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.resolvedMatches
+      <span class="dox_type">Matcher.resolvedMatches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">fetchMatch
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">hasOrGetNext</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">get</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">hasOrGetNext</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">mod</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">nRows</span><span class="p">,</span> <span class="nx">nCols</span><span class="p">;</span>
 
 
@@ -1954,7 +2289,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Check if there is any match yet.</p>
         </td>
@@ -1972,7 +2307,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>No x, No y get the next match.</p>
         </td>
@@ -1985,7 +2320,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Check both x and y.</p>
         </td>
@@ -2002,7 +2337,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>No match was ever requested.</p>
         </td>
@@ -2010,7 +2345,7 @@ otherwise we create holes in the matches array.</p>
             <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="k">return</span> <span class="nx">get</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">return</span> <span class="nx">fetchMatch</span><span class="p">[</span><span class="nx">mod</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
@@ -2018,10 +2353,22 @@ otherwise we create holes in the matches array.</p>
             <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;=</span> <span class="nx">nRows</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">nCols</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;=</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
-                        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+                        <span class="k">return</span> <span class="nx">fetchMatch</span><span class="p">[</span><span class="nx">mod</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+</div>
+<p>return this.resolvedMatches[x][y];</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
                         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
@@ -2030,22 +2377,46 @@ otherwise we create holes in the matches array.</p>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
                     <span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;=</span> <span class="nx">nRows</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="nx">get</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="k">return</span> <span class="nx">fetchMatch</span><span class="p">[</span><span class="nx">mod</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+</div>
+<p>return mod ? this.resolvedMatches[x][y] : true;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="nx">get</span><span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                        <span class="k">return</span> <span class="nx">mod</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">get</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="k">return</span> <span class="nx">mod</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+</div>
+<p>End undefined x.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
 
 </pre></div>
@@ -2054,7 +2425,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Validate x.</p>
         </td>
@@ -2069,7 +2440,7 @@ otherwise we create holes in the matches array.</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">nRows</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
@@ -2086,13 +2457,13 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Default y (whole row).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">nRows</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
 
@@ -2102,12 +2473,24 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Return the whole row.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">];</span>
+                <span class="k">return</span> <span class="nx">fetchMatch</span><span class="p">[</span><span class="nx">mod</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+</div>
+<p>return this.resolvedMatches[x];</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
@@ -2121,17 +2504,17 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>Validate y.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y must be number &#39;</span> <span class="o">+</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.&#39;</span> <span class="o">+</span> <span class="nx">m</span>  <span class="o">+</span> <span class="s1">&#39;: y must be number &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.getMatch: y cannot be negative&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.&#39;</span> <span class="o">+</span> <span class="nx">m</span> <span class="o">+</span> <span class="s1">&#39;: y cannot be negative&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">nCols</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
@@ -2143,16 +2526,28 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Valid x,y match.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&lt;=</span> <span class="nx">nCols</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatches</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">];</span>
+                <span class="k">return</span> <span class="nx">fetchMatch</span><span class="p">[</span><span class="nx">mod</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+</div>
+<p>return this.resolvedMatches[x][y];</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
@@ -2165,13 +2560,13 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Out of bound.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>

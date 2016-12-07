@@ -677,7 +677,6 @@ or if reInit = true).</p>
                     <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -686,6 +685,23 @@ or if reInit = true).</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Dirty hack.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">game</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="nx">game</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">r1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">id1</span><span class="p">;</span>
+                    <span class="nx">game</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">r2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">id2</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -701,7 +717,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Prepare options to send to players.</p>
         </td>
@@ -722,7 +738,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Add options to array.</p>
         </td>
@@ -754,7 +770,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Store reference to last valid settings.</p>
         </td>
