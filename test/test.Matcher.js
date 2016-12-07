@@ -27,6 +27,9 @@ describe('Matcher', function() {
             (null === matcher.resolvedMatches).should.eql(true);
             (null === matcher.resolvedMatchesObj).should.eql(true);
             (null === matcher.assignedIds).should.eql(true);
+            (null === matcher.assignedIdsMap).should.eql(true);
+            (null === matcher.ids).should.eql(true);
+            (null === matcher.idsMap).should.eql(true);
             matcher.assignerCb.should.eql(Matcher.randomAssigner);
             matcher.missingId.should.eql('bot');
             matcher.bye.should.eql(-1);
@@ -662,13 +665,11 @@ describe('Matcher', function() {
     });
 
     describe('#getMatchFor(x)', function() {
-        it('should return entire row', function() {
-            matcher.getMatchObject(0).should.eql({
-                c: 'bot', bot: 'c', a: 'b', b: 'a' });
-            matcher.getMatchObject(1).should.eql({
-                c: 'b', b: 'c', bot: 'a', a: 'bot' });
-            matcher.getMatchObject(2).should.eql({
-                c: 'a', a: 'c', b: 'bot', bot: 'b' });
+        it('should return all matches in array', function() {
+            matcher.getMatchFor('a').should.eql([ 'b', 'bot', 'c' ]);
+            matcher.getMatchFor('b').should.eql([ 'a', 'c', 'bot' ]);
+            matcher.getMatchFor('c').should.eql([ 'bot', 'b', 'a' ]);
+            matcher.getMatchFor('bot').should.eql([ 'c', 'a', 'b' ]);
         });
 
         it('should return null if out of bounds', function() {
