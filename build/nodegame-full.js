@@ -20238,7 +20238,9 @@ if (!Array.prototype.indexOf) {
  * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
- * Handles matching roles to players.
+ * Handles assigning roles to matches.
+ *
+ * Currently only supports assigning roles to matches of size 2.
  */
 (function(exports, parent) {
 
@@ -20248,6 +20250,52 @@ if (!Array.prototype.indexOf) {
     var J = parent.JSUS;
 
     exports.Roler = Roler;
+
+    // ## Static methods.
+
+    /**
+     * ### Roler.linearRolifier
+     *
+     * Applies roles to a single match
+     *
+     * This is the default callback copied over `Matcher.rolify`.
+     * 
+     * @param {array} A match array containing two valid ids, or 
+     *   one id and a 'missing-id'
+     *
+     * @return {array} roles An array containing the roles for the match.
+     *   Missing ids will receive an undefined role
+     *
+     * @see Roler.id2RoleMap
+     * @see Roler.rolify
+     * @see Roler.setRolifyCb
+     */
+    Roler.linearRolifier = function(match, x, y) {
+        var roles, len;
+        var id1, id2, soloIdx;
+        len = match.length;
+        if (!len) {
+            throw new Error('Roler.rolify: match must be a non empty array. ' +
+                            'Found: ' + match);
+        }
+        id1 = match[0];
+        id2 = match[1];
+        roles = new Array(len);
+        if (id1 !== this.missingId && id2 !== this.missingId) {
+            this.setRoleFor(id1, this.rolesArray[0]);
+            this.setRoleFor(id2, this.rolesArray[1]);
+            roles = [ this.rolesArray[0], this.rolesArray[1] ];
+        }
+        else {
+            if (!this.rolesArray[2]) {
+                throw new Error('Roler.rolify: role3 required, but not found.');
+            }
+            soloIdx = (id1 === this.missingId) ? 1 : 0;
+            this.setRoleFor(match[soloIdx], this.rolesArray[2]);
+            roles[soloIdx] = this.rolesArray[2];
+        }
+        return roles;
+    };
 
     /**
      * ## Roler constructor
@@ -20261,10 +20309,10 @@ if (!Array.prototype.indexOf) {
          *
          * List of available roles
          *
-         * Also contains which ids are associated to the role.
+         * Also contains which ids are currently associated to the role.
          *
          * @see Roler.setRoles
-         * @see Roler.clear
+         * @see Roler.setRoleFor
          */
         this.roles = {};
 
@@ -20279,21 +20327,72 @@ if (!Array.prototype.indexOf) {
         this.rolesArray = [];
 
         /**
-         * ### Roler.map
+         * ### Roler.id2RoleMap
          *
-         * The map ids-roles
+         * The current map of ids-roles
          */
-        this.map = {};
+        this.id2RoleMap = {};
 
         /**
-         * ### Roler.mapByRole
+         * ### Roler._id2PosMap
          *
-         * Maps ids to a position in the roles array (role must be known)
+         * Maps ids to the current position in the corresponding role array
+         *
+         * The role array is inside the roles object.
+         *
+         * For example:
+         *
+         * ```javascript
+         * roler.roles.X = [ 'a', 'b', 'c', 'd' ];
+         * roler.id2RoleMap.b = 'X';
+         * roler._id2PosMap.b = 1;
+         * ```
          *
          * @api private
          */
-        this._map = {};
+        this._id2PosMap = {};
+
+        /**
+         * ### Roler.rolesMap
+         *
+         * The map of all roles for all matches in all rounds
+         *
+         * @see Roler.rolifyAll
+         */
+        this.rolesMap = null;
+
+        /**
+         * ### Roler.rolify
+         *
+         * Callback that assigns roles to a single match 
+         *
+         * @see Roler.linearRolifier
+         */
+        this.rolify = Roler.linearRolifier
+
+        /**
+         * ### Roler.missingId
+         *
+         * The id indicating a skipped match (i.e. a bye in a match)
+         *
+         * @see Matcher.missingId
+         */
+        this.missingId = 'bot';
     }
+
+    /**
+     * ### Roler.init
+     *
+     * Inits the Roler instance
+     *
+     * @param {object} options
+     */
+    Roler.prototype.init = function(options) {
+        options = options || {};
+        if (options.rolifyCb) this.setRolifyCb(options.rolifyCb);
+        if (options.roles) this.setRoles(options.roles);
+        if (options.missingId) this.missingId = options.missingId;
+    };
 
     /**
      * ### Roler.clear
@@ -20303,8 +20402,9 @@ if (!Array.prototype.indexOf) {
     Roler.prototype.clear = function() {
         this.rolesArray = [];
         this.roles = {};
-        this.map = {};
-        this.mapByRole = {};
+        this.id2RoleMap = {};
+        this._id2PosMap = {};
+        this.rolesMap = null;
     };
 
     /**
@@ -20322,7 +20422,7 @@ if (!Array.prototype.indexOf) {
     Roler.prototype.setRoles = function(roles, min, max) {
         var rolesObj, role;
         var i, len;
-        var min, max, err;
+        var err;
 
         // Clear previousd data.
         this.clear();
@@ -20375,7 +20475,8 @@ if (!Array.prototype.indexOf) {
      *
      * Sets the current role for the given id
      *
-     * @param {string} role The role to check
+     * @param {string} id The id of a player
+     * @param {string} role A valid role for the id
      *
      * @see Roler.roles
      */
@@ -20392,21 +20493,25 @@ if (!Array.prototype.indexOf) {
             throw new Error('Roler.setRoleFor: unknown role: ' + role);
         }
         // Id to role.
-        this.map[id] = role;
+        this.id2RoleMap[id] = role;
         // Save reference of numeric position in roles array to role.
-        this._map[role] = this.roles[role].length;
+        this._id2PosMap[role] = this.roles[role].length;
         // Add the id to the roles array.
         this.roles[role].push(id);
     };
 
     /**
-     * ### Roler.setRoleFor
+     * ### Roler.removeRoleFor
      *
-     * Sets the current role for the given id
+     * Removes the current role for the given id
      *
-     * @param {string} role The role to check
+     * @param {string} id The id of the player
+     * @param {string} role Optional. The role to remove, if known
+     *
+     * @return {string|null} role The removed role or null, if id had no role
      *
      * @see Roler.roles
+     * @see Roler.id2RoleMap
      */
     Roler.prototype.removeRoleFor = function(id, role) {
         if ('string' !== typeof id) {
@@ -20419,16 +20524,14 @@ if (!Array.prototype.indexOf) {
         }
         else {
             role = this.getRoleFor(id);
-            if (!role) {
-                throw new Error('Roler.removeRoleFor: could find any role ' +
-                                'assigned to id: ' + id);
-            }
+            if (!role) return null;
         }
         if (!this.roles[role]) {
             throw new Error('Roler.setRoleFor: unknown role: ' + role);
         }
-        this.map[id] = null;
-        this.roles[role].splice(this._map[id])
+        this.id2RoleMap[id] = null;
+        this.roles[role].splice(this._id2PosMap[id]);
+        return role;
     };
 
     /**
@@ -20458,18 +20561,18 @@ if (!Array.prototype.indexOf) {
      *
      * @return {boolean} True if id has given role
      *
-     * @see Roler.map
+     * @see Roler.id2RoleMap
      */
     Roler.prototype.hasRole = function(id, role) {
         if ('string' !== typeof id) {
-            throw new TypeError('Roler.hasRole: id must be string. Found: ' + 
+            throw new TypeError('Roler.hasRole: id must be string. Found: ' +
                                 id);
         }
         if ('string' !== typeof role) {
-            throw new TypeError('Roler.hasRole: role must be string. Found: ' + 
+            throw new TypeError('Roler.hasRole: role must be string. Found: ' +
                                 role);
         }
-        return this.map[id] === role;
+        return this.id2RoleMap[id] === role;
     };
 
     /**
@@ -20482,14 +20585,66 @@ if (!Array.prototype.indexOf) {
      * @return {string|null} The role currently hold, or null
      *    if the id is not found
      *
-     * @see Roler.map
+     * @see Roler.id2RoleMap
      */
     Roler.prototype.getRoleFor = function(id) {
         if ('string' !== typeof id) {
-            throw new TypeError('Roler.hasRole: id must be string. Found: ' + 
+            throw new TypeError('Roler.getRoleFor: id must be string. Found: ' +
                                 id);
         }
-        return this.map[id] || null;
+        return this.id2RoleMap[id] || null;
+    };
+
+    /**
+     * ### Roler.setRolifyCb
+     *
+     * Sets the callback assigning the roles
+     *
+     * The callback takes as input a match array, and optionally its
+     * x and y coordinates in the array of matches.
+     *
+     * @param {function} cb The rolifier cb
+     *
+     * @see Roler.rolify
+     */
+    Roler.prototype.setRolifyCb = function(cb) {    
+        if ('function' !== typeof cb) {
+            throw new TypeError('Roler.setRolifyCb: cb must be function. ' +
+                                'Found: ' + cb);
+        }
+        this.rolify = cb;
+    };
+
+    /**
+     * ### Roler.rolifyAll
+     *
+     * Applies roles to all matches
+     *
+     * @param {array} Array of array of matches
+     *
+     * @return {array} rolesMap The full maps of roles
+     *
+     * @see Roler.rolesMap
+     */
+    Roler.prototype.rolifyAll = function(matches) {
+        var i, len, j, lenJ, row, rolesMap;
+        len = matches ? null : matches.length;
+        if (!len) {
+            throw new Error('Roler.rolifyAll: match must be a non empty ' +
+                            'array. Found: ' + matches);
+        }
+        i = -1;
+        rolesMap = new Array(len);
+        for ( ; ++i < len ; ) {
+            row = matches[i];
+            i = -1, lenJ = row.length;
+            rolesMap[i] = new Array(lenJ);
+            for ( ; ++j < lenJ ; ) {
+                rolesMap[i][j] = this.rolify(row[j], i, j);
+            }
+        }
+        this.rolesMap = rolesMap;
+        return rolesMap;
     };
 
     // ## Closure
@@ -20537,6 +20692,7 @@ if (!Array.prototype.indexOf) {
      * Symbol assigned to matching number without valid id
      *
      * @see Matcher.resolvedMatches
+     * @see Roler.missingId
      */
     Matcher.missingId = 'bot';
 
@@ -20567,17 +20723,6 @@ if (!Array.prototype.indexOf) {
     Matcher.linearAssigner = function(ids) {
         return J.clone(ids);
     };
-
-//     /**
-//      * ### Matcher.roundRobin
-//      *
-//      * TODO: check if we need this.
-//      *
-//      * @return The round robin matches
-//      */
-//     Matcher.roundRobin = function(n, options) {
-//         return pairMatcher('roundrobin', n, options);
-//     };
 
     /**
      * ## Matcher constructor
@@ -21126,6 +21271,30 @@ if (!Array.prototype.indexOf) {
      */
     Matcher.prototype.getMatchObject = function(x, y) {
         return hasOrGetNext.call(this, 'getMatchObject', 3, x, y);
+    };
+
+    /**
+     * ### Matcher.normalizeRound
+     *
+     * Returns the round index given the current number of matches
+     *
+     * For example, if the are only 10 matches repeated in cycle,
+     * but the game has 20 rounds, round 13th will have normalized
+     * round index equal to 3.
+     *
+     * @param {number} round The round to normalize
+     *
+     * @return {object} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.matches
+     */
+    Matcher.prototype.normalizeRound = function(round) {
+        if ('number' !== typeof round || isNaN(round) || round < 1) {
+            throw new TypeError('Matcher.normalizeRound: round must be a ' +
+                                'number > 0. Found: ' + round);
+        }
+        return round % this.matches.length;
     };
 
     /**
@@ -21683,27 +21852,57 @@ if (!Array.prototype.indexOf) {
      *
      * Returns the current match for the specified id
      *
-     * @param {string} id The id for which a match is found
+     * @param {string} id The id to search a match for
+     * @param {number} round Optional. Specifies a round other
+     *   than current (will be normalized if there are more
+     *   rounds than matches)
+     *
+     * @return {string|null} The current match for the id, or null
+     *    if the id is not found
      */
     MatcherManager.prototype.getMatchFor = function(id, round) {
         if ('undefined' === typeof round) {
-            round = this.node.game.getCurrentGameStage().round;
+            round = this.getIterationRound();
+        }
+        else if ('undefined' !== typeof round) {
+            round = this.matcher.normalizeRound(round);
         }
         return this.matcher.getMatchFor(id, round);
     };
 
     /**
-     * ### MatcherManager.getMatchFor
+     * ### MatcherManager.getRoleFor
      *
-     * Returns the current match for the specified id
+     * Returns the current role for the specified id
      *
-     * @param {string} id The id for which a match is found
+     * @param {string} id The id to search a role for
+     * @param {number} round Optional. Specifies a round other
+     *   than current (will be normalized if there are more
+     *   rounds than matches) [***Currently not supported***]
+     *
+     * @return {string|null} The role currently hold by id, or null
+     *    if the id is not found
      */
     MatcherManager.prototype.getRoleFor = function(id, round) {
         if ('undefined' === typeof round) {
-            round = this.node.game.getCurrentGameStage().round;
+            console.log('***MatcherManager.getRoleFor: round parameter ' +
+                        'currently not supported.***');
         }
-        return this.matcher.getMatchFor(id, round);
+        return this.roler.getRoleFor(id);
+    };
+
+    /**
+     * ### MatcherManager.getIterationRound
+     *
+     * Returns the pointer the round in the matcher (matches are cycled through)
+     *
+     * @return {number} The current iteration round
+     *
+     * @see Matcher.x
+     * @see Matcher.hasNext
+     */
+    MatcherManager.prototype.getIterationRound = function() {
+        return this.matcher.x || 0;
     };
 
     // ## Helper Methods
@@ -21720,11 +21919,11 @@ if (!Array.prototype.indexOf) {
      * @return {array} The array of matches.
      */
     function randomPairs(settings) {
-        var r1, r2, r3;
-
+        var r1, r2;
         var ii, i, len;
-        var roundMatches, nMatchesIdx, match, id1, id2, soloId;
-        var matches, opts1, opts2, sayPartner, doRoles;
+        var roundMatches, nMatchesIdx, match, id1, id2, soloId, missId;
+        var matches,  sayPartner, doRoles;
+        var opts, roles;
 
         var game, n;
         var nRounds;
@@ -21735,15 +21934,9 @@ if (!Array.prototype.indexOf) {
 
         doRoles = !!settings.roles;
         if (doRoles) {
-
             // Resets all roles.
             this.roler.clear();
-
             this.roler.setRoles(settings.roles, 2); // TODO: pass the alg name?
-
-            r1 = settings.roles[0];
-            r2 = settings.roles[1];
-            r3 = settings.roles[2];
         }
 
         game = this.node.game;
@@ -21755,8 +21948,8 @@ if (!Array.prototype.indexOf) {
         }
         else {
             nRounds = game.plot.getRound(game.getNextStep(), 'total');
-            if (nRounds > n-1) nRounds = n-1;
         }
+        if (nRounds > n-1) nRounds = n-1;
 
         // Algorithm: random.
         if (settings.match === 'random') {
@@ -21786,6 +21979,7 @@ if (!Array.prototype.indexOf) {
                 // Generates matches;
                 this.matcher.match(true);
             }
+            // Cycle through the matches, if we do not have enough.
             else if (!this.matcher.hasNext()) {
                 this.matcher.init( { x: null, y: null });
             }
@@ -21794,6 +21988,7 @@ if (!Array.prototype.indexOf) {
         // Get all the matches for round x, and increments x.
         nMatchesIdx = 'number' === typeof this.matcher.x ?
             (this.matcher.x + 1) : 0;
+        // This also increments the index matcher.x.
         roundMatches = this.matcher.getMatch(nMatchesIdx);
 
         len = roundMatches.length;
@@ -21803,6 +21998,9 @@ if (!Array.prototype.indexOf) {
             new Array((len*2)) :
             (settings.skipBye ? new Array((len*2)-2) : new Array((len*2)-1));
 
+        // The id in case the number of player is odd.
+        missId = this.matcher.missingId;
+
         // While we have matches, send them to clients.
         ii = i = -1;
         for ( ; ++i < len ; ) {
@@ -21810,49 +22008,101 @@ if (!Array.prototype.indexOf) {
             match = roundMatches[i];
             id1 = match[0];
             id2 = match[1];
-            if (id1 !== 'bot' && id2 !== 'bot') {
 
-                if (doRoles) {
+            if (doRoles) {
+                roles = this.roler.rolify(match, nMatchesIdx, i, missId);
 
-                    // Set roles.
-                    this.roler.setRoleFor(id1, r1);
-                    this.roler.setRoleFor(id2, r2);
+                // Prepare options to send to player 1, if role1 is defined.
+                r1 = roles[0];
 
+                if (r1) {
                     if (!sayPartner) {
-                        // Prepare options to send to players.
-                        opts1 = { id: id1, options: { role: r1 } };
-                        opts2 = { id: id2, options: { role: r2 } };
+                        opts = { id: id1, options: { role: r1 } };
                     }
                     else {
-                        // Prepare options to send to players.
-                        opts1 = { id: id1, options: { role: r1,partner: id2 } };
-                        opts2 = { id: id2, options: { role: r2,partner: id1 } };
+                        opts = { id: id1, options: { role: r1, partner: id2 } };
                     }
+                    // Add options to array.
+                    matches[ii] = opts;
                 }
-                else {
-                    opts1 = { id: id1, options: { partner: id2 } };
+
+                // Prepare options to send to player 2, if role2 is defined.
+                r2 = roles[1];
+
+                if (r2) {
+
+                    // Increment ii index if both r1 and r2 are defined.
+                    if (r1) ii++;
+
+                    if (!sayPartner) {
+                        opts = { id: id2, options: { role: r2 } };
+                    }
+                    else {
+                        opts = { id: id2, options: { role: r2, partner: id1 } };
+                    }
+                    // Add options to array.
+                    matches[ii] = opts;
+                }
+            }
+            else if (sayPartner) {
+                if (id1 !== missId) {
+                    opts = { id: id1, options: { partner: id2 } };
+                    matches[ii] = opts;
+                }
+                if (id2 !== missId) {
+                    if (id1 !== missId) ii++;
                     opts2 = { id: id2, options: { partner: id1 } };
+                    matches[ii] = opts;
                 }
-
-                // Add options to array.
-                matches[ii] = opts1;
-                ii++;
-                matches[ii] = opts2;
             }
-            else if (doRoles) {
-                if (!r3) {
-                    throw new Error('MatcherManager.match: role3 required, ' +
-                                    'but not found.');
-                }
-                soloId = id1 === 'bot' ? id2 : id1;
-                this.roler.map[soloId] = r3;
 
-                matches[ii] = {
-                    id: soloId,
-                    options: { role: r3 }
-                };
+//         // How it was.
+//
+//         id1 = match[0];
+//         id2 = match[1];
+//         if (id1 !== missId && id2 !== missId) {
+//
+//             if (doRoles) {
+//
+//                 // Set roles.
+//                 this.roler.setRoleFor(id1, r1);
+//                 this.roler.setRoleFor(id2, r2);
+//
+//                 if (!sayPartner) {
+//                     // Prepare options to send to players.
+//                     opts1 = { id: id1, options: { role: r1 } };
+//                     opts2 = { id: id2, options: { role: r2 } };
+//                 }
+//                 else {
+//                     // Prepare options to send to players.
+//                     opts1 = { id: id1, options: { role: r1,partner: id2 } };
+//                     opts2 = { id: id2, options: { role: r2,partner: id1 } };
+//                 }
+//             }
+//             else {
+//                 opts1 = { id: id1, options: { partner: id2 } };
+//                 opts2 = { id: id2, options: { partner: id1 } };
+//             }
+            //
+//             // Add options to array.
+//             matches[ii] = opts1;
+//             ii++;
+//             matches[ii] = opts2;
+//         }
+//         else if (doRoles) {
+//             if (!r3) {
+//                 throw new Error('MatcherManager.match: role3 required, ' +
+//                                 'but not found.');
+//             }
+//             soloId = (id1 === missId) ? id2 : id1;
+//             this.roler.setRoleFor(soloId, r3);
+//
+//             matches[ii] = {
+//                 id: soloId,
+//                 options: { role: r3 }
+//             };
+//         }
 
-            }
         }
 
         // Store reference to last valid settings.
@@ -22780,14 +23030,21 @@ if (!Array.prototype.indexOf) {
                                 'or undefined. Found: ' +  options);
         }
 
-        // Update `role` and `partner` and in the step **only if**
-        // role and partner are not specified in the options already.
-        // By default `role` and `partner` are set to NULL at the
-        // beginning of each step.
+        // Properties `role` and `partner` might have been specified
+        // in the options, processed by processGotoStepOptions and
+        // inserted in the plot, or be already in the plot.
         role = this.plot.getProperty(nextStep, 'role');
+
         if (!role) role = null;
         else if (role === true) role = this.role;
         else if ('function' === typeof role) role = role.call(this);
+
+        if (role === null && this.getProperty('roles') !== null) {
+            throw new Error('Game.gotoStep: "role" is null, but "roles" ' +
+                            'are found  in step ' + nextStep);
+        }
+
+        // Overwrites step properties if a role is set.
         this.setRole(role, true);
 
         partner = this.plot.getProperty(nextStep, 'partner');
@@ -22795,7 +23052,6 @@ if (!Array.prototype.indexOf) {
         else if (partner === true) partner = this.partner;
         else if ('function' === typeof partner) partner= partner.call(this);
         this.setPartner(partner, true);
-
 
         if (stageInit) {
             // Store time:
@@ -25900,6 +26156,7 @@ if (!Array.prototype.indexOf) {
      * Symbol assigned to matching number without valid id
      *
      * @see Matcher.resolvedMatches
+     * @see Roler.missingId
      */
     Matcher.missingId = 'bot';
 
@@ -25930,17 +26187,6 @@ if (!Array.prototype.indexOf) {
     Matcher.linearAssigner = function(ids) {
         return J.clone(ids);
     };
-
-//     /**
-//      * ### Matcher.roundRobin
-//      *
-//      * TODO: check if we need this.
-//      *
-//      * @return The round robin matches
-//      */
-//     Matcher.roundRobin = function(n, options) {
-//         return pairMatcher('roundrobin', n, options);
-//     };
 
     /**
      * ## Matcher constructor
@@ -26489,6 +26735,30 @@ if (!Array.prototype.indexOf) {
      */
     Matcher.prototype.getMatchObject = function(x, y) {
         return hasOrGetNext.call(this, 'getMatchObject', 3, x, y);
+    };
+
+    /**
+     * ### Matcher.normalizeRound
+     *
+     * Returns the round index given the current number of matches
+     *
+     * For example, if the are only 10 matches repeated in cycle,
+     * but the game has 20 rounds, round 13th will have normalized
+     * round index equal to 3.
+     *
+     * @param {number} round The round to normalize
+     *
+     * @return {object} The next or requested match, or null if not found
+     *
+     * @see Matcher.x
+     * @see Matcher.matches
+     */
+    Matcher.prototype.normalizeRound = function(round) {
+        if ('number' !== typeof round || isNaN(round) || round < 1) {
+            throw new TypeError('Matcher.normalizeRound: round must be a ' +
+                                'number > 0. Found: ' + round);
+        }
+        return round % this.matches.length;
     };
 
     /**
@@ -28375,11 +28645,11 @@ if (!Array.prototype.indexOf) {
         }
         if (!node.constants.gamecommands[command]) {
             throw new Error('node.remoteCommand: unknown command: ' +
-                            command + '.');
+                            command);
         }
         if ('string' !== typeof to && !J.isArray(to)) {
             throw new TypeError('node.remoteCommand: to must be string ' +
-                                'or array.');
+                                'or array. Found: ' + to);
         }
 
         // Stringify options, if any.
@@ -28408,10 +28678,12 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.remoteAlert = function(text, to) {
         var msg;
         if ('string' !== typeof text) {
-            throw new TypeError('node.remoteAlert: text must be string.');
+            throw new TypeError('node.remoteAlert: text must be string. ' +
+                               'Found: ' + text);
         }
-        if ('undefined' === typeof to) {
-            throw new TypeError('node.remoteAlert: to must be string.');
+        if ('string' !== typeof to && !J.isArray(to)) {
+            throw new TypeError('node.remoteAlert: to must be string ' +
+                                'or array. Found: ' + to);
         }
         msg = this.msg.create({
             target: this.constants.target.ALERT,
