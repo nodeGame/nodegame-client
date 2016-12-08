@@ -605,7 +605,8 @@ remote options. That is:</p>
 
         <span class="kd">var</span> <span class="nx">ii</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">,</span> <span class="nx">missId</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">opts1</span><span class="p">,</span> <span class="nx">opts2</span><span class="p">,</span> <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span>  <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">roles</span><span class="p">;</span>
 
         <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">n</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">nRounds</span><span class="p">;</span>
@@ -850,9 +851,9 @@ or if reInit = true).</p>
             <span class="nx">match</span> <span class="o">=</span> <span class="nx">roundMatches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
             <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">roles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">missId</span><span class="p">);</span>
 
 
 </pre></div>
@@ -863,13 +864,18 @@ or if reInit = true).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
-<p>Set roles.</p>
+<p>Prepare options to send to player 1, if role1 is defined.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id1</span><span class="p">,</span> <span class="nx">r1</span><span class="p">);</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id2</span><span class="p">,</span> <span class="nx">r2</span><span class="p">);</span>
+                <span class="nx">r1</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 
+                <span class="k">if</span> <span class="p">(</span><span class="nx">r1</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="p">}</span>
 
 </pre></div>
         </td>
@@ -879,13 +885,12 @@ or if reInit = true).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
-<p>Prepare options to send to players.</p>
+<p>Add options to array.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                        <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span> <span class="p">}</span> <span class="p">};</span>
-                        <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span> <span class="p">}</span> <span class="p">};</span>
-                    <span class="p">}</span>
-                    <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+                <span class="p">}</span>
+
 
 </pre></div>
         </td>
@@ -895,17 +900,11 @@ or if reInit = true).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
-<p>Prepare options to send to players.</p>
+<p>Prepare options to send to player 1, if role1 is defined.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                        <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span><span class="p">,</span><span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
-                        <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span><span class="p">,</span><span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
-                    <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
-                <span class="p">}</span>
+                <span class="nx">r2</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">r2</span><span class="p">)</span> <span class="p">{</span>
 
 
 </pre></div>
@@ -916,27 +915,106 @@ or if reInit = true).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
+<p>Increment ii index if both r1 and r2 are defined.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">r1</span><span class="p">)</span> <span class="nx">ii</span><span class="o">++</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+</div>
 <p>Add options to array.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts1</span><span class="p">;</span>
-                <span class="nx">ii</span><span class="o">++</span><span class="p">;</span>
-                <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts2</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">r3</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;MatcherManager.match: role3 required, &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;but not found.&#39;</span><span class="p">);</span>
+                    <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="nx">soloId</span> <span class="o">=</span> <span class="nx">id1</span> <span class="o">===</span> <span class="nx">missId</span> <span class="o">?</span> <span class="nx">id2</span> <span class="o">:</span> <span class="nx">id1</span><span class="p">;</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">soloId</span><span class="p">,</span> <span class="nx">r3</span><span class="p">);</span>
-
-                <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="nx">id</span><span class="o">:</span> <span class="nx">soloId</span><span class="p">,</span>
-                    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r3</span> <span class="p">}</span>
-                <span class="p">};</span>
-
             <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">id2</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="nx">ii</span><span class="o">++</span><span class="p">;</span>
+                    <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>                    
+                <span class="p">}</span>
+            <span class="p">}</span>        
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code>    <span class="c1">// How it was.</span>
+
+    <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="c1">// Set roles.</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id1</span><span class="p">,</span> <span class="nx">r1</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id2</span><span class="p">,</span> <span class="nx">r2</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Prepare options to send to players.</span>
+                <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span> <span class="p">}</span> <span class="p">};</span>
+                <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span> <span class="p">}</span> <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="c1">// Prepare options to send to players.</span>
+                <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r1</span><span class="p">,</span><span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
+                <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r2</span><span class="p">,</span><span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">opts1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
+            <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Add options to array.</span>
+        <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts1</span><span class="p">;</span>
+        <span class="nx">ii</span><span class="o">++</span><span class="p">;</span>
+        <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts2</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">r3</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;MatcherManager.match: role3 required, &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;but not found.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">soloId</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">===</span> <span class="nx">missId</span><span class="p">)</span> <span class="o">?</span> <span class="nx">id2</span> <span class="o">:</span> <span class="nx">id1</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">soloId</span><span class="p">,</span> <span class="nx">r3</span><span class="p">);</span>
+
+        <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">soloId</span><span class="p">,</span>
+            <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">r3</span> <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
         <span class="p">}</span>
 
 
@@ -946,7 +1024,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Store reference to last valid settings.</p>
         </td>
