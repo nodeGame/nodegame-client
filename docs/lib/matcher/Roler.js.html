@@ -25,6 +25,12 @@
         <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
+        <a href="#static%20methods.">Static methods.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.linearrolifier">Roler.linearRolifier</a>
+      </div>
+      <div class="heading h2">
         <a href="#roler%20constructor">Roler constructor</a>
       </div>
       <div class="heading h3">
@@ -34,13 +40,22 @@
         <a href="#roler.rolesarray">Roler.rolesArray</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.map">Roler.map</a>
+        <a href="#roler.id2rolemap">Roler.id2RoleMap</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.map">Roler.map</a>
+        <a href="#roler._id2posmap">Roler._id2PosMap</a>
       </div>
       <div class="heading h3">
         <a href="#roler.rolesmap">Roler.rolesMap</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.rolify">Roler.rolify</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.missingid">Roler.missingId</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.init">Roler.init</a>
       </div>
       <div class="heading h3">
         <a href="#roler.clear">Roler.clear</a>
@@ -64,7 +79,7 @@
         <a href="#roler.getrolefor">Roler.getRoleFor</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.rolify">Roler.rolify</a>
+        <a href="#roler.setrolifycb">Roler.setRolifyCb</a>
       </div>
       <div class="heading h3">
         <a href="#roler.rolifyall">Roler.rolifyAll</a>
@@ -92,7 +107,9 @@
 <p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p>Handles matching roles to players.</p>
+  <div class="body"><p>Handles assigning roles to matches.</p>
+
+<p>Currently only supports assigning roles to matches of size 2.</p>
   </div>
 </div>
         </td>
@@ -118,6 +135,100 @@ MIT Licensed</p>
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">Roler</span> <span class="o">=</span> <span class="nx">Roler</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="static%20methods.">
+  <h2>
+    <a href="#static%20methods." name="static%20methods." class="pilcrow">&#182;</a>
+    Static methods.
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.linearrolifier">
+  <h3>
+    <a href="#roler.linearrolifier" name="roler.linearrolifier" class="pilcrow">&#182;</a>
+    Roler.linearRolifier
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Applies roles to a single match</p>
+
+<p>This is the default callback copied over <code>Matcher.rolify</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">A</span>
+      <span class="dox_type">array</span>
+      <span>match array containing two valid ids, or 
+  one id and a 'missing-id'</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>roles An array containing the roles for the match.
+  Missing ids will receive an undefined role</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.id2RoleMap</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.rolify</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.setRolifyCb
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">linearRolifier</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloIdx</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">match</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: match must be a non empty array. &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">match</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="nx">roles</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id1</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id2</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="nx">roles</span> <span class="o">=</span> <span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: role3 required, but not found.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">soloIdx</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="nx">soloIdx</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+            <span class="nx">roles</span><span class="p">[</span><span class="nx">soloIdx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">roles</span><span class="p">;</span>
+    <span class="p">};</span>
 
 
 </pre></div>
@@ -158,7 +269,7 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>List of available roles</p>
 
-<p>Also contains which ids are associated to the role.</p>
+<p>Also contains which ids are currently associated to the role.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -167,7 +278,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.clear
+      <span class="dox_type">Roler.setRoleFor
 </span>
     </div>
   </div>
@@ -216,20 +327,20 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.map">
+<div class="pilwrap" id="roler.id2rolemap">
   <h3>
-    <a href="#roler.map" name="roler.map" class="pilcrow">&#182;</a>
-    Roler.map
+    <a href="#roler.id2rolemap" name="roler.id2rolemap" class="pilcrow">&#182;</a>
+    Roler.id2RoleMap
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>The map ids-roles</p>
+  <div class="body"><p>The current map of ids-roles</p>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span> <span class="o">=</span> <span class="p">{};</span>
 
 
 </pre></div>
@@ -238,15 +349,27 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.map">
+<div class="pilwrap" id="roler._id2posmap">
   <h3>
-    <a href="#roler.map" name="roler.map" class="pilcrow">&#182;</a>
-    Roler.map
+    <a href="#roler._id2posmap" name="roler._id2posmap" class="pilcrow">&#182;</a>
+    Roler._id2PosMap
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Maps ids to a position in the roles array (role must be known)</p>
+  <div class="body"><p>Maps ids to the current position in the corresponding role array</p>
+
+<p>The role array is inside the roles object.</p>
+
+<p>For example:</p>
+
+
+<div class="highlight"><pre><code><span class="nx">roler</span><span class="p">.</span><span class="nx">roles</span><span class="p">.</span><span class="nx">X</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span> <span class="p">];</span>
+<span class="nx">roler</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">.</span><span class="nx">b</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="p">;</span>
+<span class="nx">roler</span><span class="p">.</span><span class="nx">_id2PosMap</span><span class="p">.</span><span class="nx">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">API</div>
@@ -258,7 +381,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_map</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_id2PosMap</span> <span class="o">=</span> <span class="p">{};</span>
 
 
 </pre></div>
@@ -288,7 +411,100 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.rolify">
+  <h3>
+    <a href="#roler.rolify" name="roler.rolify" class="pilcrow">&#182;</a>
+    Roler.rolify
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Callback that assigns roles to a single match </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.linearRolifier
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span> <span class="o">=</span> <span class="nx">Roler</span><span class="p">.</span><span class="nx">linearRolifier</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.missingid">
+  <h3>
+    <a href="#roler.missingid" name="roler.missingid" class="pilcrow">&#182;</a>
+    Roler.missingId
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The id indicating a skipped match (i.e. a bye in a match)</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.missingId
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="s1">&#39;bot&#39;</span><span class="p">;</span>
     <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.init">
+  <h3>
+    <a href="#roler.init" name="roler.init" class="pilcrow">&#182;</a>
+    Roler.init
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Inits the Roler instance</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options
+</span>
+      <span class="dox_type">object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rolifyCb</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setRolifyCb</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">rolifyCb</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">roles</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setRoles</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">roles</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">missingId</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
+    <span class="p">};</span>
 
 
 </pre></div>
@@ -313,8 +529,8 @@ MIT Licensed</p>
     <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_map</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_id2PosMap</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -377,7 +593,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
 </div>
 <p>Clear previousd data.</p>
         </td>
@@ -402,7 +618,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -420,7 +636,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -451,7 +667,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>All data validated.</p>
         </td>
@@ -517,12 +733,12 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Id to role.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -530,12 +746,12 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Save reference of numeric position in roles array to role.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_map</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_id2PosMap</span><span class="p">[</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -543,7 +759,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Add the id to the roles array.</p>
         </td>
@@ -566,18 +782,34 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Sets the current role for the given id</p>
+  <div class="body"><p>Removes the current role for the given id</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
+      <span class="dox_tag_name">id</span>
+      <span class="dox_type">string</span>
+      <span>The id of the player</span>
+    </div>
+    <div class="dox_tag_detail">
       <span class="dox_tag_name">role</span>
       <span class="dox_type">string</span>
-      <span>The role to check</span>
+      <span>Optional. The role to remove, if known</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>role The removed role or null, if id had no role</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.roles
+      <span class="dox_type">Roler.roles</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.id2RoleMap
 </span>
     </div>
   </div>
@@ -595,16 +827,14 @@ MIT Licensed</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">role</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.removeRoleFor: could find any role &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;assigned to id: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">role</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRoleFor: unknown role: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">splice</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_map</span><span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">roles</span><span class="p">[</span><span class="nx">role</span><span class="p">].</span><span class="nx">splice</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_id2PosMap</span><span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+        <span class="k">return</span> <span class="nx">role</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -685,7 +915,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.map
+      <span class="dox_type">Roler.id2RoleMap
 </span>
     </div>
   </div>
@@ -701,7 +931,7 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.hasRole: role must be string. Found: &#39;</span> <span class="o">+</span>
                                 <span class="nx">role</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">===</span> <span class="nx">role</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">===</span> <span class="nx">role</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -738,7 +968,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.map
+      <span class="dox_type">Roler.id2RoleMap
 </span>
     </div>
   </div>
@@ -750,7 +980,7 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRoleFor: id must be string. Found: &#39;</span> <span class="o">+</span>
                                 <span class="nx">id</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -760,66 +990,41 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.rolify">
+<div class="pilwrap" id="roler.setrolifycb">
   <h3>
-    <a href="#roler.rolify" name="roler.rolify" class="pilcrow">&#182;</a>
-    Roler.rolify
+    <a href="#roler.setrolifycb" name="roler.setrolifycb" class="pilcrow">&#182;</a>
+    Roler.setRolifyCb
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Applies roles to a single match</p>
+  <div class="body"><p>Sets the callback assigning the roles</p>
+
+<p>The callback takes as input a match array, and optionally its
+x and y coordinates in the array of matches.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">A</span>
-      <span class="dox_type">array</span>
-      <span>match array containing two valid ids, or 1 id and
-  one id and a 'miss-id'</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">string</span>
-      <span class="dox_type">null</span>
-      <span>The role currently hold, or null
-   if the id is not found</span>
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>The rolifier cb</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.map
+      <span class="dox_type">Roler.rolify
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">rolify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloIdx</span><span class="p">;</span>
-        <span class="nx">len</span> <span class="o">=</span> <span class="nx">match</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: match must be a non empty array. &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">match</span><span class="p">);</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRolifyCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>    
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.setRolifyCb: cb must be function. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">cb</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-        <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-        <span class="nx">roles</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id1</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id2</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-            <span class="nx">roles</span> <span class="o">=</span> <span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: role3 required, but not found.&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="nx">soloIdx</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">===</span> <span class="nx">missId</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="nx">soloIdx</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-            <span class="nx">roles</span><span class="p">[</span><span class="nx">soloIdx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">roles</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -861,7 +1066,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">rolifyAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">,</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">rolifyAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">rolesMap</span><span class="p">;</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="nx">matches</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
@@ -875,7 +1080,7 @@ MIT Licensed</p>
             <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">missId</span><span class="p">);</span>
+                <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">;</span>

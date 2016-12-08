@@ -158,7 +158,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;&#x61;&#x69;&#x6C;&#x74;&#x6F;:&#x73;&#46;&#x62;&#x61;&#108;&#105;&#x65;&#116;&#x74;&#x69;&#x40;&#x6E;e&#x75;&#x2E;&#x65;&#100;&#117;">&#x73;&#46;&#x62;&#x61;&#108;&#105;&#x65;&#116;&#x74;&#x69;&#x40;&#x6E;e&#x75;&#x2E;&#x65;&#100;&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#97;&#x69;&#108;&#x74;&#x6F;:&#x73;&#x2E;b&#97;&#108;&#105;&#x65;&#x74;&#x74;&#105;&#x40;&#110;&#101;&#117;&#x2E;&#x65;d&#117;">&#x73;&#x2E;b&#97;&#108;&#105;&#x65;&#x74;&#x74;&#105;&#x40;&#110;&#101;&#117;&#x2E;&#x65;d&#117;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -273,7 +273,11 @@ Will be initialized later.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Matcher.resolvedMatches
+      <span class="dox_type">Matcher.resolvedMatches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.missingId
 </span>
     </div>
   </div>
@@ -360,32 +364,6 @@ Will be initialized later.</p>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">linearAssigner</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ids</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">ids</span><span class="p">);</span>
     <span class="p">};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code><span class="cm">/**</span>
-<span class="cm"> * ### Matcher.roundRobin</span>
-<span class="cm"> *</span>
-<span class="cm"> * TODO: check if we need this.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @return The round robin matches</span>
-<span class="cm"> */</span>
-<span class="nx">Matcher</span><span class="p">.</span><span class="nx">roundRobin</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">pairMatcher</span><span class="p">(</span><span class="s1">&#39;roundrobin&#39;</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-<span class="p">};</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
 
 
 </pre></div>
@@ -908,7 +886,7 @@ match the numbers in the <code>matches</code> array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Init.</p>
         </td>
@@ -1128,7 +1106,7 @@ match the numbers in the <code>matches</code> array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Keep track of all ids.</p>
         </td>
@@ -1143,7 +1121,7 @@ match the numbers in the <code>matches</code> array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>TODO: validate? Duplicated ids are fine?</p>
         </td>
@@ -1224,7 +1202,7 @@ have been generated first.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Map all ids to its position.</p>
         </td>
@@ -1357,7 +1335,7 @@ TODO: creates two lists of matches with bots and without.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Assign/generate ids if not done before.</p>
         </td>
@@ -1374,7 +1352,7 @@ TODO: creates two lists of matches with bots and without.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Parse the matches array and creates two data structures
 where the absolute position becomes the player id.</p>
@@ -1398,7 +1376,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Resolve matches.</p>
         </td>
@@ -1418,7 +1396,7 @@ where the absolute position becomes the player id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Create resolved matches:
 Array.</p>
@@ -1432,7 +1410,7 @@ Array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Obj.</p>
         </td>
@@ -1446,7 +1424,7 @@ Array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>By Id.</p>
         </td>
@@ -1464,7 +1442,7 @@ Array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Substitute matching-structure.</p>
         </td>
@@ -1479,7 +1457,7 @@ Array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Set getMatch indexes to 0.</p>
         </td>
@@ -2037,7 +2015,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Make sure we have even numbers.</p>
         </td>
@@ -2054,7 +2032,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>Limit rounds.</p>
         </td>
@@ -2077,7 +2055,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Here roundsLimit does not depend on n (must be smaller).</p>
         </td>
@@ -2114,7 +2092,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Shuffle list of ids for random.</p>
         </td>
@@ -2127,7 +2105,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Create a new array for round i.</p>
         </td>
@@ -2141,7 +2119,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Check if new need to cycle.</p>
         </td>
@@ -2163,7 +2141,7 @@ they are considered as already an id.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Counter jj is updated only if not skipBye,
 otherwise we create holes in the matches array.</p>
@@ -2182,7 +2160,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Insert match.</p>
         </td>
@@ -2195,7 +2173,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Insert cycle match (if any).</p>
         </td>
@@ -2221,7 +2199,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Permutate for next round.</p>
         </td>
@@ -2273,7 +2251,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>hasNext.</p>
         </td>
@@ -2288,7 +2266,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>getMatch.</p>
         </td>
@@ -2304,7 +2282,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>getMatchFor.</p>
         </td>
@@ -2322,7 +2300,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>getMatchObject.</p>
         </td>
@@ -2427,7 +2405,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Check if there is any match yet.</p>
         </td>
@@ -2445,7 +2423,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>No x, No y get the next match.</p>
         </td>
@@ -2458,7 +2436,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Check both x and y.</p>
         </td>
@@ -2475,7 +2453,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>No match was ever requested.</p>
         </td>
@@ -2502,7 +2480,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>return this.resolvedMatches[x][y];</p>
         </td>
@@ -2528,7 +2506,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>return mod ? this.resolvedMatches[x][y] : true;</p>
         </td>
@@ -2550,7 +2528,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>End undefined x.</p>
         </td>
@@ -2563,7 +2541,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Validate x.</p>
         </td>
@@ -2595,7 +2573,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>Default y (whole row).</p>
         </td>
@@ -2611,7 +2589,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>Return the whole row.</p>
         </td>
@@ -2624,7 +2602,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>return this.resolvedMatches[x];</p>
         </td>
@@ -2642,7 +2620,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>Validate y.</p>
         </td>
@@ -2665,7 +2643,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Valid x,y match.</p>
         </td>
@@ -2682,7 +2660,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>return this.resolvedMatches[x][y];</p>
         </td>
@@ -2699,7 +2677,7 @@ otherwise we create holes in the matches array.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>Out of bound.</p>
         </td>
