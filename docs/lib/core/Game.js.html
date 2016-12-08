@@ -2231,10 +2231,9 @@ DONE for a short time in the new game stage:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
-<p>Update <code>role</code> and <code>partner</code> and in the step <strong>only if</strong>
-role and partner are not specified in the options already.
-By default <code>role</code> and <code>partner</code> are set to NULL at the
-beginning of each step.</p>
+<p>Properties <code>role</code> and <code>partner</code> might have been specified
+in the options, processed by processGotoStepOptions and
+inserted in the plot, or be already in the plot.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">role</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">);</span>
@@ -2244,8 +2243,8 @@ beginning of each step.</p>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="nx">role</span> <span class="o">=</span> <span class="nx">role</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;roles&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: role is null, but &quot;roles&quot; &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;are specified in step &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &quot;role&quot; is null, but &quot;roles&quot; &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;are found  in step &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
         <span class="p">}</span>
 
 
@@ -2261,7 +2260,6 @@ beginning of each step.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">setRole</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-
 
         <span class="nx">partner</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">nextStep</span><span class="p">,</span> <span class="s1">&#39;partner&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">partner</span><span class="p">)</span> <span class="nx">partner</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
