@@ -58,6 +58,9 @@
         <a href="#roler.init">Roler.init</a>
       </div>
       <div class="heading h3">
+        <a href="#roler.setrolesmap">Roler.setRolesMap</a>
+      </div>
+      <div class="heading h3">
         <a href="#roler.clear">Roler.clear</a>
       </div>
       <div class="heading h3">
@@ -221,6 +224,7 @@ MIT Licensed</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">match</span><span class="p">);</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: role3 required, but not found.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="nx">soloIdx</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
@@ -513,6 +517,73 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="roler.setrolesmap">
+  <h3>
+    <a href="#roler.setrolesmap" name="roler.setrolesmap" class="pilcrow">&#182;</a>
+    Roler.setRolesMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets a preinited role map</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">rolesMap</span>
+      <span class="dox_type">array</span>
+      <span>The roles map</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">validate</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Boolean flag to
+  turn on/off validation. Default: TRUE</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.rolesMap
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRolesMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rolesMap</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validate</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">rolesMap</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">rolesMap</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: rolesMap must be a &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-empty array. Found: &#39;</span> <span class="o">+</span> <span class="nx">rolesMap</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lenJ</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: rolesMap round &#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span>
+                                    <span class="s1">&#39;has no elements.&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]))</span> <span class="p">{</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: rolesMap round &#39;</span> <span class="o">+</span>
+                                        <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; element &#39;</span> <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span> <span class="s1">&#39; should be &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;array. Found: &#39;</span> <span class="o">+</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="roler.clear">
   <h3>
     <a href="#roler.clear" name="roler.clear" class="pilcrow">&#182;</a>
@@ -593,7 +664,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Clear previousd data.</p>
         </td>
@@ -618,7 +689,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -636,7 +707,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -667,7 +738,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>All data validated.</p>
         </td>
@@ -733,7 +804,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Id to role.</p>
         </td>
@@ -746,7 +817,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Save reference of numeric position in roles array to role.</p>
         </td>
@@ -759,7 +830,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Add the id to the roles array.</p>
         </td>
@@ -1103,8 +1174,8 @@ x and y coordinates in the array of matches.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 <span class="p">})(</span>
-    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
-    <span class="s1">&#39;undefined&#39;</span> <span class="o">!=</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>
         </td>
