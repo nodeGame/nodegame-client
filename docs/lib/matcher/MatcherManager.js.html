@@ -485,7 +485,7 @@ remote options. That is:</p>
       <span class="dox_type">number</span>
       <span>Optional. Specifies a round other
   than current (will be normalized if there are more
-  rounds than matches) [<strong><em>Currently not supported</em></strong>]</span>
+  rounds than matches)</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -501,10 +501,12 @@ remote options. That is:</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRoleFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***MatcherManager.getRoleFor: round parameter &#39;</span> <span class="o">+</span>
-                        <span class="s1">&#39;currently not supported.***&#39;</span><span class="p">);</span>
+            <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIterationRound</span><span class="p">();</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">normalizeRound</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
     <span class="p">};</span>
 
 
