@@ -20282,17 +20282,16 @@ if (!Array.prototype.indexOf) {
         id2 = match[1];
         roles = new Array(len);
         if (id1 !== this.missingId && id2 !== this.missingId) {
-            this.setRoleFor(id1, this.rolesArray[0]);
-            this.setRoleFor(id2, this.rolesArray[1]);
+            this.setRoleFor(id1, this.rolesArray[0], x);
+            this.setRoleFor(id2, this.rolesArray[1], x);
             roles = [ this.rolesArray[0], this.rolesArray[1] ];
         }
         else {
             if (!this.rolesArray[2]) {
-                console.log(match);
                 throw new Error('Roler.rolify: role3 required, but not found.');
             }
             soloIdx = (id1 === this.missingId) ? 1 : 0;
-            this.setRoleFor(match[soloIdx], this.rolesArray[2]);
+            this.setRoleFor(match[soloIdx], this.rolesArray[2], x);
             roles[soloIdx] = this.rolesArray[2];
         }
         return roles;
@@ -20306,11 +20305,27 @@ if (!Array.prototype.indexOf) {
     function Roler() {
 
         /**
+         * ### Roler.x
+         *
+         * The row-index of the last returned roles by Matcher.getRo
+         *
+         * @see Matcher.getMatch
+         */
+        this.x = null;
+
+        /**
+         * ### Roler.y
+         *
+         * The column-index of the last returned match by Matcher.getMatch
+         *
+         * @see Matcher.getMatch
+         */
+        this.y = null;
+
+        /**
          * ### Roler.roles
          *
-         * List of available roles
-         *
-         * Also contains which ids are currently associated to the role.
+         * List of all available roles
          *
          * @see Roler.setRoles
          * @see Roler.setRoleFor
@@ -20330,28 +20345,35 @@ if (!Array.prototype.indexOf) {
         /**
          * ### Roler.id2RoleMap
          *
-         * The current map of ids-roles
+         * Array of maps of ids-roles per round
          */
-        this.id2RoleMap = {};
+        this.id2RoleMap = [];
 
         /**
-         * ### Roler._id2PosMap
+         * ### Roler.role2IdMap
          *
-         * Maps ids to the current position in the corresponding role array
-         *
-         * The role array is inside the roles object.
-         *
-         * For example:
-         *
-         * ```javascript
-         * roler.roles.X = [ 'a', 'b', 'c', 'd' ];
-         * roler.id2RoleMap.b = 'X';
-         * roler._id2PosMap.b = 1;
-         * ```
-         *
-         * @api private
+         * Array of maps of ids-roles per round
          */
-        this._id2PosMap = {};
+        this.role2IdMap = [];
+
+//         /**
+//          * ### Roler._id2PosMap
+//          *
+//          * Array of maps ids to the current position in the corresponding role array
+//          *
+//          * The role array is inside the roles object.
+//          *
+//          * For example:
+//          *
+//          * ```javascript
+//          * roler.roles.X = [ 'a', 'b', 'c', 'd' ];
+//          * roler.id2RoleMap.b = 'X';
+//          * roler._id2PosMap.b = 1;
+//          * ```
+//          *
+//          * @api private
+//          */
+//         this._id2PosMap = [];
 
         /**
          * ### Roler.rolesMap
@@ -20427,12 +20449,102 @@ if (!Array.prototype.indexOf) {
                                         + i + ' element ' + j + ' should be ' +
                                         'array. Found: ' + rolesMap[i][j]);
                     }
+                    // These are specific to the rolify cb.
+                    if (rolesMap[i][j].length !== 2) {
+                        throw new Error('Roler.setRolesMap: roles map (' +
+                                        i + ',' + j + ') was expected to have' +
+                                        ' length 2: ' + rolesMap[i][j]);
+                    }
+                    if ('string' !== typeof rolesMap[i][j][0] ||
+                        'string' !== typeof rolesMap[i][j][1] ||
+                        rolesMap[i][j][0].trim() === '' ||
+                        rolesMap[i][j][1].trim() === '') {
+
+                        throw new Error('Roler.setRolesMap: roles map (' +
+                                        i + ',' + j + ') has invalid ' +
+                                        'elements: ' + rolesMap[i][j]);
+                    }
                 }
 
             }
         }
         this.rolesMap = rolesMap;
     };
+
+    /**
+     * ### Roler.setRoleFor
+     *
+     * Sets the current role for the given id
+     *
+     * @param {string} id The id of a player
+     * @param {string} role A valid role for the id
+     * @param {number} x The x-th round the role is being set for
+     *
+     * @see Roler.id2RoleMap
+     * @see Roler.role2IdMap
+     */
+    Roler.prototype.setRoleFor = function(id, role, x) {
+        if ('string' !== typeof id) {
+            throw new TypeError('Roler.setRoleFor: id must be string. Found: ' +
+                                id);
+        }
+        if ('string' !== typeof role) {
+            throw new TypeError('Roler.setRoleFor: role must be string. ' +
+                                'Found: ' + role);
+        }
+        if (!this.roles[role]) {
+            throw new Error('Roler.setRoleFor: unknown role: ' + role);
+        }
+        if ('number' !== typeof x || x < 0 || isNaN(x)) {
+            throw new TypeError('Roler.setRoleFor: x must be a non-negative ' +
+                                'number. Found: ' + x);
+        }
+        // Id to role.
+        if (!this.id2RoleMap[x]) this.id2RoleMap[x] = {};
+        this.id2RoleMap[x][id] = role;
+
+        // Role to id.
+        if (!this.role2IdMap[x]) this.role2IdMap[x] = {};
+        if (!this.role2IdMap[x][role]) this.role2IdMap[x][role] = [];
+        this.role2IdMap[x][role].push(id);
+
+//         // Save reference of numeric position in roles array to role.
+//         this._id2RolePosMap[role] = this.roles[x][role].length;        
+    };
+
+//     /**
+//      * ### Roler.removeRoleFor
+//      *
+//      * Removes the current role for the given id
+//      *
+//      * @param {string} id The id of the player
+//      * @param {string} role Optional. The role to remove, if known
+//      *
+//      * @return {string|null} role The removed role or null, if id had no role
+//      *
+//      * @see Roler.roles
+//      * @see Roler.id2RoleMap
+//      */
+//     Roler.prototype.removeRoleFor = function(id, role) {
+//         if ('string' !== typeof id) {
+//             throw new TypeError('Roler.setRoleFor: id must be string. Found: ' +
+//                                 id);
+//         }
+//         if (role && 'string' !== typeof role) {
+//             throw new TypeError('Roler.setRoleFor: role must be string or ' +
+//                                 'undefined. Found: ' + role);
+//         }
+//         else {
+//             role = this.getRoleFor(id);
+//             if (!role) return null;
+//         }
+//         if (!this.roles[role]) {
+//             throw new Error('Roler.setRoleFor: unknown role: ' + role);
+//         }
+//         this.id2RoleMap[id] = null;
+//         this.roles[role].splice(this._id2PosMap[id]);
+//         return role;
+//     };
 
     /**
      * ### Roler.clear
@@ -20443,7 +20555,8 @@ if (!Array.prototype.indexOf) {
         this.rolesArray = [];
         this.roles = {};
         this.id2RoleMap = {};
-        this._id2PosMap = {};
+        this.role2IdMap = {};
+        // this._id2PosMap = {};
         this.rolesMap = null;
     };
 
@@ -20503,75 +20616,11 @@ if (!Array.prototype.indexOf) {
                                     'must be a non-empty string. Found: ' +
                                     role);
             }
-            rolesObj[role] = [];
+            rolesObj[role] = true;
         }
         // All data validated.
         this.roles = rolesObj;
         this.rolesArray = roles;
-    };
-
-    /**
-     * ### Roler.setRoleFor
-     *
-     * Sets the current role for the given id
-     *
-     * @param {string} id The id of a player
-     * @param {string} role A valid role for the id
-     *
-     * @see Roler.roles
-     */
-    Roler.prototype.setRoleFor = function(id, role) {
-        if ('string' !== typeof id) {
-            throw new TypeError('Roler.setRoleFor: id must be string. Found: ' +
-                                id);
-        }
-        if ('string' !== typeof role) {
-            throw new TypeError('Roler.setRoleFor: role must be string. ' +
-                                'Found: ' + role);
-        }
-        if (!this.roles[role]) {
-            throw new Error('Roler.setRoleFor: unknown role: ' + role);
-        }
-        // Id to role.
-        this.id2RoleMap[id] = role;
-        // Save reference of numeric position in roles array to role.
-        this._id2PosMap[role] = this.roles[role].length;
-        // Add the id to the roles array.
-        this.roles[role].push(id);
-    };
-
-    /**
-     * ### Roler.removeRoleFor
-     *
-     * Removes the current role for the given id
-     *
-     * @param {string} id The id of the player
-     * @param {string} role Optional. The role to remove, if known
-     *
-     * @return {string|null} role The removed role or null, if id had no role
-     *
-     * @see Roler.roles
-     * @see Roler.id2RoleMap
-     */
-    Roler.prototype.removeRoleFor = function(id, role) {
-        if ('string' !== typeof id) {
-            throw new TypeError('Roler.setRoleFor: id must be string. Found: ' +
-                                id);
-        }
-        if (role && 'string' !== typeof role) {
-            throw new TypeError('Roler.setRoleFor: role must be string or ' +
-                                'undefined. Found: ' + role);
-        }
-        else {
-            role = this.getRoleFor(id);
-            if (!role) return null;
-        }
-        if (!this.roles[role]) {
-            throw new Error('Roler.setRoleFor: unknown role: ' + role);
-        }
-        this.id2RoleMap[id] = null;
-        this.roles[role].splice(this._id2PosMap[id]);
-        return role;
     };
 
     /**
@@ -20594,16 +20643,17 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Roler.hasRole
      *
-     * Returns TRUE if a given id is currently holding the specified role
+     * Returns TRUE if a given id is holding the specified role at round x
      *
      * @param {string} id The id to check
      * @param {string} role The role to check
+     * @param {number} x The round to check
      *
      * @return {boolean} True if id has given role
      *
      * @see Roler.id2RoleMap
      */
-    Roler.prototype.hasRole = function(id, role) {
+    Roler.prototype.hasRole = function(id, role, x) {
         if ('string' !== typeof id) {
             throw new TypeError('Roler.hasRole: id must be string. Found: ' +
                                 id);
@@ -20611,28 +20661,61 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof role) {
             throw new TypeError('Roler.hasRole: role must be string. Found: ' +
                                 role);
+        }        
+        if ('number' !== typeof x || x < 0 || isNaN(x)) {
+            throw new TypeError('Roler.hasRole: x must be a non-negative ' +
+                                'number. Found: ' + x);
         }
-        return this.id2RoleMap[id] === role;
+        return this.id2RoleMap[x][id] === role;
     };
 
     /**
      * ### Roler.getRoleFor
      *
-     * Returns the role currently hold by an id
+     * Returns the role hold by an id at round x
      *
      * @param {string} id The id to check
+     * @param {number} x The round to check
      *
      * @return {string|null} The role currently hold, or null
      *    if the id is not found
      *
      * @see Roler.id2RoleMap
      */
-    Roler.prototype.getRoleFor = function(id) {
+    Roler.prototype.getRoleFor = function(id, x) {
         if ('string' !== typeof id) {
             throw new TypeError('Roler.getRoleFor: id must be string. Found: ' +
                                 id);
+        }        
+        if ('number' !== typeof x || x < 0 || isNaN(x)) {
+            throw new TypeError('Roler.getRoleFor: x must be a non-negative ' +
+                                'number. Found: ' + x);
         }
-        return this.id2RoleMap[id] || null;
+        return this.id2RoleMap[x][id] || null;
+    };
+
+    /**
+     * ### Roler.getIdForRole
+     *
+     * Returns the id/s holding a roles at round x
+     *
+     * @param {string} role The role to check
+     * @param {number} x The round to check
+     *
+     * @return {array} Array of id/s holding the role at round x
+     *
+     * @see Roler.id2RoleMap
+     */
+    Roler.prototype.getIdForRole = function(role, x) {
+        if ('string' !== typeof role) {
+            throw new TypeError('Roler.getIdForRole: role must be string. ' +
+                                'Found: ' + id);
+        }        
+        if ('number' !== typeof x || x < 0 || isNaN(x)) {
+            throw new TypeError('Roler.getIdForRole: x must be a ' +
+                                'non-negative number. Found: ' + x);
+        }
+        return this.role2IdMap[x][role] || [];
     };
 
     /**
@@ -20686,6 +20769,7 @@ if (!Array.prototype.indexOf) {
         this.rolesMap = rolesMap;
         return rolesMap;
     };
+
 
     // ## Closure
 })(
@@ -22034,17 +22118,19 @@ if (!Array.prototype.indexOf) {
      * @param {string} id The id to search a role for
      * @param {number} round Optional. Specifies a round other
      *   than current (will be normalized if there are more
-     *   rounds than matches) [***Currently not supported***]
+     *   rounds than matches)
      *
      * @return {string|null} The role currently hold by id, or null
      *    if the id is not found
      */
     MatcherManager.prototype.getRoleFor = function(id, round) {
         if ('undefined' === typeof round) {
-            console.log('***MatcherManager.getRoleFor: round parameter ' +
-                        'currently not supported.***');
+            round = this.getIterationRound();
         }
-        return this.roler.getRoleFor(id);
+        else if ('undefined' !== typeof round) {
+            round = this.matcher.normalizeRound(round);
+        }
+        return this.roler.getRoleFor(id, round);
     };
 
     /**
