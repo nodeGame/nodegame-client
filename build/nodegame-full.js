@@ -20246,6 +20246,9 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
+    // TODO: have x, y indexes like in Matcher?
+    // TODO: getRoles method
+
     // ## Global scope
     var J = parent.JSUS;
 
@@ -20305,30 +20308,11 @@ if (!Array.prototype.indexOf) {
     function Roler() {
 
         /**
-         * ### Roler.x
-         *
-         * The row-index of the last returned roles by Matcher.getRo
-         *
-         * @see Matcher.getMatch
-         */
-        this.x = null;
-
-        /**
-         * ### Roler.y
-         *
-         * The column-index of the last returned match by Matcher.getMatch
-         *
-         * @see Matcher.getMatch
-         */
-        this.y = null;
-
-        /**
          * ### Roler.roles
          *
          * List of all available roles
          *
          * @see Roler.setRoles
-         * @see Roler.setRoleFor
          */
         this.roles = {};
 
@@ -20356,31 +20340,13 @@ if (!Array.prototype.indexOf) {
          */
         this.role2IdMap = [];
 
-//         /**
-//          * ### Roler._id2PosMap
-//          *
-//          * Array of maps ids to the current position in the corresponding role array
-//          *
-//          * The role array is inside the roles object.
-//          *
-//          * For example:
-//          *
-//          * ```javascript
-//          * roler.roles.X = [ 'a', 'b', 'c', 'd' ];
-//          * roler.id2RoleMap.b = 'X';
-//          * roler._id2PosMap.b = 1;
-//          * ```
-//          *
-//          * @api private
-//          */
-//         this._id2PosMap = [];
-
         /**
          * ### Roler.rolesMap
          *
          * The map of all roles for all matches in all rounds
          *
          * @see Roler.rolifyAll
+         * @see Roler.setRolesMap
          */
         this.rolesMap = null;
 
@@ -20415,6 +20381,82 @@ if (!Array.prototype.indexOf) {
         if (options.rolifyCb) this.setRolifyCb(options.rolifyCb);
         if (options.roles) this.setRoles(options.roles);
         if (options.missingId) this.missingId = options.missingId;
+    };
+
+    /**
+     * ### Roler.clear
+     *
+     * Clears all roles lists
+     */
+    Roler.prototype.clear = function() {
+        this.roles = {};
+        this.rolesArray = [];
+        this.id2RoleMap = [];
+        this.role2IdMap = [];
+        this.rolesMap = null;
+    };
+
+    /**
+     * ### Roler.setRoles
+     *
+     * Validates and sets the roles
+     *
+     * @param {array} roles Array of roles (string)
+     * @param {number} min At least _min_ roles must be specified. Default: 2
+     * @param {number} max At least _max_ roles must be specified. Default: inf
+     *
+     * @see Roler.setRoles
+     * @see Roler.clear
+     */
+    Roler.prototype.setRoles = function(roles, min, max) {
+        var rolesObj, role;
+        var i, len;
+        var err;
+
+        // Clear previousd data.
+        this.clear();
+
+        if (min && 'number' !== typeof min || min < 2) {
+            throw new TypeError('Roler.setRoles: min must be a ' +
+                                'number > 2 or undefined. Found: ' + min);
+        }
+        min = min || 2;
+
+        if (max && 'number' !== typeof max || max < min) {
+            throw new TypeError('Roler.setRoles: max must ' +
+                                'be number or undefined. Found: ' + max);
+        }
+
+        // At least two roles must be defined
+        if (!J.isArray(roles)) {
+            throw new TypeError('Roler.setRoles: roles must ' +
+                                'be array. Found: ' + roles);
+        }
+
+        len = roles.length;
+        // At least two roles must be defined
+        if (len < min || len > max) {
+            err = 'Roler.setRoles: roles must contain at least ' +
+                min + ' roles';
+            if (max) err += ' and no more than ' + max;
+            err += '. Found: ' + len;
+            throw new Error(err);
+        }
+
+        rolesObj = {};
+        i = -1;
+        for ( ; ++i < len ; ) {
+            role = roles[i];
+            if ('string' !== typeof role || role.trim() === '') {
+                throw new TypeError('Roler.setRoles: each role ' +
+                                    'must be a non-empty string. Found: ' +
+                                    role);
+            }
+            rolesObj[role] = true;
+        }
+        // All data validated.
+        this.roles = rolesObj;
+        this.rolesArray = roles;
     };
 
     /**
@@ -20507,120 +20549,6 @@ if (!Array.prototype.indexOf) {
         if (!this.role2IdMap[x]) this.role2IdMap[x] = {};
         if (!this.role2IdMap[x][role]) this.role2IdMap[x][role] = [];
         this.role2IdMap[x][role].push(id);
-
-//         // Save reference of numeric position in roles array to role.
-//         this._id2RolePosMap[role] = this.roles[x][role].length;        
-    };
-
-//     /**
-//      * ### Roler.removeRoleFor
-//      *
-//      * Removes the current role for the given id
-//      *
-//      * @param {string} id The id of the player
-//      * @param {string} role Optional. The role to remove, if known
-//      *
-//      * @return {string|null} role The removed role or null, if id had no role
-//      *
-//      * @see Roler.roles
-//      * @see Roler.id2RoleMap
-//      */
-//     Roler.prototype.removeRoleFor = function(id, role) {
-//         if ('string' !== typeof id) {
-//             throw new TypeError('Roler.setRoleFor: id must be string. Found: ' +
-//                                 id);
-//         }
-//         if (role && 'string' !== typeof role) {
-//             throw new TypeError('Roler.setRoleFor: role must be string or ' +
-//                                 'undefined. Found: ' + role);
-//         }
-//         else {
-//             role = this.getRoleFor(id);
-//             if (!role) return null;
-//         }
-//         if (!this.roles[role]) {
-//             throw new Error('Roler.setRoleFor: unknown role: ' + role);
-//         }
-//         this.id2RoleMap[id] = null;
-//         this.roles[role].splice(this._id2PosMap[id]);
-//         return role;
-//     };
-
-    /**
-     * ### Roler.clear
-     *
-     * Clears the roles lists
-     */
-    Roler.prototype.clear = function() {
-        this.rolesArray = [];
-        this.roles = {};
-        this.id2RoleMap = {};
-        this.role2IdMap = {};
-        // this._id2PosMap = {};
-        this.rolesMap = null;
-    };
-
-    /**
-     * ### Roler.setRoles
-     *
-     * Validates and sets the roles
-     *
-     * @param {array} roles Array of roles (string)
-     * @param {number} min At least _min_ roles must be specified. Default: 2
-     * @param {number} max At least _max_ roles must be specified. Default: inf
-     *
-     * @see Roler.setRoles
-     * @see Roler.clear
-     */
-    Roler.prototype.setRoles = function(roles, min, max) {
-        var rolesObj, role;
-        var i, len;
-        var err;
-
-        // Clear previousd data.
-        this.clear();
-
-        if (min && 'number' !== typeof min || min < 2) {
-            throw new TypeError('Roler.setRoles: min must be a ' +
-                                'number > 2 or undefined. Found: ' + min);
-        }
-        min = min || 2;
-
-        if (max && 'number' !== typeof max || max < min) {
-            throw new TypeError('Roler.setRoles: max must ' +
-                                'be number or undefined. Found: ' + max);
-        }
-
-        // At least two roles must be defined
-        if (!J.isArray(roles)) {
-            throw new TypeError('Roler.setRoles: roles must ' +
-                                'be array. Found: ' + roles);
-        }
-
-        len = roles.length;
-        // At least two roles must be defined
-        if (len < min || len > max) {
-            err = 'Roler.setRoles: roles must contain at least ' +
-                min + ' roles';
-            if (max) err += ' and no more than ' + max;
-            err += '. Found: ' + len;
-            throw new Error(err);
-        }
-
-        rolesObj = {};
-        i = -1;
-        for ( ; ++i < len ; ) {
-            role = roles[i];
-            if ('string' !== typeof role || role.trim() === '') {
-                throw new TypeError('Roler.setRoles: each role ' +
-                                    'must be a non-empty string. Found: ' +
-                                    role);
-            }
-            rolesObj[role] = true;
-        }
-        // All data validated.
-        this.roles = rolesObj;
-        this.rolesArray = roles;
     };
 
     /**
@@ -20661,7 +20589,7 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof role) {
             throw new TypeError('Roler.hasRole: role must be string. Found: ' +
                                 role);
-        }        
+        }
         if ('number' !== typeof x || x < 0 || isNaN(x)) {
             throw new TypeError('Roler.hasRole: x must be a non-negative ' +
                                 'number. Found: ' + x);
@@ -20686,7 +20614,7 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof id) {
             throw new TypeError('Roler.getRoleFor: id must be string. Found: ' +
                                 id);
-        }        
+        }
         if ('number' !== typeof x || x < 0 || isNaN(x)) {
             throw new TypeError('Roler.getRoleFor: x must be a non-negative ' +
                                 'number. Found: ' + x);
@@ -20710,7 +20638,7 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof role) {
             throw new TypeError('Roler.getIdForRole: role must be string. ' +
                                 'Found: ' + id);
-        }        
+        }
         if ('number' !== typeof x || x < 0 || isNaN(x)) {
             throw new TypeError('Roler.getIdForRole: x must be a ' +
                                 'non-negative number. Found: ' + x);
@@ -20751,16 +20679,15 @@ if (!Array.prototype.indexOf) {
      */
     Roler.prototype.rolifyAll = function(matches) {
         var i, len, j, lenJ, row, rolesMap;
-        len = matches ? null : matches.length;
-        if (!len) {
+        if (!J.isArray(matches) || !matches.length) {
             throw new Error('Roler.rolifyAll: match must be a non empty ' +
                             'array. Found: ' + matches);
         }
-        i = -1;
+        i = -1, len = matches.length;
         rolesMap = new Array(len);
         for ( ; ++i < len ; ) {
             row = matches[i];
-            i = -1, lenJ = row.length;
+            j = -1, lenJ = row.length;
             rolesMap[i] = new Array(lenJ);
             for ( ; ++j < lenJ ; ) {
                 rolesMap[i][j] = this.rolify(row[j], i, j);
@@ -22175,12 +22102,6 @@ if (!Array.prototype.indexOf) {
 
         doRoles = !!settings.roles;
 
-//        if (doRoles) {
-            // Resets all roles.
-            // this.roler.clear();
-            // this.roler.setRoles(settings.roles, 2); // TODO: pass alg name?
-//        }
-
         game = this.node.game;
         n = game.pl.size();
 
@@ -22274,7 +22195,6 @@ if (!Array.prototype.indexOf) {
             }
 
             if (doRoles) {
-                // roles = this.roler.rolify([ id1, id2 ], nMatchesIdx, i);
                 roles = this.roler.rolesMap[nMatchesIdx][i];
 
                 // Prepare options to send to player 1, if role1 is defined.
@@ -22320,54 +22240,6 @@ if (!Array.prototype.indexOf) {
                     matches[ii] = opts;
                 }
             }
-
-//         // How it was.
-//
-//         id1 = match[0];
-//         id2 = match[1];
-//         if (id1 !== missId && id2 !== missId) {
-//
-//             if (doRoles) {
-//
-//                 // Set roles.
-//                 this.roler.setRoleFor(id1, r1);
-//                 this.roler.setRoleFor(id2, r2);
-//
-//                 if (!sayPartner) {
-//                     // Prepare options to send to players.
-//                     opts1 = { id: id1, options: { role: r1 } };
-//                     opts2 = { id: id2, options: { role: r2 } };
-//                 }
-//                 else {
-//                     // Prepare options to send to players.
-//                     opts1 = { id: id1, options: { role: r1,partner: id2 } };
-//                     opts2 = { id: id2, options: { role: r2,partner: id1 } };
-//                 }
-//             }
-//             else {
-//                 opts1 = { id: id1, options: { partner: id2 } };
-//                 opts2 = { id: id2, options: { partner: id1 } };
-//             }
-            //
-//             // Add options to array.
-//             matches[ii] = opts1;
-//             ii++;
-//             matches[ii] = opts2;
-//         }
-//         else if (doRoles) {
-//             if (!r3) {
-//                 throw new Error('MatcherManager.match: role3 required, ' +
-//                                 'but not found.');
-//             }
-//             soloId = (id1 === missId) ? id2 : id1;
-//             this.roler.setRoleFor(soloId, r3);
-//
-//             matches[ii] = {
-//                 id: soloId,
-//                 options: { role: r3 }
-//             };
-//         }
-
         }
 
         // Store reference to last valid settings.
