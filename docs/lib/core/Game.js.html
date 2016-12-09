@@ -366,7 +366,7 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>The game's metadata</p>
 
-<p>This object is under normal auto filled with the data
+<p>This object is normally filled-in automatically with data
 from the file <code>package.json</code> inside the game folder.</p>
 
 <p>Contains at least the following properties:</p>
@@ -403,7 +403,7 @@ from the file <code>package.json</code> inside the game folder.</p>
   </div>
   <div class="body"><p>The game's settings</p>
 
-<p>This object is under normal auto filled with the settings
+<p>This object is normally filled-in automatically with the settings
 contained in the game folder: <code>game/game.settings</code>,
 depending also on the chosen treatment.</p>
   </div>
@@ -656,7 +656,7 @@ of the partner player.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Game.execStep
+      <span class="dox_type">Game.gotoStep
 </span>
     </div>
   </div>
@@ -1741,17 +1741,31 @@ and in this case the same step is re-executed.</p>
   <code>willBeDone</code> (immediately calls <code>node.done()</code>, useful
   for reconnections)</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">null</span>
+      <span>TRUE, if the step is found and it is executed;
+  FALSE, if the step is not found or can't be executed; NULL, if
+  we reached the end of the game sequence or it is game over.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">Game.execStep</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">PushManager.clearTimer
-
-TODO: harmonize return values
-TODO: remove some unused comments in the code.
+      <span class="dox_type">PushManager.clearTimer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">MatcherManager.match
 </span>
+    </div>
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>STEPPING</span>
     </div>
   </div>
 </div>
@@ -1928,9 +1942,8 @@ and we clear also the milliseconds count.</p>
             {
               id: 'playerId',
               options: {
-                 role: "A", // optional.
-                 partner: "XXX", // or object.
-                 group: "xxx"
+                 role: "A", // Optional.
+                 partner: "XXX", // Optional.
               }
             },
             ...
@@ -1950,8 +1963,8 @@ and we clear also the milliseconds count.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
-<p>TODO: This should if we have more components
-trying to modify the plot in remoteOptions.</p>
+<p>TODO: Allow a more general modification of plot obj
+in remote clients via a new callback, e.g. remoteOptions.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">remoteOptions</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">plot</span><span class="o">:</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">options</span> <span class="p">};</span>
@@ -2244,7 +2257,7 @@ inserted in the plot, or be already in the plot.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="s1">&#39;roles&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.gotoStep: &quot;role&quot; is null, but &quot;roles&quot; &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;are found  in step &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
+                            <span class="s1">&#39;are found in step &#39;</span> <span class="o">+</span> <span class="nx">nextStep</span><span class="p">);</span>
         <span class="p">}</span>
 
 
@@ -2435,12 +2448,6 @@ inserted in the plot, or be already in the plot.</p>
       <span class="dox_tag_name">step</span>
       <span class="dox_type">GameStage</span>
       <span>Step to execute</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>The result of the execution of the step callback</span>
     </div>
   </div>
 </div>

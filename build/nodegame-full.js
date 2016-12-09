@@ -20772,6 +20772,8 @@ if (!Array.prototype.indexOf) {
      */
     function Matcher(options) {
 
+        options = options || {};
+
         /**
          * ### Matcher.x
          *
@@ -21000,7 +21002,7 @@ if (!Array.prototype.indexOf) {
          *
          * @see Matcher.doRoles
          * @see Matcher.init
-         */        
+         */
         this.roler = options.roler || null;
 
         /**
@@ -21011,7 +21013,7 @@ if (!Array.prototype.indexOf) {
          * @see Matcher.doRoles
          * @see Matcher.roler
          * @see Matcher.matcher
-         */        
+         */
         this.roler = options.roler || null;
 
         // Init.
@@ -21064,13 +21066,13 @@ if (!Array.prototype.indexOf) {
             this.roler.init({
                 missingId: this.missingId,
                 roles: options.roles
-            });           
-            this.doRoles = true;     
+            });
+            this.doRoles = true;
         }
         else if ('undefined' !== typeof options.doRoles) {
             this.doRoles = !!options.doRoles;
         }
-        
+
         if ('undefined' !== typeof options.doObjLists) {
             this.doObjLists = !!options.doObjLists;
         }
@@ -21421,7 +21423,7 @@ if (!Array.prototype.indexOf) {
      * @see Matcher.resolvedMatchesObj
      */
     Matcher.prototype.getMatchObject = function(x, y) {
-        if (!this.resolvedMatchesObj) {            
+        if (!this.resolvedMatchesObj) {
             throw new Error('Matcher.getMatchObject: no obj matches found.');
         }
         return hasOrGetNext.call(this, 'getMatchObject', 3, x, y);
@@ -22184,9 +22186,8 @@ if (!Array.prototype.indexOf) {
                 matches.length--;
                 continue;
             }
-            
+
             if (doRoles) {
-                debugger
                 // roles = this.roler.rolify([ id1, id2 ], nMatchesIdx, i);
                 roles = this.roler.rolesMap[nMatchesIdx][i];
 
@@ -22459,7 +22460,7 @@ if (!Array.prototype.indexOf) {
          *
          * The game's metadata
          *
-         * This object is under normal auto filled with the data
+         * This object is normally filled-in automatically with data
          * from the file `package.json` inside the game folder.
          *
          * Contains at least the following properties:
@@ -22479,7 +22480,7 @@ if (!Array.prototype.indexOf) {
          *
          * The game's settings
          *
-         * This object is under normal auto filled with the settings
+         * This object is normally filled-in automatically with the settings
          * contained in the game folder: `game/game.settings`,
          * depending also on the chosen treatment.
          */
@@ -22584,7 +22585,7 @@ if (!Array.prototype.indexOf) {
          *
          * Assigns roles to players, players to players, etc.
          *
-         * @see Game.execStep
+         * @see Game.gotoStep
          */
         this.matcher = MatcherManager ? new MatcherManager(this.node) : null;
 
@@ -23022,11 +23023,15 @@ if (!Array.prototype.indexOf) {
      *   `willBeDone` (immediately calls `node.done()`, useful
      *   for reconnections)
      *
+     * @return {boolean|null} TRUE, if the step is found and it is executed;
+     *   FALSE, if the step is not found or can't be executed; NULL, if
+     *   we reached the end of the game sequence or it is game over.
+     *
      * @see Game.execStep
      * @see PushManager.clearTimer
+     * @see MatcherManager.match
      *
-     * TODO: harmonize return values
-     * TODO: remove some unused comments in the code.
+     * @emit STEPPING
      */
     Game.prototype.gotoStep = function(nextStep, options) {
         var node;
@@ -23091,9 +23096,8 @@ if (!Array.prototype.indexOf) {
                 //             {
                 //               id: 'playerId',
                 //               options: {
-                //                  role: "A", // optional.
-                //                  partner: "XXX", // or object.
-                //                  group: "xxx"
+                //                  role: "A", // Optional.
+                //                  partner: "XXX", // Optional.
                 //               }
                 //             },
                 //             ...
@@ -23103,8 +23107,8 @@ if (!Array.prototype.indexOf) {
                 i = -1, len = matches.length;
                 for ( ; ++i < len ; ) {
                     pid = matches[i].id;
-                    // TODO: This should if we have more components
-                    // trying to modify the plot in remoteOptions.
+                    // TODO: Allow a more general modification of plot obj
+                    // in remote clients via a new callback, e.g. remoteOptions.
                     remoteOptions = { plot: matches[i].options };
 
                     if (curStep.stage === 0) {
@@ -23219,7 +23223,7 @@ if (!Array.prototype.indexOf) {
 
         if (role === null && this.getProperty('roles') !== null) {
             throw new Error('Game.gotoStep: "role" is null, but "roles" ' +
-                            'are found  in step ' + nextStep);
+                            'are found in step ' + nextStep);
         }
 
         // Overwrites step properties if a role is set.
@@ -23283,8 +23287,6 @@ if (!Array.prototype.indexOf) {
      * Executes the specified stage object
      *
      * @param {GameStage} step Step to execute
-     *
-     * @return {boolean} The result of the execution of the step callback
      */
     Game.prototype.execStep = function(step) {
         var cb, origCb;
@@ -26374,6 +26376,8 @@ if (!Array.prototype.indexOf) {
      */
     function Matcher(options) {
 
+        options = options || {};
+
         /**
          * ### Matcher.x
          *
@@ -26602,7 +26606,7 @@ if (!Array.prototype.indexOf) {
          *
          * @see Matcher.doRoles
          * @see Matcher.init
-         */        
+         */
         this.roler = options.roler || null;
 
         /**
@@ -26613,7 +26617,7 @@ if (!Array.prototype.indexOf) {
          * @see Matcher.doRoles
          * @see Matcher.roler
          * @see Matcher.matcher
-         */        
+         */
         this.roler = options.roler || null;
 
         // Init.
@@ -26666,13 +26670,13 @@ if (!Array.prototype.indexOf) {
             this.roler.init({
                 missingId: this.missingId,
                 roles: options.roles
-            });           
-            this.doRoles = true;     
+            });
+            this.doRoles = true;
         }
         else if ('undefined' !== typeof options.doRoles) {
             this.doRoles = !!options.doRoles;
         }
-        
+
         if ('undefined' !== typeof options.doObjLists) {
             this.doObjLists = !!options.doObjLists;
         }
@@ -27023,7 +27027,7 @@ if (!Array.prototype.indexOf) {
      * @see Matcher.resolvedMatchesObj
      */
     Matcher.prototype.getMatchObject = function(x, y) {
-        if (!this.resolvedMatchesObj) {            
+        if (!this.resolvedMatchesObj) {
             throw new Error('Matcher.getMatchObject: no obj matches found.');
         }
         return hasOrGetNext.call(this, 'getMatchObject', 3, x, y);
