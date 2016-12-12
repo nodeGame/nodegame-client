@@ -418,7 +418,7 @@ remote options. That is:</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the current match for the specified id</p>
+  <div class="body"><p>Returns the match for the specified id</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -450,7 +450,7 @@ remote options. That is:</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIterationRound</span><span class="p">();</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">normalizeRound</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatchFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
@@ -471,7 +471,7 @@ remote options. That is:</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the current role for the specified id</p>
+  <div class="body"><p>Returns the role for the specified id</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -492,8 +492,8 @@ remote options. That is:</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">string</span>
       <span class="dox_type">null</span>
-      <span>The role currently hold by id, or null
-   if the id is not found</span>
+      <span>The role hold by id at the
+   specified round or null if not found</span>
     </div>
   </div>
 </div>
@@ -503,7 +503,7 @@ remote options. That is:</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIterationRound</span><span class="p">();</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">normalizeRound</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
