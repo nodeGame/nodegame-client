@@ -3816,8 +3816,33 @@ makes it an object with property 'milliseconds'. Makes sure
 a function, or just the number of milliseconds.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="kc">null</span> <span class="o">===</span> <span class="nx">timer</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span> <span class="o">&amp;&amp;</span>
+                 <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
+</div>
+<p>Manual clone.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">timer</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">),</span>
+                    <span class="nx">update</span><span class="o">:</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">update</span><span class="p">,</span>
+                    <span class="nx">timeup</span><span class="o">:</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">timeup</span><span class="p">,</span>
+                    <span class="nx">hooks</span><span class="o">:</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">hooks</span>
+                <span class="p">};</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="nx">timer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timer</span><span class="p">)</span> <span class="nx">timer</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">milliseconds</span><span class="o">:</span> <span class="nx">timer</span> <span class="p">};</span>
 
@@ -3837,7 +3862,7 @@ a function, or just the number of milliseconds.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
 </div>
 <p>Make sure update and timer are the same.</p>
         </td>
@@ -3917,7 +3942,7 @@ a function, or just the number of milliseconds.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 <p>Fire custom hooks from the latest to the first if any.</p>
         </td>
@@ -3932,7 +3957,7 @@ a function, or just the number of milliseconds.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 <p>Fire Timeup Event</p>
         </td>
