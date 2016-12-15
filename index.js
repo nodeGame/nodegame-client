@@ -124,9 +124,6 @@
         node.Stager = exports.Stager;
         node.stepRules = exports.stepRules;
 
-        // Removed.
-        // node.fs = new exports.NodeGameFS(node);
-
         return node;
     };
 

@@ -82,6 +82,9 @@
         <a href="#roler.getidforrole">Roler.getIdForRole</a>
       </div>
       <div class="heading h3">
+        <a href="#roler.getroles">Roler.getRoles</a>
+      </div>
+      <div class="heading h3">
         <a href="#roler.setrolifycb">Roler.setRolifyCb</a>
       </div>
       <div class="heading h3">
@@ -129,8 +132,7 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
 </div>
-<p>TODO: have x, y indexes like in Matcher?
-TODO: getRoles method</p>
+<p>TODO: have x, y indexes like in Matcher?</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
@@ -1035,6 +1037,62 @@ TODO: getRoles method</p>
   <h3>
     <a href="#roler.getidforrole" name="roler.getidforrole" class="pilcrow">&#182;</a>
     Roler.getIdForRole
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the id/s holding a roles at round x</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">role</span>
+      <span class="dox_type">string</span>
+      <span>The role to check</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>The round to check</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>Array of id/s holding the role at round x</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.id2RoleMap
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getIdForRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getIdForRole: role must be string. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getIdForRole: x must be a &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.getroles">
+  <h3>
+    <a href="#roler.getroles" name="roler.getroles" class="pilcrow">&#182;</a>
+    Roler.getRoles
   </h3>
 </div>
 
