@@ -176,7 +176,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#x6D;a&#x69;&#x6C;&#116;&#111;:&#x73;&#46;&#98;&#97;&#x6C;&#x69;&#x65;&#116;&#x74;&#x69;&#x40;&#110;&#x65;u&#46;e&#x64;&#x75;">&#x73;&#46;&#98;&#97;&#x6C;&#x69;&#x65;&#116;&#x74;&#x69;&#x40;&#110;&#x65;u&#46;e&#x64;&#x75;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;a&#105;lt&#x6F;:&#115;&#x2E;&#98;&#x61;l&#x69;&#x65;&#x74;&#x74;i&#x40;&#x6E;&#101;&#x75;&#x2E;e&#100;&#117;">&#115;&#x2E;&#98;&#x61;l&#x69;&#x65;&#x74;&#x74;i&#x40;&#x6E;&#101;&#x75;&#x2E;e&#100;&#117;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -1566,7 +1566,8 @@ TODO: creates two lists of matches with bots and without.
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Matcher</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">match</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">assignIds</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">pair</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">matched</span><span class="p">,</span> <span class="nx">matchedObj</span><span class="p">,</span> <span class="nx">matchedId</span><span class="p">,</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">matched</span><span class="p">,</span> <span class="nx">matchedObj</span><span class="p">,</span> <span class="nx">matchedId</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">rolesObj</span><span class="p">,</span> <span class="nx">idRolesObj</span><span class="p">,</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Matcher.match: no matches found.&#39;</span><span class="p">);</span>
@@ -1606,12 +1607,25 @@ where the absolute position becomes the player id.</p>
         <span class="nx">matched</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">);</span>
         <span class="nx">matchedObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">doObjLists</span> <span class="o">?</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="nx">matchedId</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">doIdLists</span> <span class="o">?</span> <span class="p">{}</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="nx">roles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span> <span class="o">?</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">roles</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">);</span>
+            <span class="nx">rolesObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">);</span>
+            <span class="nx">idRolesObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenI</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">roles</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">rolesObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">idRolesObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
             <span class="nx">matched</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doObjLists</span><span class="p">)</span> <span class="nx">matchedObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span><span class="p">)</span> <span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+                <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+                <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+            <span class="p">}</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="nx">id1</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">id2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                 <span class="nx">pair</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">];</span>
@@ -1697,6 +1711,19 @@ Array.</p>
         <td class="code highlight"><div class="highlight"><pre>
                 <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">matched</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
+                    <span class="nx">r1</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+                    <span class="nx">r2</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+                    <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">r1</span> <span class="o">!==</span> <span class="nx">r2</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">id1</span><span class="p">;</span>
+                        <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">id2</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span> <span class="p">];</span>
+                    <span class="p">}</span>
+                    <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
+                    <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1716,7 +1743,12 @@ Array.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesObj</span> <span class="o">=</span> <span class="nx">matchedObj</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolvedMatchesById</span> <span class="o">=</span> <span class="nx">matchedId</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRolesMap</span><span class="p">(</span><span class="nx">roles</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesObj</span> <span class="o">=</span> <span class="nx">rolesObj</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRolesMap</span><span class="p">(</span><span class="nx">roles</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRolesMapObj</span><span class="p">(</span><span class="nx">rolesObj</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">setRolesMapObjById</span><span class="p">(</span><span class="nx">idRolesObj</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="p">}</span>
 
 </pre></div>
         </td>
