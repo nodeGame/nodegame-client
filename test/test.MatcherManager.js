@@ -351,7 +351,7 @@ describe('MatcherManager', function() {
     });
 
 
-    describe('#match() roundrobin,mirror_invert,roles', function() {
+    describe('#getMatchFor()', function() {
         before(function() {
             // Fake game round.
             tmp = 1;
@@ -360,10 +360,94 @@ describe('MatcherManager', function() {
             };
         });
 
-        it('should save last matches', function() {
+        it('should match 1 with 4', function() {
             matcher.getMatchFor('1').should.be.eql('4');
         });
+        it('should match 4 with 1', function() {
+            matcher.getMatchFor('4').should.be.eql('1');
+        });
 
+        it('should match 2 with 3', function() {
+            matcher.getMatchFor('2').should.be.eql('3');
+        });
+        it('should match 3 with 2', function() {
+            matcher.getMatchFor('3').should.be.eql('2');
+        });
 
     });
+
+    describe('#getRoleFor()', function() {
+
+        it('should match RED with 1', function() {
+            matcher.getRoleFor('1').should.be.eql('RED');
+        });
+        it('should match 4 with BLUE', function() {
+            matcher.getRoleFor('4').should.be.eql('BLUE');
+        });
+
+        it('should match 2 with RED', function() {
+            matcher.getRoleFor('2').should.be.eql('RED');
+        });
+        it('should match 3 with BLUE', function() {
+            matcher.getRoleFor('3').should.be.eql('BLUE');
+        });
+
+    });
+
+
+    describe('#getIdForRole()', function() {
+
+        it('should match RED with 1,2', function() {
+            matcher.getIdForRole('RED').should.be.eql(['1', '2']);
+        });
+        it('should match BLUE with 4,3', function() {
+            matcher.getIdForRole('BLUE').should.be.eql(['4', '3']);
+        });
+
+    });
+
+    describe('#getMatches()', function() {
+
+        it('default', function() {
+            matcher.getMatches().should.be.eql([ [ '1', '4' ], [ '2', '3' ] ]);
+        });
+
+        it('ARRAY_ROLES', function() {
+            matcher.getMatches('ARRAY_ROLES').should.be.eql(
+                [ [ 'RED', 'BLUE' ], [ 'RED', 'BLUE' ] ]
+            );
+        });
+
+        it('ARRAY_ID_ROLES', function() {
+            matcher.getMatches('ARRAY_ID_ROLES').should.be.eql(
+                [ { '1': 'RED', '4': 'BLUE' }, { '2': 'RED', '3': 'BLUE' } ]
+            );
+        });
+
+        it('ARRAY_ROLES_ID', function() {
+            matcher.getMatches('ARRAY_ROLES_ID').should.be.eql(
+                [ { RED: '1', BLUE: '4' }, { RED: '2', BLUE: '3' } ]
+            );
+        });
+
+        it('OBJ', function() {
+            matcher.getMatches('OBJ').should.be.eql(
+                { '1': '4', '2': '3', '3': '2', '4': '1' }
+            );
+        });
+
+        it('OBJ_ROLES_ID', function() {
+            matcher.getMatches('OBJ_ROLES_ID').should.be.eql(
+                { RED: [ '1', '2' ], BLUE: [ '4', '3' ] }
+            );
+        });
+
+        it('OBJ_ID_ROLES', function() {
+            matcher.getMatches('OBJ_ID_ROLES').should.be.eql(
+                { '1': 'RED', '2': 'RED', '3': 'BLUE', '4': 'BLUE' }
+            );
+        });
+
+    });
+
 });
