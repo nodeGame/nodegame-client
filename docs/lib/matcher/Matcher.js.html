@@ -176,7 +176,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#x61;i&#108;&#x74;&#111;:&#115;&#x2E;&#x62;&#x61;&#108;i&#101;&#x74;&#116;i&#x40;&#110;e&#117;&#x2E;&#x65;&#100;u">&#115;&#x2E;&#x62;&#x61;&#108;i&#101;&#x74;&#116;i&#x40;&#110;e&#117;&#x2E;&#x65;&#100;u</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#97;&#x69;&#x6C;&#x74;&#x6F;:&#x73;.&#x62;&#x61;&#x6C;&#x69;&#101;t&#x74;&#x69;&#x40;&#110;&#101;&#117;&#46;&#x65;&#x64;&#x75;">&#x73;.&#x62;&#x61;&#x6C;&#x69;&#101;t&#x74;&#x69;&#x40;&#110;&#101;&#117;&#46;&#x65;&#x64;&#x75;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -2071,6 +2071,9 @@ error is thrown.</p>
 <p>For example, if the are only 10 matches repeated in cycle,
 but the game has 20 rounds, round 13th will have normalized
 round index equal to 3.</p>
+
+<p>Important! Matches are 0-based, but rounds are 1-based. This
+method takes care of it.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -2103,7 +2106,7 @@ round index equal to 3.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Matcher.normalizeRound: round must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;number &gt; 0. Found: &#39;</span> <span class="o">+</span> <span class="nx">round</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">round</span> <span class="o">%</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">round</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="k">this</span><span class="p">.</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">};</span>
 
 

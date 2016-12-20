@@ -354,14 +354,14 @@ describe('MatcherManager', function() {
     describe('#match() roundrobin,mirror_invert,roles', function() {
         before(function() {
             // Fake game round.
-            // tmp = 1;
-            // node.game.getCurrentGameStage = function() {
-            //     return { round: tmp };
-            // };
+            tmp = 1;
+            node.game.getCurrentGameStage = function() {
+                return { round: tmp };
+            };
         });
 
         it('should save last matches', function() {
-            // matcher.getMatchFor('1').should.be.eql('2');
+            matcher.getMatchFor('1').should.be.eql('4');
         });
 
 

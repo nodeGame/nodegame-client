@@ -541,7 +541,7 @@ they can be passed in either order.</p>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">mod</span> <span class="o">=</span> <span class="s1">&#39;ARRAY&#39;</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
+        <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatches&#39;</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY_ROLES&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">rolesMapObj</span><span class="p">[</span><span class="nx">round</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY_ID_ROLES&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
@@ -605,7 +605,8 @@ they can be passed in either order.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatchFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatchFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">round</span><span class="p">));</span>
+        <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatchFor&#39;</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatchFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -661,7 +662,8 @@ they can be passed in either order.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRoleFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">round</span><span class="p">));</span>
+        <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getRoleFor&#39;</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getRoleFor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -714,7 +716,8 @@ they can be passed in either order.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getIdForRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getIdForRole</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">round</span><span class="p">));</span>
+        <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getIdForRole&#39;</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getIdForRole</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -790,6 +793,9 @@ they can be passed in either order.</p>
 
   </div>
   <div class="body"><p>Parses a round into corresponding index of matches</p>
+
+<p>Important! Matches are 0-based, but rounds are 1-based.
+<code>Matcher.normalizeRound</code> takes care of it.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -822,9 +828,13 @@ they can be passed in either order.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">round2Index</span><span class="p">(</span><span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">round2Index</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getCurrentGameStage</span><span class="p">().</span><span class="nx">round</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">round</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;MatcherManager.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: game stage &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;is 0.0.0, please specify a valid round.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">round</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">normalizeRound</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
