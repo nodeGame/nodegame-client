@@ -460,20 +460,15 @@ they can be passed in either order.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">Optional.</span>
-      <span class="dox_type">number</span>
+      <span class="dox_tag_name">mod</span>
       <span class="dox_type">string</span>
-      <span>If number, the round of the matches
-  (default: current game round). If string, a valid modifier
-  (default: 'ARRAY')</span>
+      <span>Optional. A valid modifier (default: 'ARRAY')</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">Optional.</span>
+      <span class="dox_tag_name">round</span>
       <span class="dox_type">number</span>
-      <span class="dox_type">string</span>
-      <span>If number, the round of the matches
-  (default: current game round). If string, a valid modifier
-  (default: 'ARRAY')</span>
+      <span>Optional. The round of the matches
+  (default: current game round).</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -509,37 +504,19 @@ they can be passed in either order.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">mod</span><span class="p">,</span> <span class="nx">round</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">mod</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">round</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">round</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getMatches: second &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;argument must be undefined or &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;number if first argument is string. &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">round</span><span class="p">);</span>
-                <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getMatches: mod must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;undefined or string. Found: &#39;</span> <span class="o">+</span> <span class="nx">mod</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">round</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
-                <span class="nx">mod</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="nx">mod</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getMatches: second &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;argument must be undefined or &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;string if first argument is number. &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">mod</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getMatches: first &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;argument must be undefined, number or &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">mod</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
             <span class="nx">mod</span> <span class="o">=</span> <span class="s1">&#39;ARRAY&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">round</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getMatches: round &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;must be undefined or number. Found: &#39;</span> <span class="o">+</span> <span class="nx">round</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatches&#39;</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
 
