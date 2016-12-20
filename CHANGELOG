@@ -1,6 +1,6 @@
 # nodegame-client change log
 
-## 3.5.0 (changelog not fully updated)...
+## 3.5.0
 - Introduced role: the same step can have sub-step properties organized in roles. Current role saved in: `node.game.role`.
 - Introduce partner: the ID (or full obj) of another client.
 - New step properties: role, partner, roles, matcher.
@@ -10,7 +10,7 @@
 - Fixed bug of timer step property being an object with a callback on the milliseconds property.
 
 ## 3.2.1
-- node.get timeout erroneously not clering the event listener if executeOnce was set. Fixed.
+- node.get timeout erroneously not clearing the event listener if executeOnce was set. Fixed.
 - SocketDirect does not stringify/unstringify the messages now. Just passes the plane object.
 
 ## 3.1.1
