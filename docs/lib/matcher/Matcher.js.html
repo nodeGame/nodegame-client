@@ -176,7 +176,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;a&#105;lt&#x6F;:&#115;&#x2E;&#98;&#x61;l&#x69;&#x65;&#x74;&#x74;i&#x40;&#x6E;&#101;&#x75;&#x2E;e&#100;&#117;">&#115;&#x2E;&#98;&#x61;l&#x69;&#x65;&#x74;&#x74;i&#x40;&#x6E;&#101;&#x75;&#x2E;e&#100;&#117;</a>
+<p>Copyright(c) 2016 Stefano Balietti <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6F;:&#115;&#46;&#x62;&#97;&#x6C;&#105;e&#x74;&#116;&#105;&#x40;&#110;&#x65;&#117;&#x2E;&#x65;&#100;&#117;">&#115;&#46;&#x62;&#97;&#x6C;&#105;e&#x74;&#116;&#105;&#x40;&#110;&#x65;&#117;&#x2E;&#x65;&#100;&#117;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Class handling the creation of tournament schedules.</p>
@@ -2294,8 +2294,22 @@ they are considered as already an id.</p>
 <li>bye: identifier for dummy competitor. Default: -1.</li>
 <li>skypeBye: flag whether players matched with the dummy
    competitor should be added or not. Default: true.</li>
-<li>rounds: number of rounds to repeat matching. Default: ?</li>
-</ul></span>
+<li>rounds: number of rounds to repeat matching. Default:</li>
+<li>cycle: if there are more rounds than possible combinations
+   this option specifies how to fill extra rounds. Available
+   settings:</li>
+</ul>
+
+
+<div class="highlight"><pre><code>   <span class="o">-</span> <span class="s1">&#39;repeat&#39;</span><span class="o">:</span> <span class="nx">repeats</span> <span class="nx">all</span> <span class="nx">available</span> <span class="nx">matches</span> <span class="p">(</span><span class="k">default</span><span class="p">)</span>
+   <span class="o">-</span> <span class="s1">&#39;repeat_invert&#39;</span><span class="o">:</span> <span class="nx">repeats</span> <span class="nx">all</span> <span class="nx">available</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">inverts</span>
+        <span class="nx">the</span> <span class="nx">position</span> <span class="nx">of</span> <span class="nx">ids</span> <span class="k">in</span> <span class="nx">the</span> <span class="nx">match</span>
+   <span class="o">-</span> <span class="s1">&#39;mirror&#39;</span><span class="o">:</span> <span class="nx">repeats</span> <span class="nx">all</span> <span class="nx">available</span> <span class="nx">matches</span> <span class="k">in</span> <span class="nx">mirrored</span> <span class="nx">order</span><span class="p">.</span>
+   <span class="o">-</span> <span class="s1">&#39;mirror_invert&#39;</span><span class="o">:</span> <span class="nx">repeats</span> <span class="nx">all</span> <span class="nx">available</span> <span class="nx">matches</span> <span class="k">in</span> <span class="nx">mirrored</span>
+         <span class="nx">order</span> <span class="nx">and</span> <span class="nx">also</span> <span class="nx">inverts</span> <span class="nx">the</span> <span class="nx">position</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">ids</span> <span class="k">in</span> <span class="nx">the</span> <span class="nx">match</span>
+</code></pre></div>
+
+</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
