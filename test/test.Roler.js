@@ -116,13 +116,13 @@ describe('Roler', function() {
 
     function testDataStructures(it) {
 
-        it('should create the matchedRoles obj', function() {
-            roler.matchedRoles.should.exist;
-            roler.matchedRoles.length.should.eql(3);
+        it('should create the rolifiedMatches obj', function() {
+            roler.rolifiedMatches.should.exist;
+            roler.rolifiedMatches.length.should.eql(3);
         });
 
-        it('should create a linear matchedRoles obj', function() {
-            roler.matchedRoles.should.eql(
+        it('should create a linear rolifiedMatches obj', function() {
+            roler.rolifiedMatches.should.eql(
                 [ [ [ 'A', 'B' ], [ 'A', 'B' ] ],
                   [ [ 'A', 'B' ], [ 'A', 'B' ] ],
                   [ [ 'A', 'B' ], [ 'A', 'B' ] ] ]
@@ -184,26 +184,26 @@ describe('Roler', function() {
 
     function testDataStructuresOdd(it) {
 
-        it('should create the matchedRoles obj', function() {
-            roler.matchedRoles.should.exist;
-            roler.matchedRoles.length.should.eql(3);
+        it('should create the rolifiedMatches obj', function() {
+            roler.rolifiedMatches.should.exist;
+            roler.rolifiedMatches.length.should.eql(3);
         });
 
-        it('should create a linear matchedRoles obj', function() {
+        it('should create a linear rolifiedMatches obj', function() {
 
             // There are undefined spots in array, and mocha get confused.
 
-            roler.matchedRoles[0][0][0].should.be.eql('C');
-            (undefined === roler.matchedRoles[0][0][1]).should.be.true;
-            roler.matchedRoles[0][1].should.be.eql([ 'A', 'B' ]);
+            roler.rolifiedMatches[0][0][0].should.be.eql('C');
+            (undefined === roler.rolifiedMatches[0][0][1]).should.be.true;
+            roler.rolifiedMatches[0][1].should.be.eql([ 'A', 'B' ]);
 
-            roler.matchedRoles[1][0].should.be.eql([ 'A', 'B' ]);
-            (undefined === roler.matchedRoles[1][1][0]).should.be.true;
-            roler.matchedRoles[1][1][1].should.be.eql('C');
+            roler.rolifiedMatches[1][0].should.be.eql([ 'A', 'B' ]);
+            (undefined === roler.rolifiedMatches[1][1][0]).should.be.true;
+            roler.rolifiedMatches[1][1][1].should.be.eql('C');
 
-            roler.matchedRoles[2][0].should.be.eql([ 'A', 'B' ]);
-            roler.matchedRoles[2][1][0].should.be.eql('C');
-            (undefined === roler.matchedRoles[2][1][1]).should.be.true
+            roler.rolifiedMatches[2][0].should.be.eql([ 'A', 'B' ]);
+            roler.rolifiedMatches[2][1][0].should.be.eql('C');
+            (undefined === roler.rolifiedMatches[2][1][1]).should.be.true
 
         });
 
