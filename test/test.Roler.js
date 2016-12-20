@@ -116,13 +116,13 @@ describe('Roler', function() {
 
     function testDataStructures(it) {
 
-        it('should create the rolesMap obj', function() {
-            roler.rolesMap.should.exist;
-            roler.rolesMap.length.should.eql(3);
+        it('should create the matchedRoles obj', function() {
+            roler.matchedRoles.should.exist;
+            roler.matchedRoles.length.should.eql(3);
         });
 
-        it('should create a linear rolesMap obj', function() {
-            roler.rolesMap.should.eql(
+        it('should create a linear matchedRoles obj', function() {
+            roler.matchedRoles.should.eql(
                 [ [ [ 'A', 'B' ], [ 'A', 'B' ] ],
                   [ [ 'A', 'B' ], [ 'A', 'B' ] ],
                   [ [ 'A', 'B' ], [ 'A', 'B' ] ] ]
@@ -130,7 +130,7 @@ describe('Roler', function() {
         });
 
         it('should create the id2role map', function() {
-            roler.id2RoleMap.should.eql([
+            roler.id2RoleRoundMap.should.eql([
                 { '1': 'A', '2': 'A', '3': 'B', '4': 'B' },
                 { '1': 'A', '2': 'B', '3': 'B', '4': 'A' },
                 { '1': 'A', '2': 'B', '3': 'A', '4': 'B' }
@@ -138,7 +138,7 @@ describe('Roler', function() {
         });
 
         it('should create the role2id map', function() {
-            roler.role2IdMap.should.eql(
+            roler.role2IdRoundMap.should.eql(
                 [ { A: [ '1', '2' ], B: [ '4', '3' ] },
                   { A: [ '1', '4' ], B: [ '3', '2' ] },
                   { A: [ '1', '3' ], B: [ '2', '4' ] }
@@ -184,31 +184,31 @@ describe('Roler', function() {
 
     function testDataStructuresOdd(it) {
 
-        it('should create the rolesMap obj', function() {
-            roler.rolesMap.should.exist;
-            roler.rolesMap.length.should.eql(3);
+        it('should create the matchedRoles obj', function() {
+            roler.matchedRoles.should.exist;
+            roler.matchedRoles.length.should.eql(3);
         });
 
-        it('should create a linear rolesMap obj', function() {
+        it('should create a linear matchedRoles obj', function() {
 
             // There are undefined spots in array, and mocha get confused.
 
-            roler.rolesMap[0][0][0].should.be.eql('C');
-            (undefined === roler.rolesMap[0][0][1]).should.be.true;
-            roler.rolesMap[0][1].should.be.eql([ 'A', 'B' ]);
+            roler.matchedRoles[0][0][0].should.be.eql('C');
+            (undefined === roler.matchedRoles[0][0][1]).should.be.true;
+            roler.matchedRoles[0][1].should.be.eql([ 'A', 'B' ]);
 
-            roler.rolesMap[1][0].should.be.eql([ 'A', 'B' ]);
-            (undefined === roler.rolesMap[1][1][0]).should.be.true;
-            roler.rolesMap[1][1][1].should.be.eql('C');
+            roler.matchedRoles[1][0].should.be.eql([ 'A', 'B' ]);
+            (undefined === roler.matchedRoles[1][1][0]).should.be.true;
+            roler.matchedRoles[1][1][1].should.be.eql('C');
 
-            roler.rolesMap[2][0].should.be.eql([ 'A', 'B' ]);
-            roler.rolesMap[2][1][0].should.be.eql('C');
-            (undefined === roler.rolesMap[2][1][1]).should.be.true
+            roler.matchedRoles[2][0].should.be.eql([ 'A', 'B' ]);
+            roler.matchedRoles[2][1][0].should.be.eql('C');
+            (undefined === roler.matchedRoles[2][1][1]).should.be.true
 
         });
 
         it('should create the id2role map', function() {
-            roler.id2RoleMap.should.eql(
+            roler.id2RoleRoundMap.should.eql(
                 [ { '1': 'C', '2': 'A', '3': 'B' },
                   { '1': 'A', '2': 'C', '3': 'B' },
                   { '1': 'A', '2': 'B', '3': 'C' } ]
@@ -216,7 +216,7 @@ describe('Roler', function() {
         });
 
         it('should create the role2id map', function() {
-            roler.role2IdMap.should.eql(
+            roler.role2IdRoundMap.should.eql(
                 [ { C: [ '1' ], A: [ '2' ], B: [ '3' ] },
                   { A: [ '1' ], B: [ '3' ], C: [ '2' ] },
                   { A: [ '1' ], B: [ '2' ], C: [ '3' ] }

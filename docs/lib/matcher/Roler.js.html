@@ -40,19 +40,19 @@
         <a href="#roler.rolesarray">Roler.rolesArray</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.id2rolemap">Roler.id2RoleMap</a>
+        <a href="#roler.matchedroles">Roler.matchedRoles</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.role2idmap">Roler.role2IdMap</a>
+        <a href="#roler.role2idmatchmap">Roler.role2IdMatchMap</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.rolesmap">Roler.rolesMap</a>
+        <a href="#roler.id2rolematchmap">Roler.id2RoleMatchMap</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.rolesmapobj">Roler.rolesMapObj</a>
+        <a href="#roler.id2roleroundmap">Roler.id2RoleRoundMap</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.rolesmapobjbyid">Roler.rolesMapObjById</a>
+        <a href="#roler.role2idroundmap">Roler.role2IdRoundMap</a>
       </div>
       <div class="heading h3">
         <a href="#roler.rolify">Roler.rolify</a>
@@ -70,13 +70,13 @@
         <a href="#roler.setroles">Roler.setRoles</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.setrolesmap">Roler.setRolesMap</a>
+        <a href="#roler.setmatchedroles">Roler.setMatchedRoles</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.setrolesmapobj">Roler.setRolesMapObj</a>
+        <a href="#roler.setrole2idmatchmap">Roler.setRole2IdMatchMap</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.setrolesmapobjbyid">Roler.setRolesMapObjById</a>
+        <a href="#roler.setid2rolematchmap">Roler.setId2RoleMatchMap</a>
       </div>
       <div class="heading h3">
         <a href="#roler.setrolefor">Roler.setRoleFor</a>
@@ -92,6 +92,9 @@
       </div>
       <div class="heading h3">
         <a href="#roler.getidforrole">Roler.getIdForRole</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.getmatchedroles">Roler.getMatchedRoles</a>
       </div>
       <div class="heading h3">
         <a href="#roler.getrole">Roler.getRole</a>
@@ -367,59 +370,29 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.id2rolemap">
+<div class="pilwrap" id="roler.matchedroles">
   <h3>
-    <a href="#roler.id2rolemap" name="roler.id2rolemap" class="pilcrow">&#182;</a>
-    Roler.id2RoleMap
+    <a href="#roler.matchedroles" name="roler.matchedroles" class="pilcrow">&#182;</a>
+    Roler.matchedRoles
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Array of maps of ids-roles per round</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span> <span class="o">=</span> <span class="p">[];</span>
+  <div class="body"><p>Array of arrays of roles assigned for all matches in all rounds</p>
+
+<p>For example:</p>
 
 
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="roler.role2idmap">
-  <h3>
-    <a href="#roler.role2idmap" name="roler.role2idmap" class="pilcrow">&#182;</a>
-    Roler.role2IdMap
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Array of maps of ids-roles per round</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span> <span class="o">=</span> <span class="p">[];</span>
+<div class="highlight"><pre><code><span class="p">[</span>
+    <span class="c1">// Round 1.</span>
+    <span class="p">[</span>  <span class="p">[</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="s1">&#39;ROLE_B&#39;</span> <span class="p">],</span> <span class="p">[</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="s1">&#39;ROLE_B&#39;</span> <span class="p">],</span> <span class="p">...</span> <span class="p">],</span>
+    <span class="c1">// Round 2.</span>
+    <span class="p">[</span>  <span class="p">[</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="s1">&#39;ROLE_B&#39;</span> <span class="p">],</span> <span class="p">[</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="s1">&#39;ROLE_B&#39;</span> <span class="p">],</span> <span class="p">...</span> <span class="p">],</span>
+    <span class="p">...</span>
+<span class="p">]</span>
+</code></pre></div>
 
 
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="roler.rolesmap">
-  <h3>
-    <a href="#roler.rolesmap" name="roler.rolesmap" class="pilcrow">&#182;</a>
-    Roler.rolesMap
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>The map of all roles for all matches in all rounds</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -428,14 +401,14 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.setRolesMap
+      <span class="dox_type">Roler.setMatchedRoles
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -444,15 +417,27 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.rolesmapobj">
+<div class="pilwrap" id="roler.role2idmatchmap">
   <h3>
-    <a href="#roler.rolesmapobj" name="roler.rolesmapobj" class="pilcrow">&#182;</a>
-    Roler.rolesMapObj
+    <a href="#roler.role2idmatchmap" name="roler.role2idmatchmap" class="pilcrow">&#182;</a>
+    Roler.role2IdMatchMap
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>The map of all roles and ids for all matches in all rounds</p>
+  <div class="body"><p>Array of arrays of maps role to id/s for all matches in all rounds</p>
+
+<p>For example:</p>
+
+
+<div class="highlight"><pre><code><span class="p">[</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ROLE_A</span><span class="o">:</span> <span class="s1">&#39;ID1&#39;</span><span class="p">,</span> <span class="nx">ROLE_B</span><span class="o">:</span> <span class="s1">&#39;ID2&#39;</span> <span class="p">},</span> <span class="p">...</span> <span class="p">],</span> <span class="c1">// Round 1.</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ROLE_A</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;ID1&#39;</span><span class="p">,</span> <span class="s1">&#39;ID2&#39;</span> <span class="p">]</span> <span class="p">},</span> <span class="p">...</span> <span class="p">],</span> <span class="c1">// Round 2.</span>
+    <span class="p">...</span>
+<span class="p">]</span>
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -461,14 +446,14 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.setRolesMap
+      <span class="dox_type">Roler.setMatchedRoles
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMatchMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -477,15 +462,27 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.rolesmapobjbyid">
+<div class="pilwrap" id="roler.id2rolematchmap">
   <h3>
-    <a href="#roler.rolesmapobjbyid" name="roler.rolesmapobjbyid" class="pilcrow">&#182;</a>
-    Roler.rolesMapObjById
+    <a href="#roler.id2rolematchmap" name="roler.id2rolematchmap" class="pilcrow">&#182;</a>
+    Roler.id2RoleMatchMap
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>The map of all roles and ids for all matches in all rounds</p>
+  <div class="body"><p>Array of arrays of maps id to role for all matches in all rounds</p>
+
+<p>For example:</p>
+
+
+<div class="highlight"><pre><code><span class="p">[</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ID1</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="nx">ID2</span><span class="o">:</span> <span class="s1">&#39;ROLE_B&#39;</span> <span class="p">},</span> <span class="p">...</span> <span class="p">],</span> <span class="c1">// Round 1.</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ID1</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="nx">ID2</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span> <span class="p">},</span> <span class="p">...</span> <span class="p">],</span> <span class="c1">// Round 2.</span>
+    <span class="p">...</span>
+<span class="p">]</span>
+</code></pre></div>
+
+
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -494,14 +491,86 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.setRolesMap
+      <span class="dox_type">Roler.setMatchedRoles
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObjById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMatchMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.id2roleroundmap">
+  <h3>
+    <a href="#roler.id2roleroundmap" name="roler.id2roleroundmap" class="pilcrow">&#182;</a>
+    Roler.id2RoleRoundMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array of maps of id to role per each round</p>
+
+<p>For example:</p>
+
+
+<div class="highlight"><pre><code><span class="p">[</span>
+    <span class="c1">// Round 1.</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ID1</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="nx">ID2</span><span class="o">:</span> <span class="s1">&#39;ROLE_B&#39;</span><span class="p">,</span> <span class="nx">ID3</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="p">...</span> <span class="p">}</span> <span class="p">],</span>
+    <span class="c1">// Round 2.</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ID1</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="nx">ID2</span><span class="o">:</span> <span class="s1">&#39;ROLE_A&#39;</span><span class="p">,</span> <span class="nx">ID3</span><span class="o">:</span> <span class="s1">&#39;ROLE_B&#39;</span><span class="p">,</span> <span class="p">...</span> <span class="p">}</span> <span class="p">],</span>
+    <span class="p">...</span>
+<span class="p">]</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.role2idroundmap">
+  <h3>
+    <a href="#roler.role2idroundmap" name="roler.role2idroundmap" class="pilcrow">&#182;</a>
+    Roler.role2IdRoundMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array of maps of role to id/s per each round</p>
+
+<p>For example:</p>
+
+
+<div class="highlight"><pre><code><span class="p">[</span>
+    <span class="c1">// Round 1.</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ROLE_A</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;ID1&#39;</span><span class="p">,</span> <span class="s1">&#39;ID3&#39;</span><span class="p">,</span> <span class="p">...</span> <span class="p">],</span> <span class="nx">ROLE_B</span><span class="o">:</span> <span class="s1">&#39;ID2&#39;</span><span class="p">,</span> <span class="p">...</span> <span class="p">}</span> <span class="p">],</span>
+    <span class="c1">// Round 2.</span>
+    <span class="p">[</span> <span class="p">{</span> <span class="nx">ROLE_A</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;ID1&#39;</span><span class="p">,</span> <span class="s1">&#39;ID2&#39;</span><span class="p">,</span> <span class="p">...</span> <span class="p">],</span> <span class="nx">ROLE_B</span><span class="o">:</span> <span class="s1">&#39;ID3&#39;</span><span class="p">,</span> <span class="p">...</span> <span class="p">}</span> <span class="p">],</span>
+    <span class="p">...</span>
+<span class="p">]</span>
+</code></pre></div>
+
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span> <span class="o">=</span> <span class="p">[];</span>
 
 
 </pre></div>
@@ -620,10 +689,11 @@ MIT Licensed</p>
     <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">roles</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObj</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMatchMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMatchMap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -775,10 +845,10 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.setrolesmap">
+<div class="pilwrap" id="roler.setmatchedroles">
   <h3>
-    <a href="#roler.setrolesmap" name="roler.setrolesmap" class="pilcrow">&#182;</a>
-    Roler.setRolesMap
+    <a href="#roler.setmatchedroles" name="roler.setmatchedroles" class="pilcrow">&#182;</a>
+    Roler.setMatchedRoles
   </h3>
 </div>
 
@@ -788,7 +858,7 @@ MIT Licensed</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">rolesMap</span>
+      <span class="dox_tag_name">matchedRoles</span>
       <span class="dox_type">array</span>
       <span>The roles map</span>
     </div>
@@ -800,33 +870,34 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
+      <span class="dox_type">Roler.matchedRoles
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRolesMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rolesMap</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMatchedRoles</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matchedRoles</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validate</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">rolesMap</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">rolesMap</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: rolesMap must be a &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;non-empty array. Found: &#39;</span> <span class="o">+</span> <span class="nx">rolesMap</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matchedRoles</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">matchedRoles</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setMatchedRoles: matchedRoles must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be a non-empty array. Found: &#39;</span> <span class="o">+</span> <span class="nx">matchedRoles</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lenJ</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: rolesMap round &#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span>
-                                    <span class="s1">&#39;has no elements.&#39;</span><span class="p">);</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setMatchedRoles: matchedRoles &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;round &#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;has no elements.&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]))</span> <span class="p">{</span>
-                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: rolesMap round &#39;</span> <span class="o">+</span>
-                                        <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; element &#39;</span> <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span> <span class="s1">&#39; should be &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;array. Found: &#39;</span> <span class="o">+</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]))</span> <span class="p">{</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setMatchedRoles: matchedRoles &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;round &#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39; element &#39;</span> <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span>
+                                        <span class="s1">&#39; should be array. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
                     <span class="p">}</span>
 
 </pre></div>
@@ -840,25 +911,25 @@ MIT Licensed</p>
 <p>These are specific to the rolify cb.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">].</span><span class="nx">length</span> <span class="o">!==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: roles map (&#39;</span> <span class="o">+</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">].</span><span class="nx">length</span> <span class="o">!==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setMatchedRoles: roles (&#39;</span> <span class="o">+</span>
                                         <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span> <span class="s1">&#39;) was expected to have&#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39; length 2: &#39;</span> <span class="o">+</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
+                                        <span class="s1">&#39; length 2: &#39;</span> <span class="o">+</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
                     <span class="p">}</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span>
-                        <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span>
-                        <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span>
-                        <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">].</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span>
+                        <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span>
+                        <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">].</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span>
+                        <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">].</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
 
-                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setRolesMap: roles map (&#39;</span> <span class="o">+</span>
+                        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.setMatchedRoles: roles (&#39;</span> <span class="o">+</span>
                                         <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span> <span class="s1">&#39;) has invalid &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;elements: &#39;</span> <span class="o">+</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
+                                        <span class="s1">&#39;elements: &#39;</span> <span class="o">+</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
 
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -868,15 +939,61 @@ MIT Licensed</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.setrolesmapobj">
+<div class="pilwrap" id="roler.setrole2idmatchmap">
   <h3>
-    <a href="#roler.setrolesmapobj" name="roler.setrolesmapobj" class="pilcrow">&#182;</a>
-    Roler.setRolesMapObj
+    <a href="#roler.setrole2idmatchmap" name="roler.setrole2idmatchmap" class="pilcrow">&#182;</a>
+    Roler.setRole2IdMatchMap
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Sets a preinited role-obj map</p>
+  <div class="body"><p>Sets a preinited role to id/s round map</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">map</span>
+      <span class="dox_type">array</span>
+      <span>The role to id/s map</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">validate</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Boolean flag to
+  turn on/off validation. Default: TRUE</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.matchedRoles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRole2IdMatchMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">map</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validate</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">validateRolesMapObj</span><span class="p">(</span><span class="s1">&#39;setRole2IdMatchMap&#39;</span><span class="p">,</span> <span class="nx">map</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMatchMap</span> <span class="o">=</span> <span class="nx">map</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.setid2rolematchmap">
+  <h3>
+    <a href="#roler.setid2rolematchmap" name="roler.setid2rolematchmap" class="pilcrow">&#182;</a>
+    Roler.setId2RoleMatchMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets a preinited id to role round map</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -893,67 +1010,18 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
+      <span class="dox_type">Roler.id2RoleMatchMap
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRolesMapObj</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">map</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">nKeys</span><span class="p">;</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setId2RoleMatchMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">map</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validate</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">validateRolesMapObj</span><span class="p">(</span><span class="s1">&#39;setRolesMapObj&#39;</span><span class="p">,</span> <span class="nx">map</span><span class="p">);</span>
+            <span class="nx">validateRolesMapObj</span><span class="p">(</span><span class="s1">&#39;setId2RoleMatchMap&#39;</span><span class="p">,</span> <span class="nx">map</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObj</span> <span class="o">=</span> <span class="nx">map</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="roler.setrolesmapobjbyid">
-  <h3>
-    <a href="#roler.setrolesmapobjbyid" name="roler.setrolesmapobjbyid" class="pilcrow">&#182;</a>
-    Roler.setRolesMapObjById
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Sets a preinited id-role map</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">map</span>
-      <span class="dox_type">array</span>
-      <span>The roles-obj map</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">validate</span>
-      <span class="dox_type">boolean</span>
-      <span>Optional. Boolean flag to
-  turn on/off validation. Default: TRUE</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setRolesMapObjById</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">map</span><span class="p">,</span> <span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validate</span> <span class="o">||</span> <span class="o">!!</span><span class="nx">validate</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">validateRolesMapObj</span><span class="p">(</span><span class="s1">&#39;setRolesMapObjById&#39;</span><span class="p">,</span> <span class="nx">map</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapIdObj</span> <span class="o">=</span> <span class="nx">map</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMatchMap</span> <span class="o">=</span> <span class="nx">map</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -992,11 +1060,11 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.id2RoleMap</span>
+      <span class="dox_type">Roler.id2RoleRoundMap</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.role2IdMap
+      <span class="dox_type">Roler.role2IdRoundMap
 </span>
     </div>
   </div>
@@ -1031,8 +1099,8 @@ MIT Licensed</p>
 <p>Id to role.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1046,9 +1114,9 @@ MIT Licensed</p>
 <p>Role to id.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">])</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -1134,7 +1202,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.id2RoleMap
+      <span class="dox_type">Roler.id2RoleRoundMap
 </span>
     </div>
   </div>
@@ -1154,7 +1222,7 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.hasRole: x must be a non-negative &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">]</span> <span class="o">===</span> <span class="nx">role</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">]</span> <span class="o">===</span> <span class="nx">role</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1196,7 +1264,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.id2RoleMap
+      <span class="dox_type">Roler.id2RoleRoundMap
 </span>
     </div>
   </div>
@@ -1212,7 +1280,7 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRoleFor: x must be a non-negative &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1252,7 +1320,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.id2RoleMap
+      <span class="dox_type">Roler.id2RoleRoundMap
 </span>
     </div>
   </div>
@@ -1268,7 +1336,44 @@ MIT Licensed</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getIdForRole: x must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">role</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.getmatchedroles">
+  <h3>
+    <a href="#roler.getmatchedroles" name="roler.getmatchedroles" class="pilcrow">&#182;</a>
+    Roler.getMatchedRoles
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns all matched roles</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>The matched roles</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.matchedRoles
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatchedRoles</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1310,7 +1415,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
+      <span class="dox_type">Roler.matchedRoles
 </span>
     </div>
   </div>
@@ -1324,7 +1429,7 @@ MIT Licensed</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
@@ -1332,7 +1437,7 @@ MIT Licensed</p>
                                 <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1374,7 +1479,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
+      <span class="dox_type">Roler.matchedRoles
 </span>
     </div>
   </div>
@@ -1388,7 +1493,7 @@ MIT Licensed</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
@@ -1396,7 +1501,7 @@ MIT Licensed</p>
                                 <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1438,7 +1543,7 @@ MIT Licensed</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
+      <span class="dox_type">Roler.matchedRoles
 </span>
     </div>
   </div>
@@ -1452,7 +1557,7 @@ MIT Licensed</p>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
@@ -1460,7 +1565,7 @@ MIT Licensed</p>
                                 <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1535,19 +1640,19 @@ x and y coordinates in the array of matches.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">array</span>
-      <span>rolesMap The full maps of roles</span>
+      <span>matchedRoles The full maps of roles</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap</span>
+      <span class="dox_type">Roler.matchedRoles</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMapObj</span>
+      <span class="dox_type">Roler.role2IdMatchMap</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMapObjById
+      <span class="dox_type">Roler.id2RoleMatchMap
 </span>
     </div>
   </div>
@@ -1555,7 +1660,7 @@ x and y coordinates in the array of matches.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">rolifyAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">rolesMap</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">matchedRoles</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">rolesObj</span><span class="p">,</span> <span class="nx">idRolesObj</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
@@ -1563,17 +1668,17 @@ x and y coordinates in the array of matches.</p>
                             <span class="s1">&#39;array. Found: &#39;</span> <span class="o">+</span> <span class="nx">matches</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="nx">rolesMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+        <span class="nx">matchedRoles</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
         <span class="nx">rolesObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
         <span class="nx">idRolesObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">row</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+            <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
             <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
             <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
+                <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -1581,13 +1686,13 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>TODO: this code is repeated in Matcher.match, make it one!</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">r1</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
-                <span class="nx">r2</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+                <span class="nx">r1</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+                <span class="nx">r2</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
                 <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">r1</span> <span class="o">!==</span> <span class="nx">r2</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
@@ -1601,11 +1706,11 @@ x and y coordinates in the array of matches.</p>
                 <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObj</span> <span class="o">=</span> <span class="nx">rolesObj</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObjById</span> <span class="o">=</span> <span class="nx">idRolesObj</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMatchMap</span> <span class="o">=</span> <span class="nx">rolesObj</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMatchMap</span> <span class="o">=</span> <span class="nx">idRolesObj</span><span class="p">;</span>
 
-        <span class="k">return</span> <span class="nx">rolesMap</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">matchedRoles</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1648,8 +1753,8 @@ x and y coordinates in the array of matches.</p>
 <ul><li>Each object must have two info-items.</li>
 <li>An info-item can contain:
 a) 2 keys-valus pairs (id-role|role-id), or
-b) an array of length 2 (role: id1, id2) [only if invoking
-method is setRolesMapObj]</li></ul></li>
+b) an array of length 2 (role: id1, id2) [allowed only if
+invoking method is 'setRole2IdMatchMap']</li></ul></li>
 </ul>
   </div>
   <div class="details">
@@ -1670,11 +1775,11 @@ method is setRolesMapObj]</li></ul></li>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">setRolesMapObj</span>
+      <span class="dox_type">setRole2IdMatchMap</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">setRolesMapObjById
+      <span class="dox_type">setId2RoleMatchMap
 </span>
     </div>
   </div>
@@ -1691,7 +1796,7 @@ method is setRolesMapObj]</li></ul></li>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: map must be a &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;non-empty array. Found: &#39;</span> <span class="o">+</span> <span class="nx">map</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="nx">arrayOk</span> <span class="o">=</span> <span class="p">(</span><span class="nx">method</span> <span class="o">===</span> <span class="s1">&#39;setRolesMapObj&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">arrayOk</span> <span class="o">=</span> <span class="p">(</span><span class="nx">method</span> <span class="o">===</span> <span class="s1">&#39;setRole2IdMatchMap&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">map</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">map</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
@@ -1741,7 +1846,7 @@ method is setRolesMapObj]</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>These are specific to the rolify cb.</p>
         </td>

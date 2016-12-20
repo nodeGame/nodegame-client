@@ -543,7 +543,7 @@ they can be passed in either order.</p>
         <span class="p">}</span>
         <span class="nx">round</span> <span class="o">=</span> <span class="nx">round2Index</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;getMatches&#39;</span><span class="p">,</span> <span class="nx">round</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY_ROLES&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">rolesMapObj</span><span class="p">[</span><span class="nx">round</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY_ROLES&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">role2IdMatchMap</span><span class="p">[</span><span class="nx">round</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY_ID_ROLES&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;ARRAY_ROLES_ID&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatch</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span> <span class="o">===</span> <span class="s1">&#39;OBJ&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">getMatchObject</span><span class="p">(</span><span class="nx">round</span><span class="p">);</span> <span class="c1">// ok</span>
@@ -883,7 +883,7 @@ they can be passed in either order.</p>
         <span class="kd">var</span> <span class="nx">ii</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">,</span> <span class="nx">missId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span>  <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">roles</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">matchedRoles</span><span class="p">;</span>
 
         <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">n</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">nRounds</span><span class="p">;</span>
@@ -1097,6 +1097,8 @@ or if reInit = true).</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">missId</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">missingId</span><span class="p">;</span>
 
+        <span class="nx">matchedRoles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">getMatchedRoles</span><span class="p">();</span>
+
 
 </pre></div>
         </td>
@@ -1162,7 +1164,7 @@ or if reInit = true).</p>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">doRoles</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">roles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">rolesMap</span><span class="p">[</span><span class="nx">nMatchesIdx</span><span class="p">][</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">roles</span> <span class="o">=</span> <span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">nMatchesIdx</span><span class="p">][</span><span class="nx">i</span><span class="p">];</span>
 
 
 </pre></div>
