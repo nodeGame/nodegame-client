@@ -52,7 +52,7 @@
         <a href="#roler.rolesmapobj">Roler.rolesMapObj</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.rolesmapobj">Roler.rolesMapObj</a>
+        <a href="#roler.rolesmapobjbyid">Roler.rolesMapObjById</a>
       </div>
       <div class="heading h3">
         <a href="#roler.rolify">Roler.rolify</a>
@@ -111,6 +111,12 @@
       <div class="heading h2">
         <a href="#helper%20methods.">Helper methods.</a>
       </div>
+      <div class="heading h3">
+        <a href="#validaterolesmapobj">validateRolesMapObj</a>
+      </div>
+      <div class="heading h3">
+        <a href="#validaterolesmapobj">validateRolesMapObj</a>
+      </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
@@ -153,8 +159,7 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
 </div>
-<p>TODO: have x, y indexes like in Matcher?
-TODO: getRoles method</p>
+<p>TODO: have x, y indexes like in Matcher?</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
@@ -472,10 +477,10 @@ TODO: getRoles method</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.rolesmapobj">
+<div class="pilwrap" id="roler.rolesmapobjbyid">
   <h3>
-    <a href="#roler.rolesmapobj" name="roler.rolesmapobj" class="pilcrow">&#182;</a>
-    Roler.rolesMapObj
+    <a href="#roler.rolesmapobjbyid" name="roler.rolesmapobjbyid" class="pilcrow">&#182;</a>
+    Roler.rolesMapObjById
   </h3>
 </div>
 
@@ -1534,7 +1539,15 @@ x and y coordinates in the array of matches.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.rolesMap
+      <span class="dox_type">Roler.rolesMap</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.rolesMapObj</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.rolesMapObjById
 </span>
     </div>
   </div>
@@ -1543,21 +1556,55 @@ x and y coordinates in the array of matches.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">rolifyAll</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">rolesMap</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">,</span> <span class="nx">rolesObj</span><span class="p">,</span> <span class="nx">idRolesObj</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">matches</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolifyAll: match must be a non empty &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;array. Found: &#39;</span> <span class="o">+</span> <span class="nx">matches</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="nx">rolesMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+        <span class="nx">rolesObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+        <span class="nx">idRolesObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">row</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+            <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
+            <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">lenJ</span><span class="p">);</span>
             <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span><span class="p">(</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+</div>
+<p>TODO: this code is repeated in Matcher.match, make it one!</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">r1</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+                <span class="nx">r2</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+                <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">r1</span> <span class="o">!==</span> <span class="nx">r2</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+                    <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">rolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">r1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span>
+                <span class="p">}</span>
+                <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+                <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">r1</span><span class="p">;</span>
+                <span class="nx">idRolesObj</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">][</span><span class="nx">row</span><span class="p">[</span><span class="nx">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">r2</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">rolesMap</span> <span class="o">=</span> <span class="nx">rolesMap</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObj</span> <span class="o">=</span> <span class="nx">rolesObj</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolesMapObjById</span> <span class="o">=</span> <span class="nx">idRolesObj</span><span class="p">;</span>
+
         <span class="k">return</span> <span class="nx">rolesMap</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -1577,11 +1624,69 @@ x and y coordinates in the array of matches.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validaterolesmapobj">
+  <h3>
+    <a href="#validaterolesmapobj" name="validaterolesmapobj" class="pilcrow">&#182;</a>
+    validateRolesMapObj
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deep validates an input roles map (object type), throws errors</p>
+
+<p>Validation:</p>
+
+<ul>
+<li>The map is an array of objects
+<ul><li>Each object must have two info-items.</li>
+<li>An info-item can contain:
+a) 2 keys-valus pairs (id-role|role-id), or
+b) an array of length 2 (role: id1, id2) [only if invoking
+method is setRolesMapObj]</li></ul></li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method invoking validation</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">map</span>
+      <span class="dox_type">array</span>
+      <span>The map to validate</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">validString</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">setRolesMapObj</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">setRolesMapObjById
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">validateRolesMapObj</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">nKeys</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">arrayOk</span><span class="p">,</span> <span class="nx">elem</span><span class="p">,</span> <span class="nx">isArray</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">map</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: map must be a &#39;</span> <span class="o">+</span>
                             <span class="s1">&#39;non-empty array. Found: &#39;</span> <span class="o">+</span> <span class="nx">map</span><span class="p">);</span>
@@ -1636,7 +1741,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>These are specific to the rolify cb.</p>
         </td>
@@ -1651,6 +1756,43 @@ x and y coordinates in the array of matches.</p>
     <span class="p">}</span>
 
 
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validaterolesmapobj">
+  <h3>
+    <a href="#validaterolesmapobj" name="validaterolesmapobj" class="pilcrow">&#182;</a>
+    validateRolesMapObj
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deep validates an input roles map (object type), throws errors</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method invoking validation</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">map</span>
+      <span class="dox_type">array</span>
+      <span>The map to validate</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">validString
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">validString</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">elem</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span> <span class="o">||</span> <span class="nx">elem</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: roles map (&#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span>
