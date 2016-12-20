@@ -103,13 +103,19 @@
         <a href="#roler.getmatchedroles">Roler.getMatchedRoles</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.getrole">Roler.getRole</a>
+        <a href="#roler.getrolematch">Roler.getRoleMatch</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.getrole2idmap">Roler.getRole2IdMap</a>
+        <a href="#roler.getrole2idmatch">Roler.getRole2IdMatch</a>
       </div>
       <div class="heading h3">
-        <a href="#roler.getid2rolemap">Roler.getId2RoleMap</a>
+        <a href="#roler.getid2rolematch">Roler.getId2RoleMatch</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.getrole2idroundmap">Roler.getRole2IdRoundMap</a>
+      </div>
+      <div class="heading h3">
+        <a href="#roler.getrole2idroundmap">Roler.getRole2IdRoundMap</a>
       </div>
       <div class="heading h2">
         <a href="#rolify.">Rolify.</a>
@@ -1299,19 +1305,19 @@ x and y coordinates in the array of matches.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the id/s holding a roles at round x</p>
+  <div class="body"><p>Returns the id/s holding the specified role at round x</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">role</span>
       <span class="dox_type">string</span>
-      <span>The role to check</span>
+      <span>The role</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">x</span>
       <span class="dox_type">number</span>
-      <span>The round to check</span>
+      <span>The round</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1321,7 +1327,7 @@ x and y coordinates in the array of matches.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.id2RoleRoundMap
+      <span class="dox_type">Roler.role2IdRoundMap
 </span>
     </div>
   </div>
@@ -1384,10 +1390,10 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.getrole">
+<div class="pilwrap" id="roler.getrolematch">
   <h3>
-    <a href="#roler.getrole" name="roler.getrole" class="pilcrow">&#182;</a>
-    Roler.getRole
+    <a href="#roler.getrolematch" name="roler.getrolematch" class="pilcrow">&#182;</a>
+    Roler.getRoleMatch
   </h3>
 </div>
 
@@ -1409,9 +1415,9 @@ x and y coordinates in the array of matches.</p>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">object</span>
+      <span class="dox_type">array</span>
       <span class="dox_type">null</span>
-      <span>The role/s requested or null
+      <span>The requested role matches or null
    if the x or y indexes are out of bounds</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -1423,21 +1429,18 @@ x and y coordinates in the array of matches.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRoleMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole: x must be a non-negative &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRoleMatch: x must be a &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
         <span class="p">}</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole: y must be a non-negative &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRoleMatch: y must be undefined or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;a non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
         <span class="p">}</span>
-
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">matchedRoles</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -1448,15 +1451,15 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.getrole2idmap">
+<div class="pilwrap" id="roler.getrole2idmatch">
   <h3>
-    <a href="#roler.getrole2idmap" name="roler.getrole2idmap" class="pilcrow">&#182;</a>
-    Roler.getRole2IdMap
+    <a href="#roler.getrole2idmatch" name="roler.getrole2idmatch" class="pilcrow">&#182;</a>
+    Roler.getRole2IdMatch
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Returns the requested role to id mapping</p>
+  <div class="body"><p>Returns the requested role to id matches</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1473,33 +1476,34 @@ x and y coordinates in the array of matches.</p>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
       <span class="dox_type">object</span>
       <span class="dox_type">null</span>
-      <span>The role/s requested or null
+      <span>The role to id/s matches or null
    if the x or y indexes are out of bounds</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">Roler.role2IdRoundMap
+      <span class="dox_type">Roler.role2IdRoundMatch
 </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole2IdMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole2IdMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole2IdMap: x must be a &#39;</span> <span class="o">+</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole2IdMatch: x must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMatch</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole2IdMap: y must be a &#39;</span> <span class="o">+</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole2IdMatch: y must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdMatchMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1509,15 +1513,15 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="roler.getid2rolemap">
+<div class="pilwrap" id="roler.getid2rolematch">
   <h3>
-    <a href="#roler.getid2rolemap" name="roler.getid2rolemap" class="pilcrow">&#182;</a>
-    Roler.getId2RoleMap
+    <a href="#roler.getid2rolematch" name="roler.getid2rolematch" class="pilcrow">&#182;</a>
+    Roler.getId2RoleMatch
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Returns the requested roles</p>
+  <div class="body"><p>Returns the requested id to role matches</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1534,9 +1538,10 @@ x and y coordinates in the array of matches.</p>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
       <span class="dox_type">object</span>
       <span class="dox_type">null</span>
-      <span>The role/s requested or null
+      <span>The id to role matches or null
    if the x or y indexes are out of bounds</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -1548,19 +1553,118 @@ x and y coordinates in the array of matches.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getId2RoleMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getId2RoleMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getId2RoleMap: x must be a &#39;</span> <span class="o">+</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getId2RoleMatch: x must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMatch</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getId2RoleMap: y must be a &#39;</span> <span class="o">+</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getId2RoleMatch: y must be a &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">y</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleMatchMap</span><span class="p">[</span><span class="nx">x</span><span class="p">][</span><span class="nx">y</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.getrole2idroundmap">
+  <h3>
+    <a href="#roler.getrole2idroundmap" name="roler.getrole2idroundmap" class="pilcrow">&#182;</a>
+    Roler.getRole2IdRoundMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the requested role to id/s mapping</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>The round</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The role to id/s map or null
+   if x is out of bounds</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.role2IdRoundMap
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRole2IdRoundMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getRole2IdRoundMap: x must be a &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">role2IdRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.getrole2idroundmap">
+  <h3>
+    <a href="#roler.getrole2idroundmap" name="roler.getrole2idroundmap" class="pilcrow">&#182;</a>
+    Roler.getRole2IdRoundMap
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the requested id to role mapping</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>The round</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">null</span>
+      <span>The role-to-id map or null
+   if x is out of bounds</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.id2RoleRoundMap
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getId2RoleRoundMap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getId2RoleRoundMap: x must be a &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;non-negative number. Found: &#39;</span> <span class="o">+</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1653,7 +1757,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>TODO: this code is repeated in Matcher.match, make it one!</p>
         </td>
@@ -1935,7 +2039,7 @@ invoking method is 'setRole2IdMatchMap']</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>These are specific to the rolify cb.</p>
         </td>
