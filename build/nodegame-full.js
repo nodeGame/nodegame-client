@@ -6292,7 +6292,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -6464,6 +6464,10 @@ if (!Array.prototype.indexOf) {
         // ### __defaultFormat
         // Default format for saving and loading items.
         this.__defaultFormat = null;
+
+        // ### __wd
+        // Default working directory for saving and loading files.
+        this.__wd = null;
 
         // ### log
         // Std out for log messages
@@ -7051,6 +7055,15 @@ if (!Array.prototype.indexOf) {
                 }
             }
         }
+
+        if (options.defaultFormat) {
+            this.setDefaultFormat(options.defaultFormat);
+        }
+
+        if (options.wd && 'function' === typeof this.setWD) {
+            this.setWD(options.wd);
+        }
+
     };
 
     /**
@@ -7234,6 +7247,8 @@ if (!Array.prototype.indexOf) {
         options.globalCompare = this.globalCompare;
         options.filters = this.__userDefinedFilters;
         options.formats = this.__formats;
+        options.defaultFormat = this.__defaultFormat;
+        options.wd = this.__wd;
 
         // Must be removed before cloning.
         if (options.log) {
@@ -19908,14 +19923,14 @@ if (!Array.prototype.indexOf) {
     Socket.prototype.onMessage = Socket.prototype.onMessageHI;
 
     /**
-     * ### Socket.shouldClearBuffer
+     * ### Socket.setMsgListener
      *
-     * Clears buffer conditionally
+     * Sets the onMessage listener
      *
      * @param msgHandler {function} Optional. Callback function which is
      *  called for every message in the buffer instead of the messages
      *  being emitted.
-     *  Default: Emit every buffered message.
+     *  Default: Emits every buffered message.
      *
      * @see this.node.emit
      * @see Socket.clearBuffer
@@ -26618,7 +26633,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### VisualTimer.doTimeUp | doTimeup
+     * ### GameTimer.doTimeUp | doTimeup
      *
      * Stops the timer and calls the timeup
      *
@@ -48274,7 +48289,9 @@ if (!Array.prototype.indexOf) {
                     that.startTiming(options);
                 }
                 else {
-                    that.setToZero();
+                    // Set to zero if it was not started already.
+                    if (!that.gameTimer.isRunning()) that.setToZero();
+                    // that.setToZero();
                 }
             }
         });

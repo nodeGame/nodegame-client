@@ -109,7 +109,7 @@
         <a href="#socket.onmessage">Socket.onMessage</a>
       </div>
       <div class="heading h3">
-        <a href="#socket.shouldclearbuffer">Socket.shouldClearBuffer</a>
+        <a href="#socket.setmsglistener">Socket.setMsgListener</a>
       </div>
       <div class="heading h3">
         <a href="#socket.shouldclearbuffer">Socket.shouldClearBuffer</a>
@@ -1490,15 +1490,15 @@ if the game is not ready, and the message priority is low.x</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="socket.shouldclearbuffer">
+<div class="pilwrap" id="socket.setmsglistener">
   <h3>
-    <a href="#socket.shouldclearbuffer" name="socket.shouldclearbuffer" class="pilcrow">&#182;</a>
-    Socket.shouldClearBuffer
+    <a href="#socket.setmsglistener" name="socket.setmsglistener" class="pilcrow">&#182;</a>
+    Socket.setMsgListener
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Clears buffer conditionally</p>
+  <div class="body"><p>Sets the onMessage listener</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1507,7 +1507,7 @@ if the game is not ready, and the message priority is low.x</p>
       <span>{function} Optional. Callback function which is
  called for every message in the buffer instead of the messages
  being emitted.
- Default: Emit every buffered message.</span>
+ Default: Emits every buffered message.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
