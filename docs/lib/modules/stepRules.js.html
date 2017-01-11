@@ -25,6 +25,9 @@
         <a href="#solo">SOLO</a>
       </div>
       <div class="heading h2">
+        <a href="#solo_step">SOLO_STEP</a>
+      </div>
+      <div class="heading h2">
         <a href="#wait">WAIT</a>
       </div>
       <div class="heading h2">
@@ -59,10 +62,10 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2017 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p>Collections of rules to determine whether the game should step.</p>
+  <div class="body"><p>Collections of rules to determine whether the game should step forward.</p>
   </div>
 </div>
         </td>
@@ -115,12 +118,48 @@ It is not defined on browsers then.</p>
 </div>
 
 
-<p>Player proceeds to the next step as soon as the current one
-is DONE, regardless to the situation of other players</p>
+<p>Always steps when current step is DONE</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">SOLO</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="solo_step">
+  <h2>
+    <a href="#solo_step" name="solo_step" class="pilcrow">&#182;</a>
+    SOLO_STEP
+  </h2>
+</div>
+
+
+<p>Steps when current step is DONE, but only if it is not last step in stage</p>
+
+<p>When the last step in current stage is done, then it waits
+for an explicit step command.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">SOLO_STEP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>If next step is going to be a new stage, then wait.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -137,7 +176,7 @@ is DONE, regardless to the situation of other players</p>
 </div>
 
 
-<p>Player waits for explicit step command</p>
+<p>Always waits for explicit step command</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">WAIT</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
@@ -158,8 +197,9 @@ is DONE, regardless to the situation of other players</p>
 </div>
 
 
-<p>Player waits that all the clients have terminated the
-current step before going to the next</p>
+<p>Steps when current step is DONE for all clients (including itself)</p>
+
+<p>If no other clients are connected, then it behaves like SOLO.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">SYNC_STEP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
@@ -181,16 +221,18 @@ current step before going to the next</p>
 </div>
 
 
-<p>Player can advance freely within the steps of one stage,
-but has to wait before going to the next one</p>
+<p>Like SOLO, but in the last step of a stage behaves like SYNC_STEP</p>
+
+<p>If no other clients are connected, then it behaves like SOLO also
+in the last step.</p>
+
+<p>Important: it assumes that the number of steps in current
+stage is the same in all clients (including this one).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">SYNC_STAGE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span> <span class="nx">game</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iamdone</span> <span class="o">=</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">iamdone</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">iamdone</span><span class="p">;</span>
+        <span class="nx">iamdone</span> <span class="o">=</span> <span class="nx">myStageLevel</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -198,13 +240,13 @@ but has to wait before going to the next one</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
 <p>If next step is going to be a new stage, wait for others.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">return</span> <span class="nx">iamdone</span> <span class="o">&amp;&amp;</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;STAGE_UPTO&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">game</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">stepsToNextStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">iamdone</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="nx">iamdone</span> <span class="o">&amp;&amp;</span> <span class="nx">pl</span><span class="p">.</span><span class="nx">isStepDone</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="s1">&#39;STAGE_UPTO&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
 
@@ -221,8 +263,9 @@ but has to wait before going to the next one</p>
 </div>
 
 
-<p>All the players in the player list must be sync in the same
-step and DONE. My own stage does not matter.</p>
+<p>Like SYNC_STEP, but does not look at own stage level</p>
+
+<p>If no other clients are connected, then it behaves like WAIT.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">OTHERS_SYNC_STEP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">)</span> <span class="p">{</span>
@@ -246,10 +289,12 @@ step and DONE. My own stage does not matter.</p>
 </div>
 
 
-<p>All the players in the player list must be sync in the <em>last</em>
-step of current stage and DONE. My own stage does not matter.
-Important: to work it assumes that number of steps in current
-stage is the same in all players (including this one).</p>
+<p>Like SYNC_STAGE, but does not look at own stage level</p>
+
+<p>If no other clients are connected, then it behaves like WAIT.</p>
+
+<p>Important: it assumes that the number of steps in current
+stage is the same in all clients (including this one).</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">exports</span><span class="p">.</span><span class="nx">stepRules</span><span class="p">.</span><span class="nx">OTHERS_SYNC_STAGE</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">myStageLevel</span><span class="p">,</span> <span class="nx">pl</span><span class="p">,</span>
@@ -265,7 +310,7 @@ stage is the same in all players (including this one).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
 <p>Manual clone in case there are more steps to go.</p>
         </td>
