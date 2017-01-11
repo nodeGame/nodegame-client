@@ -10892,10 +10892,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stepping Rules
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * Collections of rules to determine whether the game should step.
+ * Collections of rules to determine whether the game should step forward.
  */
 (function(exports, parent) {
 
@@ -10911,43 +10911,69 @@ if (!Array.prototype.indexOf) {
     // It is not defined on browsers then.
 
     // ## SOLO
-    // Player proceeds to the next step as soon as the current one
-    // is DONE, regardless to the situation of other players
+    //
+    // Always steps when current step is DONE
+    //
     exports.stepRules.SOLO = function(stage, myStageLevel, pl, game) {
         return myStageLevel === node.constants.stageLevels.DONE;
     };
 
+    // ## SOLO_STEP
+    //
+    // Steps when current step is DONE, but only if it is not last step in stage
+    //
+    // When the last step in current stage is done, then it waits
+    // for an explicit step command.
+    //
+    exports.stepRules.SOLO_STEP = function(stage, myStageLevel, pl, game) {
+        // If next step is going to be a new stage, then wait.
+        if (game.plot.stepsToNextStage(stage) === 1) return false;
+        else return myStageLevel === node.constants.stageLevels.DONE;
+    };
+
     // ## WAIT
-    // Player waits for explicit step command
+    //
+    // Always waits for explicit step command
+    //
     exports.stepRules.WAIT = function(stage, myStageLevel, pl, game) {
         return false;
     };
 
     // ## SYNC_STEP
-    // Player waits that all the clients have terminated the
-    // current step before going to the next
+    //
+    // Steps when current step is DONE for all clients (including itself)
+    //
+    // If no other clients are connected, then it behaves like SOLO.
+    //
     exports.stepRules.SYNC_STEP = function(stage, myStageLevel, pl, game) {
         return myStageLevel === node.constants.stageLevels.DONE &&
             pl.isStepDone(stage);
     };
 
     // ## SYNC_STAGE
-    // Player can advance freely within the steps of one stage,
-    // but has to wait before going to the next one
+    //
+    // Like SOLO, but in the last step of a stage behaves like SYNC_STEP
+    //
+    // If no other clients are connected, then it behaves like SOLO also
+    // in the last step.
+    //
+    // Important: it assumes that the number of steps in current
+    // stage is the same in all clients (including this one).
+    //
     exports.stepRules.SYNC_STAGE = function(stage, myStageLevel, pl, game) {
-        var iamdone = myStageLevel === node.constants.stageLevels.DONE;
-        if (game.plot.stepsToNextStage(stage) > 1) {
-            return iamdone;
-        }
-        else {
-            // If next step is going to be a new stage, wait for others.
-            return iamdone && pl.isStepDone(stage, 'STAGE_UPTO');
-        }
+        var iamdone;
+        iamdone = myStageLevel === node.constants.stageLevels.DONE;
+        // If next step is going to be a new stage, wait for others.
+        if (game.plot.stepsToNextStage(stage) > 1) return iamdone;
+        else return iamdone && pl.isStepDone(stage, 'STAGE_UPTO');
     };
 
     // ## OTHERS_SYNC_STEP
-    // All the players in the player list must be sync in the same
-    // step and DONE. My own stage does not matter.
+    // 
+    // Like SYNC_STEP, but does not look at own stage level
+    //
+    // If no other clients are connected, then it behaves like WAIT.
+    //
     exports.stepRules.OTHERS_SYNC_STEP = function(stage, myStageLevel, pl) {
         if (!pl.size()) return false;
         stage = pl.first().stage;
@@ -10956,10 +10982,14 @@ if (!Array.prototype.indexOf) {
     };
 
     // ## OTHERS_SYNC_STAGE
-    // All the players in the player list must be sync in the _last_
-    // step of current stage and DONE. My own stage does not matter.
-    // Important: to work it assumes that number of steps in current
-    // stage is the same in all players (including this one).
+    //
+    // Like SYNC_STAGE, but does not look at own stage level
+    //
+    // If no other clients are connected, then it behaves like WAIT.
+    //
+    // Important: it assumes that the number of steps in current
+    // stage is the same in all clients (including this one).
+    //
     exports.stepRules.OTHERS_SYNC_STAGE = function(stage, myStageLevel, pl,
                                                    game) {
 
@@ -12961,9 +12991,8 @@ if (!Array.prototype.indexOf) {
                     break;
                 }
                 // Player before given step.
-                if (cmp > 0) {
-                    return false;
-                }
+                if (cmp > 0) return false;
+                
                 break;
             }
 
@@ -12973,6 +13002,7 @@ if (!Array.prototype.indexOf) {
             // If the stageLevel check is required let's do it!
             if ('undefined' !== typeof stageLevel &&
                 p.stageLevel !== stageLevel) {
+
                 return false;
             }
         }
@@ -19930,7 +19960,7 @@ if (!Array.prototype.indexOf) {
      * @param msgHandler {function} Optional. Callback function which is
      *  called for every message in the buffer instead of the messages
      *  being emitted.
-     *  Default: Emits every buffered message.
+     *  Default: Socket.onMessageFull
      *
      * @see this.node.emit
      * @see Socket.clearBuffer
@@ -23510,7 +23540,8 @@ if (!Array.prototype.indexOf) {
         stepRule = this.plot.getStepRule(curStep);
 
         if ('function' !== typeof stepRule) {
-            throw new TypeError('Game.shouldStep: stepRule is not a function.');
+            throw new TypeError('Game.shouldStep: stepRule must be function. ' +
+                                'Found: ' + stepRule);
         }
 
         stageLevel = stageLevel || this.getStageLevel();
