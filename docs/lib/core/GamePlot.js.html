@@ -1435,10 +1435,9 @@ makes sures stage is with numbers and not strings.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the number of steps from next stage (normalized)</p>
+  <div class="body"><p>Returns the number of steps to reach the next stage</p>
 
-<p>The next stage can be a repetition of the current one, if inside a
-loop or a repeat stage.</p>
+<p>By default, each stage repetition is considered as a new stage.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1446,14 +1445,13 @@ loop or a repeat stage.</p>
       <span class="dox_tag_name">gameStage</span>
       <span class="dox_type">GameStage</span>
       <span class="dox_type">string</span>
-      <span>The GameStage object,
- or its string representation</span>
+      <span>The reference step</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">repeat</span>
+      <span class="dox_tag_name">countRepeat</span>
       <span class="dox_type">boolean</span>
-      <span>If TRUE stage repetitions are counted.
- Default: FALSE.</span>
+      <span>If TRUE stage repetitions are
+ considered as current stage, and included in the count. Default: FALSE.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1463,13 +1461,31 @@ loop or a repeat stage.</p>
       <span>The number of steps including current one,
   or NULL on error.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.normalizeGameStage
+</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepsToNextStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">repeat</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepsToNextStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span> <span class="nx">countRepeat</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">,</span> <span class="nx">totSteps</span><span class="p">,</span> <span class="nx">stepNo</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+</div>
+<p>Checks stage and step ranges.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">normalizeGameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
@@ -1477,7 +1493,7 @@ loop or a repeat stage.</p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">seqObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="nx">stepNo</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
         <span class="nx">totSteps</span> <span class="o">=</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">repeat</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">countRepeat</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">totSteps</span> <span class="o">=</span> <span class="nx">totSteps</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span> <span class="o">-</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span><span class="p">));</span>
                 <span class="nx">stepNo</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span> <span class="o">*</span> <span class="nx">stepNo</span><span class="p">;</span>
@@ -1490,6 +1506,17 @@ loop or a repeat stage.</p>
     <span class="p">};</span>
 
 
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+</div>
+<p>TODO: remove in next version.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepsToPreviousStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;GamePlot.stepsToPreviousStage is **deprecated**. Use&#39;</span> <span class="o">+</span>
                     <span class="s1">&#39;GamePlot.stepsFromPreviousStage instead.&#39;</span><span class="p">);</span>
@@ -1511,10 +1538,9 @@ loop or a repeat stage.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns the number of steps from previous stage (normalized)</p>
+  <div class="body"><p>Returns the number of steps passed from the previous stage</p>
 
-<p>The previous stage can be a repetition of the current one, if inside a
-loop or a repeat stage.</p>
+<p>By default, each stage repetition is considered as a new stage.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1522,8 +1548,13 @@ loop or a repeat stage.</p>
       <span class="dox_tag_name">gameStage</span>
       <span class="dox_type">GameStage</span>
       <span class="dox_type">string</span>
-      <span>The GameStage object,
- or its string representation</span>
+      <span>The reference step</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">countRepeat</span>
+      <span class="dox_type">boolean</span>
+      <span>If TRUE stage repetitions are
+ considered as current stage, and included in the count. Default: FALSE.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1533,20 +1564,50 @@ loop or a repeat stage.</p>
       <span>The number of steps including current one, or
   NULL on error.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GamePlot.normalizeGameStage
+</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepsFromPreviousStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">GamePlot</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stepsFromPreviousStage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">,</span>
+                                                         <span class="nx">countRepeat</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">seqObj</span><span class="p">,</span> <span class="nx">stepNo</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stager</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+</div>
+<p>Checks stage and step ranges.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">normalizeGameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">gameStage</span> <span class="o">||</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">stage</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="nx">seqObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSequenceObject</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">seqObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="nx">stepNo</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nx">stepNo</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">stepNo</span> <span class="o">&gt;</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">stepNo</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">countRepeat</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">stepNo</span> <span class="o">=</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span> <span class="o">*</span> <span class="p">(</span><span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span>
+                        <span class="nx">stepNo</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span> <span class="o">||</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;doLoop&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">stepNo</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1814,7 +1875,7 @@ loop or a repeat stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Look in current step:</p>
         </td>
@@ -1834,7 +1895,7 @@ loop or a repeat stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>Look in current stage:</p>
         </td>
@@ -1854,7 +1915,7 @@ loop or a repeat stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Look in Stager's defaults:</p>
         </td>
@@ -1873,7 +1934,7 @@ loop or a repeat stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Not found:</p>
         </td>
@@ -1935,7 +1996,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>No stager found, no globals!</p>
         </td>
@@ -1949,7 +2010,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Look in Stager's defaults:</p>
         </td>
@@ -1963,7 +2024,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Look in current stage:</p>
         </td>
@@ -1978,7 +2039,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Look in current step:</p>
         </td>
@@ -2063,7 +2124,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <p>Look in the tmpCache (cleared every step).</p>
         </td>
@@ -2081,7 +2142,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Look in the main cache (this persists over steps).</p>
         </td>
@@ -2099,7 +2160,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>Look in current step.</p>
         </td>
@@ -2117,7 +2178,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Look in current stage.</p>
         </td>
@@ -2137,7 +2198,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>Look in Stager's defaults.</p>
         </td>
@@ -2157,7 +2218,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>Cache it and return it.</p>
         </td>
@@ -2174,7 +2235,7 @@ game stage.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>Not found.</p>
         </td>
@@ -2255,7 +2316,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
 <p>Look in current step.</p>
         </td>
@@ -2273,7 +2334,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Look in current stage.</p>
         </td>
@@ -2293,7 +2354,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>Look in Stager's defaults.</p>
         </td>
@@ -2313,7 +2374,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>Cache it and return it.</p>
         </td>
@@ -2330,7 +2391,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>Not found.</p>
         </td>
@@ -2406,7 +2467,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <p>Get step.</p>
         </td>
@@ -2422,7 +2483,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Cache it.</p>
         </td>
@@ -2502,7 +2563,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>Get stage.</p>
         </td>
@@ -2569,6 +2630,9 @@ is stored in the cached.</p>
   </div>
   <div class="body"><p>Converts the GameStage fields to numbers</p>
 
+<p>Checks if stage and step numbers are within the range
+of what found in the stager.</p>
+
 <p>Works only in simple mode.</p>
   </div>
   <div class="details">
@@ -2603,7 +2667,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>Find stage number.</p>
         </td>
@@ -2646,7 +2710,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Get sequence object.</p>
         </td>
@@ -2669,7 +2733,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>Get stage object.</p>
         </td>
@@ -2684,7 +2748,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>Find step number.</p>
         </td>
@@ -2714,7 +2778,7 @@ is stored in the cached.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Check round property.</p>
         </td>

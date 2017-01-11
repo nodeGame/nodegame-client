@@ -630,19 +630,19 @@ describe('GamePlot', function() {
             plot.stepsFromPreviousStage('1.1.1').should.eql(1);
         });
 
-        it('should return 1 for stage 3.1', function() {
+        it('should return 1 for stage 3.1.1', function() {
             plot.stepsFromPreviousStage('3.1.1').should.eql(1);
         });
 
-        it('should return 2 for stage 3.2', function() {
+        it('should return 2 for stage 3.2.1', function() {
             plot.stepsFromPreviousStage('3.2.1').should.eql(2);
         });
 
-        it('should return 3 for stage 3.3', function() {
+        it('should return 3 for stage 3.3.1', function() {
             plot.stepsFromPreviousStage('3.3.1').should.eql(3);
         });
 
-        it('should return 1 for stage 5.1', function() {
+        it('should return 1 for stage 5.1.1', function() {
             plot.stepsFromPreviousStage('5.1.1').should.eql(1);
         });
 
@@ -652,7 +652,7 @@ describe('GamePlot', function() {
     });
 
 
-    describe('#stepsToNextStage() repeat=TRUE', function() {
+    describe('#stepsToNextStage() countRepeat=TRUE', function() {
         before(function() {
 
             stager = ngc.getStager();
@@ -683,19 +683,19 @@ describe('GamePlot', function() {
             plot.stepsToNextStage('1.1.1', true).should.eql(1);
         });
 
-        it('should return 3 for stage 3.1', function() {
+        it('should return 3 for stage 3.1.1', function() {
             plot.stepsToNextStage('3.1.1', true).should.eql(9);
         });
 
-        it('should return 2 for stage 3.2', function() {
+        it('should return 2 for stage 3.2.1', function() {
             plot.stepsToNextStage('3.2.1', true).should.eql(8);
         });
 
-        it('should return 1 for stage 3.3', function() {
+        it('should return 1 for stage 3.3.1', function() {
             plot.stepsToNextStage('3.3.1', true).should.eql(7);
         });
 
-        it('should return 1 for stage 5.1', function() {
+        it('should return 1 for stage 5.1.1', function() {
             plot.stepsToNextStage('5.1.1', true).should.eql(5);
         });
 
@@ -709,6 +709,62 @@ describe('GamePlot', function() {
 
         it('should return null for doLoop stage', function() {
             (plot.stepsToNextStage('dolo', true) === null).should.eql(true);
+        });
+    });
+
+    describe('#stepsFromPreviousStage() countRepeat=TRUE', function() {
+        it('should return 1 for stage 1', function() {
+            plot.stepsFromPreviousStage('1.1.1', true).should.eql(1);
+        });
+
+        it('should return 1 for stage 3.1', function() {
+            plot.stepsFromPreviousStage('3.1.1', true).should.eql(1);
+        });
+
+        it('should return 2 for stage 3.2.1', function() {
+            plot.stepsFromPreviousStage('3.2.1', true).should.eql(2);
+        });
+
+        it('should return 3 for stage 3.3.1', function() {
+            plot.stepsFromPreviousStage('3.3.1', true).should.eql(3);
+        });
+
+        it('should return 1 for stage 5.1.1', function() {
+            plot.stepsFromPreviousStage('5.1.1', true).should.eql(1);
+        });
+
+        it('should return null for non-existing stage', function() {
+            (plot.stepsFromPreviousStage('5.5.1', true) === null)
+                .should.eql(true);
+        });
+
+        it('should return null for loop stage', function() {
+            (plot.stepsFromPreviousStage('lo', true) === null).should.eql(true);
+        });
+
+        it('should return null for doLoop stage', function() {
+            (plot.stepsFromPreviousStage('dolo', true) === null)
+                .should.eql(true);
+        });
+
+        it('should return 5 for stage 5.1.5', function() {
+            plot.stepsFromPreviousStage('5.1.5', true).should.eql(5);
+        });
+
+        it('should return 3 for stage 5.1.3', function() {
+            plot.stepsFromPreviousStage('5.1.3', true).should.eql(3);
+        });
+
+        it('should return 2 for stage 3.2.2', function() {
+            plot.stepsFromPreviousStage('3.2.2', true).should.eql(5);
+        });
+
+        it('should return 2 for stage 3.2.3', function() {
+            plot.stepsFromPreviousStage('3.2.3', true).should.eql(8);
+        });
+
+        it('should return 2 for stage 3.3.3', function() {
+            plot.stepsFromPreviousStage('3.3.3', true).should.eql(9);
         });
     });
 
