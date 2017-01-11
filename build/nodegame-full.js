@@ -10927,7 +10927,7 @@ if (!Array.prototype.indexOf) {
     //
     exports.stepRules.SOLO_STEP = function(stage, myStageLevel, pl, game) {
         // If next step is going to be a new stage, then wait.
-        if (game.plot.stepsToNextStage(stage) === 1) return false;
+        if (game.plot.stepsToNextStage(stage, true) === 1) return false;
         else return myStageLevel === node.constants.stageLevels.DONE;
     };
 
@@ -10969,7 +10969,7 @@ if (!Array.prototype.indexOf) {
     };
 
     // ## OTHERS_SYNC_STEP
-    // 
+    //
     // Like SYNC_STEP, but does not look at own stage level
     //
     // If no other clients are connected, then it behaves like WAIT.
@@ -12950,12 +12950,7 @@ if (!Array.prototype.indexOf) {
         }
 
         checkOutliers = 'undefined' === typeof checkOutliers ?
-            true : checkOutliers;
-
-        if ('boolean' !== typeof checkOutliers) {
-            throw new TypeError('PlayerList.arePlayersSync: checkOutliers ' +
-                                'must be boolean or undefined.');
-        }
+            true : !!checkOutliers;
 
         if (!checkOutliers && type === 'EXACT') {
             throw new Error('PlayerList.arePlayersSync: incompatible options:' +
@@ -12972,6 +12967,7 @@ if (!Array.prototype.indexOf) {
             case 'EXACT':
                 // Players in same stage, step and round.
                 cmp = GameStage.compare(gameStage, p.stage);
+                console.log(cmp, gameStage, p.stage)
                 if (cmp !== 0) return false;
                 break;
 
@@ -12984,7 +12980,6 @@ if (!Array.prototype.indexOf) {
              case 'STAGE_UPTO':
                 // Players in current stage up to the reference step.
                 cmp = GameStage.compare(gameStage, p.stage);
-
                 // Player in another stage or in later step.
                 if (gameStage.stage !== p.stage.stage || cmp < 0) {
                     outlier = true;
@@ -12992,7 +12987,7 @@ if (!Array.prototype.indexOf) {
                 }
                 // Player before given step.
                 if (cmp > 0) return false;
-                
+
                 break;
             }
 
@@ -13763,7 +13758,105 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GamePlot.next
      *
-     * Returns the next stage in the sequence
+     * Returns the next step in the sequence
+     *
+     * If the step in `curStage` is an integer and out of bounds,
+     * that bound is assumed.
+     *
+     * @param {GameStage} curStage The GameStage of reference
+     * @param {bolean} execLoops Optional. If true, loop and doLoop
+     *   conditional function will be executed to determine next stage.
+     *   If false, null will be returned if the next stage depends
+     *   on the execution of the loop/doLoop conditional function.
+     *   Default: true.
+     *
+     * @return {GameStage|string} The GameStage after _curStage_
+     *
+     * @see GameStage
+     */
+    GamePlot.prototype.nextStage = function(curStage, execLoops) {    
+        var seqObj, stageObj;
+        var stageNo, stepNo, steps;
+        var normStage, nextStage;
+        var flexibleMode;
+
+        // GamePlot was not correctly initialized.
+        if (!this.stager) return GamePlot.NO_SEQ;
+
+        flexibleMode = this.isFlexibleMode();
+        if (flexibleMode) {
+            // TODO.
+        }
+
+        // Standard Mode.
+        else {
+            // Get normalized GameStage:
+            // makes sures stage is with numbers and not strings.
+            normStage = this.normalizeGameStage(curStage);
+            if (normStage === null) {
+                this.node.warn('GamePlot.nextStage: invalid stage: ' +
+                               curStage);
+                return null;
+            }
+
+            stageNo = normStage.stage;
+
+            if (stageNo === 0) {
+                return new GameStage({
+                    stage: 1,
+                    step:  1,
+                    round: 1
+                });
+            }
+            seqObj = this.stager.sequence[stageNo - 1];
+
+            if (seqObj.type === 'gameover') return GamePlot.GAMEOVER;
+
+            execLoops = 'undefined' === typeof execLoops ? true : execLoops;
+
+            // Get stage object.
+            stageObj = this.stager.stages[seqObj.id];
+
+            // Go to next stage.
+            if (stageNo < this.stager.sequence.length) {
+                seqObj = this.stager.sequence[stageNo];
+
+                // Return null if a loop is found and can't be executed.
+                if (!execLoops && seqObj.type === 'loop') return null;
+
+                // Skip over loops if their callbacks return false:
+                while (seqObj.type === 'loop' &&
+                       !seqObj.cb.call(this.node.game)) {
+
+                    stageNo++;
+                    if (stageNo >= this.stager.sequence.length) {
+                        return GamePlot.END_SEQ;
+                    }
+                    // Update seq object.
+                    seqObj = this.stager.sequence[stageNo];
+                }
+
+                // Handle gameover:
+                if (this.stager.sequence[stageNo].type === 'gameover') {
+                    return GamePlot.GAMEOVER;
+                }
+
+                return new GameStage({
+                    stage: stageNo + 1,
+                    step:  1,
+                    round: 1
+                });
+            }
+
+            // No more stages remaining:
+            return GamePlot.END_SEQ;
+        }
+    };
+
+    /**
+     * ### GamePlot.next
+     *
+     * Returns the next step in the sequence
      *
      * If the step in `curStage` is an integer and out of bounds,
      * that bound is assumed.
@@ -13971,7 +14064,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GamePlot.previous
      *
-     * Returns the previous stage in the stager
+     * Returns the previous step in the sequence
      *
      * Works only in simple mode.
      *
@@ -14149,31 +14242,44 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GamePlot.stepsToNextStage
      *
-     * Returns the number of steps from next stage (normalized)
+     * Returns the number of steps to reach the next stage
      *
-     * The next stage can be a repetition of the current one, if inside a
-     * loop or a repeat stage.
+     * By default, each stage repetition is considered as a new stage.
      *
-     * @param {GameStage|string} gameStage The GameStage object,
-     *  or its string representation
+     * @param {GameStage|string} gameStage The reference step
+     * @param {boolean} countRepeat If TRUE stage repetitions are
+     *  considered as current stage, and included in the count. Default: FALSE.
      *
      * @return {number|null} The number of steps including current one,
      *   or NULL on error.
+     *
+     * @see GamePlot.normalizeGameStage
      */
-    GamePlot.prototype.stepsToNextStage = function(gameStage) {
-        var seqObj, stepNo;
+    GamePlot.prototype.stepsToNextStage = function(gameStage, countRepeat) {
+        var seqObj, totSteps, stepNo;
         if (!this.stager) return null;
 
+        // Checks stage and step ranges.
         gameStage = this.normalizeGameStage(gameStage);
         if (!gameStage) return null;
         if (gameStage.stage === 0) return 1;
         seqObj = this.getSequenceObject(gameStage);
         if (!seqObj) return null;
         stepNo = gameStage.step;
-        return 1 + seqObj.steps.length - stepNo;
+        totSteps = seqObj.steps.length;
+        if (countRepeat) {
+            if (seqObj.type === 'repeat') {
+                totSteps = totSteps * (1 + (seqObj.num - gameStage.round));
+                stepNo = gameStage.round * stepNo;
+            }
+            else if (seqObj.type === 'loop' || seqObj.type === 'doLoop') {
+                return null;
+            }
+        }
+        return 1 + totSteps - stepNo;
     };
 
-
+    // TODO: remove in next version.
     GamePlot.prototype.stepsToPreviousStage = function(gameStage) {
         console.log('GamePlot.stepsToPreviousStage is **deprecated**. Use' +
                     'GamePlot.stepsFromPreviousStage instead.');
@@ -14183,27 +14289,43 @@ if (!Array.prototype.indexOf) {
     /**
      * ### GamePlot.stepsFromPreviousStage
      *
-     * Returns the number of steps from previous stage (normalized)
+     * Returns the number of steps passed from the previous stage
      *
-     * The previous stage can be a repetition of the current one, if inside a
-     * loop or a repeat stage.
+     * By default, each stage repetition is considered as a new stage.
      *
-     * @param {GameStage|string} gameStage The GameStage object,
-     *  or its string representation
+     * @param {GameStage|string} gameStage The reference step
+     * @param {boolean} countRepeat If TRUE stage repetitions are
+     *  considered as current stage, and included in the count. Default: FALSE.
      *
      * @return {number|null} The number of steps including current one, or
      *   NULL on error.
+     *
+     * @see GamePlot.normalizeGameStage
      */
-    GamePlot.prototype.stepsFromPreviousStage = function(gameStage) {
+    GamePlot.prototype.stepsFromPreviousStage = function(gameStage,
+                                                         countRepeat) {
+
         var seqObj, stepNo;
         if (!this.stager) return null;
 
+        // Checks stage and step ranges.
         gameStage = this.normalizeGameStage(gameStage);
         if (!gameStage || gameStage.stage === 0) return null;
         seqObj = this.getSequenceObject(gameStage);
         if (!seqObj) return null;
         stepNo = gameStage.step;
-        return (stepNo < 1 || stepNo > seqObj.steps.length) ? null : stepNo;
+        if (countRepeat) {
+            if (seqObj.type === 'repeat') {
+                if (gameStage.round > 1) {
+                    stepNo = (seqObj.steps.length * (gameStage.round-1)) +
+                        stepNo;
+                }
+            }
+            else if (seqObj.type === 'loop' || seqObj.type === 'doLoop') {
+                return null;
+            }
+        }
+        return stepNo;
     };
 
     /**
@@ -14623,6 +14745,9 @@ if (!Array.prototype.indexOf) {
      * ### GamePlot.normalizeGameStage
      *
      * Converts the GameStage fields to numbers
+     *
+     * Checks if stage and step numbers are within the range
+     * of what found in the stager.
      *
      * Works only in simple mode.
      *
@@ -23565,7 +23690,13 @@ if (!Array.prototype.indexOf) {
     Game.prototype.step = function(options) {
         var curStep, nextStep;
         curStep = this.getCurrentGameStage();
-        nextStep = this.plot.next(curStep);
+        if (this.breakStage) {
+            nextStep = this.plot.nextStage(curStep);
+            this.breakStage = null;
+        }
+        else {
+            nextStep = this.plot.next(curStep);
+        }
         return this.gotoStep(nextStep, options);
     };
 

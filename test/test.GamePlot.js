@@ -695,6 +695,18 @@ describe('GamePlot', function() {
             plot.stepsToNextStage('3.3.1', true).should.eql(7);
         });
 
+        it('should return 1 for stage 3.3.2', function() {
+            plot.stepsToNextStage('3.3.2', true).should.eql(5);
+        });
+
+        it('should return 1 for stage 3.1.3', function() {
+            plot.stepsToNextStage('3.1.3', true).should.eql(3);
+        });
+
+        it('should return 1 for stage 3.3.3', function() {
+            plot.stepsToNextStage('3.3.3', true).should.eql(1);
+        });
+
         it('should return 1 for stage 5.1.1', function() {
             plot.stepsToNextStage('5.1.1', true).should.eql(5);
         });
