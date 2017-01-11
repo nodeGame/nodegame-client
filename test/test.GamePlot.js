@@ -672,6 +672,8 @@ describe('GamePlot', function() {
                 .repeat('3', 3)
                 .next('4')
                 .repeat('5', 5)
+                .loop('lo', function() { return true; })
+                .doLoop('dolo', function() { return true; })
                 .finalize();
 
             plot = new GamePlot(node, stager);
@@ -699,6 +701,14 @@ describe('GamePlot', function() {
 
         it('should return null for non-existing stage', function() {
             (plot.stepsToNextStage('5.5.1', true) === null).should.eql(true);
+        });
+
+        it('should return null for loop stage', function() {
+            (plot.stepsToNextStage('lo', true) === null).should.eql(true);
+        });
+
+        it('should return null for doLoop stage', function() {
+            (plot.stepsToNextStage('dolo', true) === null).should.eql(true);
         });
     });
 

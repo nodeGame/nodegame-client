@@ -1449,6 +1449,12 @@ loop or a repeat stage.</p>
       <span>The GameStage object,
  or its string representation</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">repeat</span>
+      <span class="dox_type">boolean</span>
+      <span>If TRUE stage repetitions are counted.
+ Default: FALSE.</span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
@@ -1471,9 +1477,14 @@ loop or a repeat stage.</p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">seqObj</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="nx">stepNo</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">step</span><span class="p">;</span>
         <span class="nx">totSteps</span> <span class="o">=</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">steps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">repeat</span> <span class="o">&amp;&amp;</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">totSteps</span> <span class="o">=</span> <span class="nx">totSteps</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span> <span class="o">-</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span><span class="p">));</span>
-            <span class="nx">stepNo</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span> <span class="o">*</span> <span class="nx">stepNo</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">repeat</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;repeat&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">totSteps</span> <span class="o">=</span> <span class="nx">totSteps</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">num</span> <span class="o">-</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span><span class="p">));</span>
+                <span class="nx">stepNo</span> <span class="o">=</span> <span class="nx">gameStage</span><span class="p">.</span><span class="nx">round</span> <span class="o">*</span> <span class="nx">stepNo</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;loop&#39;</span> <span class="o">||</span> <span class="nx">seqObj</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;doLoop&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="nx">totSteps</span> <span class="o">-</span> <span class="nx">stepNo</span><span class="p">;</span>
     <span class="p">};</span>
