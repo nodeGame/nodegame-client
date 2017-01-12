@@ -12967,7 +12967,6 @@ if (!Array.prototype.indexOf) {
             case 'EXACT':
                 // Players in same stage, step and round.
                 cmp = GameStage.compare(gameStage, p.stage);
-                console.log(cmp, gameStage, p.stage)
                 if (cmp !== 0) return false;
                 break;
 
@@ -13774,7 +13773,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see GameStage
      */
-    GamePlot.prototype.nextStage = function(curStage, execLoops) {    
+    GamePlot.prototype.nextStage = function(curStage, execLoops) {
         var seqObj, stageObj;
         var stageNo, stepNo, steps;
         var normStage, nextStage;
@@ -14269,8 +14268,10 @@ if (!Array.prototype.indexOf) {
         totSteps = seqObj.steps.length;
         if (countRepeat) {
             if (seqObj.type === 'repeat') {
-                totSteps = totSteps * (1 + (seqObj.num - gameStage.round));
-                stepNo = gameStage.round * stepNo;
+                if (gameStage.round > 1) {
+                    stepNo = ((gameStage.round-1) * totSteps) + stepNo;
+                }
+                totSteps = totSteps * seqObj.num;
             }
             else if (seqObj.type === 'loop' || seqObj.type === 'doLoop') {
                 return null;
