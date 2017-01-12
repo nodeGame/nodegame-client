@@ -1,5 +1,10 @@
 # nodegame-client change log
 
+## Current (master)
+- Step rule `SOLO_STEP` to step through all steps of a stage.
+- `#GamePlot.nextStage` (previousStage still to be done).
+- `#GamePlot.stepsToNextStage` and `#GamePlot.stepsFromPreviousStage` accepts a parameter to control for round repetitions.
+
 ## 3.5.0
 - Introduced role: the same step can have sub-step properties organized in roles. Current role saved in: `node.game.role`.
 - Introduce partner: the ID (or full obj) of another client.
