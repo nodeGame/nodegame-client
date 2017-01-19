@@ -180,6 +180,7 @@
                 return;
             }
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
+            if (options.breakStage) node.game.breakStage(true);
             node.game.step();
         });
 

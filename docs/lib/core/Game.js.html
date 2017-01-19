@@ -2568,7 +2568,7 @@ inserted in the plot, or be already in the plot.</p>
         <span class="kd">var</span> <span class="nx">widget</span><span class="p">,</span> <span class="nx">widgetObj</span><span class="p">,</span> <span class="nx">widgetRoot</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">widgetCb</span><span class="p">,</span> <span class="nx">widgetExit</span><span class="p">,</span> <span class="nx">widgetDone</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">origDoneCb</span><span class="p">,</span> <span class="nx">exitCb</span><span class="p">,</span> <span class="nx">origExitCb</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">frame</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">frameOptions</span><span class="p">,</span> <span class="nx">frameAutoParse</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">frame</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">frameOptions</span><span class="p">,</span> <span class="nx">frameAutoParse</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">step</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.execStep: step must be object.&#39;</span><span class="p">);</span>
@@ -2841,7 +2841,8 @@ it is not passed to W.loadFrame.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">w</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">w</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Game.execStep: frame option in step &#39;</span> <span class="o">+</span>
                                 <span class="nx">step</span> <span class="o">+</span> <span class="s1">&#39;, but nodegame-window is not loaded.&#39;</span><span class="p">);</span>
             <span class="p">}</span>
@@ -2897,12 +2898,30 @@ it is not passed to W.loadFrame.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
+<p>In case we are not changing frame, we do not reload it,
+unless we are forced to.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">uri</span> <span class="o">===</span> <span class="nx">w</span><span class="p">.</span><span class="nx">unprocessedUri</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">frameOptions</span><span class="p">.</span><span class="nx">forceReload</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+</div>
 <p>Auto load frame and wrap cb.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">frameOptions</span><span class="p">);</span>
-            <span class="p">});</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">frameOptions</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">execCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
@@ -2961,7 +2980,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>Execute custom callback. Can throw errors.</p>
         </td>
@@ -2975,7 +2994,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>A non fatal error occurred.</p>
         </td>
@@ -2993,7 +3012,7 @@ and emits an event before exiting.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Internal listeners will check whether we need to emit PLAYING.</p>
         </td>
@@ -3229,7 +3248,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.
 The stage level, must also be sent in the published update,
@@ -3358,7 +3377,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3484,7 +3503,7 @@ parameter <code>mod</code>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 <p>Important: First publish, then actually update.</p>
         </td>
@@ -3630,7 +3649,7 @@ value of the update to decide whether is to be published or not.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
 </div>
 <p>Two cases are handled outside of the switch: NO msg
 and LOADED stage with syncOnLoaded option.</p>
@@ -3651,7 +3670,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
+  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
 </div>
 <p>Else will be evaluated below.</p>
         </td>
@@ -3665,7 +3684,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
+  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
 </div>
 <p>Check all the other cases.</p>
         </td>
@@ -3692,7 +3711,7 @@ and LOADED stage with syncOnLoaded option.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
+  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
 </div>
 <p>Unknown values of publishLevels are treated as ALL.</p>
         </td>
@@ -4028,7 +4047,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
+  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
 </div>
 <p>Should emit PLAYING only after LOADED.</p>
         </td>
@@ -4229,7 +4248,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <p>Adding new globals.</p>
         </td>
@@ -4251,7 +4270,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
 </div>
 <p>Removing old ones.</p>
         </td>
@@ -4272,7 +4291,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
 </div>
 <p>Updating globals reference.</p>
         </td>
@@ -4464,7 +4483,7 @@ an error will be thrown on attempts to overwrite roles.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>Modify plot properties.</p>
         </td>
@@ -4699,7 +4718,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+  <a class="pilcrow" href="#section-159" id="section-159">&#182;</a>
 </div>
 <p>Call node.done() immediately after PLAYING is emitted.</p>
         </td>
@@ -4716,7 +4735,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-159" id="section-159">&#182;</a>
+  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
 </div>
 <p>Temporarily modify plot properties.
 Must be done after setting the role.</p>
@@ -4737,7 +4756,7 @@ Must be done after setting the role.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
+  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
 </div>
 <p>TODO: rename cb.
 Call the cb with options as param, if found.</p>

@@ -7135,11 +7135,13 @@ if (!Array.prototype.indexOf) {
      * @param {array} db Array of items to import
      */
     NDDB.prototype.importDB = function(db) {
-        var i;
+        var i, len;
         if (!J.isArray(db)) {
-            this.throwErr('TypeError', 'importDB', 'db must be array');
+            this.throwErr('TypeError', 'importDB', 'db must be array. Found: ' +
+                         db);
         }
-        for (i = 0; i < db.length; i++) {
+        i = -1, len = db.length;
+        for ( ; ++i < len ; ) {
             nddb_insert.call(this, db[i], this.__update.indexes);
         }
         this._autoUpdate({indexes: false});
@@ -7160,11 +7162,19 @@ if (!Array.prototype.indexOf) {
      *  - null
      *
      * @param {object} o The item or array of items to insert
-     * @see NDDB._insert
+     *
+     * @return {object|boolean} o The inserted object (might have been
+     *   updated by on('insert') callbacks), or FALSE if the object could
+     *   not be inserted, e.g. if a on('insert') callback returned FALSE.
+     *
+     * @see nddb_insert
      */
     NDDB.prototype.insert = function(o) {
-        nddb_insert.call(this, o, this.__update.indexes);
+        var res;
+        res = nddb_insert.call(this, o, this.__update.indexes);
+        if (res === false) return false;
         this._autoUpdate({indexes: false});
+        return o;
     };
 
     /**
@@ -7924,11 +7934,20 @@ if (!Array.prototype.indexOf) {
      *
      * Accepts any number of parameters, the first one is the name
      * of the event, and the remaining will be passed to the event listeners.
+     *
+     * If a registered event listener returns FALSE, subsequent event
+     * listeners are **not** executed, and the method returns FALSE.
+     *
+     * @param {string} The event type ('insert', 'delete', 'update')
+     *
+     * @return {boolean} TRUE under normal conditions, or FALSE if at least
+     *   one callback function returned FALSE.
      */
     NDDB.prototype.emit = function() {
         var event;
         var h, h2;
         var i, len, argLen, args;
+        var res;
         event = arguments[0];
         if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
@@ -7937,64 +7956,72 @@ if (!Array.prototype.indexOf) {
             this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
         len = this.hooks[event].length;
-        if (!len) return;
+        if (!len) return true;
         argLen = arguments.length;
 
         switch(len) {
 
         case 1:
             h = this.hooks[event][0];
-            if (argLen === 1) h.call(this);
-            else if (argLen === 2) h.call(this, arguments[1]);
+            if (argLen === 1) res = h.call(this);
+            else if (argLen === 2) res = h.call(this, arguments[1]);
             else if (argLen === 3) {
-                h.call(this, arguments[1], arguments[2]);
+                res = h.call(this, arguments[1], arguments[2]);
             }
             else {
                 args = new Array(argLen-1);
                 for (i = 0; i < argLen; i++) {
                     args[i] = arguments[i+1];
                 }
-                h.apply(this, args);
+                res = h.apply(this, args);
             }
             break;
         case 2:
             h = this.hooks[event][0], h2 = this.hooks[event][1];
             if (argLen === 1) {
-                h.call(this);
-                h2.call(this);
+                res = h.call(this) !== false;
+                res = res && h2.call(this) !== false;
             }
             else if (argLen === 2) {
-                h.call(this, arguments[1]);
-                h2.call(this, arguments[1]);
+                res = h.call(this, arguments[1]) !== false;
+                res = res && h2.call(this, arguments[1]) !== false;
             }
             else if (argLen === 3) {
-                h.call(this, arguments[1], arguments[2]);
-                h2.call(this, arguments[1], arguments[2]);
+                res = h.call(this, arguments[1], arguments[2]) !== false;
+                res = res && h2.call(this, arguments[1], arguments[2])!== false;
             }
             else {
                 args = new Array(argLen-1);
                 for (i = 0; i < argLen; i++) {
                     args[i] = arguments[i+1];
                 }
-                h.apply(this, args);
-                h2.apply(this, args);
+                res = h.apply(this, args) !== false;
+                res = res && h2.apply(this, args) !== false;
             }
             break;
         default:
-
              if (argLen === 1) {
                  for (i = 0; i < len; i++) {
-                     this.hooks[event][i].call(this);
+                     res = this.hooks[event][i].call(this) !== false;
+                     if (res === false) break;
                  }
             }
             else if (argLen === 2) {
+                res = true;
                 for (i = 0; i < len; i++) {
-                    this.hooks[event][i].call(this, arguments[1]);
+                    res = this.hooks[event][i].call(this,
+                                                    arguments[1]) !== false;
+                    if (res === false) break;
+
                 }
             }
             else if (argLen === 3) {
+                res = true;
                 for (i = 0; i < len; i++) {
-                    this.hooks[event][i].call(this, arguments[1], arguments[2]);
+                    res = this.hooks[event][i].call(this,
+                                                    arguments[1],
+                                                    arguments[2]) !== false;
+                    if (res === false) break;
                 }
             }
             else {
@@ -8002,12 +8029,15 @@ if (!Array.prototype.indexOf) {
                 for (i = 0; i < argLen; i++) {
                     args[i] = arguments[i+1];
                 }
+                res = true;
                 for (i = 0; i < len; i++) {
-                    this.hooks[event][i].apply(this, args);
+                    res = this.hooks[event][i].apply(this, args) !== false;
+                    if (res === false) break;
                 }
 
             }
         }
+        return res;
     };
 
     // ## Sort and Select
@@ -8564,11 +8594,11 @@ if (!Array.prototype.indexOf) {
      *
      * Updates all selected entries
      *
-     * Mix ins the properties of the _update_ object in each
-     * selected item.
+     * Mixins the properties of the _update_ object in each of the
+     * selected items.
      *
-     * Properties from the _update_ object that are not found in
-     * the selected items will be created.
+     * Some selected items can be skipped from update if a callback
+     * on('update') returns FALSE.
      *
      * @param {object} update An object containing the properties
      *  that will be updated.
@@ -8576,23 +8606,26 @@ if (!Array.prototype.indexOf) {
      * @return {NDDB} A new instance of NDDB with updated entries
      *
      * @see JSUS.mixin
+     * @see NDDB.emit
      */
     NDDB.prototype.update = function(update) {
-        var i, len, db;
+        var i, len, db, res;
         if ('object' !== typeof update) {
             this.throwErr('TypeError', 'update', 'update must be object');
         }
 
         // Gets items and resets the current selection.
         db = this.fetch();
-        if (db.length) {
-            len = db.length;
+        len = db.length;
+        if (len) {
             for (i = 0; i < len; i++) {
-                this.emit('update', db[i], update);
-                J.mixin(db[i], update);
-                this._indexIt(db[i]);
-                this._hashIt(db[i]);
-                this._viewIt(db[i]);
+                res = this.emit('update', db[i], update);
+                if (res === true) {
+                    J.mixin(db[i], update);
+                    this._indexIt(db[i]);
+                    this._hashIt(db[i]);
+                    this._viewIt(db[i]);
+                }
             }
             this._autoUpdate({indexes: false});
         }
@@ -8607,10 +8640,10 @@ if (!Array.prototype.indexOf) {
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
-     *
-     * TODO: do we still need this method?
      */
     NDDB.prototype.removeAllEntries = function() {
+        console.log('***NDDB.removeAllEntries is deprecated. Use ' +
+                    'NDDB.clear instead***');
         if (!this.db.length) return this;
         this.emit('remove', this.db);
         this.nddbid.resolve = {};
@@ -9913,13 +9946,16 @@ if (!Array.prototype.indexOf) {
      * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
      *    and views. Default, FALSE
      *
+     * @return {boolean} TRUE, if item was inserted, FALSE otherwise, e.g.
+     *   if a callback on('insert') returned FALSE.
+     *
      * @see NDDB.nddbid
      * @see NDDB.emit
      *
      * @api private
      */
     function nddb_insert(o, update) {
-        var nddbid;
+        var nddbid, res;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
             this.throwErr('TypeError', 'insert', 'object or function ' +
                           'expected, ' + typeof o + ' received');
@@ -9943,13 +9979,16 @@ if (!Array.prototype.indexOf) {
         // Add to index directly (bypass api).
         this.nddbid.resolve[o._nddbid] = this.db.length;
         // End create index.
+        res = this.emit('insert', o);
+        // Stop inserting elements if one callback returned FALSE.
+        if (res === false) return false;
         this.db.push(o);
-        this.emit('insert', o);
         if (update) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
         }
+        return true
     }
 
     /**
@@ -10436,21 +10475,25 @@ if (!Array.prototype.indexOf) {
      *
      * @param {mixed} idx The id of item to remove
      *
-     * @return {object|boolean} The removed item, or FALSE if index is invalid
+     * @return {object|boolean} The removed item, or FALSE if the
+     *   index is invalid or if the object could not be removed,
+     *   e.g. if a on('remove') callback returned FALSE.
      *
      * @see NDDB.index
+     * @see NDDB.emit
      * @see NDDBIndex.get
      * @see NDDBIndex.update
      */
     NDDBIndex.prototype.remove = function(idx) {
-        var o, dbidx;
+        var o, dbidx, res;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         o = this.nddb.db[dbidx];
-        if ('undefined' === typeof o) return;
+        if ('undefined' === typeof o) return false;
+        res = this.nddb.emit('remove', o);
+        if (res === false) return false;
         this.nddb.db.splice(dbidx, 1);
         this._remove(idx);
-        this.nddb.emit('remove', o);
         this.nddb._autoUpdate();
         return o;
     };
@@ -10466,19 +10509,21 @@ if (!Array.prototype.indexOf) {
      *
      * @param {mixed} idx The id of item to update
      *
-     * @return {object|boolean} The updated item, or FALSE if index is invalid
+     * @return {object|boolean} The updated item, or FALSE if
+     *   index is invalid, or a callback on('update') returned FALSE.
      *
      * @see NDDB.index
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
     NDDBIndex.prototype.update = function(idx, update) {
-        var o, dbidx, nddb;
+        var o, dbidx, nddb, res;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         nddb = this.nddb;
         o = nddb.db[dbidx];
-        nddb.emit('update', o, update);
+        res = nddb.emit('update', o, update);
+        if (res === false) return false;
         J.mixin(o, update);
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
@@ -13762,6 +13807,8 @@ if (!Array.prototype.indexOf) {
      * If the step in `curStage` is an integer and out of bounds,
      * that bound is assumed.
      *
+     * // TODO: previousStage
+     *
      * @param {GameStage} curStage The GameStage of reference
      * @param {bolean} execLoops Optional. If true, loop and doLoop
      *   conditional function will be executed to determine next stage.
@@ -13784,7 +13831,11 @@ if (!Array.prototype.indexOf) {
 
         flexibleMode = this.isFlexibleMode();
         if (flexibleMode) {
-            // TODO.
+            // TODO. What does next stage mean in flexible mode?
+            // Calling the next cb of the last step? A separate cb?
+            console.log('***GamePlot.nextStage: method not available in ' +
+                        'flexible mode.***');
+            return null;
         }
 
         // Standard Mode.
@@ -16563,7 +16614,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see Block.remove
      */
-    Block.prototype.removeAllItems = function(itemId) {
+    Block.prototype.removeAllItems = function() {
         var i, len;
 
         if (this.finalized) {
@@ -16573,7 +16624,8 @@ if (!Array.prototype.indexOf) {
 
         i = -1, len = this.unfinishedItems.length;
         for ( ; ++i < len ; ) {
-            this.remove(this.unfinishedItems[i].item.id);
+            // Always remove item 0, size is changing.
+            this.remove(this.unfinishedItems[0].item.id);
         }
 
     };
@@ -23100,7 +23152,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Game
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Handles the flow of the game
@@ -23351,6 +23403,15 @@ if (!Array.prototype.indexOf) {
          * @see Game.step
          */
         this._steppedSteps = [new GameStage()];
+
+        /**
+         * ### Game._breakStage
+         *
+         * Flags to break current stage at next node.done call
+         *
+         * @see Game.breakStage
+         */
+        this._breakStage = false;
 
         /** ### Game.pushManager
          *
@@ -23675,6 +23736,30 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Game.breakStage
+     *
+     * Sets/Removes a flag to break current stage
+     *
+     * If the flag is set, when node.done() is invoked, the game will
+     * step into the next stage instead of into the next step.
+     *
+     * @param {boolean} doBreak Optional. TRUE to set the flag, FALSE to
+     *   remove it, or undefined to just get returned the current value.
+     *
+     * @return {boolean} The value of the flag before it is overwritten
+     *   by current call.
+     *
+     * @see Game._breakStage
+     * @see Game.gotoStep
+     */
+    Game.prototype.breakStage = function(doBreak) {
+        var b;
+        b = this._breakStage;
+        if ('undefined' !== typeof doBreak) this._breakStage = !!doBreak;
+        return b;
+    };
+
+    /**
      * ### Game.step
      *
      * Executes the next stage / step
@@ -23687,17 +23772,14 @@ if (!Array.prototype.indexOf) {
      * @see Game.currentStage
      * @see Game.gotoStep
      * @see Game.execStep
+     * @see Game.breakStage
      */
     Game.prototype.step = function(options) {
         var curStep, nextStep;
         curStep = this.getCurrentGameStage();
-        if (this.breakStage) {
-            nextStep = this.plot.nextStage(curStep);
-            this.breakStage = null;
-        }
-        else {
-            nextStep = this.plot.next(curStep);
-        }
+        // Gets current value and sets breakStage flag in one call.
+        if (this.breakStage(false)) nextStep = this.plot.nextStage(curStep);
+        else nextStep = this.plot.next(curStep);
         return this.gotoStep(nextStep, options);
     };
 
@@ -23990,7 +24072,7 @@ if (!Array.prototype.indexOf) {
         var widget, widgetObj, widgetRoot;
         var widgetCb, widgetExit, widgetDone;
         var doneCb, origDoneCb, exitCb, origExitCb;
-        var frame, uri, frameOptions, frameAutoParse;
+        var w, frame, uri, frameOptions, frameAutoParse;
 
         if ('object' !== typeof step) {
             throw new Error('Game.execStep: step must be object.');
@@ -24114,9 +24196,14 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // TODO: compare currently loaded frame, with
+        // requested frame. If it the same, and no forceReload flag is found
+        // it is not passed to W.loadFrame.
+
         // Handle frame loading natively, if required.
         if (frame) {
-            if (!this.node.window) {
+            w = this.node.window;
+            if (!w) {
                 throw new Error('Game.execStep: frame option in step ' +
                                 step + ', but nodegame-window is not loaded.');
             }
@@ -24152,10 +24239,17 @@ if (!Array.prototype.indexOf) {
 
             }
 
-            // Auto load frame and wrap cb.
-            this.execCallback(function() {
-                this.node.window.loadFrame(uri, cb, frameOptions);
-            });
+            // In case we are not changing frame, we do not reload it,
+            // unless we are forced to.
+            if (uri === w.unprocessedUri && !frameOptions.forceReload) {
+                this.execCallback(cb);
+            }
+            else {
+                // Auto load frame and wrap cb.
+                this.execCallback(function() {
+                    this.node.window.loadFrame(uri, cb, frameOptions);
+                });
+            }
         }
         else {
             this.execCallback(cb);
@@ -30622,6 +30716,7 @@ if (!Array.prototype.indexOf) {
                 return;
             }
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
+            if (options.breakStage) node.game.breakStage(true);            
             node.game.step();
         });
 
@@ -31659,11 +31754,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameWindow
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * GameWindow provides a handy API to interface nodeGame with the
- * browser window
+ * API to interface nodeGame with the browser window
  *
  * Creates a custom root element inside the HTML page, and insert an
  * iframe element inside it.
@@ -31679,28 +31773,31 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
+    var J, DOM;
 
+    var constants, windowLevels, screenLevels;
+    var CB_EXECUTED, WIN_LOADING, lockedUpdate;
+
+    J = node.JSUS;
     if (!J) {
         throw new Error('GameWindow: JSUS object not found. Aborting.');
     }
 
-    var DOM = J.get('DOM');
-
+    DOM = J.get('DOM');
     if (!DOM) {
         throw new Error('GameWindow: JSUS DOM object not found. Aborting.');
     }
 
-    var constants = node.constants;
-    var windowLevels = constants.windowLevels;
-    var screenLevels = constants.screenLevels;
+    constants = node.constants;
+    windowLevels = constants.windowLevels;
+    screenLevels = constants.screenLevels;
 
-    var CB_EXECUTED = constants.stageLevels.CALLBACK_EXECUTED;
+    CB_EXECUTED = constants.stageLevels.CALLBACK_EXECUTED;
 
-    var WIN_LOADING = windowLevels.LOADING;
+    WIN_LOADING = windowLevels.LOADING;
 
     // Allows just one update at the time to the counter of loading frames.
-    var lockedUpdate = false;
+    lockedUpdate = false;
 
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
@@ -31975,11 +32072,26 @@ if (!Array.prototype.indexOf) {
          *
          * Currently loaded URIs in the internal frames
          *
-         * Maps frame names (e.g. 'ng_mainframe') to the URIs they are showing.
+         * Maps frame names (e.g. 'ng_mainframe') to the (processed) URIs
+         * that they are showing.
          *
          * @see GameWindow.preCache
+         * @see GameWindow.processUri
+         *
+         * TODO: check: this is still having the test frame, should it be
+         * removed instead?
          */
-        this.currentURIs = {};
+        this.currentURIs = {};      
+
+        /**
+         * ### GameWindow.unprocessedUri
+         *
+         * The uri parameter passed to `loadFrame`, still unprocessed
+         *
+         * @see GameWindow.currentURIs
+         * @see GameWindow.processUri
+         */
+        this.unprocessedUri = null;
 
         /**
          * ### GameWindow.globalLibs
@@ -33197,6 +33309,9 @@ if (!Array.prototype.indexOf) {
             autoParse = opts.autoParse;
         }
 
+        // Store unprocessed uri parameter.
+        this.unprocessedUri = uri;
+
         // Adapt the uri if necessary.
         uri = this.processUri(uri);
 
@@ -33303,6 +33418,8 @@ if (!Array.prototype.indexOf) {
      * Parses a uri string and adds channel uri and prefix, if defined
      *
      * @param {string} uri The uri to process
+     *
+     * @return {string} uri The processed uri
      *
      * @see GameWindow.uriPrefix
      * @see GameWindow.uriChannel

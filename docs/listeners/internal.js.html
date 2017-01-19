@@ -504,6 +504,7 @@ In case the handler returns FALSE, the process is stopped.</p>
                 <span class="k">return</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;BEFORE_GAMECOMMAND&#39;</span><span class="p">,</span> <span class="nx">gcommands</span><span class="p">.</span><span class="nx">step</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">breakStage</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">breakStage</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">step</span><span class="p">();</span>
         <span class="p">});</span>
 
