@@ -10602,7 +10602,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '3.5.0';
+    node.version = '3.5.1';
 
 })(window);
 
@@ -13657,10 +13657,12 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GamePlot
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Wraps a stager and exposes methods to navigate through the sequence
+ *
+ * TODO: previousStage
  */
 (function(exports, parent) {
 
@@ -30716,7 +30718,7 @@ if (!Array.prototype.indexOf) {
                 return;
             }
             node.emit('BEFORE_GAMECOMMAND', gcommands.step, options);
-            if (options.breakStage) node.game.breakStage(true);            
+            if (options.breakStage) node.game.breakStage(true);
             node.game.step();
         });
 
@@ -32081,7 +32083,7 @@ if (!Array.prototype.indexOf) {
          * TODO: check: this is still having the test frame, should it be
          * removed instead?
          */
-        this.currentURIs = {};      
+        this.currentURIs = {};
 
         /**
          * ### GameWindow.unprocessedUri
