@@ -1,6 +1,6 @@
 # nodegame-client change log
 
-## Current (master)
+## 3.5.1
 - Step rule `SOLO_STEP` to step through all steps of a stage.
 - `#GamePlot.nextStage` (previousStage still to be done).
 - `#GamePlot.stepsToNextStage` and `#GamePlot.stepsFromPreviousStage` accepts a parameter to control for round repetitions.
