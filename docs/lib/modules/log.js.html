@@ -161,6 +161,23 @@ otherwise we enter an infinite loop.</p>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">isConnected</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">])</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">remoteLogMap</span><span class="p">[</span><span class="nx">txt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>There is a chance that the message is not sent,
+depending on what the state of the connection is.
+TODO: example, error on Init function, socket.io
+transport stays in state of <code>upgrading</code> and does
+not let send messages. If you manually force it 
+in a debug session, they are actually sent.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
                     <span class="k">this</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
                         <span class="nx">target</span><span class="o">:</span> <span class="nx">LOG</span><span class="p">,</span>
                         <span class="nx">text</span><span class="o">:</span> <span class="nx">level</span><span class="p">,</span>

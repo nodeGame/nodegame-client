@@ -56,7 +56,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2017 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Handles runtime errors</p>
@@ -131,7 +131,7 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Reference to the last error occurred.</p>
+  <div class="body"><p>Reference to the last error occurred</p>
   </div>
 </div>
         </td>
@@ -199,30 +199,6 @@ In node.js, the ServerNode Error Manager is active.</p>
                 <span class="k">return</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
             <span class="p">};</span>
         <span class="p">}</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code>    <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="nx">err</span><span class="p">;</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Caught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
-    <span class="p">}</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
     <span class="p">};</span>
 
 
