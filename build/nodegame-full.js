@@ -20301,7 +20301,7 @@ if (!Array.prototype.indexOf) {
             throw new Error('Socket.startSession: session already existing. ' +
                             'Use force parameter to overwrite it.');
         }
-        
+
         // We need to first set the session,
         // and then eventually stop an ongoing game.
         this.session = msg.session;
