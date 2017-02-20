@@ -2491,7 +2491,8 @@ if (!Array.prototype.indexOf) {
         var i, len, idOrder, children, child;
         var id, forceId, missId;
         if (!JSUS.isNode(parent)) {
-            throw new TypeError('DOM.shuffleElements: parent must node.');
+            throw new TypeError('DOM.shuffleElements: parent must be a node. ' +
+                               'Found: ' + parent);
         }
         if (!parent.children || !parent.children.length) {
             JSUS.log('DOM.shuffleElements: parent has no children.', 'ERR');
@@ -2499,7 +2500,8 @@ if (!Array.prototype.indexOf) {
         }
         if (order) {
             if (!JSUS.isArray(order)) {
-                throw new TypeError('DOM.shuffleElements: order must array.');
+                throw new TypeError('DOM.shuffleElements: order must array.' +
+                                   'Found: ' + order);
             }
             if (order.length !== parent.children.length) {
                 throw new Error('DOM.shuffleElements: order length must ' +
@@ -7749,7 +7751,7 @@ if (!Array.prototype.indexOf) {
                 if (index !== oldIdx) {
                     if ('undefined' !== typeof oldIdx) {
                         if ('undefined' !== typeof this[key].resolve[oldIdx]) {
-                            delete this[key].resolve[oldIdx];
+                            this[key]._remove(oldIdx);
                         }
                     }
                 }
@@ -26991,18 +26993,19 @@ if (!Array.prototype.indexOf) {
         // a function, or just the number of milliseconds.
         if ('function' === typeof timer) {
             timer = timer.call(this.node.game);
-            if (null === timer) return null
+            if (null === timer) return null;
         }
-        else if ('object' === typeof timer &&
-                 'function' === typeof timer.milliseconds) {
-
-                // Manual clone.
-                timer = {
-                    milliseconds: timer.milliseconds.call(this.node.game),
-                    update: timer.update,
-                    timeup: timer.timeup,
-                    hooks: timer.hooks
-                };
+        else if ('object' === typeof timer) {
+            // Manual clone.
+            timer = {
+                milliseconds: timer.milliseconds,
+                update: timer.update,
+                timeup: timer.timeup,
+                hooks: timer.hooks
+            };
+            if ('function' === typeof timer.milliseconds) {
+                timer.milliseconds = timer.milliseconds.call(this.node.game);
+            }
         }
 
         if ('function' === typeof timer) timer = timer.call(this.node.game);
@@ -33314,15 +33317,16 @@ if (!Array.prototype.indexOf) {
         // Store unprocessed uri parameter.
         this.unprocessedUri = uri;
 
-        // Adapt the uri if necessary.
-        uri = this.processUri(uri);
-
         if (this.cacheSupported === null) {
             this.preCacheTest(function() {
                 that.loadFrame(uri, func, opts);
             });
             return;
         }
+
+        // Adapt the uri if necessary. Important! Must follow
+        // the assignment to unprocessedUri AND preCacheTest.
+        uri = this.processUri(uri);
 
         if (this.cacheSupported === false) {
             storeCacheNow = false;
@@ -37260,6 +37264,16 @@ if (!Array.prototype.indexOf) {
     Widget.prototype.setValues = function(values) {};
 
     /**
+     * ### Widget.reset
+     *
+     * Resets the widget
+     *
+     * Deletes current selection, any highlighting, and other data
+     * that the widget might have collected to far.
+     */
+    Widget.prototype.reset = function(options) {};
+
+    /**
      * ### Widget.highlight
      *
      * Hightlights the user interface of the widget in some way
@@ -37626,10 +37640,12 @@ if (!Array.prototype.indexOf) {
      */
     Widgets.prototype.register = function(name, w) {
         if ('string' !== typeof name) {
-            throw new TypeError('Widgets.register: name must be string.');
+            throw new TypeError('Widgets.register: name must be string. ' +
+                                'Found: ' + name);
         }
         if ('function' !== typeof w) {
-            throw new TypeError('Widgets.register: w must be function.');
+            throw new TypeError('Widgets.register: w must be function.' +
+                               'Found: ' + w);
         }
         // Add default properties to widget prototype.
         J.mixout(w.prototype, new node.Widget());
@@ -37692,11 +37708,12 @@ if (!Array.prototype.indexOf) {
         var changes, origDestroy;
         var that;
         if ('string' !== typeof widgetName) {
-            throw new TypeError('Widgets.get: widgetName must be string.');
+            throw new TypeError('Widgets.get: widgetName must be string.' +
+                               'Found: ' + widgetName);
         }
         if (options && 'object' !== typeof options) {
             throw new TypeError('Widgets.get: options must be object or ' +
-                                'undefined.');
+                                'undefined. Found: ' + options);
         }
         options = options || {};
         that = this;
@@ -37855,15 +37872,16 @@ if (!Array.prototype.indexOf) {
      */
     Widgets.prototype.append = function(w, root, options) {
         if ('string' !== typeof w && 'object' !== typeof w) {
-            throw new TypeError('Widgets.append: w must be string or object.');
+            throw new TypeError('Widgets.append: w must be string or object.' +
+                               'Found: ' + w);
         }
         if (root && !J.isElement(root)) {
             throw new TypeError('Widgets.append: root must be HTMLElement ' +
-                                'or undefined.');
+                                'or undefined. Found: ' + root);
         }
         if (options && 'object' !== typeof options) {
             throw new TypeError('Widgets.append: options must be object or ' +
-                                'undefined.');
+                                'undefined. Found: ' + options);
         }
 
         // Init default values.
@@ -38229,7 +38247,7 @@ if (!Array.prototype.indexOf) {
             options.mode = 'MANY_TO_MANY';
         }
         else if ('string' === typeof options.mode) {
-            switch(this.mode) {
+            switch(options.mode) {
             case Chat.modes.RECEIVER_ONLY:
                 tmp = 'SERVER';
                 break;
@@ -38278,6 +38296,7 @@ if (!Array.prototype.indexOf) {
             this.submit = W.getEventButton(this.chatEvent,
                                            this.submitText,
                                            this.submitId);
+            this.submit.className = 'btn btn-sm btn-secondary';
             this.textarea = W.getElement('textarea', this.textareaId);
             // Append them.
             W.writeln('', this.bodyDiv);
@@ -40170,15 +40189,11 @@ if (!Array.prototype.indexOf) {
      *       to have none.
      *   - group: the name of the group (number or string), if any
      *   - groupOrder: the order of the list in the group, if any
-     *   - onclick: a custom onclick listener function. Context is
-     *       `this` instance
      *   - mainText: a text to be displayed above the list
      *   - shuffleForms: if TRUE, forms are shuffled before being added
      *       to the list
      *   - freeText: if TRUE, a textarea will be added under the list,
      *       if 'string', the text will be added inside the the textarea
-     *   - timeFrom: The timestamp as recorded by `node.timer.setTimestamp`
-     *       or FALSE, to measure absolute time for current choice
      *
      * @param {object} options Configuration options
      */
@@ -40408,36 +40423,37 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### ChoiceManager.setCurrentChoice
+     *
+     * Marks a choice as current in each form
+     *
+     * If the item allows it, multiple choices can be set as current.
+     *
+     * @param {number|string} The choice to mark as current
+     */
+    ChoiceManager.prototype.setCurrentChoice = function(choice) {
+        var i, len;
+        i = -1, len = this.forms[i].length;
+        for ( ; ++i < len ; ) {
+            this.forms[i].setCurrentChoice(choice);
+        }
+    };
+
+    /**
      * ### ChoiceManager.unsetCurrentChoice
      *
-     * Deletes the value for currentChoice
+     * Deletes the value for currentChoice in each form
      *
      * If `ChoiceManager.selectMultiple` is set the
      *
-     * @param {number|string} Optional. The choice to delete from currentChoice
+     * @param {number|string} Optional. The choice to delete
      *   when multiple selections are allowed
-     *
-     * @see ChoiceManager.currentChoice
-     * @see ChoiceManager.selectMultiple
      */
     ChoiceManager.prototype.unsetCurrentChoice = function(choice) {
         var i, len;
-        if (!this.selectMultiple || 'undefined' === typeof choice) {
-            this.currentChoice = null;
-        }
-        else {
-            if ('string' !== typeof choice && 'number' !== typeof choice) {
-                throw new TypeError('ChoiceManager.unsetCurrentChoice: ' +
-                                    'choice must be string, number ' +
-                                    'or undefined.');
-            }
-            i = -1, len = this.currentChoice.length;
-            for ( ; ++i < len ; ) {
-                if (this.currentChoice[i] === choice) {
-                    this.currentChoice.splice(i,1);
-                    break;
-                }
-            }
+        i = -1, len = this.forms[i].length;
+        for ( ; ++i < len ; ) {
+            this.forms[i].unsetCurrentChoice(choice);
         }
     };
 
@@ -40549,7 +40565,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChoiceTable
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates a configurable table where each cell is a selectable choice
@@ -40566,7 +40582,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.0.0';
+    ChoiceTable.version = '1.2.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -40602,6 +40618,18 @@ if (!Array.prototype.indexOf) {
         this.table = null;
 
         /**
+         * ### ChoiceTable.tr
+         *
+         * Reference to TR elements of the table
+         *
+         * Note: if the orientation is vertical there will be multiple TR
+         * otherwise just one.
+         *
+         * @see createTR
+         */
+        this.trs = [];
+
+        /**
          * ## ChoiceTable.listener
          *
          * The listener function
@@ -40626,7 +40654,7 @@ if (!Array.prototype.indexOf) {
             td = e.target || e.srcElement;
 
             // Not a clickable choice.
-            if (!td.id || td.id === '') return;
+            if ('undefined' === typeof that.choicesIds[td.id]) return;
 
             // Id of elements are in the form of name_value or name_item_value.
             value = td.id.split(that.separator);
@@ -40683,11 +40711,20 @@ if (!Array.prototype.indexOf) {
         this.choices = null;
 
         /**
-         * ### ChoiceTable.values
+         * ### ChoiceTable.choicesValues
          *
          * Map of choices' values to indexes in the choices array
          */
         this.choicesValues = {};
+
+        /**
+         * ### ChoiceTable.choicesIds
+         *
+         * Map of choices' cells ids to choices
+         *
+         * Used to determine what are the clickable choices.
+         */
+        this.choicesIds = {};
 
         /**
          * ### ChoiceTable.choicesCells
@@ -40880,7 +40917,7 @@ if (!Array.prototype.indexOf) {
          *
          * If truthy, a textarea for free-text comment will be added
          *
-         * If 'string', the text will be added inside the the textarea
+         * If 'string', the text will be added inside the textarea
          */
         this.freeText = null;
 
@@ -40897,9 +40934,10 @@ if (!Array.prototype.indexOf) {
          * Symbol used to separate tokens in the id attribute of every cell
          *
          * Default ChoiceTable.separator
+         *
+         * @see ChoiceTable.renderChoice
          */
         this.separator = ChoiceTable.separator;
-
     }
 
     // ## ChoiceTable methods
@@ -40911,6 +40949,8 @@ if (!Array.prototype.indexOf) {
      *
      * Available options are:
      *
+     *   - left: the content of the left (or top) cell
+     *   - right: the content of the right (or bottom) cell
      *   - className: the className of the table (string, array), or false
      *       to have none.
      *   - orientation: orientation of the table: vertical (v) or horizontal (h)
@@ -40929,7 +40969,7 @@ if (!Array.prototype.indexOf) {
      *   - renderer: a function that will render the choices. See
      *       ChoiceTable.renderer for info about the format
      *   - freeText: if TRUE, a textarea will be added under the table,
-     *       if 'string', the text will be added inside the the textarea
+     *       if 'string', the text will be added inside the textarea
      *   - timeFrom: The timestamp as recorded by `node.timer.setTimestamp`
      *       or FALSE, to measure absolute time for current choice
      *
@@ -41157,7 +41197,6 @@ if (!Array.prototype.indexOf) {
             }
             this.setCorrectChoice(options.correctChoice);
         }
-
     };
 
     /**
@@ -41245,31 +41284,25 @@ if (!Array.prototype.indexOf) {
         i = -1, H = this.orientation === 'H';
 
         if (H) {
-            tr = document.createElement('tr');
-            this.table.appendChild(tr);
+            tr = createTR(this, 'main');
             // Add horizontal choices title.
             if (this.leftCell) tr.appendChild(this.leftCell);
         }
         // Main loop.
         for ( ; ++i < len ; ) {
             if (!H) {
-                tr = document.createElement('tr');
-                this.table.appendChild(tr);
+                tr = createTR(this, 'left');
                 // Add vertical choices title.
                 if (i === 0 && this.leftCell) {
                     tr.appendChild(this.leftCell);
-                    tr = document.createElement('tr');
-                    this.table.appendChild(tr);
+                    tr = createTR(this, i);
                 }
             }
             // Clickable cell.
             tr.appendChild(this.choicesCells[i]);
         }
         if (this.rightCell) {
-            if (!H) {
-                tr = document.createElement('tr');
-                this.table.appendChild(tr);
-            }
+            if (!H) tr = createTR(this, 'right');
             tr.appendChild(this.rightCell);
         }
         // Enable onclick listener.
@@ -41297,8 +41330,7 @@ if (!Array.prototype.indexOf) {
         i = -1, H = this.orientation === 'H';
 
         if (H) {
-            tr = document.createElement('tr');
-            this.table.appendChild(tr);
+            tr = createTR(this, 'main');
             // Add horizontal choices left.
             if (this.left) {
                 td = this.renderSpecial('left', this.left);
@@ -41308,14 +41340,12 @@ if (!Array.prototype.indexOf) {
         // Main loop.
         for ( ; ++i < len ; ) {
             if (!H) {
-                tr = document.createElement('tr');
-                this.table.appendChild(tr);
+                tr = createTR(this, 'left');
                 // Add vertical choices left.
                 if (i === 0 && this.left) {
                     td = this.renderSpecial('left', this.left);
                     tr.appendChild(td);
-                    tr = document.createElement('tr');
-                    this.table.appendChild(tr);
+                    tr = createTR(this, i);
                 }
             }
             // Clickable cell.
@@ -41323,10 +41353,7 @@ if (!Array.prototype.indexOf) {
             tr.appendChild(td);
         }
         if (this.right) {
-            if (!H) {
-                tr = document.createElement('tr');
-                this.table.appendChild(tr);
-            }
+            if (!H) tr = createTR(this, 'right');
             td = this.renderSpecial('right', this.right);
             tr.appendChild(td);
         }
@@ -41340,6 +41367,7 @@ if (!Array.prototype.indexOf) {
      *
      * Renders a non-choice element into a cell of the table (e.g. left/right)
      *
+     * @param {string} type The type of special cell ('left' or 'right').
      * @param {mixed} special The special element. It must be string or number,
      *   or array where the first element is the 'value' (incorporated in the
      *   `id` field) and the second the text to display as choice.
@@ -41367,6 +41395,7 @@ if (!Array.prototype.indexOf) {
             throw new Error('ChoiceTable.renderSpecial: unknown type: ' + type);
         }
         td.className = className;
+        td.id = this.id + this.separator + 'special-cell-' + type
         return td;
     };
 
@@ -41380,7 +41409,7 @@ if (!Array.prototype.indexOf) {
      * @param {mixed} choice The choice element. It must be string or number,
      *   or array where the first element is the 'value' (incorporated in the
      *   `id` field) and the second the text to display as choice. If a
-     *   If renderer function is defined there are no restriction on the
+     *   renderer function is defined there are no restriction on the
      *   format of choice
      * @param {number} idx The position of the choice within the choice array
      *
@@ -41435,6 +41464,7 @@ if (!Array.prototype.indexOf) {
         // All fine, updates global variables.
         this.choicesValues[value] = idx;
         this.choicesCells[idx] = td;
+        this.choicesIds[td.id] = td;
 
         return td;
     };
@@ -41600,7 +41630,7 @@ if (!Array.prototype.indexOf) {
      *    - correctChoice:  the choices are compared against correct ones.
      *
      * @param {boolean} markAttempt Optional. If TRUE, the value of
-     *   current choice is added to the attempts array. Default
+     *   current choice is added to the attempts array. Default: TRUE
      *
      * @return {boolean|null} TRUE if current choice is correct,
      *   FALSE if it is not correct, or NULL if no correct choice
@@ -41675,12 +41705,13 @@ if (!Array.prototype.indexOf) {
     /**
      * ### ChoiceTable.unsetCurrentChoice
      *
-     * Deletes the value for currentChoice
+     * Deletes the value of currentChoice
      *
-     * If `ChoiceTable.selectMultiple` is set the
+     * If `ChoiceTable.selectMultiple` is activated, then it is
+     * possible to select the choice to unset.
      *
-     * @param {number|string} Optional. The choice to delete from currentChoice
-     *   when multiple selections are allowed
+     * @param {number|string} Optional. The choice to delete from
+     *   currentChoice when multiple selections are allowed
      *
      * @see ChoiceTable.currentChoice
      * @see ChoiceTable.selectMultiple
@@ -41716,7 +41747,10 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTable.prototype.isChoiceCurrent = function(choice) {
         var i, len;
-        if ('string' !== typeof choice && 'number' !== typeof choice) {
+        if ('number' === typeof choice) {
+            choice = '' + choice;
+        }
+        else if ('string' !== typeof choice) {
             throw new TypeError('ChoiceTable.isChoiceCurrent: choice ' +
                                 'must be string or number.');
         }
@@ -41778,23 +41812,28 @@ if (!Array.prototype.indexOf) {
      *   Available optionts:
      *
      *   - markAttempt: If TRUE, getting the value counts as an attempt
-     *      to find the correct answer. Default: TRUE.
+     *       to find the correct answer. Default: TRUE.
      *   - highlight:   If TRUE, if current value is not the correct
-     *      value, widget will be highlighted. Default: FALSE.
+     *       value, widget will be highlighted. Default: FALSE.
+     *   - reset:       If TRUTHY and a correct choice is selected (or not
+     *       specified), then it resets the state of the widgets before
+     *       returning it. Default: FALSE.
      *
      * @return {object} Object containing the choice and paradata
      *
      * @see ChoiceTable.verifyChoice
+     * @see ChoiceTable.reset
      */
     ChoiceTable.prototype.getValues = function(opts) {
-        var obj;
+        var obj, resetOpts;
+        opts = opts || {};
         obj = {
             id: this.id,
-            choice: J.clone(this.currentChoice),
+            choice: opts.reset ?
+                this.currentChoice: J.clone(this.currentChoice),
             time: this.timeCurrentChoice,
             nClicks: this.numberOfClicks
         };
-        opts = opts || {};
         if (opts.processChoice) {
             obj.choice = opts.processChoice.call(this, obj.choice);
         }
@@ -41813,6 +41852,10 @@ if (!Array.prototype.indexOf) {
             if (!obj.isCorrect && opts.highlight) this.highlight();
         }
         if (this.textarea) obj.freetext = this.textarea.value;
+        if (obj.isCorrect !== false && opts.reset) {
+            resetOpts = 'object' !== typeof opts.reset ? {} : opts.reset;
+            this.reset(resetOpts);
+        }
         return obj;
     };
 
@@ -41828,7 +41871,7 @@ if (!Array.prototype.indexOf) {
      * @experimental
      */
     ChoiceTable.prototype.setValues = function(options) {
-        var choice, correctChoice;
+        var choice, correctChoice, cell;
         var i, len, j, lenJ;
 
         if (!this.choices || !this.choices.length) {
@@ -41881,11 +41924,97 @@ if (!Array.prototype.indexOf) {
         i = -1;
         for ( ; ++i < len ; ) {
             choice = J.randomInt(0, this.choicesCells.length)-1;
-            this.choicesCells[choice].click();
+            // Do not click it again if it is already selected.
+            if (!this.isChoiceCurrent(choice)) {
+                this.choicesCells[choice].click();
+            }
         }
 
         // Make a random comment.
         if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
+    };
+
+    /**
+     * ### ChoiceTable.reset
+     *
+     * Resets current selection and collected paradata
+     *
+     * @param {object} options Optional. Available options:
+     *    - shuffleChoices: If TRUE, choices are shuffled. Default: FALSE
+     */
+    ChoiceTable.prototype.reset = function(options) {
+        var i, len;
+
+        options = options || {};
+
+        this.attempts = [];
+        this.numberOfClicks = 0;
+        this.currentChoice = null;
+        this.timeCurrentChoice = null;
+
+        if (this.selected) {
+            if (!this.selectMultiple) {
+                J.removeClass(this.selected, 'selected');
+            }
+            else {
+                i = -1, len = this.selected.length;
+                for ( ; ++i < len ; ) {
+                    J.removeClass(this.selected[i], 'selected');
+                }
+            }
+            this.selected = null;
+        }
+
+        if (this.textArea) this.textArea.value = '';
+        if (this.isHighlighted()) this.unhighlight();
+
+        if (options.shuffleChoices) this.shuffle();
+    };
+
+    /**
+     * ### ChoiceTable.shuffle
+     *
+     * Shuffles the order of the choices
+     */
+    ChoiceTable.prototype.shuffle = function() {
+        var order, H;
+        var i, len, cell, choice;
+        var choicesValues, choicesCells;
+        var parentTR;
+
+        H = this.orientation === 'H';
+        order = J.shuffle(this.order);
+        i = -1, len = order.length;
+        choicesValues = {};
+        choicesCells = new Array(len);
+
+        for ( ; ++i < len ; ) {
+            choice = order[i];
+            cell = this.choicesCells[this.choicesValues[choice]];
+            choicesCells[i] = cell;
+            choicesValues[choice] = i;
+            if (H) {
+                this.trs[0].appendChild(cell);
+            }
+            else {
+                parentTR = cell.parentElement || cell.parentNode;
+                this.table.appendChild(parentTR);
+            }
+        }
+        if (this.rightCell) {
+            if (H) {
+                this.trs[0].appendChild(this.rightCell);
+            }
+            else {
+                parentTR = this.rightCell.parentElement ||
+                    this.rightCell.parentNode;
+                this.table.appendChild(parentTR);
+            }
+        }
+
+        this.order = order;
+        this.choicesCells = choicesCells;
+        this.choicesValues = choicesValues;
     };
 
     // ## Helper methods.
@@ -41920,11 +42049,35 @@ if (!Array.prototype.indexOf) {
         return choice;
     }
 
+    /**
+     * ### createTR
+     *
+     * Creates and append a new TR element
+     *
+     * Adds the the `id` attribute formatted as:
+     *   'tr' + separator + widget_id
+     *
+     * @param {ChoiceTable} that This instance
+     *
+     * @return {HTMLElement} Thew newly created TR element
+     *
+     * @see ChoiceTable.tr
+     */
+    function createTR(that, trid) {
+        var tr;
+        tr = document.createElement('tr');
+        tr.id = 'tr' + that.separator + that.id;
+        that.table.appendChild(tr);
+        // Store reference.
+        that.trs.push(tr);
+        return tr;
+    }
+
 })(node);
 
 /**
  * # ChoiceTableGroup
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates a table that groups together several choice tables widgets
@@ -41943,7 +42096,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.0.0';
+    ChoiceTableGroup.version = '1.2.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
@@ -41979,6 +42132,17 @@ if (!Array.prototype.indexOf) {
         this.table = null;
 
         /**
+         * ### ChoiceTableGroup.trs
+         *
+         * Collection of all trs created
+         *
+         * Useful when shuffling items/choices
+         *
+         * @see ChoiceTableGroup.shuffle
+         */
+        this.trs = [];
+
+        /**
          * ## ChoiceTableGroup.listener
          *
          * The listener function
@@ -42005,6 +42169,9 @@ if (!Array.prototype.indexOf) {
             // Not a clickable choice.
             if (!td.id || td.id === '') return;
 
+            // Not a clickable choice.
+            if (!that.choicesById[td.id]) return;
+
             // Id of elements are in the form of name_value or name_item_value.
             value = td.id.split(that.separator);
 
@@ -42015,6 +42182,9 @@ if (!Array.prototype.indexOf) {
             value = value[1];
 
             item = that.itemsById[name];
+
+            // Not a clickable cell.
+            if (!item) return;
 
             item.timeCurrentChoice = time;
 
@@ -42069,6 +42239,22 @@ if (!Array.prototype.indexOf) {
          * Map of items ids to items
          */
         this.itemsById = {};
+
+        /**
+         * ### ChoiceTableGroup.choices
+         *
+         * Array of default choices (if passed as global parameter)
+         */
+        this.choices = null;
+
+        /**
+         * ### ChoiceTableGroup.choicesById
+         *
+         * Map of items choices ids to corresponding cell
+         *
+         * Useful to detect clickable cells.
+         */
+        this.choicesById = {};
 
         /**
          * ### ChoiceTableGroup.itemsSettings
@@ -42200,6 +42386,17 @@ if (!Array.prototype.indexOf) {
          * @see mixinSettings
          */
         this.separator = ChoiceTableGroup.separator;
+
+        /**
+         * ### ChoiceTableGroup.shuffleChoices
+         *
+         * If TRUE, choices in items are shuffled
+         *
+         * This option is passed to each individual item.
+         *
+         * @see mixinSettings
+         */
+        this.shuffleChoices = null;
     }
 
     // ## ChoiceTableGroup methods
@@ -42340,6 +42537,10 @@ if (!Array.prototype.indexOf) {
                                 options.timeFrom);
         }
 
+        // Option shuffleChoices, default false.
+        if ('undefined' !== typeof options.shuffleChoices) {
+            this.shuffleChoices = !!options.shuffleChoices;
+        }
 
         // Set the renderer, if any.
         if ('function' === typeof options.renderer) {
@@ -42349,6 +42550,11 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('ChoiceTableGroup.init: options.renderer ' +
                                 'must be function or undefined. Found: ' +
                                 options.renderer);
+        }
+
+        // Set default choices, if any.
+        if ('undefined' !== typeof options.choices) {
+            this.choices = options.choices;
         }
 
         // Set the className, if not use default.
@@ -42438,19 +42644,19 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTableGroup.prototype.buildTable = function() {
         var i, len, tr, H, ct;
-        var j, lenJ, lenJOld, hasRight;
+        var j, lenJ, lenJOld, hasRight, cell;
 
         H = this.orientation === 'H';
         i = -1, len = this.itemsSettings.length;
         if (H) {
             for ( ; ++i < len ; ) {
-                // Add new TR.
-                tr = document.createElement('tr');
-                this.table.appendChild(tr);
-
-                // Get item, append choices for item.
+                // Get item.
                 ct = getChoiceTable(this, i);
 
+                // Add new TR.
+                tr = createTR(this, ct.id);
+
+                // Append choices for item.
                 tr.appendChild(ct.leftCell);
                 j = -1, lenJ = ct.choicesCells.length;
                 // Make sure all items have same number of choices.
@@ -42464,7 +42670,9 @@ if (!Array.prototype.indexOf) {
                 }
                 // TODO: might optimize. There are two loops (+1 inside ct).
                 for ( ; ++j < lenJ ; ) {
-                    tr.appendChild(ct.choicesCells[j]);
+                    cell = ct.choicesCells[j];
+                    tr.appendChild(cell);
+                    this.choicesById[cell.id] = cell;
                 }
                 if (ct.rightCell) tr.appendChild(ct.rightCell);
             }
@@ -42472,8 +42680,7 @@ if (!Array.prototype.indexOf) {
         else {
 
             // Add new TR.
-            tr = document.createElement('tr');
-            this.table.appendChild(tr);
+            tr = createTR(this, 'header');
 
             // Build all items first.
             for ( ; ++i < len ; ) {
@@ -42503,7 +42710,7 @@ if (!Array.prototype.indexOf) {
                                     'cell: ' + ct.id);
 
                 }
-                // Add titles.
+                // Add left.
                 tr.appendChild(ct.leftCell);
             }
 
@@ -42512,8 +42719,7 @@ if (!Array.prototype.indexOf) {
             j = -1;
             for ( ; ++j < lenJ ; ) {
                 // Add new TR.
-                tr = document.createElement('tr');
-                this.table.appendChild(tr);
+                tr = createTR(this, 'row' + (j+1));
 
                 i = -1;
                 // TODO: might optimize. There are two loops (+1 inside ct).
@@ -42522,7 +42728,9 @@ if (!Array.prototype.indexOf) {
                         tr.appendChild(this.items[i].rightCell);
                     }
                     else {
-                        tr.appendChild(this.items[i].choicesCells[j]);
+                        cell = this.items[i].choicesCells[j];
+                        tr.appendChild(cell);
+                        this.choicesById[cell.id] = cell;
                     }
                 }
             }
@@ -42674,9 +42882,29 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### ChoiceTable.setCurrentChoice
+     *
+     * Marks a choice as current in each item
+     *
+     * If the item allows it, multiple choices can be set as current.
+     *
+     * @param {number|string} The choice to mark as current
+     *
+     * @see ChoiceTable.currentChoice
+     * @see ChoiceTable.selectMultiple
+     */
+    ChoiceTableGroup.prototype.setCurrentChoice = function(choice) {
+        var i, len;
+        i = -1, len = this.items[i].length;
+        for ( ; ++i < len ; ) {
+            this.items[i].setCurrentChoice(choice);
+        }
+    };
+
+    /**
      * ### ChoiceTableGroup.unsetCurrentChoice
      *
-     * Deletes the value for currentChoice
+     * Deletes the value for currentChoice from every item
      *
      * If `ChoiceTableGroup.selectMultiple` is set the
      *
@@ -42688,9 +42916,9 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTableGroup.prototype.unsetCurrentChoice = function(choice) {
         var i, len;
-        i = -1, len = this.items[i].length;
+        i = -1, len = this.items.length;
         for ( ; ++i < len ; ) {
-            this.items[i].unsetCurrentChoice();
+            this.items[i].unsetCurrentChoice(choice);
         }
     };
 
@@ -42741,19 +42969,26 @@ if (!Array.prototype.indexOf) {
      *      to find the correct answer. Default: TRUE.
      *   - highlight:   If TRUE, if current value is not the correct
      *      value, widget will be highlighted. Default: FALSE.
+     *   - reset:    If TRUTHY and no item raises an error,
+     *       then it resets the state of all items before
+     *       returning it. Default: FALSE.
      *
      * @return {object} Object containing the choice and paradata
      *
      * @see ChoiceTableGroup.verifyChoice
+     * @see ChoiceTableGroup.reset
      */
     ChoiceTableGroup.prototype.getValues = function(opts) {
-        var obj, i, len, tbl, toHighlight;
+        var obj, i, len, tbl, toHighlight, toReset;
         obj = {
             id: this.id,
             order: this.order,
             items: {}
         };
         opts = opts || {};
+        // Make sure reset is done only at the end.
+        toReset = opts.reset;
+        opts.reset = false;
         i = -1, len = this.items.length;
         for ( ; ++i < len ; ) {
             tbl = this.items[i];
@@ -42766,12 +43001,14 @@ if (!Array.prototype.indexOf) {
                 toHighlight = true;
             }
         }
+
         if (toHighlight) this.highlight();
+        else if (toReset) this.reset(toReset);
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
     };
 
-   /**
+    /**
      * ### ChoiceTableGroup.setValues
      *
      * Sets values in the choice table group as specified by the options
@@ -42799,6 +43036,61 @@ if (!Array.prototype.indexOf) {
         if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
     };
 
+    /**
+     * ### ChoiceTableGroup.reset
+     *
+     * Resets all the ChoiceTable items and textarea
+     *
+     * @param {object} options Optional. Options specifying how to set
+     *   to reset each item
+     *
+     * @see ChoiceTable.reset
+     * @see ChoiceTableGroup.shuffle
+     */
+    ChoiceTableGroup.prototype.reset = function(opts) {
+        var i, len;
+        opts = opts || {};
+        i = -1, len = this.items.length;
+        for ( ; ++i < len ; ) {
+            this.items[i].reset(opts);
+        }
+        // Delete textarea, if found.
+        if (this.textarea) this.textarea.value = '';
+        if (opts.shuffleItems) this.shuffle();
+        if (this.isHighlighted()) this.unhighlight();
+    };
+
+    /**
+     * ### ChoiceTableGroup.shuffle
+     *
+     * Shuffles the order of the displayed items
+     *
+     * Assigns the new order of items to `this.order`.
+     *
+     * @param {object} options Optional. Not used for now.
+     *
+     * TODO: shuffle choices in each item. (Note: can't use
+     * item.shuffle, because the cells are taken out, so
+     * there is no table and no tr in there)
+     *
+     * JSUS.shuffleElements
+     */
+    ChoiceTableGroup.prototype.shuffle = function(opts) {
+        var order, i, len, j, lenJ;
+        if (!this.items || !this.items.length) return;
+        order = J.shuffle(this.order);
+        if (this.orientation === 'H') {
+            J.shuffleElements(this.table, order);
+        }
+        else {
+            i = -1, len = this.trs.length;
+            for ( ; ++i < len ; ) {
+                J.shuffleElements(this.trs[i], order);
+            }
+        }
+        this.order = order;
+    };
+
     // ## Helper methods.
 
     /**
@@ -42807,19 +43099,30 @@ if (!Array.prototype.indexOf) {
      * Mix-ins global settings with local settings for specific choice tables
      *
      * @param {ChoiceTableGroup} that This instance
-     * @param {object} s The local settings for choice table
+     * @param {object|string} s The current settings for the item
+     *   (choice table), or just its id, to mixin all settings.
      * @param {number} i The ordinal position of the table in the group
      *
      * @return {object} s The mixed-in settings
      */
     function mixinSettings(that, s, i) {
+        if ('string' === typeof s) {
+            s = { id: s };
+        }
+        else if ('object' !== typeof s) {
+            throw new TypeError('ChoiceTableGroup.buildTable: item must be ' +
+                                'string or object. Found: ' + s);
+        }
         s.group = that.id;
         s.groupOrder = i+1;
         s.orientation = that.orientation;
         s.title = false;
         s.listeners = false;
-        s.timeFrom = that.timeFrom;
         s.separator = that.separator;
+
+        if ('undefined' === typeof s.choices && that.choices) {
+            s.choices = that.choices;
+        }
 
         if (!s.renderer && that.renderer) s.renderer = that.renderer;
 
@@ -42832,6 +43135,14 @@ if (!Array.prototype.indexOf) {
 
             s.selectMultiple = that.selectMultiple;
         }
+
+        if ('undefined' === typeof s.shuffleChoices && that.shuffleChoices) {
+            s.shuffleChoices = that.shuffleChoices;
+        }
+
+        if ('undefined' === typeof s.timeFrom) s.timeFrom = that.timeFrom;
+
+        if ('undefined' === typeof s.left) s.left = s.id;
 
         return s;
     }
@@ -42867,6 +43178,30 @@ if (!Array.prototype.indexOf) {
         that.itemsById[ct.id] = ct;
         that.items[i] = ct;
         return ct;
+    }
+
+    /**
+     * ### createTR
+     *
+     * Creates and append a new TR element
+     *
+     * If required by current configuration, the `id` attribute is
+     * added to the TR in the form of: 'tr' + separator + widget_id
+     *
+     * @param {ChoiceTable} that This instance
+     *
+     * @return {HTMLElement} Thew newly created TR element
+     */
+    function createTR(that, trid) {
+        var tr, sep;
+        tr = document.createElement('tr');
+        that.table.appendChild(tr);
+        // Set id.
+        sep = that.separator;
+        tr.id = that.id + sep + 'tr' + sep + trid;
+        // Store reference.
+        that.trs.push(tr);
+        return tr;
     }
 
 })(node);
@@ -44806,6 +45141,7 @@ if (!Array.prototype.indexOf) {
         this.usingButtons = this.options.usingButtons || true;
 
         // Register listener.
+        // TODO: should it be moved into the listeners method?
         node.on.lang(this.onLangCallback);
 
         // Display initialization.
@@ -44905,7 +45241,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MoneyTalks
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Displays a box for formatting earnings ("money") in currency
@@ -44920,7 +45256,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    MoneyTalks.version = '0.2.0';
+    MoneyTalks.version = '0.3.0';
     MoneyTalks.description = 'Displays the earnings of a player.';
 
     MoneyTalks.title = 'Earnings';
@@ -45021,8 +45357,8 @@ if (!Array.prototype.indexOf) {
 
     MoneyTalks.prototype.listeners = function() {
         var that = this;
-        node.on('MONEYTALKS', function(amount) {
-            that.update(amount);
+        node.on('MONEYTALKS', function(amount, clear) {
+            that.update(amount, clear);
         });
     };
 
@@ -45049,6 +45385,18 @@ if (!Array.prototype.indexOf) {
         this.money += parsedAmount;
         this.spanMoney.innerHTML = this.money.toFixed(this.precision);
     };
+
+    /**
+     * ### MoneyTalks.getValues
+     *
+     * Returns the current value of "money"
+     *
+     * @see MoneyTalks.money
+     */
+    MoneyTalks.prototype.getValues = function() {
+        return this.money;
+    };
+
 })(node);
 
 /**
@@ -48048,11 +48396,12 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualTimer
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * Display a timer for the game. Timer can trigger events.
- * Only for countdown smaller than 1h.
+ * Display a configurable timer for the game
+ *
+ * Timer can trigger events, only for countdown smaller than 1h.
  *
  * www.nodegame.org
  */
@@ -48066,9 +48415,9 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualTimer.version = '0.8.1';
-    VisualTimer.description = 'Display a timer for the game. Timer can ' +
-        'trigger events. Only for countdown smaller than 1h.';
+    VisualTimer.version = '0.9.0';
+    VisualTimer.description = 'Display a configurable timer for the game. ' +
+        'Can trigger events. Only for countdown smaller than 1h.';
 
     VisualTimer.title = 'Time left';
     VisualTimer.className = 'visualtimer';
@@ -48183,13 +48532,17 @@ if (!Array.prototype.indexOf) {
      * @see GameTimer
      */
     VisualTimer.prototype.init = function(options) {
-        var t;
-        options = options || {};
+        var t, gameTimerOptions;
 
+        options = options || {};
         if ('object' !== typeof options) {
             throw new TypeError('VisualTimer.init: options must be ' +
                                 'object or undefined');
         }
+
+        // Important! Do not modify directly options, because it might
+        // modify a step-property. Will manual clone later.
+        gameTimerOptions = {};
 
         // If gameTimer is not already set, check options, then
         // try to use node.game.timer, if defined, otherwise crete a new timer.
@@ -48222,41 +48575,46 @@ if (!Array.prototype.indexOf) {
                                 'external gameTimer.');
             }
             if (!J.isArray(options.hooks)) {
-                options.hooks = [options.hooks];
+                gameTimerOptions.hooks = [ options.hooks ];
             }
         }
         else {
-            options.hooks = [];
+            gameTimerOptions.hooks = [];
         }
 
         // Only push this hook once.
         if (!this.isInitialized) {
-            options.hooks.push({
+            gameTimerOptions.hooks.push({
                 name: 'VisualTimer_' + this.wid,
                 hook: this.updateDisplay,
                 ctx: this
             });
         }
 
-        // Important! Must be called after processing hooks and gameTimer.
-        J.mixout(options, this.options);
+        // Important! Manual clone must be done after hooks and gameTimer.
 
         // Parse milliseconds option.
         if ('undefined' !== typeof options.milliseconds) {
-            options.milliseconds = node.timer.parseInput('milliseconds',
-                                                         options.milliseconds);
+            gameTimerOptions.milliseconds =
+                node.timer.parseInput('milliseconds', options.milliseconds);
         }
 
         // Parse update option.
         if ('undefined' !== typeof options.update) {
-            options.update = node.timer.parseInput('update',
-                                                   options.update);
+            gameTimerOptions.update =
+                node.timer.parseInput('update', options.update);
         }
         else {
-            options.update = 1000;
+            gameTimerOptions.update = 1000;
         }
+
+        // Parse timeup option.
+        if ('undefined' !== typeof options.timeup) {
+            gameTimerOptions.timeup = options.timeup;
+        }
+
         // Init the gameTimer, regardless of the source (internal vs external).
-        this.gameTimer.init(options);
+        this.gameTimer.init(gameTimerOptions);
 
         t = this.gameTimer;
 
@@ -48278,7 +48636,7 @@ if (!Array.prototype.indexOf) {
 //             }
 //         });
 
-        this.options = options;
+        this.options = gameTimerOptions;
 
         if ('undefined' === typeof this.options.stopOnDone) {
             this.options.stopOnDone = true;
@@ -48457,16 +48815,15 @@ if (!Array.prototype.indexOf) {
       * @see VisualTimer.restart
       */
     VisualTimer.prototype.startWaiting = function(options) {
-        if ('undefined' === typeof options) {
-            options = {};
-        }
-        if (typeof options.milliseconds === 'undefined') {
+        if ('undefined' === typeof options) options = {};
+        
+        if ('undefined' === typeof options.milliseconds) {
             options.milliseconds = this.gameTimer.timeLeft;
         }
-        if (typeof options.mainBoxOptions === 'undefined') {
+        if ('undefined' === typeof options.mainBoxOptions) {
             options.mainBoxOptions = {};
         }
-        if (typeof options.waitBoxOptions === 'undefined') {
+        if ('undefined' === typeof options.waitBoxOptions) {
             options.waitBoxOptions = {};
         }
         options.mainBoxOptions.classNameBody = 'strike';
@@ -48565,15 +48922,17 @@ if (!Array.prototype.indexOf) {
             if (that.options.startOnPlaying) {
                 options = that.gameTimer.getStepOptions();
                 if (options) {
-                    // TODO: improve.
+                    // Visual update is here (1000 usually).
                     options.update = that.update;
+                    // Make sure timeup is not used (game.timer does it).
                     options.timeup = undefined;
+                    // Options other than `update`, `timeup`,
+                    // `milliseconds`, `hooks`, `gameTimer` are ignored.
                     that.startTiming(options);
                 }
                 else {
                     // Set to zero if it was not started already.
                     if (!that.gameTimer.isRunning()) that.setToZero();
-                    // that.setToZero();
                 }
             }
         });
@@ -48581,6 +48940,8 @@ if (!Array.prototype.indexOf) {
         node.on('REALLY_DONE', function() {
             if (that.options.stopOnDone) {
                 if (!that.gameTimer.isStopped()) {
+                    // This was createing problems, so we just stop it.
+                    // It could be an option, though.
                     // that.startWaiting();
                     that.stop();
                 }
