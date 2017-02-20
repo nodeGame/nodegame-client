@@ -2377,7 +2377,7 @@ game stage.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GamePlot.getProperty: property must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">property</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">gameStage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GameStage</span><span class="p">(</span><span class="nx">gameStage</span><span class="p">);</span>
@@ -2571,7 +2571,7 @@ is stored in the cached.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">property</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GamePlot.updateProperty: property must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">property</span><span class="p">);</span>
         <span class="p">}</span>
 
 

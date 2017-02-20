@@ -30,6 +30,9 @@
       <div class="heading h3">
         <a href="#roler.linearrolifier">Roler.linearRolifier</a>
       </div>
+      <div class="heading h3">
+        <a href="#roler.fixedrolifier">Roler.fixedRolifier</a>
+      </div>
       <div class="heading h2">
         <a href="#roler%20constructor">Roler constructor</a>
       </div>
@@ -237,7 +240,7 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Applies roles to a single match</p>
+  <div class="body"><p>Applies roles to a single match sequentially</p>
 
 <p>This is the default callback copied over <code>Matcher.rolify</code>.</p>
   </div>
@@ -284,6 +287,100 @@ MIT Licensed</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id1</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">x</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id2</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">x</span><span class="p">);</span>
             <span class="nx">roles</span> <span class="o">=</span> <span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: role3 required, but not found.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">soloIdx</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="nx">soloIdx</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="nx">roles</span><span class="p">[</span><span class="nx">soloIdx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">roles</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="roler.fixedrolifier">
+  <h3>
+    <a href="#roler.fixedrolifier" name="roler.fixedrolifier" class="pilcrow">&#182;</a>
+    Roler.fixedRolifier
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Applies roles to a single match keeping each id with always the same role</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">A</span>
+      <span class="dox_type">array</span>
+      <span>match array containing two valid ids, or
+  one id and a 'missing-id'</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>roles An array containing the roles for the match.
+  Missing ids will receive an undefined role</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.rolify</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Roler.setRolifyCb
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Roler</span><span class="p">.</span><span class="nx">fixedRolifier</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloIdx</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">role1</span><span class="p">,</span> <span class="nx">role2</span><span class="p">,</span> <span class="nx">roleMap</span><span class="p">;</span>
+
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">match</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.rolify: match must be a non empty array. &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">match</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">id1</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="nx">id2</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="nx">roles</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">len</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Each id must keep the same role, so we look at the first match.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">roleMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">id2RoleRoundMap</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span> <span class="o">&amp;&amp;</span> <span class="nx">id2</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">roleMap</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">role1</span> <span class="o">=</span> <span class="nx">roleMap</span><span class="p">[</span><span class="nx">id1</span><span class="p">];</span>
+                <span class="nx">role2</span> <span class="o">=</span> <span class="nx">roleMap</span><span class="p">[</span><span class="nx">id2</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">role1</span><span class="p">)</span> <span class="nx">role1</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">role2</span><span class="p">)</span> <span class="nx">role2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id1</span><span class="p">,</span> <span class="nx">role1</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRoleFor</span><span class="p">(</span><span class="nx">id2</span><span class="p">,</span> <span class="nx">role2</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="nx">roles</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">role1</span><span class="p">,</span> <span class="nx">role2</span> <span class="p">];</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rolesArray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">{</span>
@@ -848,7 +945,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Clear previousd data.</p>
         </td>
@@ -873,7 +970,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -891,7 +988,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>At least two roles must be defined</p>
         </td>
@@ -922,7 +1019,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>All data validated.</p>
         </td>
@@ -1001,7 +1098,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Id to role.</p>
         </td>
@@ -1016,7 +1113,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Role to id.</p>
         </td>
@@ -1097,7 +1194,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>These are specific to the rolify cb.</p>
         </td>
@@ -1755,7 +1852,7 @@ x and y coordinates in the array of matches.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>TODO: this code is repeated in Matcher.match, make it one!</p>
         </td>
@@ -2038,7 +2135,7 @@ invoking method is 'setRole2IdMatches']</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>These are specific to the rolify cb.</p>
         </td>
