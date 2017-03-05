@@ -1,5 +1,11 @@
 # nodegame-client change log
 
+## 3.5.2
+- Widget step properties updated: checkAnswers -> checkValues.
+- Widget step check values only if a value is returned.
+- Timer makes sure objects with step settings are manually cloned.
+- PlayerList.add accept optional parameter to control the type of updates triggered.
+
 ## 3.5.1
 - Step rule `SOLO_STEP` to step through all steps of a stage.
 - `#GamePlot.nextStage` (previousStage still to be done).
