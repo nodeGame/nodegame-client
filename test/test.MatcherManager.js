@@ -450,7 +450,6 @@ describe('MatcherManager', function() {
 
     });
 
-
     describe('#replaceId(x,y)', function() {
         before(function() {
             matcher.replaceId('2', 'cucco');
@@ -483,14 +482,13 @@ describe('MatcherManager', function() {
             );
         });
 
-//         it('should replace id - OBJ_ROLES_ID', function() {
-//             matcher.getMatches('OBJ_ROLES_ID').should.be.eql(
-//                 { RED: [ '1', 'cucco' ], BLUE: [ '4', '3' ] }
-//             );
-//         });
+        it('should replace id - OBJ_ROLES_ID', function() {
+            matcher.getMatches('OBJ_ROLES_ID').should.be.eql(
+                { RED: [ '1', 'cucco' ], BLUE: [ '4', '3' ] }
+            );
+        });
 
         it('should replace id - OBJ_ID_ROLES', function() {
-            console.log(matcher.roler.id2RoleRoundMap);
             matcher.getMatches('OBJ_ID_ROLES').should.be.eql(
                 { '1': 'RED', 'cucco': 'RED', '3': 'BLUE', '4': 'BLUE' }
             );
