@@ -508,7 +508,7 @@ they can be passed in either order.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMatches</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mod</span><span class="p">,</span> <span class="nx">round</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">mod</span><span class="p">,</span> <span class="nx">round</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getMatches: mod must be &#39;</span> <span class="o">+</span>
@@ -799,7 +799,7 @@ they can be passed in either order.</p>
         <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">replaceId</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span>
-    
+
 
 </pre></div>
         </td>
@@ -920,7 +920,7 @@ they can be passed in either order.</p>
     <span class="kd">function</span> <span class="nx">randomPairs</span><span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ii</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">soloId</span><span class="p">,</span> <span class="nx">missId</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">missId</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span>  <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">matchedRoles</span><span class="p">;</span>
 
@@ -1299,7 +1299,7 @@ or if reInit = true).</p>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">id2</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="nx">ii</span><span class="o">++</span><span class="p">;</span>
-                    <span class="nx">opts2</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
+                    <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
                     <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>

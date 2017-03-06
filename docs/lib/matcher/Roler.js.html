@@ -583,7 +583,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span> <span class="o">=</span> <span class="nx">Roler</span><span class="p">.</span><span class="nx">linearRolifier</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rolify</span> <span class="o">=</span> <span class="nx">Roler</span><span class="p">.</span><span class="nx">linearRolifier</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1303,7 +1303,7 @@ x and y coordinates in the array of matches.</p>
     <span class="nx">Roler</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getIdForRole</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">role</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getIdForRole: role must be string. &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">role</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">x</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Roler.getIdForRole: x must be a &#39;</span> <span class="o">+</span>
@@ -2111,7 +2111,7 @@ x and y coordinates in the array of matches.</p>
 <p>All ids with same role at same round.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                        <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">n</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">newId</span><span class="p">]]</span>
+                        <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">n</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">newId</span><span class="p">]];</span>
 
                         <span class="nx">lenH</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">lenH</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -2250,10 +2250,9 @@ invoking method is 'setRole2IdMatches']</li></ul></li>
                             <span class="nx">isArray</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">elem</span><span class="p">.</span><span class="nx">length</span> <span class="o">!==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Roler.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span>
-                                                <span class="s1">&#39;roles matches (&#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span>
-                                                <span class="o">+</span> <span class="nx">j</span> <span class="o">+</span>
-                                                <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39;) has invalid &#39;</span> <span class="o">+</span>
-                                                <span class="s1">&#39;length: &#39;</span> <span class="o">+</span> <span class="nx">elem</span><span class="p">);</span>
+                                                <span class="s1">&#39;roles matches (&#39;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span>
+                                                <span class="nx">j</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39;) has &#39;</span> <span class="o">+</span>
+                                                <span class="s1">&#39;invalid length: &#39;</span> <span class="o">+</span> <span class="nx">elem</span><span class="p">);</span>
                             <span class="p">}</span>
                             <span class="nx">validString</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
                             <span class="nx">validString</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
