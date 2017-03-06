@@ -689,7 +689,7 @@ describe('Matcher', function() {
         });
     });
 
-    describe('#replaceId(x)', function() {
+    describe('#replaceId(x,y)', function() {
         before(function() {
             matcher.replaceId('a', 'cucco');
         });
@@ -900,7 +900,6 @@ describe('Matcher', function() {
                 matcher.getMatchFor('a', -1);
             }).should.throw();
         });
-
 
         it('replaceId() is called with wrong param ', function() {
             (function() {

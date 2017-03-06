@@ -86,6 +86,66 @@ describe('Roler', function() {
 
     });
 
+
+    describe('#replaceId(x,y)', function() {
+        before(function() {
+            roler.replaceId('1', 'cucco');
+        });
+        it('should replace id - getRoleFor', function() {
+            roler.getRoleFor('cucco', 0).should.eql('A');
+            roler.getRoleFor('cucco', 1).should.eql('A');
+            roler.getRoleFor('cucco', 2).should.eql('A');
+        });
+        it('should NOT update other roles - getRoleFor', function() {
+            roler.getRoleFor('2', 0).should.eql('A');
+            roler.getRoleFor('2', 1).should.eql('B');
+            roler.getRoleFor('2', 2).should.eql('B');
+        });
+        it('should remove old match - getMatchFor', function() {
+            (null === roler.getRoleFor('1', 0)).should.be.true;
+            (null === roler.getRoleFor('1', 1)).should.be.true;
+            (null === roler.getRoleFor('1', 2)).should.be.true;
+        });
+
+        it('should replace id - getIdForRole', function() {
+            roler.getIdForRole('A', 0).should.eql(['cucco', '2']);
+            roler.getIdForRole('A', 1).should.eql(['cucco', '4']);
+            roler.getIdForRole('A', 2).should.eql(['cucco', '3']);
+        });
+
+        it('should NOT update other roles - getIdForRole', function() {
+            roler.getIdForRole('B', 0).should.eql(['4', '3']);
+            roler.getIdForRole('B', 1).should.eql(['3', '2']);
+            roler.getIdForRole('B', 2).should.eql(['2', '4']);
+        });
+
+        it('should update id - getRole2IdRoundMap', function() {
+            roler.getRole2IdRoundMap(0).should.eql({
+                A: [ 'cucco', '2' ], B: [ '4', '3' ]
+            });
+            roler.getRole2IdRoundMap(1).should.eql({
+                A: [ 'cucco', '4' ], B: [ '3', '2' ]
+            });
+            roler.getRole2IdRoundMap(2).should.eql({
+                A: [ 'cucco', '3' ], B: [ '2', '4' ]
+            });
+        });
+
+        it('should update id - getId2RoleRoundMap', function() {
+            roler.getId2RoleRoundMap(0).should.eql({
+                'cucco': 'A', '3': 'B', '2': 'A', '4': 'B'
+            });
+            roler.getId2RoleRoundMap(1).should.eql({
+                'cucco': 'A', '4': 'A', '2': 'B', '3': 'B'
+            });
+            roler.getId2RoleRoundMap(2).should.eql({
+                'cucco': 'A', '3': 'A', '2': 'B', '4': 'B'
+            });
+        });
+
+    });
+
+
     describe('#rolifyAll odd', function() {
         before(function() {
             matcher = new Matcher();
@@ -102,7 +162,7 @@ describe('Roler', function() {
     });
 
 
-    describe('#replaceId(x)', function() {
+    describe('#replaceId(x,y) odd', function() {
         before(function() {
             roler.replaceId('1', 'cucco');
         });
@@ -140,6 +200,30 @@ describe('Roler', function() {
 
             roler.getIdForRole('C', 1).should.eql(['2']);
             roler.getIdForRole('C', 2).should.eql(['3']);
+        });
+
+        it('should update id - getRole2IdRoundMap', function() {
+            roler.getRole2IdRoundMap(0).should.eql({
+                A: [ '2' ], B: [ '3' ], C: [ 'cucco' ]
+            });
+            roler.getRole2IdRoundMap(1).should.eql({
+                A: [ 'cucco' ], B: [ '3' ], C: [ '2' ]
+            });
+            roler.getRole2IdRoundMap(2).should.eql({
+                A: [ 'cucco' ], B: [ '2' ], C: [ '3' ]
+            });
+        });
+
+        it('should update id - getId2RoleRoundMap', function() {
+            roler.getId2RoleRoundMap(0).should.eql({
+                'cucco': 'C', '3': 'B', '2': 'A'
+            });
+            roler.getId2RoleRoundMap(1).should.eql({
+                'cucco': 'A', '3': 'B', '2': 'C'
+            });
+            roler.getId2RoleRoundMap(2).should.eql({
+                'cucco': 'A', '3': 'C', '2': 'B'
+            });
         });
 
     });

@@ -450,4 +450,53 @@ describe('MatcherManager', function() {
 
     });
 
+
+    describe('#replaceId(x,y)', function() {
+        before(function() {
+            matcher.replaceId('2', 'cucco');
+        });
+        it('should replace id - default', function() {
+            matcher.getMatches().should.eql([ [ '1', '4' ], [ 'cucco', '3' ] ]);
+        });
+
+        it('should NOT replace roles - ARRAY_ROLES', function() {
+            matcher.getMatches('ARRAY_ROLES').should.be.eql(
+                [ [ 'RED', 'BLUE' ], [ 'RED', 'BLUE' ] ]
+            );
+        });
+
+        it('should replace id - ARRAY_ID_ROLES', function() {
+            matcher.getMatches('ARRAY_ID_ROLES').should.be.eql(
+                [ { '1': 'RED', '4': 'BLUE' }, { 'cucco': 'RED', '3': 'BLUE' } ]
+            );
+        });
+
+        it('should replace id - ARRAY_ROLES_ID', function() {
+            matcher.getMatches('ARRAY_ROLES_ID').should.be.eql(
+                [ { RED: '1', BLUE: '4' }, { RED: 'cucco', BLUE: '3' } ]
+            );
+        });
+
+        it('should replace id - OBJ', function() {
+            matcher.getMatches('OBJ').should.be.eql(
+                { '1': '4', 'cucco': '3', '3': 'cucco', '4': '1' }
+            );
+        });
+
+        it('should replace id - OBJ_ROLES_ID', function() {
+            matcher.getMatches('OBJ_ROLES_ID').should.be.eql(
+                { RED: [ '1', 'cucco' ], BLUE: [ '4', '3' ] }
+            );
+        });
+
+        it('should replace id - OBJ_ID_ROLES', function() {
+            console.log(matcher.getMatches('OBJ_ID_ROLES'));
+            matcher.getMatches('OBJ_ID_ROLES').should.be.eql(
+                { '1': 'RED', 'cucco': 'RED', '3': 'BLUE', '4': 'BLUE' }
+            );
+        });
+
+    });
+
+
 });
