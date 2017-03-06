@@ -496,5 +496,9 @@ describe('MatcherManager', function() {
 
     });
 
-
+    describe('#replaceId(x,y) unknown x', function() {
+        it('should replace id - default', function() {
+            matcher.replaceId('22', 'cucco').should.be.false;
+        });
+    });
 });

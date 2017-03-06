@@ -800,7 +800,7 @@ manually after being returned.</p>
     <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">replaceId</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">replaceId</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">);</span>
-        <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">replaceId</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">);</span>
+        <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">replaceId</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span>
 

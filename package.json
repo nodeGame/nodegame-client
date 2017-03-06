@@ -1,7 +1,7 @@
 {
     "name": "nodegame-client"
   , "description": "nodeGame client for the browser and node.js"
-  , "version": "3.5.2"
+  , "version": "3.5.3"
   , "homepage": "http://www.nodegame.org"
   , "keywords": ["game", "multiplayer", "experiment", "behavioral", "real-time", "synchronous" ]
   , "author": "Stefano Balietti <futur.dorko@gmail.com>"

@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 3.5.3
+- MatcherManager.replaceId, Matcher.replaceId, Roler.replaceId.
+
 ## 3.5.2
 - Widget step properties updated: checkAnswers -> checkValues.
 - Widget step check values only if a value is returned.
