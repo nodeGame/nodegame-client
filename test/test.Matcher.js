@@ -689,6 +689,70 @@ describe('Matcher', function() {
         });
     });
 
+    describe('#replaceId(x)', function() {
+        before(function() {
+            matcher.replaceId('a', 'cucco');
+        });
+        it('should replace id - getMatchFor', function() {
+            matcher.getMatchFor('cucco').should.eql([ 'b', 'bot', 'c' ]);
+        });
+        it('should update also other matches - getMatchFor', function() {
+            matcher.getMatchFor('b').should.eql([ 'cucco', 'c', 'bot' ]);
+            matcher.getMatchFor('c').should.eql([ 'bot', 'b', 'cucco' ]);
+            matcher.getMatchFor('bot').should.eql([ 'c', 'cucco', 'b' ]);
+        });
+        it('should remove old match - getMatchFor', function() {
+            (null === matcher.getMatchFor('a')).should.be.true;
+        });
+
+        it('should remove old match - getMatchFor', function() {
+            (null === matcher.getMatchFor('a')).should.be.true;
+        });
+
+        it('should replace id - getMatch', function() {
+            matcher.getMatch(0).should.eql([[ 'c', 'bot' ], [ 'cucco', 'b' ]]);
+            matcher.getMatch(1).should.eql([[ 'c', 'b' ], [ 'bot', 'cucco' ]]);
+            matcher.getMatch(2).should.eql([[ 'c', 'cucco' ], [ 'b', 'bot' ]]);
+        });
+
+        it('should replace id - getMatchObject', function() {
+             matcher.getMatchObject(0).should.eql({
+                c: 'bot', bot: 'c', cucco: 'b', b: 'cucco' });
+            matcher.getMatchObject(1).should.eql({
+                c: 'b', b: 'c', bot: 'cucco', cucco: 'bot' });
+            matcher.getMatchObject(2).should.eql({
+                c: 'cucco', cucco: 'c', b: 'bot', bot: 'b' });
+        });
+
+        it('should replace id - getIds', function() {
+            var res;
+            var i, len, found;
+            res = matcher.getIds();
+            i = -1, len = res.length;
+            for ( ; ++i < len ; ) {
+                if (res[i] === 'cucco') {
+                    found = true;
+                    break;
+                }
+            }
+            found.should.be.true;
+        });
+
+        it('should replace id - getIds', function() {
+            var res;
+            var i, len, found;
+            res = matcher.getIds();
+            i = -1, len = res.length;
+            for ( ; ++i < len ; ) {
+                if (res[i] === 'cucco') {
+                    found = true;
+                    break;
+                }
+            }
+            found.should.be.true;
+        });
+    });
+
     describe('#setMatches', function() {
         before(function() {
             matcher.setMatches([
