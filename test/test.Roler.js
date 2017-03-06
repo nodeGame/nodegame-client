@@ -101,6 +101,49 @@ describe('Roler', function() {
         testDataStructuresOdd(it);
     });
 
+
+    describe('#replaceId(x)', function() {
+        before(function() {
+            roler.replaceId('1', 'cucco');
+        });
+        it('should replace id - getRoleFor', function() {
+            roler.getRoleFor('cucco', 0).should.eql('C');
+            roler.getRoleFor('cucco', 1).should.eql('A');
+            roler.getRoleFor('cucco', 2).should.eql('A');
+        });
+        it('should NOT update other roles - getRoleFor', function() {
+            roler.getRoleFor('2', 0).should.eql('A');
+            roler.getRoleFor('2', 1).should.eql('C');
+            roler.getRoleFor('2', 2).should.eql('B');
+        });
+        it('should remove old match - getMatchFor', function() {
+            (null === roler.getRoleFor('1', 0)).should.be.true;
+            (null === roler.getRoleFor('1', 1)).should.be.true;
+            (null === roler.getRoleFor('1', 2)).should.be.true;
+        });
+
+        it('should replace id - getIdForRole', function() {
+
+            roler.getIdForRole('C', 0).should.eql(['cucco']);
+            roler.getIdForRole('A', 1).should.eql(['cucco']);
+            roler.getIdForRole('A', 2).should.eql(['cucco']);
+        });
+
+
+        it('should NOT update other roles - getIdForRole', function() {
+
+            roler.getIdForRole('A', 0).should.eql(['2']);
+
+            roler.getIdForRole('B', 0).should.eql(['3']);
+            roler.getIdForRole('B', 1).should.eql(['3']);
+            roler.getIdForRole('B', 2).should.eql(['2']);
+
+            roler.getIdForRole('C', 1).should.eql(['2']);
+            roler.getIdForRole('C', 2).should.eql(['3']);
+        });
+
+    });
+
     describe('Roler should throw an error if', function() {
         before(function() {
             roler = new Roler();
@@ -109,6 +152,24 @@ describe('Roler', function() {
         it('match() is called without matches ', function() {
             (function() {
                 roler.match();
+            }).should.throw();
+        });
+
+        it('replaceId() is called with wrong param ', function() {
+            (function() {
+                roler.replaceId(3,'2');
+            }).should.throw();
+        });
+
+        it('replaceId() is called with no param ', function() {
+            (function() {
+                roler.replaceId();
+            }).should.throw();
+        });
+
+        it('replaceId() is called with one missing param ', function() {
+            (function() {
+                roler.replaceId('2');
             }).should.throw();
         });
 

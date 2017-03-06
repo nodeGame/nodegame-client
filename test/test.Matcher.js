@@ -701,9 +701,6 @@ describe('Matcher', function() {
             matcher.getMatchFor('c').should.eql([ 'bot', 'b', 'cucco' ]);
             matcher.getMatchFor('bot').should.eql([ 'c', 'cucco', 'b' ]);
         });
-        it('should remove old match - getMatchFor', function() {
-            (null === matcher.getMatchFor('a')).should.be.true;
-        });
 
         it('should remove old match - getMatchFor', function() {
             (null === matcher.getMatchFor('a')).should.be.true;
@@ -903,6 +900,26 @@ describe('Matcher', function() {
                 matcher.getMatchFor('a', -1);
             }).should.throw();
         });
+
+
+        it('replaceId() is called with wrong param ', function() {
+            (function() {
+                matcher.replaceId(3,'a');
+            }).should.throw();
+        });
+
+        it('replaceId() is called with no param ', function() {
+            (function() {
+                matcher.replaceId();
+            }).should.throw();
+        });
+
+        it('replaceId() is called with one missing param ', function() {
+            (function() {
+                matcher.replaceId('a');
+            }).should.throw();
+        });
+
     });
 
 });
