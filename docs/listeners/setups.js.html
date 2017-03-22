@@ -89,7 +89,7 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti
+<p>Copyright(c) 2017 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Listeners for incoming messages</p>
@@ -686,12 +686,12 @@ object).</p>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">lang</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">lang</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
                 <span class="p">}</span>
-                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">lang</span> <span class="o">||</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">setLanguage</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;lang&quot;): lang must be &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;string, array, or undefined. Found: &#39;</span> <span class="o">+</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;setup(&quot;lang&quot;): lang must be string, &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;array, object or undefined. Found: &#39;</span> <span class="o">+</span>
                                         <span class="nx">lang</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>

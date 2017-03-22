@@ -1,6 +1,6 @@
 /**
  * # setups
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Listeners for incoming messages
@@ -297,12 +297,12 @@
                 if (J.isArray(lang)) {
                     this.setLanguage(lang[0], lang[1]);
                 }
-                else if ('string' === typeof lang) {
+                else if ('string' === typeof lang || 'object' === typeof lang) {
                     this.setLanguage(lang);
                 }
                 else {
-                    throw new TypeError('setup("lang"): lang must be ' +
-                                        'string, array, or undefined. Found: ' +
+                    throw new TypeError('setup("lang"): lang must be string, ' +
+                                        'array, object or undefined. Found: ' +
                                         lang);
                 }
             }
