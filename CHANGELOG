@@ -1,5 +1,10 @@
 # nodegame-client change log
 
+## 3.5.4
+- Fixed `#node.setup('lang')`.
+- Fixed widget step markAttempt parameter type.
+- `#node.setLanguage()` accepts also a string that converts into an object automatically.
+
 ## 3.5.3
 - MatcherManager.replaceId, Matcher.replaceId, Roler.replaceId.
 
