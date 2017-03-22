@@ -70,12 +70,6 @@
         <a href="#target.player_update">target.PLAYER_UPDATE</a>
       </div>
       <div class="heading h4">
-        <a href="#target.stage">target.STAGE</a>
-      </div>
-      <div class="heading h4">
-        <a href="#target.stage_level">target.STAGE_LEVEL</a>
-      </div>
-      <div class="heading h4">
         <a href="#target.redirect">target.REDIRECT</a>
       </div>
       <div class="heading h4">
@@ -101,6 +95,12 @@
       </div>
       <div class="heading h4">
         <a href="#not%20used%20targets%20(for%20future%20development)">not used targets (for future development)</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.stage">target.STAGE</a>
+      </div>
+      <div class="heading h4">
+        <a href="#target.stage_level">target.STAGE_LEVEL</a>
       </div>
       <div class="heading h3">
         <a href="#node.constants.gamecommands">node.constants.gamecommands</a>
@@ -516,44 +516,6 @@ information carried in the message.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="target.stage">
-  <h4>
-    <a href="#target.stage" name="target.stage" class="pilcrow">&#182;</a>
-    target.STAGE
-  </h4>
-</div>
-
-
-<p>A client notifies his own stage</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE</span> <span class="o">=</span> <span class="s1">&#39;STAGE&#39;</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="target.stage_level">
-  <h4>
-    <a href="#target.stage_level" name="target.stage_level" class="pilcrow">&#182;</a>
-    target.STAGE_LEVEL
-  </h4>
-</div>
-
-
-<p>A client notifies his own stage level</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">STAGE_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;STAGE_LEVEL&#39;</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
 <div class="pilwrap" id="target.redirect">
   <h4>
     <a href="#target.redirect" name="target.redirect" class="pilcrow">&#182;</a>
@@ -677,7 +639,7 @@ information carried in the message.</p>
 
 
 <p>A generic log message used to send info to the server
-@see node.constants.remoteVerbosity</p>
+@see NodeGameClient.remoteVerbosity</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">LOG</span> <span class="o">=</span> <span class="s1">&#39;LOG&#39;</span><span class="p">;</span>
@@ -726,6 +688,57 @@ information carried in the message.</p>
 
     <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">WARN</span> <span class="o">=</span> <span class="s1">&#39;WARN&#39;</span><span class="p">;</span>   <span class="c1">// To do.</span>
     <span class="nx">k</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">ERR</span>  <span class="o">=</span> <span class="s1">&#39;ERR&#39;</span><span class="p">;</span>    <span class="c1">// To do.</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>Old targets.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.stage">
+  <h4>
+    <a href="#target.stage" name="target.stage" class="pilcrow">&#182;</a>
+    target.STAGE
+  </h4>
+</div>
+
+
+<p>A client notifies his own stage
+k.target.STAGE = 'STAGE';</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="target.stage_level">
+  <h4>
+    <a href="#target.stage_level" name="target.stage_level" class="pilcrow">&#182;</a>
+    target.STAGE_LEVEL
+  </h4>
+</div>
+
+
+<p>A client notifies his own stage level
+k.target.STAGE_LEVEL = 'STAGE_LEVEL';</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
 
 
@@ -875,7 +888,7 @@ information carried in the message.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>will be asynchronously evaluated.</p>
         </td>
@@ -889,7 +902,7 @@ information carried in the message.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>and the step rule evaluated.</p>
         </td>
