@@ -29678,7 +29678,7 @@ if (!Array.prototype.indexOf) {
 
     function makeLanguageObj(langStr) {
         var shortName;
-        shortname = langStr.toLowerCase().substr(0,2);
+        shortName = langStr.toLowerCase().substr(0,2);
         return {
             name: langStr,
             shortName: shortName,
