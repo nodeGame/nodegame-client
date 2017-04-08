@@ -43,6 +43,9 @@
         <a href="#matchermanager.lastmatches">MatcherManager.lastMatches</a>
       </div>
       <div class="heading h3">
+        <a href="#matchermanager.lastmatchesbyid">MatcherManager.lastMatchesById</a>
+      </div>
+      <div class="heading h3">
         <a href="#matchermanager.clear">MatcherManager.clear</a>
       </div>
       <div class="heading h3">
@@ -65,6 +68,9 @@
       </div>
       <div class="heading h3">
         <a href="#matchermanager.replaceid">MatcherManager.replaceId</a>
+      </div>
+      <div class="heading h3">
+        <a href="#matchermanager.getsetupfor">MatcherManager.getSetupFor</a>
       </div>
       <div class="heading h2">
         <a href="#helper%20methods.">Helper Methods.</a>
@@ -95,10 +101,14 @@
 </div>
 
 
-<p>Copyright(c) 2017 Stefano Balietti
+<p>Copyright(c) 2017 Stefano Balietti <a href="&#x6D;&#97;&#x69;&#108;&#116;&#x6F;:&#115;t&#x65;&#x40;&#110;&#111;&#100;&#x65;&#x67;&#97;&#109;&#101;.&#x6F;&#x72;&#x67;">&#115;t&#x65;&#x40;&#110;&#111;&#100;&#x65;&#x67;&#97;&#109;&#101;.&#x6F;&#x72;&#x67;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Handles matching roles to players and players to players.</p>
+
+<hr />
+
+<p>nodegame.org</p>
   </div>
 </div>
         </td>
@@ -271,6 +281,27 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">lastMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matchermanager.lastmatchesbyid">
+  <h3>
+    <a href="#matchermanager.lastmatchesbyid" name="matchermanager.lastmatchesbyid" class="pilcrow">&#182;</a>
+    MatcherManager.lastMatchesById
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the last matches organized by id of client</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatchesById</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">}</span>
 
 
@@ -333,7 +364,7 @@ MIT Licensed</p>
   </div>
   <div class="body"><p>Parses a conf object and returns the desired matches of roles and players</p>
 
-<p>Stores a reference of last matches under <code>MatcherManager.lastMatches</code>.</p>
+<p>Stores references of last settings and matches.</p>
 
 <p>Returned matches are in a format which is ready to be sent out as
 remote options. That is:</p>
@@ -366,7 +397,19 @@ remote options. That is:</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
+      <span class="dox_type">randomPairs</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
       <span class="dox_type">MatcherManager.lastMatches</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">MatcherManager.lastMatchesById</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">MatcherManager.lastSettings</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -391,7 +434,7 @@ remote options. That is:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>String is turned into object. Might still fail.</p>
         </td>
@@ -420,7 +463,6 @@ remote options. That is:</p>
                             <span class="s1">&#39;&quot; did not return matches.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatches</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>
     <span class="p">};</span>
 
@@ -793,6 +835,16 @@ manually after being returned.</p>
       <span class="dox_type">Roler.replaceId
 </span>
     </div>
+    <div class="dox_tag_title">experimental
+
+TODO:</div>
+    <div class="dox_tag_detail">
+      <span>this does not scale up. Maybe have another registry of
+substituted ids.
+
+TODO: maybe return info about the replaced id, e.g. current
+options, instead of boolean.</span>
+    </div>
   </div>
 </div>
         </td>
@@ -802,6 +854,59 @@ manually after being returned.</p>
         <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">matcher</span><span class="p">.</span><span class="nx">replaceId</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">);</span>
         <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">roler</span><span class="p">.</span><span class="nx">replaceId</span><span class="p">(</span><span class="nx">oldId</span><span class="p">,</span> <span class="nx">newId</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="matchermanager.getsetupfor">
+  <h3>
+    <a href="#matchermanager.getsetupfor" name="matchermanager.getsetupfor" class="pilcrow">&#182;</a>
+    MatcherManager.getSetupFor
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the setup object (partner and role options) for a specific id</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">id</span>
+      <span class="dox_type">string</span>
+      <span>The id to get the setup object for</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The requested setup object</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Matcher.match</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">round2index
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">MatcherManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSetupFor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;MatcherManager.getSetupFor: id must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lastMatchesById</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+        <span class="k">return</span> <span class="nx">out</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -925,11 +1030,41 @@ manually after being returned.</p>
         <span class="kd">var</span> <span class="nx">r1</span><span class="p">,</span> <span class="nx">r2</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">ii</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">roundMatches</span><span class="p">,</span> <span class="nx">nMatchesIdx</span><span class="p">,</span> <span class="nx">match</span><span class="p">,</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">missId</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span>  <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">matches</span><span class="p">,</span> <span class="nx">matchesById</span><span class="p">,</span> <span class="nx">sayPartner</span><span class="p">,</span> <span class="nx">doRoles</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">roles</span><span class="p">,</span> <span class="nx">matchedRoles</span><span class="p">;</span>
 
         <span class="kd">var</span> <span class="nx">game</span><span class="p">,</span> <span class="nx">n</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">nRounds</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>Delete previous results.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatchesById</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+</div>
+<p>Init local variables.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+        <span class="nx">matchesById</span> <span class="o">=</span> <span class="p">{};</span>
 
         <span class="nx">sayPartner</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span> <span class="o">?</span>
             <span class="kc">true</span> <span class="o">:</span> <span class="o">!!</span><span class="nx">settings</span><span class="p">.</span><span class="nx">sayPartner</span><span class="p">;</span>
@@ -946,7 +1081,7 @@ manually after being returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Settings the number of rounds.</p>
         </td>
@@ -966,7 +1101,7 @@ manually after being returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Algorithm: random.</p>
         </td>
@@ -986,7 +1121,7 @@ manually after being returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>cycle: settings.cycle,</p>
         </td>
@@ -1002,7 +1137,7 @@ manually after being returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Generates new random matches for this round.</p>
         </td>
@@ -1017,7 +1152,7 @@ manually after being returned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Algorithm: round robin (but only if not already initialized
 or if reInit = true).</p>
@@ -1037,7 +1172,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Make a manual copy of settings object, and generate matches.</p>
         </td>
@@ -1056,7 +1191,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Generates matches.</p>
         </td>
@@ -1070,7 +1205,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Cycle through the matches, if we do not have enough.</p>
         </td>
@@ -1087,7 +1222,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Get all the matches for round x, and increments x.</p>
         </td>
@@ -1101,7 +1236,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>This also increments the index matcher.x.</p>
         </td>
@@ -1117,7 +1252,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Contains one remoteOptions object per player.</p>
         </td>
@@ -1133,7 +1268,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>The id in case the number of player is odd.</p>
         </td>
@@ -1149,7 +1284,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>While we have matches, send them to clients.</p>
         </td>
@@ -1168,7 +1303,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Verify that id1 and id2 are still connected.</p>
         </td>
@@ -1183,7 +1318,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>If both id1 and id2 are disconnected, skip matching them.</p>
         </td>
@@ -1196,7 +1331,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Reduce matches array length.</p>
         </td>
@@ -1216,7 +1351,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Prepare options to send to player 1, if role1 is defined.</p>
         </td>
@@ -1237,12 +1372,26 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Add options to array.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>Keep reference.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">matchesById</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
                 <span class="p">}</span>
 
 
@@ -1252,7 +1401,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Prepare options to send to player 2, if role2 is defined.</p>
         </td>
@@ -1268,7 +1417,7 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Increment ii index if both r1 and r2 are defined.</p>
         </td>
@@ -1288,23 +1437,39 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Add options to array.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                     <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+</div>
+<p>Keep reference.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">matchesById</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">sayPartner</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id1</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id2</span> <span class="p">}</span> <span class="p">};</span>
                     <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+                    <span class="nx">matchesById</span><span class="p">[</span><span class="nx">id1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">id2</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">id1</span> <span class="o">!==</span> <span class="nx">missId</span><span class="p">)</span> <span class="nx">ii</span><span class="o">++</span><span class="p">;</span>
                     <span class="nx">opts</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id2</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="nx">partner</span><span class="o">:</span> <span class="nx">id1</span> <span class="p">}</span> <span class="p">};</span>
                     <span class="nx">matches</span><span class="p">[</span><span class="nx">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+                    <span class="nx">matchesById</span><span class="p">[</span><span class="nx">id2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1316,11 +1481,13 @@ or if reInit = true).</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
-<p>Store reference to last valid settings.</p>
+<p>Store references.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatches</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lastMatchesById</span> <span class="o">=</span> <span class="nx">matchesById</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">lastSettings</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="nx">matches</span><span class="p">;</span>

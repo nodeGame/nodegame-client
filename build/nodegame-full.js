@@ -22310,7 +22310,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Matcher.replaceId: oldId should be string. ' +
                                 'Found: ' + oldId);
         }
-        if ('string' !== typeof newId && newId.trim() !== '') {
+        if ('string' !== typeof newId || newId.trim() === '') {
             throw new TypeError('Matcher.replaceId: newId should be a ' +
                                 'non-empty string. Found: ' + newId);
         }
@@ -28256,7 +28256,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Matcher.replaceId: oldId should be string. ' +
                                 'Found: ' + oldId);
         }
-        if ('string' !== typeof newId && newId.trim() !== '') {
+        if ('string' !== typeof newId || newId.trim() === '') {
             throw new TypeError('Matcher.replaceId: newId should be a ' +
                                 'non-empty string. Found: ' + newId);
         }
