@@ -53,6 +53,7 @@
             // other clients could change in between.
             node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
+            node.game.beDone = false;
             node.emit('REALLY_DONE');
             res = node.game.shouldStep(stageLevels.DONE);
             node.game.setStageLevel(stageLevels.DONE);
