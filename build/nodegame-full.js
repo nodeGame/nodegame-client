@@ -24442,8 +24442,8 @@ if (!Array.prototype.indexOf) {
 
         // If we should be done now, we emit PLAYING without executing the step.
         // node.game.willBeDone is already set, and will trigger node.done().
-        if (this.beDone) node.emit('PLAYING');        
-        else this.execStep(this.getCurrentGameStage());        
+        if (this.beDone) node.emit('PLAYING');
+        else this.execStep(this.getCurrentGameStage());
 
         return true;
     };
@@ -25429,7 +25429,7 @@ if (!Array.prototype.indexOf) {
      *
      *   - willBeDone: game will be done after loading the frame and executing
      *       the step callback function,
-     *   - beDone: game is done without loading the frame or 
+     *   - beDone: game is done without loading the frame or
      *       executing the step callback function,
      *   - plot: add entries to the tmpCache of the plot,
      *   - cb: a callback executed with the game context, and with options
@@ -31164,6 +31164,7 @@ if (!Array.prototype.indexOf) {
             // other clients could change in between.
             node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
+            node.game.beDone = false;
             node.emit('REALLY_DONE');
             res = node.game.shouldStep(stageLevels.DONE);
             node.game.setStageLevel(stageLevels.DONE);
