@@ -1378,24 +1378,26 @@ the given GameTimer object are removed.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nameFrom</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.getTimeDiff: nameFrom must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.getTimeDiff: nameFrom must be string.&#39;</span> <span class="o">+</span>
+                               <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">nameFrom</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">nameTo</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.getTimeDiff: nameTo must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Timer.getTimeDiff: nameTo must be string. &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;Found: &#39;</span> <span class="o">+</span> <span class="nx">nameTo</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">timeFrom</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timestamps</span><span class="p">[</span><span class="nx">nameFrom</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timeFrom</span> <span class="o">||</span> <span class="nx">timeFrom</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Timer.getTimeDiff: nameFrom does not resolve to &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;a valid timestamp.&#39;</span><span class="p">);</span>
+                            <span class="s1">&#39;a valid timestamp: &#39;</span> <span class="o">+</span> <span class="nx">nameFrom</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">timeTo</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">timestamps</span><span class="p">[</span><span class="nx">nameTo</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">timeTo</span> <span class="o">||</span> <span class="nx">timeTo</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Timer.getTimeDiff: nameTo does not resolve to &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;a valid timestamp.&#39;</span><span class="p">);</span>
+                            <span class="s1">&#39;a valid timestamp: &#39;</span> <span class="o">+</span> <span class="nx">nameTo</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">effective</span><span class="p">)</span> <span class="p">{</span>
