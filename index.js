@@ -74,7 +74,6 @@
 
     // Game.
     exports.GameDB = require('./lib/core/GameDB').GameDB;
-    exports.GameBit = require('./lib/core/GameDB').GameBit;
     exports.Game = require('./lib/core/Game').Game;
 
     // Extra (to be tested).
@@ -82,9 +81,6 @@
 
     // Addons
     exports.TriggerManager = require('./addons/TriggerManager').TriggerManager;
-
-    // FS
-    // exports.NodeGameFS = require('./lib/core/NodeGameFS').NodeGameFS;
 
     // Load main nodegame-client class.
     exports.NodeGameClient =
