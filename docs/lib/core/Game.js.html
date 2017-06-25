@@ -239,7 +239,7 @@
 </div>
 
 
-<p>Copyright(c) 2017 Stefano Balietti <a href="&#109;&#x61;&#x69;&#108;&#116;&#111;:&#x73;t&#101;&#64;&#110;&#111;&#100;&#x65;&#103;&#97;&#x6D;&#101;&#46;&#111;&#x72;&#x67;">&#x73;t&#101;&#64;&#110;&#111;&#100;&#x65;&#103;&#97;&#x6D;&#101;&#46;&#111;&#x72;&#x67;</a>
+<p>Copyright(c) 2017 Stefano Balietti <a href="&#109;&#97;&#x69;l&#116;&#111;:&#115;&#x74;&#x65;&#64;&#x6E;&#x6F;&#x64;&#x65;&#103;&#97;&#x6D;&#101;&#x2E;&#111;&#x72;&#x67;">&#115;&#x74;&#x65;&#64;&#x6E;&#x6F;&#x64;&#x65;&#103;&#97;&#x6D;&#101;&#x2E;&#111;&#x72;&#x67;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>Handles the flow of the game</p>
@@ -4108,6 +4108,22 @@ method call.</p>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isReady</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">sizeManager</span><span class="p">.</span><span class="nx">checkSize</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+</div>
+<p><code>syncOnLoaded</code> forces clients to wait for all the others to be
+fully loaded before releasing the control of the screen to the
+players. This introduces a little overhead in
+communications and delay in the execution of a stage. It is
+not necessary in local networks, and it is FALSE by default.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">syncOnLoaded</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">plot</span><span class="p">.</span><span class="nx">getProperty</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">,</span> <span class="s1">&#39;syncOnLoaded&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">syncOnLoaded</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">pl</span><span class="p">.</span><span class="nx">isStepLoaded</span><span class="p">(</span><span class="nx">curGameStage</span><span class="p">);</span>
@@ -4296,7 +4312,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
 </div>
 <p>Adding new globals.</p>
         </td>
@@ -4318,7 +4334,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
 </div>
 <p>Removing old ones.</p>
         </td>
@@ -4339,7 +4355,7 @@ method call.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>Updating globals reference.</p>
         </td>
@@ -4531,7 +4547,7 @@ an error will be thrown on attempts to overwrite roles.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
 </div>
 <p>Modify plot properties.</p>
         </td>
@@ -4772,7 +4788,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
+  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
 </div>
 <p>Be done.. now! Skips Game.execStep.</p>
         </td>
@@ -4789,7 +4805,7 @@ object itself as parameter</li></ul></li>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
+  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
 </div>
 <p>TODO: why not setting willBeDone? It was not working, check!
 Call node.done() immediately after PLAYING is emitted.</p>
@@ -4807,7 +4823,7 @@ Call node.done() immediately after PLAYING is emitted.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
+  <a class="pilcrow" href="#section-165" id="section-165">&#182;</a>
 </div>
 <p>Temporarily modify plot properties.
 Must be done after setting the role.</p>
@@ -4828,7 +4844,7 @@ Must be done after setting the role.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-165" id="section-165">&#182;</a>
+  <a class="pilcrow" href="#section-166" id="section-166">&#182;</a>
 </div>
 <p>TODO: rename cb.
 Call the cb with options as param, if found.</p>
