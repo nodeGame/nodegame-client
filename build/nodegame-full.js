@@ -2719,7 +2719,6 @@ if (!Array.prototype.indexOf) {
      *
      * TODO: now it always create big random strings, it does not actually
      * check if the string exists.
-     *
      */
     DOM.generateUniqueId = function(prefix) {
         var search = [window];
@@ -2741,9 +2740,7 @@ if (!Array.prototype.indexOf) {
             return id;
         }
 
-
         return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
-        //return scanDocuments(prefix);
     };
 
     // ## GET/ADD
@@ -24444,7 +24441,7 @@ if (!Array.prototype.indexOf) {
         // Here we start processing the new STEP.
 
         // TODO maybe update also in case of string.
-        node.emit('STEPPING');
+        node.emit('STEPPING', curStep, nextStep);
 
         // Check for stage/step existence:
         nextStageObj = this.plot.getStage(nextStep);
@@ -25268,7 +25265,7 @@ if (!Array.prototype.indexOf) {
         // `syncOnLoaded` forces clients to wait for all the others to be
         // fully loaded before releasing the control of the screen to the
         // players. This introduces a little overhead in
-        // communications and delay in the execution of a stage. It is 
+        // communications and delay in the execution of a stage. It is
         // not necessary in local networks, and it is FALSE by default.
         syncOnLoaded = this.plot.getProperty(curGameStage, 'syncOnLoaded');
         if (!syncOnLoaded) return true;
@@ -25954,7 +25951,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Timer
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Timing-related utility functions
@@ -26057,7 +26054,7 @@ if (!Array.prototype.indexOf) {
             var i, time, pt, cpt, pausedTime;
             pt = that._pausedTimestamps;
             cpt = that._cumulPausedTimestamps;
-            time = (new Date()).getTime();
+            time = J.now();
             for (i in pt) {
                 if (pt[i] && pt.hasOwnProperty(i)) {
                     pausedTime = time - pt[i];
@@ -26102,7 +26099,8 @@ if (!Array.prototype.indexOf) {
             ('object' !== typeof options && 'number' !== typeof options)) {
 
             throw new TypeError('Timer.createTimer: options must be ' +
-                                'undefined, object or number.');
+                                'undefined, object or number. Found: ' +
+                                options);
         }
 
         if ('number' === typeof options) options = { milliseconds: options };
@@ -26112,8 +26110,8 @@ if (!Array.prototype.indexOf) {
             J.uniqueKey(this.timers, 'timer_' + J.randomInt(0, 10000000));
 
         if (this.timers[options.name]) {
-            throw new Error('Timer.createTimer: timer ' + options.name +
-                            ' already existing.');
+            throw new Error('Timer.createTimer: timer name already in use: ' +
+                            options.name);
         }
 
         // If game is paused add options startPaused, unless user
@@ -26174,13 +26172,13 @@ if (!Array.prototype.indexOf) {
         if ('string' === typeof gameTimer) {
             if (!this.timers[gameTimer]) {
                 throw new Error('node.timer.destroyTimer: gameTimer not ' +
-                                'found: ' + gameTimer + '.');
+                                'found: ' + gameTimer);
             }
             gameTimer = this.timers[gameTimer];
         }
         if ('object' !== typeof gameTimer) {
             throw new Error('node.timer.destroyTimer: gameTimer must be ' +
-                            'string or object.');
+                            'string or object. Found: ' + gameTimer);
         }
 
         // Stop timer.
@@ -26248,7 +26246,8 @@ if (!Array.prototype.indexOf) {
      */
     Timer.prototype.getTimer = function(name) {
         if ('string' !== typeof name) {
-            throw new TypeError('Timer.getTimer: name must be string.');
+            throw new TypeError('Timer.getTimer: name must be string. Found: ' +
+                                name);
         }
         return this.timers[name] || null;
     };
@@ -26261,19 +26260,24 @@ if (!Array.prototype.indexOf) {
      * @param {string} name The name of the timestamp
      * @param {number|undefined} time Optional. The time in ms as returned by
      *   Date.getTime(). Default: Current time.
+     *
+     * @return {number} time The value of the timestamp set
+     *
+     * @see Timer.getTimestamp
      */
     Timer.prototype.setTimestamp = function(name, time) {
         var i;
         // Default time: Current time
-        if ('undefined' === typeof time) time = (new Date()).getTime();
+        if ('undefined' === typeof time) time = J.now();
 
         // Check inputs:
         if ('string' !== typeof name) {
-            throw new Error('Timer.setTimestamp: name must be a string');
+            throw new Error('Timer.setTimestamp: name must be a string. ' +
+                            'Found: ' + name);
         }
         if ('number' !== typeof time) {
             throw new Error('Timer.setTimestamp: time must be a number or ' +
-                            'undefined');
+                            'undefined. Found: ' + time);
         }
 
         // We had at least one pause.
@@ -26297,6 +26301,7 @@ if (!Array.prototype.indexOf) {
             }
         }
         this.timestamps[name] = time;
+        return time;
     };
 
     /**
@@ -26312,14 +26317,11 @@ if (!Array.prototype.indexOf) {
     Timer.prototype.getTimestamp = function(name) {
         // Check input:
         if ('string' !== typeof name) {
-            throw new Error('Timer.getTimestamp: name must be a string');
+            throw new Error('Timer.getTimestamp: name must be a string. ' +
+                            'Found: ' + name);
         }
-        if (this.timestamps.hasOwnProperty(name)) {
-            return this.timestamps[name];
-        }
-        else {
-            return null;
-        }
+        if (this.timestamps.hasOwnProperty(name)) return this.timestamps[name];
+        else return null;
     };
 
     /**
@@ -26353,11 +26355,12 @@ if (!Array.prototype.indexOf) {
         var currentTime;
 
         // Get current time:
-        currentTime = (new Date()).getTime();
+        currentTime = J.now();
 
         // Check input:
         if ('string' !== typeof name) {
-            throw new TypeError('Timer.getTimeSince: name must be string.');
+            throw new TypeError('Timer.getTimeSince: name must be string. ' +
+                                'Found: ' + name);
         }
 
         if (this.timestamps.hasOwnProperty(name)) {
@@ -26446,7 +26449,8 @@ if (!Array.prototype.indexOf) {
     Timer.prototype.randomEmit = function(event, maxWait) {
         var args, i, len;
         if ('string' !== typeof event) {
-            throw new TypeError('Timer.randomEmit: event must be string.');
+            throw new TypeError('Timer.randomEmit: event must be string. ' +
+                                'Found: ' + event);
         }
         len = arguments.length;
         if (len == 3) {
@@ -26485,14 +26489,15 @@ if (!Array.prototype.indexOf) {
     Timer.prototype.randomExec = function(func, maxWait, ctx) {
         var args, i, len;
         if ('function' !== typeof func) {
-            throw new TypeError('Timer.randomExec: func must be function.');
+            throw new TypeError('Timer.randomExec: func must be function. ' +
+                               'Found: ' + func);
         }
         if ('undefined' === typeof ctx) {
             ctx = this.node.game;
         }
         else if ('object' !== typeof ctx && 'function' !== typeof ctx) {
             throw new TypeError('Timer.randomExec: ctx must be object, ' +
-                                'function or undefined.');
+                                'function or undefined. Found: ' + ctx);
         }
         len = arguments.length;
         if (len == 4) {
@@ -26630,7 +26635,7 @@ if (!Array.prototype.indexOf) {
         }
         else if ('number' !== typeof maxWait) {
             throw new TypeError('Timer.' + method + ': maxWait must ' +
-                                    'be number or undefined.');
+                                'be number or undefined. Found: ' + maxWait);
         }
 
         waitTime = Math.random() * maxWait;
@@ -27015,7 +27020,7 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new TypeError('GameTimer.fire: h must be function, string ' +
-                                'or object.');
+                                'or object. Found: ' + h);
         }
     };
 
@@ -27056,7 +27061,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Remember time of start (used by this.pause to compute remaining time)
-        this.updateStart = (new Date()).getTime();
+        this.updateStart = J.now();
 
         // Fires the event immediately if time is zero.
         // Double check necessary in strict mode.
@@ -27167,7 +27172,7 @@ if (!Array.prototype.indexOf) {
             }
             else {
                 // Save the difference of time left.
-                timestamp = (new Date()).getTime();
+                timestamp = J.now();
                 this.updateRemaining =
                     this.update - (timestamp - this.updateStart);
             }
@@ -27212,7 +27217,7 @@ if (!Array.prototype.indexOf) {
 
         this.startPaused = false;
 
-        this.updateStart = (new Date()).getTime();
+        this.updateStart = J.now();
 
         that = this;
         // Run rest of this "update" interval:
@@ -27376,12 +27381,13 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof sync) return this.stagerSync;
         if ('boolean' !== typeof sync) {
             throw new TypeError('GameTimer.syncWithStager: sync must be ' +
-                                'boolean or undefined.');
+                                'boolean or undefined. Found: ' + sync);
         }
         if (property) {
             if ('string' !== typeof property) {
                 throw new TypeError('GameTimer.syncWithStager: property ' +
-                                    'must be string or undefined.');
+                                    'must be string or undefined. Found: ' +
+                                    property);
             }
             this.setStagerProperty(property);
         }
@@ -27450,7 +27456,7 @@ if (!Array.prototype.indexOf) {
         checkDestroyed(this, 'setStagerProperty');
         if ('string' === typeof property) {
             throw new TypeError('GameTimer.setStageProperty: property must ' +
-                                'be string.');
+                                'be string. Found: ' + property);
         }
         this.stagerProperty = property;
     };
@@ -27570,7 +27576,7 @@ if (!Array.prototype.indexOf) {
         that.status = GameTimer.RUNNING;
         that.timePassed += that.update;
         that.timeLeft -= that.update;
-        that.updateStart = (new Date()).getTime();
+        that.updateStart = J.now();
         // Fire custom hooks from the latest to the first if any.
         for (i = that.hooks.length; i > 0; i--) {
             that.fire(that.hooks[(i-1)]);
@@ -29823,11 +29829,11 @@ if (!Array.prototype.indexOf) {
      *      path: 'en/' // Optional, default equal to shortName + '/'.
      *   }``
      *
-     * @param {boolean} prefix Optional. If TRUE, the window uri prefix is
-     *   set to the value of lang.path. node.window must be defined,
+     * @param {boolean} updateUriPrefix Optional. If TRUE, the window uri
+     *   prefix isset to the value of lang.path. node.window must be defined,
      *   otherwise a warning is shown. Default, FALSE.
      * @param {boolean} sayIt Optional. If TRUE, a LANG message is sent to
-     *   the server to notify the change. Default: TRUE
+     *   the server to notify the selection. Default: FALSE.
      *
      * @return {object} The language object
      *
@@ -29836,7 +29842,7 @@ if (!Array.prototype.indexOf) {
      *
      * @emit LANGUAGE_SET
      */
-    NGC.prototype.setLanguage = function(lang, prefix, sayIt) {
+    NGC.prototype.setLanguage = function(lang, updateUriPrefix, sayIt) {
         var language;
         language = 'string' === typeof lang ? makeLanguageObj(lang) : lang;
 
@@ -29854,19 +29860,19 @@ if (!Array.prototype.indexOf) {
             this.player.lang.path = language.shortName + '/';
         }
 
-        // Updates the 
-        if (prefix) {
+        // Updates the URI prefix.
+        if (updateUriPrefix) {
             if ('undefined' !== typeof this.window) {
                 this.window.setUriPrefix(this.player.lang.path);
             }
             else {
-                node.warn('node.setLanguage: prefix is true, but no window ' +
-                          'found.');
+                node.warn('node.setLanguage: updateUriPrefix is true, ' +
+                          'but window not found. Are you in a browser?');
             }
         }
 
         // Send a message to notify server.
-        if ('undefined' === typeof sayIt || sayIt) {
+        if (sayIt) {
             node.socket.send(node.msg.create({
                 target: 'LANG',
                 data: this.player.lang
@@ -29880,6 +29886,15 @@ if (!Array.prototype.indexOf) {
 
     // ## Helper functions.
 
+    /**
+     * ### makeLanguageObj
+     *
+     * From a language string returns a fully formatted obj
+     *
+     * @param {string} langStr The language string.
+     *
+     * @return {object} The language object
+     */
     function makeLanguageObj(langStr) {
         var shortName;
         shortName = langStr.toLowerCase().substr(0,2);
@@ -31307,16 +31322,11 @@ if (!Array.prototype.indexOf) {
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
             var stageLevel;
-
             stageLevel = node.game.getStageLevel();
 
             // TODO check >=.
-            if (stageLevel >= stageLevels.PLAYING) {
-                done();
-            }
-            else {
-                node.game.willBeDone = true;
-            }
+            if (stageLevel >= stageLevels.PLAYING) done();
+            else node.game.willBeDone = true;
         });
 
         /**
@@ -32452,7 +32462,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameWindow
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * API to interface nodeGame with the browser window
@@ -32477,14 +32487,9 @@ if (!Array.prototype.indexOf) {
     var CB_EXECUTED, WIN_LOADING, lockedUpdate;
 
     J = node.JSUS;
-    if (!J) {
-        throw new Error('GameWindow: JSUS object not found. Aborting.');
-    }
-
+    if (!J) throw new Error('GameWindow: JSUS not found. Aborting.');
     DOM = J.get('DOM');
-    if (!DOM) {
-        throw new Error('GameWindow: JSUS DOM object not found. Aborting.');
-    }
+    if (!DOM) throw new Error('GameWindow: JSUS=>DOM not found. Aborting.');
 
     constants = node.constants;
     windowLevels = constants.windowLevels;
@@ -33213,6 +33218,8 @@ if (!Array.prototype.indexOf) {
      *
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
+     * @TODO: Shall force destroy the frame?
+     *
      * @param {Element} root Optional. The HTML element to which the iframe
      *   will be appended. Default: this.frameRoot or document.body
      * @param {string} frameName Optional. The name of the iframe. Default:
@@ -33235,25 +33242,27 @@ if (!Array.prototype.indexOf) {
         var iframe;
         if (!force && this.frameElement) {
             throw new Error('GameWindow.generateFrame: a frame element is ' +
-                            'already existing. It cannot be duplicated.');
+                            'already existing. Use force to regenerate.');
         }
 
         root = root || this.frameRoot || document.body;
 
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.generateFrame: invalid root element.');
+            throw new Error('GameWindow.generateFrame: root must be ' +
+                            'undefined or HTMLElement. Found: ' + root);
         }
 
         frameName = frameName || 'ng_mainframe';
 
-        if ('string' !== typeof frameName) {
+        if ('string' !== typeof frameName || frameName.trim() === '') {
             throw new Error('GameWindow.generateFrame: frameName must be ' +
-                            'string.');
+                            'undefined or a non-empty string. Found: ' +
+                            frameName);
         }
 
         if (document.getElementById(frameName)) {
-            throw new Error('GameWindow.generateFrame: frameName must be ' +
-                            'unique.');
+            throw new Error('GameWindow.generateFrame: frameName is not ' +
+                            'unique in DOM: ' + frameName);
         }
 
         iframe = W.addIFrame(root, frameName);
@@ -33265,9 +33274,7 @@ if (!Array.prototype.indexOf) {
 
         this.setFrame(iframe, frameName, root);
 
-        if (this.frameElement) {
-            adaptFrame2HeaderPosition(this);
-        }
+        if (this.frameElement) adaptFrame2HeaderPosition(this);
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
@@ -33275,31 +33282,65 @@ if (!Array.prototype.indexOf) {
         return iframe;
     };
 
-    // generate info panel
-    // and return the object
-    GameWindow.prototype.generateInfoPanel = function() {
-        // return info panel also add it to the html
-        // create a reference inside game window
-        // infoPanel (this)
-
+    /**
+     * ### GameWindow.generateInfoPanel
+     *
+     * Appends a configurable div element at to "top" of the page
+     *
+     * @param {Element} root Optional. The HTML element to which the info
+     *   panel will be appended. Default:
+     *
+     *   - above the main frame, or
+     *   - below the header, or
+     *   - inside _documents.body_.
+     *
+     * @param {string} frameName Optional. The name of the iframe. Default:
+     *   'ng_mainframe'
+     * @param {boolean} force Optional. Will create the frame even if an
+     *   existing one is found. Default: FALSE
+     *
+     * @return {InfoPanel} A reference to the InfoPanel object
+     *
+     * @see GameWindow.infoPanel
+     *
+     * @emit INFOPANEL_GENERATED
+     */
+    GameWindow.prototype.generateInfoPanel = function(root, options, force) {
         var infoPanelDiv;
 
-        this.infoPanel = new node.InfoPanel({});
+        if (this.infoPanel) {
+            if (!force) {
+                throw new Error('GameWindow.generateInfoPanel: info panel is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            else {
+                this.infoPanel.destroy();
+                this.infoPanel = null;
+            }
+        }
+
+        this.infoPanel = new node.InfoPanel(options);
         infoPanelDiv = this.infoPanel.infoPanelDiv;
 
-        if (this.frameElement) {
+        if (root) {
+            if (!J.isElement(root)) {
+                throw new Error('GameWindow.generateInfoPanel: root must be ' +
+                                'undefined or HTMLElement. Found: ' + root);
+            }
+            root.appendChild(infoPanelDiv);
+        }
+        else if (this.frameElement) {
             document.body.insertBefore(infoPanelDiv, this.frameElement);
         }
         else if (this.headerElement) {
-            insertAfter(this.headerElement, infoPanelDiv);
+           J.insertAfter(this.headerElement, infoPanelDiv);
         }
         else {
             document.body.appendChild(infoPanelDiv);
         }
 
-        function insertAfter(referenceNode, newNode) {
-            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextElementSibling);
-        }
+        // Emit event.
+        node.events.ng.emit('INFOPANEL_GENERATED', this.infoPanel);
 
         return this.infoPanel;
     };
@@ -33405,6 +33446,8 @@ if (!Array.prototype.indexOf) {
      *
      * Adds a a div element and sets it as the header of the page
      *
+     * @TODO: Shall force destroy the frame?
+     *
      * @param {Element} root Optional. The HTML element to which the header
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
@@ -33420,25 +33463,26 @@ if (!Array.prototype.indexOf) {
 
         if (!force && this.headerElement) {
             throw new Error('GameWindow.generateHeader: a header element is ' +
-                            'already existing. It cannot be duplicated.');
+                            'already existing. Use force to regenerate.');
         }
 
         root = root || document.body || document.lastElementChild;
 
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.generateHeader: invalid root element.');
+            throw new Error('GameWindow.generateHeader: root must be ' +
+                            'undefined or HTMLElement. Found: ' + root);
         }
 
         headerName = headerName || 'ng_header';
 
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.generateHeader: headerName must be ' +
-                            'string.');
+                            'string. Found: ' + headerName);
         }
 
         if (document.getElementById(headerName)) {
-            throw new Error('GameWindow.generateHeader: headerName must be ' +
-                            'unique.');
+            throw new Error('GameWindow.generateHeader: headerName is not ' +
+                            'unique in DOM: ' + headerName);
         }
 
         header = this.addElement('div', root, headerName);
@@ -35100,36 +35144,36 @@ if (!Array.prototype.indexOf) {
             W.init(node.conf.window);
         });
 
-        node.on('HIDE', function(idOrObj) {
-            var el;
-            console.log('***GameWindow.on.HIDE is deprecated. Use ' +
-                        'GameWindow.hide() instead.***');
-            el = getElement(idOrObj, 'GameWindow.on.HIDE');
-            if (el) el.style.display = 'none';
-        });
-
-        node.on('SHOW', function(idOrObj) {
-            var el;
-            console.log('***GameWindow.on.SHOW is deprecated. Use ' +
-                        'GameWindow.show() instead.***');
-            el = getElement(idOrObj, 'GameWindow.on.SHOW');
-            if (el) el.style.display = '';
-        });
-
-        node.on('TOGGLE', function(idOrObj) {
-            var el;
-            console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
-                        'GameWindow.toggle() instead.***');
-            el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-            if (el) {
-                if (el.style.display === 'none') {
-                    el.style.display = '';
-                }
-                else {
-                    el.style.display = 'none';
-                }
-            }
-        });
+//         node.on('HIDE', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.HIDE is deprecated. Use ' +
+//                         'GameWindow.hide() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.HIDE');
+//             if (el) el.style.display = 'none';
+//         });
+// 
+//         node.on('SHOW', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.SHOW is deprecated. Use ' +
+//                         'GameWindow.show() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.SHOW');
+//             if (el) el.style.display = '';
+//         });
+// 
+//         node.on('TOGGLE', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
+//                         'GameWindow.toggle() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+//             if (el) {
+//                 if (el.style.display === 'none') {
+//                     el.style.display = '';
+//                 }
+//                 else {
+//                     el.style.display = 'none';
+//                 }
+//             }
+//         });
 
         // Disable all the input forms found within a given id element.
         node.on('INPUT_DISABLE', function(id) {
@@ -35251,20 +35295,15 @@ if (!Array.prototype.indexOf) {
         }
     }
 
-    function event_STEPPING(text) {
-        text = text || W.waitScreen.defaultTexts.stepping;
-        if (W.isScreenLocked()) {
-            W.waitScreen.updateText(text);
-        }
-        else {
-            W.lockScreen(text);
-        }
+    function event_STEPPING() {
+        var text;
+        text = W.waitScreen.defaultTexts.stepping;
+        if (W.isScreenLocked()) W.waitScreen.updateText(text);
+        else W.lockScreen(text);
     }
 
     function event_PLAYING() {
-        if (W.isScreenLocked()) {
-            W.unlockScreen();
-        }
+        if (W.isScreenLocked()) W.unlockScreen();
     }
 
     function event_PAUSED(text) {
@@ -35520,9 +35559,23 @@ if (!Array.prototype.indexOf) {
     ('undefined' !== typeof window) ? window : module.parent.exports.window
 );
 
+/**
+ * # InfoPanel
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * MIT Licensed
+ *
+ * Adds a configurable extra panel at the top of the screen
+ *
+ * InfoPanel is normally placed between header and main frame.
+ *
+ * www.nodegame.org
+ */
 (function(exports, window) {
 
     "use strict";
+
+    var J;
+    J = exports.JSUS;
 
     exports.InfoPanel = InfoPanel;
 
@@ -35531,8 +35584,32 @@ if (!Array.prototype.indexOf) {
     }
 
     InfoPanel.prototype.init = function(options) {
+        var that;
+
         this.infoPanelDiv = document.createElement('div');
         this.infoPanelDiv.id = 'ng_info-panel';
+
+        /**
+         * ### InfoPanel.actionsLog
+         *
+         * Array containing the list of open/close events and a timestamp
+         *
+         * Entries in the actions log are objects: with keys 'create', 
+         * 'open', 'close', 'clear', 'destroy' and a timestamp.
+         *
+         * @see InfoPanel.open
+         * @see InfoPanel.close
+         */
+        this.actionsLog = [];
+
+        /**
+         * ### InfoPanel._buttons
+         *
+         * Collection of buttons created via `createToggleButton` method
+         *
+         * @see InfoPanel.createToggleButton
+         */
+        this._buttons = [];
 
         /**
          * ### InfoPanel.className
@@ -35558,7 +35635,7 @@ if (!Array.prototype.indexOf) {
          *
          * Boolean indicating visibility of info panel div
          *
-         * Default: false
+         * Default: FALSE
          */
         if ('undefined' === typeof options.isVisible) {
             this.isVisible = false;
@@ -35572,97 +35649,205 @@ if (!Array.prototype.indexOf) {
                                 'Found: ' + options.isVisible);
         }
 
-        if (!this.isVisible) {
-            this.infoPanelDiv.style.display = 'none';
+        this.infoPanelDiv.style.display = this.isVisible ? 'block' : 'none';
+        this.actionsLog.push({ created: J.now() });
+
+        /**
+         * ### InfoPanel.onStep
+         *
+         * Performs an action ('clear', 'open', 'close') at every new step
+         *
+         * Default: null
+         */
+        if ('undefined' !== typeof options.onStep) {
+            if ('open' === options.onStep ||
+                'close' === options.onStep ||
+                'clear' ===  options.onStep) {
+
+                this.onStep = options.onStep;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStep ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStep);
+            }
         }
         else {
-            this.infoPanelDiv.style.display = 'block';
+            options.onStep = null;
         }
 
         /**
-         * ### InfoPanel.clearPattern
+         * ### InfoPanel.onStage
          *
-         * String indicating when Info Panel should automatically clear:
-         * either: 'STEP', 'STAGE', 'NONE'
-         * (after each step, after each stage, or entirely manually)
+         * Performs an action ('clear', 'open', 'close') at every new stage
          *
-         * Default: 'NONE'
+         * Default: null
          */
-        if ('undefined' === typeof options.clearPattern) {
-            this.clearPattern = 'NONE';
-        }
-        else if ('string' === typeof options.clearPattern &&
-                ['STEP', 'STAGE', 'NONE'].reduce(function(acc, value) {
-                  return options.clearPattern === value;
-                }, false)) {
-            this.clearPattern = options.clearPattern;
+        if ('undefined' !== typeof options.onStage) {
+            if ('open' === options.onStage ||
+                'close' === options.onStage ||
+                'clear' ===  options.onStage) {
+
+                this.onStage = options.onStage;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStage ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStage);
+            }
         }
         else {
-            throw new TypeError('InfoPanel constructor: options.clearPattern ' +
-                                'must be string "STEP", "STAGE", "NONE", ' +
-                                'or undefined. ' +
-                                'Found: ' + options.clearPattern);
+            options.onStage = null;
         }
 
+        if (this.onStep || this.onStage) {
+            that = this;
+            node.events.game.on('STEPPING', function(curStep, newStep) {
+                var newStage;
+                newStage = curStep.stage !== newStep.stage;
+
+                if ((that.onStep === 'close' && that.isVisible) ||
+                    (newStage && that.onStage === 'close')) {
+
+                    that.close();
+                }
+                else if (that.onStep === 'open' ||
+                         (newStage && that.onStage === 'open')) {
+
+                    that.open();
+                }
+                else if (that.onStep === 'clear' ||
+                         (newStage && that.onStage === 'clear')) {
+
+                    that.clear();
+                }
+            });
+        }
     };
 
+    /**
+     * ### InfoPanel.clear
+     *
+     * Clears the content of the Info Panel
+     */
     InfoPanel.prototype.clear = function() {
-        return this.infoPanelDiv.innerHTML = '';
+        this.infoPanelDiv.innerHTML = '';
+        this.actionsLog.push({ clear: J.now() });
     };
 
+    /**
+     * ### InfoPanel.getPanel
+     *
+     * Returns the HTML element of the panel (div)
+     *
+     * @return {HTMLElement} The Info Panel
+     *
+     * @see InfoPanel.infoPanelDiv
+     */
     InfoPanel.prototype.getPanel = function() {
         return this.infoPanelDiv;
     };
 
+    /**
+     * ### InfoPanel.destroy
+     *
+     * Removes the Info Panel from the DOM and the internal references to it
+     *
+     * @see InfoPanel.infoPanelDiv
+     * @see InfoPanel._buttons
+     */
     InfoPanel.prototype.destroy = function() {
+        var i, len;
         if (this.infoPanelDiv.parentNode) {
             this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
         }
-
+        this.actionsLog.push({ destroy: J.now() });
         this.infoPanelDiv = null;
+        i = -1, len = this._buttons.length;
+        for ( ; ++i < len ; ) {
+            if (this._buttons[i].parentNode) {
+                this._buttons[i].parentNode.removeChild(this._buttons[i]);
+            }
+        }
     };
 
-    InfoPanel.prototype.bindListener = function() {
-        // first thing in body of page ? or below header ? or above main frame ?
-        // STEPPING -- currently moving step
-        // node.game.getRound('remaining')  === 0 or 1 that means its the last step of a stage
-    };
-
+    /**
+     * ### InfoPanel.toggle
+     *
+     * Toggles the visibility of the Info Panel
+     *
+     * @see InfoPanel.open
+     * @see InfoPanel.close
+     */
     InfoPanel.prototype.toggle = function() {
-      this.isVisible = !this.isVisible;
-
-      if (this.isVisible) {
-        this.open();
-      }
-      else {
-        this.close();
-      }
+        if (this.isVisible) this.close();
+        else this.open();
     };
 
+    /**
+     * ### InfoPanel.open
+     *
+     * Opens the Info Panel (if not already open)
+     *
+     * @see InfoPanel.toggle
+     * @see InfoPanel.close
+     * @see InfoPanel.isVisible
+     */
     InfoPanel.prototype.open = function() {
-      this.infoPanelDiv.style.display = 'block';
-      this.isVisible = true;
+        if (this.isVisible) return;
+        this.actionsLog.push({ open: J.now() });
+        this.infoPanelDiv.style.display = 'block';
+        this.isVisible = true;
     };
 
+    /**
+     * ### InfoPanel.close
+     *
+     * Closes the Info Panel (if not already closed)
+     *
+     * @see InfoPanel.toggle
+     * @see InfoPanel.open
+     * @see InfoPanel.isVisible
+     */
     InfoPanel.prototype.close = function() {
-      this.infoPanelDiv.style.display = 'none';
-      this.isVisible = false;
+        if (!this.isVisible) return;
+        this.actionsLog.push({ close: J.now() });
+        this.infoPanelDiv.style.display = 'none';
+        this.isVisible = false;
     };
 
+    /**
+     * ### InfoPanel.createToggleButton
+     *
+     * Creates an HTML button with a listener to toggle the InfoPanel
+     *
+     * Adds the button to the internal collection `_buttons`. All buttons
+     * are destroyed if the Info Panel is destroyed.
+     *
+     * @return {HTMLElement} button A button that toggles info panel
+     *
+     * @see InfoPanel._buttons
+     * @see InfoPanel.toggle
+     */
     InfoPanel.prototype.createToggleButton = function(buttonLabel) {
-        // return a button that toggles info panel
-        var button;
-        var that;
+        var that, button;
 
-        that = this;
-
+        buttonLabel = buttonLabel || 'Toggle Info Panel';
+        if ('string' !== typeof buttonLabel || buttonLabel.trim() === '') {
+            throw new Error('InfoPanel.createToggleButton: buttonLabel ' +
+                            'must be undefined or a non-empty string. Found: ' +
+                            buttonLabel);
+        }
         button = document.createElement('button');
         button.className = 'btn btn-lg btn-warning';
-        button.innerHTML = buttonLabel;
+        button.innerHTML = buttonLabel ;
 
+        that = this;
         button.onclick = function() {
-          that.toggle();
+            that.toggle();
         };
+
+        this._buttons.push(button);
 
         return button;
     };
@@ -40384,7 +40569,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChernoffFacesSimple
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Displays multidimensional data in the shape of a Chernoff Face.
@@ -40444,8 +40629,6 @@ if (!Array.prototype.indexOf) {
 
         this.features = null;
         this.controls = null;
-
-        this.init(this.options);
     }
 
     ChernoffFaces.prototype.init = function(options) {
@@ -44242,7 +44425,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Controls
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates and manipulates a set of forms
@@ -44316,8 +44499,6 @@ if (!Array.prototype.indexOf) {
          * Flag to indicate whether the list has changed
          */
         this.hasChanged = false;
-
-        this.init(options);
     }
 
     Controls.prototype.add = function(root, id, attributes) {
@@ -45138,7 +45319,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DoneButton
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates a button that if pressed emits node.done()
@@ -45208,8 +45389,6 @@ if (!Array.prototype.indexOf) {
             res = node.done();
             if (res) that.disable();
         };
-
-        this.init(options);
     }
 
     // ## DoneButton methods
@@ -45904,7 +46083,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EndScreen
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates an interface to display final earnings, exit code, etc.
@@ -46133,8 +46312,6 @@ if (!Array.prototype.indexOf) {
          * null initially, element added on append()
          */
         this.endScreenHTML = null;
-
-        this.init();
     }
 
     // Implements the Widget.append method.
@@ -47037,6 +47214,8 @@ if (!Array.prototype.indexOf) {
  *
  * Creates a table that renders in each cell data captured by fired events
  *
+ * TODO: needs refactoring
+ *
  * www.nodegame.org
  */
 (function(node) {
@@ -47067,7 +47246,7 @@ if (!Array.prototype.indexOf) {
         JSUS: {}
     };
 
-    function GameTable (options) {
+    function GameTable(options) {
         this.options = options;
         this.id = options.id;
         this.name = options.name || GameTable.name;
@@ -47075,8 +47254,6 @@ if (!Array.prototype.indexOf) {
         this.root = null;
         this.gtbl = null;
         this.plist = null;
-
-        this.init(this.options);
     }
 
     GameTable.prototype.init = function(options) {
@@ -47194,14 +47371,16 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # LanguageSelector
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Manages and displays information about languages available and selected
  *
+ * @TODO: bubble event in case of buttons (now there are many listeners).
+ *
  * www.nodegame.org
  */
- (function(node) {
+(function(node) {
 
     "use strict";
 
@@ -47211,7 +47390,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    LanguageSelector.version = '0.3.1';
+    LanguageSelector.version = '0.6.0';
     LanguageSelector.description = 'Display information about the current ' +
         'language and allows to change language.';
     LanguageSelector.title = 'Language';
@@ -47316,13 +47495,31 @@ if (!Array.prototype.indexOf) {
          * ## LanguageSelector.usingButtons
          *
          * Flag indicating if the interface should have buttons
+         *
+         * Default: TRUE.
          */
-        this.usingButtons = null;
+        this.usingButtons = true;
+
+        /**
+         * ## LanguageSelector.updatePlayer
+         *
+         * Specifies when updating the player
+         *
+         * Available options:
+         *
+         *   - false: alias for 'never',
+         *   - 'never': never notifies,
+         *   - 'onselect': each time a selection is made,
+         *   - 'ondone': when current step is done.
+         *
+         * Default: 'ondone'
+         */
+        this.updatePlayer = 'ondone';
 
         /**
          * ## LanguageSelector.setUriPrefix
          *
-         * If TRUE, the Window URI prefix is updated when the language is set
+         * If TRUE, the Window URI prefix is updated when the player is updated
          *
          * Default: TRUE.
          *
@@ -47331,13 +47528,13 @@ if (!Array.prototype.indexOf) {
         this.setUriPrefix = true;
 
         /**
-         * ## LanguageSelector.notifyUpdate
+         * ## LanguageSelector.notifyServer
          *
-         * If TRUE, a message is sent to the server when the language is set
+         * If TRUE, a message is sent to the server when the player is updated
          *
          * Default: TRUE.
          */
-        this.notifyUpdate = true;
+        this.notifyServer = true;
 
         /**
          * ### LanguageSelector.onLangCallback
@@ -47369,18 +47566,20 @@ if (!Array.prototype.indexOf) {
                 // Creates labeled buttons.
                 for (language in msg.data) {
                     if (msg.data.hasOwnProperty(language)) {
-                        that.optionsLabel[language] = W.getElement('label',
-                            language + 'Label', {
-                                'for': language + 'RadioButton'
-                            });
+                        that.optionsLabel[language] =
+                            W.getElement('label',
+                                         language + 'Label', {
+                                             'for': language + 'RadioButton'
+                                         });
 
-                        that.optionsDisplay[language] = W.getElement('input',
-                            language + 'RadioButton', {
-                                type: 'radio',
-                                name: 'languageButton',
-                                value: msg.data[language].name
-                            }
-                        );
+                        that.optionsDisplay[language] =
+                            W.getElement('input',
+                                         language + 'RadioButton', {
+                                             type: 'radio',
+                                             name: 'languageButton',
+                                             value: msg.data[language].name
+                                         }
+                                        );
 
                         that.optionsDisplay[language].onclick =
                             makeSetLanguageOnClick(language);
@@ -47394,14 +47593,14 @@ if (!Array.prototype.indexOf) {
                         that.optionsLabel[language].className =
                             'unselectedButtonLabel';
                         that.displayForm.appendChild(
-                                that.optionsLabel[language]);
+                            that.optionsLabel[language]);
                     }
                 }
             }
             else {
 
-                that.displaySelection = node.window.getElement('select',
-                    'selectLanguage');
+                that.displaySelection = W.getElement('select',
+                                                     'selectLanguage');
                 for (language in msg.data) {
                     that.optionsLabel[language] =
                         document.createTextNode(msg.data[language].nativeName);
@@ -47415,15 +47614,17 @@ if (!Array.prototype.indexOf) {
                 }
                 that.displayForm.appendChild(that.displaySelection);
                 that.displayForm.onchange = function() {
-                    that.setLanguage(that.displaySelection.value);
+                    that.setLanguage(that.displaySelection.value,
+                                     that.updatePlayer === 'onselect');
                 };
             }
 
             that.loadingDiv.style.display = 'none';
             that.languagesLoaded = true;
 
-            // Initialize to English.
-            that.setLanguage('en');
+            // Initialize with current value inside player object,
+            // or default to English. Does not update the player object yet.
+            that.setLanguage(node.player.lang.shortName || 'en', false);
 
             // Extension point.
             if (that.onLangCallbackExtension) {
@@ -47431,9 +47632,9 @@ if (!Array.prototype.indexOf) {
                 that.onLangCallbackExtension = null;
             }
 
-            function makeSetLanguageOnClick(langName) {
+            function makeSetLanguageOnClick(langStr) {
                 return function() {
-                    that.setLanguage(langName);
+                    that.setLanguage(langStr, that.updatePlayer === 'onselect');
                 };
             }
         };
@@ -47446,8 +47647,6 @@ if (!Array.prototype.indexOf) {
          * @see LanguageSelector.onLangCallback
          */
         this.onLangCallbackExtension = null;
-
-        this.init(this.options);
     }
 
     // ## LanguageSelector methods
@@ -47469,8 +47668,29 @@ if (!Array.prototype.indexOf) {
             this.usingButtons = !!this.options.usingButtons;
         }
 
-        if ('undefined' !== typeof this.options.notifyUpdate) {
-            this.notifyUpdate = !!this.options.notifyUpdate;
+        if ('undefined' !== typeof this.options.notifyServer) {
+            if (false === this.options.notifyServer) {
+                this.options.notifyServer = 'never';
+            }
+            else if ('string' === typeof this.options.notifyServer) {
+                if ('never' === this.options.notifyServer ||
+                    'onselect' === this.options.notifyServer ||
+                    'ondone' === this.options.notifyServer) {
+
+                    this.notifyServer = this.options.notifyServer;
+                }
+                else {
+                    throw new Error('LanguageSelector.init: invalid value ' +
+                                    'for notifyServer: "' +
+                                    this.options.notifyServer + '". Valid ' +
+                                    'values: "never","onselect", "ondone".');
+                }
+            }
+            else {
+                throw new Error('LanguageSelector.init: options.notifyServer ' +
+                                'must be ' +
+                                this.options.notifyServer);
+            }
         }
 
         if ('undefined' !== typeof this.options.setUriPrefix) {
@@ -47497,13 +47717,16 @@ if (!Array.prototype.indexOf) {
     /**
      * ### LanguageSelector.setLanguage
      *
-     * Sets language and updates view
+     * Sets language within the widget and globally and updates the display
      *
      * @param {string} langName shortName of language to be set
+     * @param {boolean} updatePlayer If FALSE, the language is set only
+     *   inside the widget, and no changes are made to the player object.
+     *   Default: TRUE
      *
      * @see NodeGameClient.setLanguage
      */
-    LanguageSelector.prototype.setLanguage = function(langName) {
+    LanguageSelector.prototype.setLanguage = function(langName, updatePlayer) {
 
         if (this.usingButtons) {
 
@@ -47522,7 +47745,6 @@ if (!Array.prototype.indexOf) {
         this.currentLanguage = langName;
 
         if (this.usingButtons) {
-
             // Check language button and change className of label.
             this.optionsDisplay[this.currentLanguage].checked = 'checked';
             this.optionsLabel[this.currentLanguage].className =
@@ -47533,8 +47755,10 @@ if (!Array.prototype.indexOf) {
         }
 
         // Update node.player.
-        node.setLanguage(this.availableLanguages[this.currentLanguage],
-                         this.setUriPrefix, this.notifyUpdate);
+        if (updatePlayer !== false) {
+            node.setLanguage(this.availableLanguages[this.currentLanguage],
+                             this.setUriPrefix, this.notifyServer);
+        }
     };
 
     /**
@@ -47565,15 +47789,24 @@ if (!Array.prototype.indexOf) {
      * @see LanguageSelector.updateAvalaibleLanguages
      */
     LanguageSelector.prototype.loadLanguages = function(options) {
-        if(!this.languagesLoaded) {
-            this.updateAvalaibleLanguages(options);
-        }
-        else {
-            if (options && options.callback) {
-                options.callback();
-            }
+        if (!this.languagesLoaded) this.updateAvalaibleLanguages(options);
+        else if (options && options.callback) options.callback();
+    };
 
-        }
+    /**
+     * ### LanguageSelector.listeners
+     *
+     * Implements Widget.listeners
+     */
+    LanguageSelector.prototype.listeners = function() {
+        var that;
+        that = this;
+        node.events.step.on('REALLY_DONE', function() {
+            if (that.updatePlayer === 'ondone') {
+                node.setLanguage(that.availableLanguages[that.currentLanguage],
+                                 that.setUriPrefix, that.notifyServer);
+            }
+        });
     };
 
 })(node);
@@ -47652,8 +47885,6 @@ if (!Array.prototype.indexOf) {
          * Precision of floating point number to display
          */
         this.precision = 2;
-
-        this.init(options);
     }
 
     // ## MoneyTalks methods
@@ -48494,7 +48725,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Requirements
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Checks a list of requirements and displays the results
@@ -50876,7 +51107,7 @@ if (!Array.prototype.indexOf) {
         options = options || {};
         if ('object' !== typeof options) {
             throw new TypeError('VisualTimer.init: options must be ' +
-                                'object or undefined');
+                                'object or undefined. Found: ' + options);
         }
 
         // Important! Do not modify directly options, because it might
@@ -51479,7 +51710,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitingRoom
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Display the number of connected / required players to start a game
