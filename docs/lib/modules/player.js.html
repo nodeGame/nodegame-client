@@ -30,6 +30,9 @@
       <div class="heading h2">
         <a href="#helper%20functions.">Helper functions.</a>
       </div>
+      <div class="heading h3">
+        <a href="#makelanguageobj">makeLanguageObj</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -182,7 +185,7 @@ MIT Licensed</p>
       <span class="dox_tag_name">sayIt</span>
       <span class="dox_type">boolean</span>
       <span>Optional. If TRUE, a LANG message is sent to
-  the server to notify the change. Default: TRUE</span>
+  the server to notify the selection. Default: FALSE.</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -243,7 +246,7 @@ MIT Licensed</p>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setLanguage: updateUriPrefix is true, &#39;</span> <span class="o">+</span>
-                          <span class="s1">&#39;window not found. Are you in a browser?&#39;</span><span class="p">);</span>
+                          <span class="s1">&#39;but window not found. Are you in a browser?&#39;</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -259,7 +262,7 @@ MIT Licensed</p>
 <p>Send a message to notify server.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">sayIt</span> <span class="o">||</span> <span class="nx">sayIt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sayIt</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">msg</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
                 <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;LANG&#39;</span><span class="p">,</span>
                 <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">player</span><span class="p">.</span><span class="nx">lang</span>
@@ -287,6 +290,40 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="makelanguageobj">
+  <h3>
+    <a href="#makelanguageobj" name="makelanguageobj" class="pilcrow">&#182;</a>
+    makeLanguageObj
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>From a language string returns a fully formatted obj</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">langStr</span>
+      <span class="dox_type">string</span>
+      <span>The language string.</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The language object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">makeLanguageObj</span><span class="p">(</span><span class="nx">langStr</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">shortName</span><span class="p">;</span>
         <span class="nx">shortName</span> <span class="o">=</span> <span class="nx">langStr</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>

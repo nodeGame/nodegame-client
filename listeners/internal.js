@@ -74,16 +74,11 @@
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
             var stageLevel;
-
             stageLevel = node.game.getStageLevel();
 
             // TODO check >=.
-            if (stageLevel >= stageLevels.PLAYING) {
-                done();
-            }
-            else {
-                node.game.willBeDone = true;
-            }
+            if (stageLevel >= stageLevels.PLAYING) done();
+            else node.game.willBeDone = true;
         });
 
         /**
