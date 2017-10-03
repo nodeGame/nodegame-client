@@ -1241,7 +1241,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # JSUS: JavaScript UtilS.
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Collection of general purpose javascript functions. JSUS helps!
@@ -1270,9 +1270,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} txt Text to output
      */
-    JSUS.log = function(txt) {
-        console.log(txt);
-    };
+    JSUS.log = function(txt) { console.log(txt); };
 
     /**
      * ## JSUS.extend
@@ -1290,8 +1288,6 @@ if (!Array.prototype.indexOf) {
      * @param {object|function} target The object to extend
      *
      * @return {object|function} target The extended object
-     *
-     * @see JSUS.get
      */
     JSUS.extend = function(additional, target) {
         var name, prop;
@@ -1342,28 +1338,35 @@ if (!Array.prototype.indexOf) {
     /**
      * ## JSUS.require
      *
-     * Returns a copy of one / all the objects extending JSUS
+     * Returns a copy/reference of one/all the JSUS components
      *
-     * The first parameter is a string representation of the name of
-     * the requested extending object. If no parameter is passed a copy
-     * of all the extending objects is returned.
+     * @param {string} component The name of the requested JSUS library.
+     *   If undefined, all JSUS components are returned. Default: undefined.
+     * @param {boolean} clone Optional. If TRUE, the requested component
+     *   is cloned before being returned. Default: TRUE
      *
-     * @param {string} className The name of the requested JSUS library
-     *
-     * @return {function|boolean} The copy of the JSUS library, or
-     *   FALSE if the library does not exist
+     * @return {function|boolean} The copy of the JSUS component, or
+     *   FALSE if the library does not exist, or cloning is not possible
      */
-    JSUS.require = JSUS.get = function(className) {
-        if ('undefined' === typeof JSUS.clone) {
-            JSUS.log('JSUS.clone not found. Cannot continue.');
+    JSUS.require = function(component, clone) {
+        var out;
+        clone = 'undefined' === typeof clone ? true : clone;
+        if (clone && 'undefined' === typeof JSUS.clone) {
+            JSUS.log('JSUS.require: JSUS.clone not found, but clone ' +
+                     'requested. Cannot continue.');
             return false;
         }
-        if ('undefined' === typeof className) return JSUS.clone(JSUS._classes);
-        if ('undefined' === typeof JSUS._classes[className]) {
-            JSUS.log('Could not find class ' + className);
-            return false;
+        if ('undefined' === typeof component) {
+            out = JSUS._classes;
         }
-        return JSUS.clone(JSUS._classes[className]);
+        else {
+            out = JSUS._classes[component]
+            if ('undefined' === typeof out) {
+                JSUS.log('JSUS.require: could not find component ' + component);
+                return false;
+            }
+        }
+        return clone ? JSUS.clone(out) : out;
     };
 
     /**
@@ -1380,7 +1383,6 @@ if (!Array.prototype.indexOf) {
     };
 
     // ## Node.JS includes
-    // if node
     if (JSUS.isNodeJS()) {
         require('./lib/compatibility');
         require('./lib/obj');
@@ -1393,7 +1395,10 @@ if (!Array.prototype.indexOf) {
         require('./lib/queue');
         require('./lib/fs');
     }
-    // end node
+    else {
+        // Exports J in the browser.
+        exports.J = exports.JSUS;
+    }
 
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
@@ -1466,7 +1471,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ARRAY
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Collection of static functions to manipulate arrays
@@ -1598,20 +1603,27 @@ if (!Array.prototype.indexOf) {
      * If an error occurs returns FALSE.
      *
      * @param {array} array The array to loop in
-     * @param {Function} func The callback for each element in the array
+     * @param {Function} cb The callback for each element in the array
      * @param {object} context Optional. The context of execution of the
      *   callback. Defaults ARRAY.each
      *
      * @return {boolean} TRUE, if execution was successful
      */
-    ARRAY.each = function(array, func, context) {
-        if ('object' !== typeof array) return false;
-        if (!func) return false;
+    ARRAY.each = function(array, cb, context) {
+        var i, len;
+        if ('object' !== typeof array) {
+            throw new TypeError('ARRAY.each: array must be object. Found: ' +
+                                array);
+        }
+        if ('function' !== typeof cb) {
+            throw new TypeError('ARRAY.each: cb must be function. Found: ' +
+                                cb);
+        }
 
         context = context || this;
-        var i, len = array.length;
+        len = array.length;
         for (i = 0 ; i < len; i++) {
-            func.call(context, array[i]);
+            cb.call(context, array[i]);
         }
         return true;
     };
@@ -1647,8 +1659,8 @@ if (!Array.prototype.indexOf) {
         }
 
         len = arguments.length;
-        if (len === 3) args = [null, arguments[2]];
-        else if (len === 4) args = [null, arguments[2], arguments[3]];
+        if (len === 3) args = [ null, arguments[2] ];
+        else if (len === 4) args = [ null, arguments[2], arguments[3] ];
         else {
             len = len - 1;
             args = new Array(len);
@@ -2223,32 +2235,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DOM
- *
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
- * Collection of static functions related to DOM manipulation
- *
  * Helper library to perform generic operation with DOM elements.
- *
- * The general syntax is the following: Every HTML element has associated
- * a get* and a add* method, whose syntax is very similar.
- *
- * - The get* method creates the element and returns it.
- * - The add* method creates the element, append it as child to a root element,
- *     and then returns it.
- *
- * The syntax of both method is the same, but the add* method
- * needs the root element as first parameter. E.g.
- *
- * - getButton(id, text, attributes);
- * - addButton(root, id, text, attributes);
- *
- * The last parameter is generally an object containing a list of
- * of key-values pairs as additional attributes to set to the element.
- *
- * Only the methods which do not follow the above-mentioned syntax
- * will receive further explanation.
  */
 (function(JSUS) {
 
@@ -2258,15 +2248,159 @@ if (!Array.prototype.indexOf) {
 
     function DOM() {}
 
-    // ## GENERAL
+    // ## GET/ADD
+
+    /**
+     * ### DOM.get
+     *
+     * Creates a generic HTML element with specified attributes
+     *
+     * @param {string} elem The name of the tag
+     * @param {object|string} attributes Optional. Object containing
+     *   attributes for the element. If string, the id of the element. If
+     *   the request element is an 'iframe', the `name` attribute is set
+     *   equal to the `id` attribute.
+     *
+     * @return {HTMLElement} The newly created HTML element
+     *
+     * @see DOM.add
+     * @see DOM.addAttributes
+     */
+    DOM.get = function(name, attributes) {
+        var el;
+        el = document.createElement(name);
+        if ('string' === typeof attributes) el.id = attributes;
+        else if (attributes) this.addAttributes(el, attributes);
+        // For firefox, name of iframe must be set as well.
+        if (name === 'iframe' && el.id && !el.name) el.name = el.id;
+        return el;
+    };
+
+    /**
+     * ### DOM.add|append
+     *
+     * Creates and append an element with specified attributes to a root
+     *
+     * @param {string} name The name of the HTML tag
+     * @param {HTMLElement} root The root element to which the new element
+     *   will be appended
+     * @param {object|string} options Optional. Object containing
+     *   attributes for the element and rules about how to insert it relative
+     *   to root. Available options: insertAfter, insertBefore (default:
+     *   child of root). If string, it is the id of the element. Examples:
+     *
+     * ```javascript
+     * // Appends a new new to the body.
+     * var div = DOM.add('div', document.body);
+     * // Appends a new new to the body with id 'myid'.
+     * var div1 = DOM.add('div', document.body, 'myid');
+     * // Appends a new new to the body with id 'myid2' and class name 'c'.
+     * var div2 = DOM.add('div', document.body, { id: 'myid2', className: 'c'});
+     * // Appends a new div after div1 with id 'myid'.
+     * var div3 = DOM.add('div', div1, { id: 'myid3', insertAfter: true });
+     * // Appends a new div before div2 with id 'myid'.
+     * var div3 = DOM.add('div', div2, { id: 'myid3', insertBefore: true });
+     * ```
+     *
+     * @return {HTMLElement} The newly created HTML element
+     *
+     * @see DOM.get
+     * @see DOM.addAttributes
+     */
+    DOM.add = DOM.append = function(name, root, options) {
+        var el;
+        el = this.get(name, options);
+        if (options && options.insertBefore) {
+            if (options.insertAfter) {
+                throw new Error('DOM.add: options.insertBefore and ' +
+                                'options.insertBefore cannot be ' +
+                                'both set.');
+            }
+            if (!root.parentNode) {
+                throw new Error('DOM.add: root.parentNode not found. ' +
+                                'Cannot insert before.');
+            }
+            root.parentNode.insertBefore(el, root);
+        }
+        else if (options && options.insertAfter) {
+            if (!root.parentNode) {
+                throw new Error('DOM.add: root.parentNode not found. ' +
+                                'Cannot insert after.');
+            }
+            DOM.insertAfter(el, root);
+        }
+        else {
+            root.appendChild(el);
+        }
+        return el;
+    };
+
+    /**
+     * ### DOM.addAttributes
+     *
+     * Adds attributes to an HTML element and returns it
+     *
+     * Attributes are defined as key-values pairs and added
+     *
+     * Special cases:
+     *
+     *   - 'className': alias for class
+     *   - 'class': add a class to the className property (does not overwrite)
+     *   - 'style': adds property to the style property (see DOM.style)
+     *   - 'id': the id of the element
+     *   - 'innerHTML': the innerHTML property of the element (overwrites)
+     *   - 'insertBefore': ignored
+     *   - 'insertAfter': ignored
+     *
+     * @param {HTMLElement} elem The element to decorate
+     * @param {object} attributes Object containing attributes to
+     *   add to the element
+     *
+     * @return {HTMLElement} The element with speficied attributes added
+     *
+     * @see DOM.addClass
+     * @see DOM.style
+     */
+     DOM.addAttributes = function(elem, attributes) {
+        var key;
+        if (!DOM.isElement(elem)) {
+            throw new TypeError('DOM.addAttributes: elem must be ' +
+                                'HTMLElement. Found: ' + elem);
+        }
+        if ('undefined' === typeof attributes) return elem;
+        if ('object' !== typeof attributes) {
+            throw new TypeError('DOM.addAttributes: attributes must be ' +
+                                'object or undefined. Found: ' + attributes);
+        }
+        for (key in attributes) {
+            if (attributes.hasOwnProperty(key)) {
+                if (key === 'id' || key === 'innerHTML') {
+                    elem[key] = attributes[key];
+                }
+                else if (key === 'class' || key === 'className') {
+                    DOM.addClass(elem, attributes[key]);
+                }
+                else if (key === 'style') {
+                    DOM.style(elem, attributes[key]);
+                }
+                else if (key !== 'insertBefore' && key !== 'insertAfter') {
+                    elem.setAttribute(key, attributes[key]);
+                }
+            }
+        }
+        return elem;
+    };
+
+    // ## WRITE
 
     /**
      * ### DOM.write
      *
      * Write a text, or append an HTML element or node, into a root element
      *
-     * @param {Element} root The HTML element where to write into
-     * @param {mixed} text The text to write. Default, an ampty string
+     * @param {HTMLElement} root The HTML element where to write into
+     * @param {string|HTMLElement} text The text to write or an element
+     *    to append. Default: an ampty string
      *
      * @return {TextNode} The text node inserted in the root element
      *
@@ -2288,19 +2422,19 @@ if (!Array.prototype.indexOf) {
      *
      * Default break element is <br> tag
      *
-     * @param {Element} root The HTML element where to write into
-     * @param {mixed} text The text to write. Default, an ampty string
+     * @param {HTMLElement} root The HTML element where to write into
+     * @param {string|HTMLElement} text The text to write or an element
+     *    to append. Default: an ampty string
      * @param {string} rc the name of the tag to use as a break element
      *
      * @return {TextNode} The text node inserted in the root element
      *
      * @see DOM.write
-     * @see DOM.addBreak
      */
     DOM.writeln = function(root, text, rc) {
         var content;
         content = DOM.write(root, text);
-        this.addBreak(root, rc);
+        this.add(rc || 'br', root);
         return content;
     };
 
@@ -2429,7 +2563,7 @@ if (!Array.prototype.indexOf) {
                 span = document.createElement('em');
             }
             else {
-                span = JSUS.getElement('span', null, args[key]);
+                span = DOM.get('span', args[key]);
             }
 
             text = string.substring(idx_replace, idx_finish);
@@ -2448,6 +2582,8 @@ if (!Array.prototype.indexOf) {
 
         return root;
     };
+
+    // ## ELEMENTS
 
     /**
      * ### DOM.isNode
@@ -2502,7 +2638,7 @@ if (!Array.prototype.indexOf) {
      */
     DOM.shuffleElements = function(parent, order) {
         var i, len, idOrder, children, child;
-        var id, forceId, missId;
+        var id;
         if (!JSUS.isNode(parent)) {
             throw new TypeError('DOM.shuffleElements: parent must be a node. ' +
                                'Found: ' + parent);
@@ -2557,449 +2693,66 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### DOM.shuffleNodes
-     *
-     * It actually shuffles Elements.
-     *
-     * @deprecated
-     */
-    DOM.shuffleNodes = function(parent, order) {
-        console.log('***DOM.shuffleNodes is deprecated. ' +
-                    'Use Dom.shuffleElements instead.***');
-        return DOM.shuffleElements(parent, order);
-    };
-
-    /**
-     * ### DOM.getElement
-     *
-     * Creates a generic HTML element with id and attributes as specified
-     *
-     * @param {string} elem The name of the tag
-     * @param {string} id Optional. The id of the tag
-     * @param {object} attributes Optional. Object containing attributes for
-     *   the newly created element
-     *
-     * @return {HTMLElement} The newly created HTML element
-     *
-     * @see DOM.addAttributes2Elem
-     */
-    DOM.getElement = function(elem, id, attributes) {
-        var e = document.createElement(elem);
-        if ('undefined' !== typeof id) {
-            e.id = id;
-        }
-        return this.addAttributes2Elem(e, attributes);
-    };
-
-    /**
-     * ### DOM.addElement
-     *
-     * Creates and appends a generic HTML element with specified attributes
-     *
-     * @param {string} elem The name of the tag
-     * @param {HTMLElement} root The root element to which the new element will
-     *   be appended
-     * @param {string} id Optional. The id of the tag
-     * @param {object} attributes Optional. Object containing attributes for
-     *   the newly created element
-     *
-     * @return {HTMLElement} The newly created HTML element
-     *
-     * @see DOM.getElement
-     * @see DOM.addAttributes2Elem
-     */
-    DOM.addElement = function(elem, root, id, attributes) {
-        var el = this.getElement(elem, id, attributes);
-        return root.appendChild(el);
-    };
-
-    /**
-     * ### DOM.addAttributes2Elem
-     *
-     * Adds attributes to an HTML element and returns it.
-     *
-     * Attributes are defined as key-values pairs.
-     * Attributes 'label' is ignored, attribute 'className' ('class') and
-     * 'style' are special and are delegated to special methods.
-     *
-     * @param {HTMLElement} e The element to decorate
-     * @param {object} a Object containing attributes to add to the element
-     *
-     * @return {HTMLElement} The decorated element
-     *
-     * @see DOM.addLabel
-     * @see DOM.addClass
-     * @see DOM.style
-     */
-    DOM.addAttributes2Elem = function(e, a) {
-        var key;
-        if (!e || !a) return e;
-        if ('object' != typeof a) return e;
-        for (key in a) {
-            if (a.hasOwnProperty(key)) {
-                if (key === 'id') {
-                    e.id = a[key];
-                }
-                else if (key === 'class' || key === 'className') {
-                    DOM.addClass(e, a[key]);
-                }
-                else if (key === 'style') {
-                    DOM.style(e, a[key]);
-                }
-                else if (key === 'label') {
-                    // Handle the case.
-                    JSUS.log('DOM.addAttributes2Elem: label attribute is not ' +
-                             'supported. Use DOM.addLabel instead.');
-                }
-                else {
-                    e.setAttribute(key, a[key]);
-                }
-
-
-                // TODO: handle special cases
-                // <!--
-                //else {
-                //
-                //    // If there is no parent node,
-                //    // the legend cannot be created
-                //    if (!e.parentNode) {
-                //        node.log('Cannot add label: ' +
-                //                 'no parent element found', 'ERR');
-                //        continue;
-                //    }
-                //
-                //    this.addLabel(e.parentNode, e, a[key]);
-                //}
-                // -->
-            }
-        }
-        return e;
-    };
-
-    /**
      * ### DOM.populateSelect
      *
-     * Appends a list of options into a HTML select element.
-     * The second parameter list is an object containing
-     * a list of key-values pairs as text-value attributes for
-     * the option.
+     * Appends a list of options into a HTML select element
      *
      * @param {HTMLElement} select HTML select element
-     * @param {object} list Options to add to the select element
+     * @param {object} options Optional. List of options to add to
+     *   the select element. List is in the format of key-values pairs
+     *   as innerHTML and value attributes of the option.
+     *
+     * @return {HTMLElement} select The updated select element
      */
-    DOM.populateSelect = function(select, list) {
+    DOM.populateSelect = function(select, options) {
         var key, opt;
-        if (!select || !list) return;
-        for (key in list) {
-            if (list.hasOwnProperty(key)) {
-                opt = document.createElement('option');
-                opt.value = list[key];
-                opt.appendChild(document.createTextNode(key));
-                select.appendChild(opt);
+        if (!DOM.isElement(select)) {
+            throw new TypeError('DOM.populateSelect: select must be ' +
+                                'HTMLElement. Found: ' + select);
+        }
+        if (options) {
+            if ('object' !== typeof options) {
+                throw new TypeError('DOM.populateSelect: options must be ' +
+                                    'object or undefined. Found: ' + options);
+            }
+            for (key in options) {
+                if (options.hasOwnProperty(key)) {
+                    opt = document.createElement('option');
+                    opt.value = key;
+                    opt.innerHTML = options[key];
+                    select.appendChild(opt);
+                }
             }
         }
+        return select;
     };
 
     /**
      * ### DOM.removeChildrenFromNode
      *
-     * Removes all children from a node.
+     * Removes all children from a node
      *
-     * @param {HTMLElement} e HTML element.
+     * @param {HTMLNode} node HTML node.
      */
-    DOM.removeChildrenFromNode = function(e) {
-        while (e.hasChildNodes()) {
-            e.removeChild(e.firstChild);
+    DOM.removeChildrenFromNode = function(node) {
+        while (node.hasChildNodes()) {
+            node.removeChild(node.firstChild);
         }
     };
 
     /**
      * ### DOM.insertAfter
      *
-     * Insert a node element after another one.
+     * Inserts a node element after another one
      *
-     * The first parameter is the node to add.
+     * @param {Node} node The node element to insert
+     * @param {Node} referenceNode The node element after which the
+     *   the insertion is performed
      *
+     * @return {Node} The inserted node
      */
     DOM.insertAfter = function(node, referenceNode) {
-        referenceNode.insertBefore(node, referenceNode.nextSibling);
-    };
-
-    /**
-     * ### DOM.generateUniqueId
-     *
-     * Generate a unique id for the page (frames included).
-     *
-     * TODO: now it always create big random strings, it does not actually
-     * check if the string exists.
-     *
-     */
-    DOM.generateUniqueId = function(prefix) {
-        var search = [window];
-        if (window.frames) {
-            search = search.concat(window.frames);
-        }
-
-        function scanDocuments(id) {
-            var found = true;
-            while (found) {
-                for (var i=0; i < search.length; i++) {
-                    found = search[i].document.getElementById(id);
-                    if (found) {
-                        id = '' + id + '_' + JSUS.randomInt(0, 1000);
-                        break;
-                    }
-                }
-            }
-            return id;
-        }
-
-
-        return scanDocuments(prefix + '_' + JSUS.randomInt(0, 10000000));
-        //return scanDocuments(prefix);
-    };
-
-    // ## GET/ADD
-
-    /**
-     * ### DOM.getButton
-     *
-     */
-    DOM.getButton = function(id, text, attributes) {
-        var sb;
-        sb = document.createElement('button');
-        if ('undefined' !== typeof id) sb.id = id;
-        sb.appendChild(document.createTextNode(text || 'Send'));
-        return this.addAttributes2Elem(sb, attributes);
-    };
-
-    /**
-     * ### DOM.addButton
-     *
-     */
-    DOM.addButton = function(root, id, text, attributes) {
-        var b = this.getButton(id, text, attributes);
-        return root.appendChild(b);
-    };
-
-    /**
-     * ### DOM.getFieldset
-     *
-     */
-    DOM.getFieldset = function(id, legend, attributes) {
-        var f = this.getElement('fieldset', id, attributes);
-        var l = document.createElement('Legend');
-        l.appendChild(document.createTextNode(legend));
-        f.appendChild(l);
-        return f;
-    };
-
-    /**
-     * ### DOM.addFieldset
-     *
-     */
-    DOM.addFieldset = function(root, id, legend, attributes) {
-        var f = this.getFieldset(id, legend, attributes);
-        return root.appendChild(f);
-    };
-
-    /**
-     * ### DOM.getTextInput
-     *
-     */
-    DOM.getTextInput = function(id, attributes) {
-        var ti =  document.createElement('input');
-        if ('undefined' !== typeof id) ti.id = id;
-        ti.setAttribute('type', 'text');
-        return this.addAttributes2Elem(ti, attributes);
-    };
-
-    /**
-     * ### DOM.addTextInput
-     *
-     */
-    DOM.addTextInput = function(root, id, attributes) {
-        var ti = this.getTextInput(id, attributes);
-        return root.appendChild(ti);
-    };
-
-    /**
-     * ### DOM.getTextArea
-     *
-     */
-    DOM.getTextArea = function(id, attributes) {
-        var ta =  document.createElement('textarea');
-        if ('undefined' !== typeof id) ta.id = id;
-        return this.addAttributes2Elem(ta, attributes);
-    };
-
-    /**
-     * ### DOM.addTextArea
-     *
-     */
-    DOM.addTextArea = function(root, id, attributes) {
-        var ta = this.getTextArea(id, attributes);
-        return root.appendChild(ta);
-    };
-
-    /**
-     * ### DOM.getCanvas
-     *
-     */
-    DOM.getCanvas = function(id, attributes) {
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-
-        if (!context) {
-            alert('Canvas is not supported');
-            return false;
-        }
-
-        canvas.id = id;
-        return this.addAttributes2Elem(canvas, attributes);
-    };
-
-    /**
-     * ### DOM.addCanvas
-     *
-     */
-    DOM.addCanvas = function(root, id, attributes) {
-        var c = this.getCanvas(id, attributes);
-        return root.appendChild(c);
-    };
-
-    /**
-     * ### DOM.getSlider
-     *
-     */
-    DOM.getSlider = function(id, attributes) {
-        var slider = document.createElement('input');
-        slider.id = id;
-        slider.setAttribute('type', 'range');
-        return this.addAttributes2Elem(slider, attributes);
-    };
-
-    /**
-     * ### DOM.addSlider
-     *
-     */
-    DOM.addSlider = function(root, id, attributes) {
-        var s = this.getSlider(id, attributes);
-        return root.appendChild(s);
-    };
-
-    /**
-     * ### DOM.getRadioButton
-     *
-     */
-    DOM.getRadioButton = function(id, attributes) {
-        var radio = document.createElement('input');
-        radio.id = id;
-        radio.setAttribute('type', 'radio');
-        return this.addAttributes2Elem(radio, attributes);
-    };
-
-    /**
-     * ### DOM.addRadioButton
-     *
-     */
-    DOM.addRadioButton = function(root, id, attributes) {
-        var rb = this.getRadioButton(id, attributes);
-        return root.appendChild(rb);
-    };
-
-    /**
-     * ### DOM.getLabel
-     *
-     */
-    DOM.getLabel = function(forElem, id, labelText, attributes) {
-        if (!forElem) return false;
-        var label = document.createElement('label');
-        label.id = id;
-        label.appendChild(document.createTextNode(labelText));
-
-        if ('undefined' === typeof forElem.id) {
-            forElem.id = this.generateUniqueId();
-        }
-
-        label.setAttribute('for', forElem.id);
-        this.addAttributes2Elem(label, attributes);
-        return label;
-    };
-
-    /**
-     * ### DOM.addLabel
-     *
-     */
-    DOM.addLabel = function(root, forElem, id, labelText, attributes) {
-        if (!root || !forElem || !labelText) return false;
-        var l = this.getLabel(forElem, id, labelText, attributes);
-        root.insertBefore(l, forElem);
-        return l;
-    };
-
-    /**
-     * ### DOM.getSelect
-     *
-     */
-    DOM.getSelect = function(id, attributes) {
-        return this.getElement('select', id, attributes);
-    };
-
-    /**
-     * ### DOM.addSelect
-     *
-     */
-    DOM.addSelect = function(root, id, attributes) {
-        return this.addElement('select', root, id, attributes);
-    };
-
-    /**
-     * ### DOM.getIFrame
-     *
-     */
-    DOM.getIFrame = function(id, attributes) {
-        attributes = attributes || {};
-        if (!attributes.name) {
-            attributes.name = id; // For Firefox
-        }
-        return this.getElement('iframe', id, attributes);
-    };
-
-    /**
-     * ### DOM.addIFrame
-     *
-     */
-    DOM.addIFrame = function(root, id, attributes) {
-        var ifr = this.getIFrame(id, attributes);
-        return root.appendChild(ifr);
-    };
-
-    /**
-     * ### DOM.addBreak
-     *
-     */
-    DOM.addBreak = function(root, rc) {
-        var RC = rc || 'br';
-        var br = document.createElement(RC);
-        return root.appendChild(br);
-        //return this.insertAfter(br,root);
-    };
-
-    /**
-     * ### DOM.getDiv
-     *
-     */
-    DOM.getDiv = function(id, attributes) {
-        return this.getElement('div', id, attributes);
-    };
-
-    /**
-     * ### DOM.addDiv
-     *
-     */
-    DOM.addDiv = function(root, id, attributes) {
-        return this.addElement('div', root, id, attributes);
+        return referenceNode.insertBefore(node, referenceNode.nextSibling);
     };
 
     // ## CSS / JS
@@ -3007,48 +2760,74 @@ if (!Array.prototype.indexOf) {
     /**
      * ### DOM.addCSS
      *
-     * If no root element is passed, it tries to add the CSS
-     * link element to document.head, document.body, and
-     * finally document. If it fails, returns FALSE.
+     * Adds a CSS link to the page
      *
+     * @param {string} cssPath The path to the css
+     * @param {HTMLElement} root Optional. The root element. If no root
+     *    element is passed, it tries document.head, document.body, and
+     *    document. If it fails, it throws an error.
+     * @param {object|string} attributes Optional. Object containing
+     *   attributes for the element. If string, the id of the element
+     *
+     * @return {HTMLElement} The link element
      */
-    DOM.addCSS = function(root, css, id, attributes) {
+    DOM.addCSS = function(cssPath, root, attributes) {
+        if ('string' !== typeof cssPath || cssPath.trim() === '') {
+            throw new TypeError('DOM.addCSS: cssPath must be a non-empty ' +
+                                'string. Found: ' + cssPath);
+        }
         root = root || document.head || document.body || document;
-        if (!root) return false;
-
-        attributes = attributes || {};
-
-        attributes = JSUS.merge(attributes, {rel : 'stylesheet',
-                                             type: 'text/css',
-                                             href: css
-                                            });
-
-        return this.addElement('link', root, id, attributes);
+        if (!root) {
+            throw new Error('DOM.addCSS: root is undefined, and could not ' +
+                            'detect a valid root for css: ' + cssPath);
+        }
+        attributes = JSUS.mixin({
+            rel : 'stylesheet',
+            type: 'text/css',
+            href: cssPath
+        }, attributes);
+        return this.add('link', root, attributes);
     };
 
     /**
      * ### DOM.addJS
      *
+     * Adds a JavaScript script to the page
+     *
+     * @param {string} cssPath The path to the css
+     * @param {HTMLElement} root Optional. The root element. If no root
+     *    element is passed, it tries document.head, document.body, and
+     *    document. If it fails, it throws an error.
+     * @param {object|string} attributes Optional. Object containing
+     *   attributes for the element. If string, the id of the element
+     *
+     * @return {HTMLElement} The link element
+     *
      */
-    DOM.addJS = function(root, js, id, attributes) {
+    DOM.addJS = function(jsPath, root, attributes) {
+        if ('string' !== typeof jsPath || jsPath.trim() === '') {
+            throw new TypeError('DOM.addCSS: jsPath must be a non-empty ' +
+                                'string. Found: ' + jsPath);
+        }
         root = root || document.head || document.body || document;
-        if (!root) return false;
-
-        attributes = attributes || {};
-
-        attributes = JSUS.merge(attributes, {charset : 'utf-8',
-                                             type: 'text/javascript',
-                                             src: js
-                                            });
-
-        return this.addElement('script', root, id, attributes);
+        if (!root) {
+            throw new Error('DOM.addCSS: root is undefined, and could not ' +
+                            'detect a valid root for css: ' + jsPath);
+        }
+        attributes = JSUS.mixin({
+            charset : 'utf-8',
+            type: 'text/javascript',
+            src: jsPath
+        }, attributes);
+        return this.add('script', root, attributes);
     };
+
+    // ## STYLE
 
     /**
      * ### DOM.highlight
      *
-     * Provides a simple way to highlight an HTML element
-     * by adding a colored border around it.
+     * Highlights an element by adding a custom border around it
      *
      * Three pre-defined modes are implemented:
      *
@@ -3060,22 +2839,22 @@ if (!Array.prototype.indexOf) {
      * color as HEX value. Examples:
      *
      * ```javascript
-     * highlight(myDiv, 'WARN'); // yellow border
+     * highlight(myDiv, 'WARN');  // yellow border
      * highlight(myDiv);          // red border
-     * highlight(myDiv, '#CCC'); // grey border
+     * highlight(myDiv, '#CCC');  // grey border
      * ```
      *
      * @param {HTMLElement} elem The element to highlight
      * @param {string} code The type of highlight
+     *
+     * @return {HTMLElement} elem The styled element
      *
      * @see DOM.addBorder
      * @see DOM.style
      */
     DOM.highlight = function(elem, code) {
         var color;
-        if (!elem) return;
-
-        // default value is ERR
+        // Default value is ERR.
         switch (code) {
         case 'OK':
             color =  'green';
@@ -3087,31 +2866,29 @@ if (!Array.prototype.indexOf) {
             color = 'red';
             break;
         default:
-            if (code.charAt(0) === '#') {
-                color = code;
-            }
-            else {
-                color = 'red';
-            }
+            if (code.charAt(0) === '#') color = code;
+            else color = 'red';
         }
-
         return this.addBorder(elem, color);
     };
 
     /**
      * ### DOM.addBorder
      *
-     * Adds a border around the specified element. Color,
-     * width, and type can be specified.
+     * Adds a border around the specified element
+     *
+     * @param {HTMLElement} elem The element to which adding the borders
+     * @param {string} color Optional. The color of border. Default: 'red'.
+     * @param {string} width Optional. The width of border. Default: '5px'.
+     * @param {string} type Optional. The type of border. Default: 'solid'.
+     *
+     * @return {HTMLElement} The element to which a border has been added
      */
     DOM.addBorder = function(elem, color, width, type) {
         var properties;
-        if (!elem) return;
-
         color = color || 'red';
         width = width || '5px';
         type = type || 'solid';
-
         properties = { border: width + ' ' + type + ' ' + color };
         return DOM.style(elem, properties);
     };
@@ -3130,16 +2907,101 @@ if (!Array.prototype.indexOf) {
      */
     DOM.style = function(elem, properties) {
         var i;
-        if (!elem || !properties) return;
-        if (!DOM.isElement(elem)) return;
-
-        for (i in properties) {
-            if (properties.hasOwnProperty(i)) {
-                elem.style[i] = properties[i];
+        if (!DOM.isElement(elem)) {
+            throw new TypeError('DOM.style: elem must be HTMLElement. ' +
+                                'Found: ' + elem);
+        }
+        if (properties) {
+            if ('object' !== typeof properties) {
+                throw new TypeError('DOM.style: properties must be object or ' +
+                                    'undefined. Found: ' + properties);
+            }
+            for (i in properties) {
+                if (properties.hasOwnProperty(i)) {
+                    elem.style[i] = properties[i];
+                }
             }
         }
         return elem;
     };
+
+    // ## ID
+
+    /**
+     * ### DOM.generateUniqueId
+     *
+     * Generates a unique id for the whole page, frames included
+     *
+     * The resulting id is of the type: prefix_randomdigits.
+     *
+     * @param {string} prefix Optional. A given prefix. Default: a random
+     *   string of 8 characters.
+     * @param {boolean} checkFrames Optional. If TRUE, the id will be unique
+     *   all frames as well. Default: TRUE
+     *
+     * @return {string} id The unique id
+     */
+    DOM.generateUniqueId = (function() {
+        var limit;
+        limit = 100;
+
+        // Returns TRUE if id is NOT found in all docs (optimized).
+        function scanDocuments(docs, id) {
+            var i, len;
+            len = docs.length;
+            if (len === 1) {
+                return !docs[0].document.getElementById(id);
+            }
+            if (len === 2) {
+                return !!(docs[0].document.getElementById(id) &&
+                          docs[1].document.getElementById(id));
+            }
+            i = -1;
+            for ( ; ++i < len ; ) {
+                if (docs[i].document.getElementById(id)) return false;
+            }
+            return true;
+        }
+
+        return function(prefix, checkFrames) {
+            var id, windows;
+            var found, counter;
+
+            if (prefix) {
+                if ('string' !== typeof prefix && 'number' !== typeof prefix) {
+                    throw new TypeError('DOM.generateUniqueId: prefix must ' +
+                                        'be string or number. Found: ' +
+                                        prefix);
+                }
+            }
+            else {
+                prefix = JSUS.randomString(8, 'a');
+            }
+            id = prefix + '_';
+
+            windows = [ window ];
+            if ((checkFrames || 'undefined' === typeof checkFrames) &&
+                window.frames) {
+
+                windows = windows.concat(window.frames);
+            }
+
+            found = true;
+            counter = -1;
+            while (found) {
+                id = prefix + '_' + JSUS.randomInt(1000);
+                found = scanDocuments(windows, id);
+                if (++counter > limit) {
+                    throw new Error('DOM.generateUniqueId: could not ' +
+                                    'find unique id within ' + limit +
+                                    ' trials.');
+                }
+            }
+            return id;
+        };
+    })();
+
+    // ## CLASSES
 
     /**
      * ### DOM.removeClass
@@ -3147,17 +3009,26 @@ if (!Array.prototype.indexOf) {
      * Removes a specific class from the classNamex attribute of a given element
      *
      * @param {HTMLElement} el An HTML element
-     * @param {string} c The name of a CSS class already in the element
+     * @param {string} className The name of a CSS class already in the element
      *
      * @return {HTMLElement|undefined} The HTML element with the removed
      *   class, or undefined if the inputs are misspecified
      */
-    DOM.removeClass = function(el, c) {
+    DOM.removeClass = function(elem, className) {
         var regexpr, o;
-        if (!el || !c) return;
-        regexpr = new RegExp('(?:^|\\s)' + c + '(?!\\S)');
-        o = el.className = el.className.replace( regexpr, '' );
-        return el;
+        if (!DOM.isElement(elem)) {
+            throw new TypeError('DOM.removeClass: elem must be HTMLElement. ' +
+                                'Found: ' + elem);
+        }
+        if (className) {
+            if ('string' !== typeof className || className.trim() === '') {
+                throw new TypeError('DOM.removeClass: className must be ' +
+                                    'HTMLElement. Found: ' + className);
+            }
+            regexpr = new RegExp('(?:^|\\s)' + className + '(?!\\S)');
+            o = elem.className = elem.className.replace(regexpr, '' );
+        }
+        return elem;
     };
 
     /**
@@ -3167,19 +3038,27 @@ if (!Array.prototype.indexOf) {
      *
      * Takes care not to overwrite already existing classes.
      *
-     * @param {HTMLElement} el An HTML element
-     * @param {string|array} c The name/s of CSS class/es
+     * @param {HTMLElement} elem An HTML element
+     * @param {string|array} className The name/s of CSS class/es
      *
-     * @return {HTMLElement|undefined} The HTML element with the additional
+     * @return {HTMLElement} The HTML element with the additional
      *   class, or undefined if the inputs are misspecified
      */
-    DOM.addClass = function(el, c) {
-        if (!el) return;
-        if (c instanceof Array) c = c.join(' ');
-        else if ('string' !== typeof c) return;
-        if (!el.className || el.className === '') el.className = c;
-        else el.className += (' ' + c);
-        return el;
+    DOM.addClass = function(elem, className) {
+        if (!DOM.isElement(elem)) {
+            throw new TypeError('DOM.addClass: elem must be HTMLElement. ' +
+                                'Found: ' + elem);
+        }
+        if (className) {
+            if (className instanceof Array) className = className.join(' ');
+            if ('string' !== typeof className || className.trim() === '') {
+                throw new TypeError('DOM.addClass: className must be ' +
+                                    'HTMLElement. Found: ' + className);
+            }
+            if (!elem.className) elem.className = className;
+            else elem.className += (' ' + className);
+        }
+        return elem;
     };
 
     /**
@@ -3254,67 +3133,13 @@ if (!Array.prototype.indexOf) {
     DOM.getIFrameAnyChild = function(iframe) {
         var contentDocument;
         if (!iframe) return;
-        contentDocument = W.getIFrameDocument(iframe);
+        contentDocument = DOM.getIFrameDocument(iframe);
         return contentDocument.head || contentDocument.body ||
             contentDocument.lastChild ||
             contentDocument.getElementsByTagName('html')[0];
     };
 
-    // ## RIGHT-CLICK
-
-    /**
-     * ### DOM.disableRightClick
-     *
-     * Disables the popup of the context menu by right clicking with the mouse
-     *
-     * @param {Document} Optional. A target document object. Defaults, document
-     *
-     * @see DOM.enableRightClick
-     */
-    DOM.disableRightClick = function(doc) {
-        doc = doc || document;
-        if (doc.layers) {
-            doc.captureEvents(Event.MOUSEDOWN);
-            doc.onmousedown = function clickNS4(e) {
-                if (doc.layers || doc.getElementById && !doc.all) {
-                    if (e.which == 2 || e.which == 3) {
-                        return false;
-                    }
-                }
-            };
-        }
-        else if (doc.all && !doc.getElementById) {
-            doc.onmousedown = function clickIE4() {
-                if (event.button == 2) {
-                    return false;
-                }
-            };
-        }
-        doc.oncontextmenu = new Function("return false");
-    };
-
-    /**
-     * ### DOM.enableRightClick
-     *
-     * Enables the popup of the context menu by right clicking with the mouse
-     *
-     * It unregisters the event handlers created by `DOM.disableRightClick`
-     *
-     * @param {Document} Optional. A target document object. Defaults, document
-     *
-     * @see DOM.disableRightClick
-     */
-    DOM.enableRightClick = function(doc) {
-        doc = doc || document;
-        if (doc.layers) {
-            doc.releaseEvents(Event.MOUSEDOWN);
-            doc.onmousedown = null;
-        }
-        else if (doc.all && !doc.getElementById) {
-            doc.onmousedown = null;
-        }
-        doc.oncontextmenu = null;
-    };
+    // ## EVENTS
 
     /**
      * ### DOM.addEvent
@@ -3361,72 +3186,6 @@ if (!Array.prototype.indexOf) {
         capture = !!capture;
         if (element.detachEvent) return element.detachEvent('on' + event, func);
         else return element.removeEventListener(event, func, capture);
-    };
-
-    /**
-     * ### DOM.disableBackButton
-     *
-     * Disables/re-enables backward navigation in history of browsed pages
-     *
-     * When disabling, it inserts twice the current url.
-     *
-     * It will still be possible to manually select the uri in the
-     * history pane and nagivate to it.
-     *
-     * @param {boolean} disable Optional. If TRUE disables back button,
-     *   if FALSE, re-enables it. Default: TRUE.
-     *
-     * @return {boolean} The state of the back button (TRUE = disabled),
-     *   or NULL if the method is not supported by browser.
-     */
-    DOM.disableBackButton = (function(isDisabled) {
-        return function(disable) {
-            disable = 'undefined' === typeof disable ? true : disable;
-            if (disable && !isDisabled) {
-                if (!history.pushState || !history.go) {
-                    node.warn('DOM.disableBackButton: method not ' +
-                              'supported by browser.');
-                    return null;
-                }
-                history.pushState(null, null, location.href);
-                window.onpopstate = function(event) {
-                    history.go(1);
-                };
-            }
-            else if (isDisabled) {
-                window.onpopstate = null;
-            }
-            isDisabled = disable;
-            return disable;
-        };
-    })(false);
-
-    /**
-     * ### DOM.playSound
-     *
-     * Plays a sound
-     *
-     * @param {various} sound Audio tag or path to audio file to be played
-     */
-    DOM.playSound = 'undefined' === typeof Audio ?
-        function() {
-            console.log('JSUS.playSound: Audio tag not supported in your' +
-                    ' browser. Cannot play sound.');
-        } :
-        function(sound) {
-        var audio;
-        if ('string' === typeof sound) {
-            audio = new Audio(sound);
-        }
-        else if ('object' === typeof sound &&
-            'function' === typeof sound.play) {
-            audio = sound;
-        }
-        else {
-            throw new TypeError('JSUS.playSound: sound must be string' +
-               ' or audio element.');
-        }
-        audio.play();
     };
 
     /**
@@ -3485,6 +3244,129 @@ if (!Array.prototype.indexOf) {
         onFocusChange(undefined, cb);
     };
 
+    // ## UI
+
+    /**
+     * ### DOM.disableRightClick
+     *
+     * Disables the popup of the context menu by right clicking with the mouse
+     *
+     * @param {Document} Optional. A target document object. Defaults, document
+     *
+     * @see DOM.enableRightClick
+     */
+    DOM.disableRightClick = function(doc) {
+        doc = doc || document;
+        if (doc.layers) {
+            doc.captureEvents(Event.MOUSEDOWN);
+            doc.onmousedown = function clickNS4(e) {
+                if (doc.layers || doc.getElementById && !doc.all) {
+                    if (e.which == 2 || e.which == 3) {
+                        return false;
+                    }
+                }
+            };
+        }
+        else if (doc.all && !doc.getElementById) {
+            doc.onmousedown = function clickIE4() {
+                if (event.button == 2) {
+                    return false;
+                }
+            };
+        }
+        doc.oncontextmenu = function() { return false; };
+    };
+
+    /**
+     * ### DOM.enableRightClick
+     *
+     * Enables the popup of the context menu by right clicking with the mouse
+     *
+     * It unregisters the event handlers created by `DOM.disableRightClick`
+     *
+     * @param {Document} Optional. A target document object. Defaults, document
+     *
+     * @see DOM.disableRightClick
+     */
+    DOM.enableRightClick = function(doc) {
+        doc = doc || document;
+        if (doc.layers) {
+            doc.releaseEvents(Event.MOUSEDOWN);
+            doc.onmousedown = null;
+        }
+        else if (doc.all && !doc.getElementById) {
+            doc.onmousedown = null;
+        }
+        doc.oncontextmenu = null;
+    };
+
+    /**
+     * ### DOM.disableBackButton
+     *
+     * Disables/re-enables backward navigation in history of browsed pages
+     *
+     * When disabling, it inserts twice the current url.
+     *
+     * It will still be possible to manually select the uri in the
+     * history pane and nagivate to it.
+     *
+     * @param {boolean} disable Optional. If TRUE disables back button,
+     *   if FALSE, re-enables it. Default: TRUE.
+     *
+     * @return {boolean} The state of the back button (TRUE = disabled),
+     *   or NULL if the method is not supported by browser.
+     */
+    DOM.disableBackButton = (function(isDisabled) {
+        return function(disable) {
+            disable = 'undefined' === typeof disable ? true : disable;
+            if (disable && !isDisabled) {
+                if (!history.pushState || !history.go) {
+                    JSUS.log('DOM.disableBackButton: method not ' +
+                             'supported by browser.');
+                    return null;
+                }
+                history.pushState(null, null, location.href);
+                window.onpopstate = function(event) {
+                    history.go(1);
+                };
+            }
+            else if (isDisabled) {
+                window.onpopstate = null;
+            }
+            isDisabled = disable;
+            return disable;
+        };
+    })(false);
+
+    // ## EXTRA
+
+    /**
+     * ### DOM.playSound
+     *
+     * Plays a sound
+     *
+     * @param {various} sound Audio tag or path to audio file to be played
+     */
+    DOM.playSound = 'undefined' === typeof Audio ?
+        function() {
+            console.log('JSUS.playSound: Audio tag not supported in your' +
+                    ' browser. Cannot play sound.');
+        } :
+        function(sound) {
+        var audio;
+        if ('string' === typeof sound) {
+            audio = new Audio(sound);
+        }
+        else if ('object' === typeof sound &&
+            'function' === typeof sound.play) {
+            audio = sound;
+        }
+        else {
+            throw new TypeError('JSUS.playSound: sound must be string' +
+               ' or audio element.');
+        }
+        audio.play();
+    };
 
     /**
      * ### DOM.blinkTitle
@@ -3682,9 +3564,9 @@ if (!Array.prototype.indexOf) {
         d = document;
         e = d.documentElement;
         g = d.getElementsByTagName('body')[0];
-        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        x = w.innerWidth || e.clientWidth || g.clientWidth;
         y = w.innerHeight|| e.clientHeight|| g.clientHeight;
-        return !dim ? {x: x, y: y} : dim === 'x' ? x : y;
+        return !dim ? { x: x, y: y } : dim === 'x' ? x : y;
     };
 
     // ## Helper methods
@@ -3768,8 +3650,8 @@ if (!Array.prototype.indexOf) {
             }
             // All others.
             else {
-                window.onpageshow = window.onpagehide
-                    = window.onfocus = window.onblur = onchangeCb;
+                window.onpageshow = window.onpagehide =
+                    window.onfocus = window.onblur = onchangeCb;
             }
         };
     })('undefined' !== typeof document ? document : null);
@@ -3853,7 +3735,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # OBJ
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Collection of static functions to manipulate JavaScript objects
@@ -5150,7 +5032,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # RANDOM
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Generates pseudo-random numbers
@@ -5164,18 +5046,31 @@ if (!Array.prototype.indexOf) {
     /**
      * ## RANDOM.random
      *
-     * Generates a pseudo-random floating point number between
-     * [a,b), a inclusive and b exclusive.
+     * Generates a pseudo-random floating point number in interval [a,b)
      *
-     * @param {number} a The lower limit
-     * @param {number} b The upper limit
+     * Interval is a inclusive and b exclusive.
+     *
+     * If b is undefined, the interval is [0, a).
+     *
+     * If both a and b are undefined the interval is [0, 1)
+     *
+     * @param {number} a Optional. The lower limit, or the upper limit
+     *   if b is undefined
+     * @param {number} b Optional. The upper limit
      *
      * @return {number} A random floating point number in [a,b)
      */
     RANDOM.random = function(a, b) {
         var c;
-        a = ('undefined' === typeof a) ? 0 : a;
-        b = ('undefined' === typeof b) ? 0 : b;
+        if ('undefined' === typeof b) {
+            if ('undefined' === typeof a) {
+                return Math.random();
+            }
+            else {
+                b = a;
+                a = 0;                
+            }
+        }
         if (a === b) return a;
 
         if (b < a) {
@@ -5190,6 +5085,8 @@ if (!Array.prototype.indexOf) {
      * ## RANDOM.randomInt
      *
      * Generates a pseudo-random integer between (a,b] a exclusive, b inclusive
+     *
+     * @TODO: Change to interval [a,b], and allow 1 parameter for [0,a)
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
@@ -5206,9 +5103,9 @@ if (!Array.prototype.indexOf) {
     /**
      * ## RANDOM.sample
      *
-     * Generates a randomly shuffled sequence of numbers in (a,b)
+     * Generates a randomly shuffled sequence of numbers in [a,b)]
      *
-     * Both _a_ and _b_ are inclued in the interval.
+     * Both _a_ and _b_ are included in the interval.
      *
      * @param {number} a The lower limit
      * @param {number} b The upper limit
@@ -5698,7 +5595,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # PARSE
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
@@ -5748,7 +5645,7 @@ if (!Array.prototype.indexOf) {
         var regex, results;
         if (referer && 'string' !== typeof referer) {
             throw new TypeError('JSUS.getQueryString: referer must be string ' +
-                                'or undefined.');
+                                'or undefined. Found: ' + referer);
         }
         referer = referer || window.location.search;
         if ('undefined' === typeof name) return referer;
@@ -6116,7 +6013,7 @@ if (!Array.prototype.indexOf) {
         if ('number' === typeof expr) expr = '' + expr;
         else if ('string' !== typeof expr) {
             throw new TypeError('PARSE.range: expr must be string, number, ' +
-                                'undefined.');
+                                'undefined. Found: ' + expr);
         }
         // If no available numbers defined, assumes all possible are allowed.
         if ('undefined' === typeof available) {
@@ -6130,19 +6027,20 @@ if (!Array.prototype.indexOf) {
         else if ('object' === typeof available) {
             if ('function' !== typeof available.next) {
                 throw new TypeError('PARSE.range: available.next must be ' +
-                                    'function.');
+                                    'function. Found: ' + available.next);
             }
             if ('function' !== typeof available.isFinished) {
                 throw new TypeError('PARSE.range: available.isFinished must ' +
-                                    'be function.');
+                                    'be function. Found: ' +
+                                    available.isFinished);
             }
             if ('number' !== typeof available.begin) {
                 throw new TypeError('PARSE.range: available.begin must be ' +
-                                    'number.');
+                                    'number. Found: ' + available.begin);
             }
             if ('number' !== typeof available.end) {
                 throw new TypeError('PARSE.range: available.end must be ' +
-                                    'number.');
+                                    'number. Found: ' + available.end);
             }
 
             begin = available.begin;
@@ -6155,8 +6053,8 @@ if (!Array.prototype.indexOf) {
 
             numbers = available.match(/([-+]?\d+)/g);
             if (numbers === null) {
-                throw new Error(
-                    'PARSE.range: no numbers in available: ' + available);
+                throw new Error('PARSE.range: no numbers in available: ' +
+                                available);
             }
             lowerBound = Math.min.apply(null, numbers);
 
@@ -6176,7 +6074,8 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new TypeError('PARSE.range: available must be string, ' +
-                                'array, object or undefined.');
+                                'array, object or undefined. Found: ' +
+                                available);
         }
 
         // end -> maximal available value.
@@ -6340,7 +6239,8 @@ if (!Array.prototype.indexOf) {
     if ('undefined' !== typeof Function.prototype.name) {
         PARSE.funcName = function(func) {
             if ('function' !== typeof func) {
-                throw new TypeError('PARSE.funcName: func must be function.');
+                throw new TypeError('PARSE.funcName: func must be function. ' +
+                                    'Found: ' + func);
             }
             return func.name;
         };
@@ -6349,7 +6249,8 @@ if (!Array.prototype.indexOf) {
         PARSE.funcName = function(func) {
             var funcNameRegex, res;
             if ('function' !== typeof func) {
-                throw new TypeError('PARSE.funcName: func must be function.');
+                throw new TypeError('PARSE.funcName: func must be function. ' +
+                                   'Found: ' + func);
             }
             funcNameRegex = /function\s([^(]{1,})\(/;
             res = (funcNameRegex).exec(func.toString());
@@ -6363,7 +6264,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -6451,7 +6352,7 @@ if (!Array.prototype.indexOf) {
         this.db = [];
 
         // ### lastSelection
-        // The subset of items that were selected during the last operations
+        // The subset of items that were selected during the last operation
         // Notice: some of the items might not exist any more in the database.
         // @see NDDB.fetch
         this.lastSelection = [];
@@ -7180,22 +7081,36 @@ if (!Array.prototype.indexOf) {
     /**
      * ### NDDB._autoUpdate
      *
-     * Performs a series of automatic checkings and updates the db
+     * Updates pointer, indexes, and sort items
      *
-     * Checkings are performed according to current configuration, or to
-     * local options.
+     * What is updated depends on configuration stored in `this.__update`.
      *
      * @param {object} options Optional. Configuration object
+     *
+     * @see NDDB.__update
      *
      * @api private
      */
     NDDB.prototype._autoUpdate = function(options) {
-        var update;
-        update = options ? J.merge(this.__update, options) : this.__update;
+        var u;
+        u = this.__update;
+        options = options || {};
 
-        if (update.pointer) this.nddb_pointer = this.db.length-1;
-        if (update.sort) this.sort();
-        if (update.indexes) this.rebuildIndexes();
+        if (options.pointer ||
+            ('undefined' === typeof options.pointer && u.pointer)) {
+
+            this.nddb_pointer = this.db.length-1;
+        }
+        if (options.sort ||
+            ('undefined' === typeof options.sort && u.sort)) {
+
+            this.sort();
+        }
+        if (options.indexes ||
+            ('undefined' === typeof options.indexes && u.indexes)) {
+
+            this.rebuildIndexes();
+        }
     };
 
     /**
@@ -7233,18 +7148,35 @@ if (!Array.prototype.indexOf) {
      *  - null
      *
      * @param {object} o The item or array of items to insert
+     * @param {object} updateRules Optional. Update rules to overwrite
+     *   system-wide settings stored in `this.__update`
      *
      * @return {object|boolean} o The inserted object (might have been
      *   updated by on('insert') callbacks), or FALSE if the object could
      *   not be inserted, e.g. if a on('insert') callback returned FALSE.
      *
+     * @see NDDB.__update
      * @see nddb_insert
      */
-    NDDB.prototype.insert = function(o) {
+    NDDB.prototype.insert = function(o, updateRules) {
         var res;
-        res = nddb_insert.call(this, o, this.__update.indexes);
+        if ('undefined' === typeof updateRules) {
+            updateRules = this.__update;
+        }
+        else if ('object' !== typeof updateRules) {
+            this.throwErr('TypeError', 'insert',
+                          'updateRules must be object or undefined. Found: ',
+                          updateRules);
+        }
+        res = nddb_insert.call(this, o, updateRules.indexes);
         if (res === false) return false;
-        this._autoUpdate({indexes: false});
+        // If updateRules.indexes is false, then we do not want to do it.
+        // If it was true, we did it already.
+        this._autoUpdate({
+            indexes: false,
+            pointer: updateRules.pointer,
+            sort: updateRules.sort
+        });
         return o;
     };
 
@@ -7256,7 +7188,7 @@ if (!Array.prototype.indexOf) {
      * It always returns the length of the full database, regardless of
      * current selection.
      *
-     * @return {number} The length of the database
+     * @return {number} The total number of elements in the database
      *
      * @see NDDB.count
      */
@@ -8523,6 +8455,50 @@ if (!Array.prototype.indexOf) {
         return this.breed(shuffled);
     };
 
+    /**
+     * ### NDDB.random
+     *
+     * Breeds a new database with N randomly selected items
+     *
+     * @param {number} N How many random items to include
+     *
+     * @return {NDDB} A new instance of NDDB with the shuffled entries
+     */
+    NDDB.prototype.random = function(N, strict) {
+        var i, len, used, out, idx;
+        if ('number' !== typeof N) {
+            this.throwErr('TypeError', 'random',
+                          'N must be number Found: ' + N);
+        }
+        if (N < 1) {
+            this.throwErr('Error', 'random', 'N must be > 0. Found: ' + N);
+        }
+        len = this.db.length;
+        if (N > len && strict !== false) {
+            this.throwErr('Error', 'random', 'not enough items in db. Found: ' +
+                          len + '. Requested: ' + N);
+        }
+        // Heuristic.
+        if (N < (len/3)) {
+            i = 0;
+            out = new Array(N);
+            used = {};
+            while (i < N) {
+                idx = J.randomInt(0, len)-1;
+                if ('undefined' === typeof used[idx]) {
+                    used[idx] = true;
+                    out[i] = this.db[idx];
+                    i++;
+                }
+            }
+        }
+        else {
+            out = J.shuffle(this.db);
+            out = out.slice(0, N);
+        }
+        return this.breed(out);
+    };
+
     // ## Custom callbacks
 
     /**
@@ -8673,37 +8649,55 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} update An object containing the properties
      *  that will be updated.
+     * @param {object} updateRules Optional. Update rules to overwrite
+     *   system-wide settings stored in `this.__update`
      *
      * @return {NDDB} A new instance of NDDB with updated entries
      *
      * @see JSUS.mixin
      * @see NDDB.emit
      */
-    NDDB.prototype.update = function(update) {
+    NDDB.prototype.update = function(update, updateRules) {
         var i, len, db, res;
         if ('object' !== typeof update) {
-            this.throwErr('TypeError', 'update', 'update must be object');
+            this.throwErr('TypeError', 'update',
+                          'update must be object. Found: ', update);
         }
-
+        if ('undefined' === typeof updateRules) {
+            updateRules = this.__update;
+        }
+        else if ('object' !== typeof updateRules) {
+            this.throwErr('TypeError', 'update',
+                          'updateRules must be object or undefined. Found: ',
+                          updateRules);
+        }
         // Gets items and resets the current selection.
         db = this.fetch();
         len = db.length;
         if (len) {
             for (i = 0; i < len; i++) {
-                res = this.emit('update', db[i], update);
+                res = this.emit('update', db[i], update, i);
                 if (res === true) {
                     J.mixin(db[i], update);
-                    this._indexIt(db[i]);
-                    this._hashIt(db[i]);
-                    this._viewIt(db[i]);
+                    if (updateRules.indexes) {
+                        this._indexIt(db[i]);
+                        this._hashIt(db[i]);
+                        this._viewIt(db[i]);
+                    }
                 }
             }
-            this._autoUpdate({indexes: false});
+            // If updateRules.indexes is false, then we do not want to do it.
+            // If it was true, we did it already
+            this._autoUpdate({
+                indexes: false,
+                pointer: updateRules.pointer,
+                sort: updateRules.sort
+            });
         }
         return this;
     };
 
-    //## Deletion
+    // ## Deletion
 
     /**
      * ### NDDB.removeAllEntries
@@ -10001,7 +9995,6 @@ if (!Array.prototype.indexOf) {
 
     // ## Helper Methods
 
-
     /**
      * ### nddb_insert
      *
@@ -10014,7 +10007,7 @@ if (!Array.prototype.indexOf) {
      * accordingly.
      *
      * @param {object|function} o The item to add to database
-     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
+     * @param {boolean} doUpdate Optional. If TRUE, updates indexes, hashes,
      *    and views. Default, FALSE
      *
      * @return {boolean} TRUE, if item was inserted, FALSE otherwise, e.g.
@@ -10025,7 +10018,7 @@ if (!Array.prototype.indexOf) {
      *
      * @api private
      */
-    function nddb_insert(o, update) {
+    function nddb_insert(o, doUpdate) {
         var nddbid, res;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
             this.throwErr('TypeError', 'insert', 'object or function ' +
@@ -10050,11 +10043,11 @@ if (!Array.prototype.indexOf) {
         // Add to index directly (bypass api).
         this.nddbid.resolve[o._nddbid] = this.db.length;
         // End create index.
-        res = this.emit('insert', o);
+        res = this.emit('insert', o, this.db.length);
         // Stop inserting elements if one callback returned FALSE.
         if (res === false) return false;
         this.db.push(o);
-        if (update) {
+        if (doUpdate) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
@@ -10561,7 +10554,7 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof dbidx) return false;
         o = this.nddb.db[dbidx];
         if ('undefined' === typeof o) return false;
-        res = this.nddb.emit('remove', o);
+        res = this.nddb.emit('remove', o, dbidx);
         if (res === false) return false;
         this.nddb.db.splice(dbidx, 1);
         this._remove(idx);
@@ -10593,7 +10586,7 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof dbidx) return false;
         nddb = this.nddb;
         o = nddb.db[dbidx];
-        res = nddb.emit('update', o, update);
+        res = nddb.emit('update', o, update, dbidx);
         if (res === false) return false;
         J.mixin(o, update);
         // We do indexes separately from the other components of _autoUpdate
@@ -23067,7 +23060,7 @@ if (!Array.prototype.indexOf) {
             mod = 'ARRAY';
         }
 
-        if ('undefined' !== typeof round && 'number' === typeof round) {
+        if ('undefined' !== typeof round && 'number' !== typeof round) {
             throw new TypeError('MatcherManager.getMatches: round ' +
                                 'must be undefined or number. Found: ' + round);
         }
@@ -32405,15 +32398,14 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J, DOM;
+    var DOM;
 
     var constants, windowLevels, screenLevels;
     var CB_EXECUTED, WIN_LOADING, lockedUpdate;
 
-    J = node.JSUS;
     if (!J) throw new Error('GameWindow: JSUS not found. Aborting.');
-    DOM = J.get('DOM');
-    if (!DOM) throw new Error('GameWindow: JSUS=>DOM not found. Aborting.');
+    DOM = J.require('DOM');
+    if (!DOM) throw new Error('GameWindow: J.require("DOM") failed.');
 
     constants = node.constants;
     windowLevels = constants.windowLevels;
@@ -33189,7 +33181,7 @@ if (!Array.prototype.indexOf) {
                             'unique in DOM: ' + frameName);
         }
 
-        iframe = W.addIFrame(root, frameName);
+        iframe = W.add('iframe', root, frameName);
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
@@ -33415,7 +33407,7 @@ if (!Array.prototype.indexOf) {
                             'unique in DOM: ' + headerName);
         }
 
-        header = this.addElement('div', root, headerName);
+        header = this.add('div', root, headerName);
 
         // If generateHeader is called after generateFrame, and the default
         // header position is not bottom, we need to move the header in front.
@@ -34575,7 +34567,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # setup.window
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow setup functions
@@ -34585,7 +34577,6 @@ if (!Array.prototype.indexOf) {
 (function(window, node) {
 
     var GameWindow = node.GameWindow;
-    var J = node.JSUS;
 
     /**
      * ### GameWindow.addDefaultSetups
@@ -35153,7 +35144,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitScreen
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Covers the screen with a gray layer, disables inputs, and displays a message
@@ -35169,7 +35160,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    WaitScreen.version = '0.8.0';
+    WaitScreen.version = '0.8.1';
     WaitScreen.description = 'Show a standard waiting screen';
 
     // ## Helper functions
@@ -35411,7 +35402,7 @@ if (!Array.prototype.indexOf) {
             if (!this.root) {
                 this.root = W.getFrameRoot() || document.body;
             }
-            this.waitingDiv = W.addDiv(this.root, this.id);
+            this.waitingDiv = W.add('div', this.root, this.id);
         }
         if (this.waitingDiv.style.display === 'none') {
             this.waitingDiv.style.display = '';
@@ -35508,9 +35499,6 @@ if (!Array.prototype.indexOf) {
 (function(exports, window) {
 
     "use strict";
-
-    var J;
-    J = exports.JSUS;
 
     exports.InfoPanel = InfoPanel;
 
@@ -35808,11 +35796,12 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # selector
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * Utility functions to create and manipulate meaninful HTML select lists for
- * nodeGame
+ * Utility functions to create and manipulate HTML select lists
+ *
+ * Extra methods relevant for nodeGame variables are added.
  *
  * http://www.nodegame.org
  */
@@ -35820,7 +35809,6 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
     var constants = node.constants;
     var GameWindow = node.GameWindow;
 
@@ -36032,7 +36020,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # extra
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -36044,8 +36032,7 @@ if (!Array.prototype.indexOf) {
     "use strict";
 
     var GameWindow = node.GameWindow;
-    var J = node.JSUS;
-    var DOM = J.get('DOM');
+    var DOM = J.require('DOM');
 
     /**
      * ### GameWindow.getScreen
@@ -36779,8 +36766,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    var document = window.document,
-    J = node.JSUS;
+    var document = window.document;
 
     var TriggerManager = node.TriggerManager;
 
@@ -37226,7 +37212,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Table
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
@@ -37265,7 +37251,6 @@ if (!Array.prototype.indexOf) {
     exports.Table = Table;
     exports.Table.Cell = Cell;
 
-    var J = node.JSUS;
     var NDDB = node.NDDB;
     var HTMLRenderer = node.window.HTMLRenderer;
     var Entity = node.window.HTMLRenderer.Entity;
@@ -38181,7 +38166,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Widget
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Prototype of a widget class
@@ -38196,8 +38181,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.Widget = Widget;
 
@@ -38444,10 +38427,13 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|HTMLElement|false} Optional. The title for the heading,
      *    div an HTML element, or false to remove the header completely.
+     * @param {object} Optional. Options to be passed to `W.add` if a new
+     *    heading div is created. Default: { className: 'panel-heading' }
      *
      * @see Widget.headingDiv
+     * @see GameWindow.add
      */
-    Widget.prototype.setTitle = function(title) {
+    Widget.prototype.setTitle = function(title, options) {
         var tmp;
         if (!this.panelDiv) {
             throw new Error('Widget.setTitle: panelDiv is missing.');
@@ -38463,8 +38449,15 @@ if (!Array.prototype.indexOf) {
         else {
             if (!this.headingDiv) {
                 // Add heading.
-                this.headingDiv = W.addDiv(this.panelDiv, undefined,
-                        {className: 'panel-heading'});
+                if (!options) {
+                    options = { className: 'panel-heading' };
+                }
+                else if ('object' !== typeof options) {
+                    throw new TypeError('Widget.setTitle: options must ' +
+                                        'be object or undefined. Found: ' +
+                                        options);                    
+                }                
+                this.headingDiv = W.add('div', this.panelDiv, options);
                 // Move it to before the body (IE cannot have undefined).
                 tmp = (this.bodyDiv && this.bodyDiv.childNodes[0]) || null;
                 this.panelDiv.insertBefore(this.headingDiv, tmp);
@@ -38496,10 +38489,13 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|HTMLElement|false} Optional. The title for the header,
      *    an HTML element, or false to remove the header completely.
+     * @param {object} Optional. Options to be passed to `W.add` if a new
+     *    footer div is created. Default: { className: 'panel-footer' }
      *
      * @see Widget.footerDiv
+     * @see GameWindow.add
      */
-    Widget.prototype.setFooter = function(footer) {
+    Widget.prototype.setFooter = function(footer, options) {
         if (!this.panelDiv) {
             throw new Error('Widget.setFooter: panelDiv is missing.');
         }
@@ -38514,8 +38510,15 @@ if (!Array.prototype.indexOf) {
         else {
             if (!this.footerDiv) {
                 // Add footer.
-                this.footerDiv = W.addDiv(this.panelDiv, undefined,
-                        {className: 'panel-footer'});
+                if (!options) {
+                    options = { className: 'panel-footer' };
+                }
+                else if ('object' !== typeof options) {
+                    throw new TypeError('Widget.setFooter: options must ' +
+                                        'be object or undefined. Found: ' +
+                                        options);                    
+                }
+                this.footerDiv = W.add('div', this.panelDiv, options);
             }
 
             // Set footer contents.
@@ -38616,8 +38619,6 @@ if (!Array.prototype.indexOf) {
 (function(window, node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     // ## Widgets constructor
 
@@ -38984,24 +38985,30 @@ if (!Array.prototype.indexOf) {
         // In this case a dependencies check is done.
         if ('string' === typeof w) w = this.get(w, options);
 
-        // Add panelDiv (with or without frame around).
-        tmp = options.frame === false ?
-            [ 'ng_widget', 'panel', w.className ] :
+        // Add panelDiv (with or without panel).
+        tmp = options.panel === false ?
+            [ 'ng_widget',  'no-panel', w.className ] :
             [ 'ng_widget', 'panel', 'panel-default', w.className ];
+        
+        w.panelDiv = W.append('div', root, { className: tmp });
 
-        w.panelDiv = appendDiv(root, { attributes: { className: tmp } });
+        // Optionally add title (and div).
+        if (options.title !== false && w.title) {
+            tmp = options.panel === false ?
+                'no-panel-heading' : 'panel-heading';
+            w.setTitle(w.title, { className: tmp });
+        }
 
-        // Optionally add title.
-        if (options.title !== false && w.title) w.setTitle(w.title);
-
-        // Add body (with or without margins around).
-        tmp = options.frame !== false ? { className: 'panel-body' } : undefined;
-        w.bodyDiv = appendDiv(w.panelDiv, {
-            attributes: tmp
-        });
-
+        // Add body (with or without panel).        
+        tmp = options.panel !== false ? 'panel-body' : 'no-panel-body';
+        w.bodyDiv = W.append('div', w.panelDiv, { className: tmp });
+        
         // Optionally add footer.
-        if (w.footer) w.setFooter(w.footer);
+        if (w.footer) {
+            tmp = options.panel === false ?
+                'no-panel-heading' : 'panel-heading';            
+            w.setFooter(w.footer);
+        }
 
         // Optionally set context.
         if (w.context) w.setContext(w.context);
@@ -39149,11 +39156,6 @@ if (!Array.prototype.indexOf) {
 
     // ## Helper functions
 
-    function appendDiv(root, options) {
-        // TODO: Check every parameter
-        return W.addDiv(root, undefined, options.attributes);
-    }
-
 //     function createListenerFunction(w, e, l) {
 //         if (!w || !e || !l) return;
 //         w.panelDiv[e] = function() { l.call(w); };
@@ -39190,7 +39192,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Chat
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates a simple configurable chat
@@ -39201,13 +39203,11 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('Chat', Chat);
 
     // ## Meta-data
 
-    Chat.version = '0.5.1';
+    Chat.version = '0.5.2';
     Chat.description = 'Offers a uni-/bi-directional communication interface ' +
         'between players, or between players and the experimenter.';
 
@@ -39407,7 +39407,7 @@ if (!Array.prototype.indexOf) {
 
     Chat.prototype.append = function() {
 
-        this.chat = W.getElement('div', this.chatId);
+        this.chat = W.get('div', this.chatId);
         this.bodyDiv.appendChild(this.chat);
 
         if (this.mode !== Chat.modes.RECEIVER_ONLY) {
@@ -39417,7 +39417,7 @@ if (!Array.prototype.indexOf) {
                                            this.submitText,
                                            this.submitId);
             this.submit.className = 'btn btn-sm btn-secondary';
-            this.textarea = W.getElement('textarea', this.textareaId);
+            this.textarea = W.get('textarea', this.textareaId);
             // Append them.
             W.writeln('', this.bodyDiv);
             this.bodyDiv.appendChild(this.textarea);
@@ -39507,7 +39507,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChernoffFaces
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Displays multidimensional data in the shape of a Chernoff Face.
@@ -39518,14 +39518,13 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-    var Table = node.window.Table;
+    var Table = W.Table;
 
     node.widgets.register('ChernoffFaces', ChernoffFaces);
 
     // ## Meta-data
 
-    ChernoffFaces.version = '0.6.1';
+    ChernoffFaces.version = '0.6.2';
     ChernoffFaces.description =
         'Display parametric data in the form of a Chernoff Face.';
 
@@ -39870,7 +39869,7 @@ if (!Array.prototype.indexOf) {
                 time: time,
                 change: features
             });
-        };
+        }
 
         // Create a new FaceVector, if features is not one, mixing-in
         // new features and old ones.
@@ -40529,7 +40528,7 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var Table = node.window.Table;
+    var Table = W.Table;
 
     node.widgets.register('ChernoffFacesSimple', ChernoffFaces);
 
@@ -40543,7 +40542,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChernoffFaces.version = '0.3';
+    ChernoffFaces.version = '0.4';
     ChernoffFaces.description =
         'Display parametric data in the form of a Chernoff Face.';
 
@@ -40599,14 +40598,14 @@ if (!Array.prototype.indexOf) {
                 options.height : ChernoffFaces.defaults.canvas.heigth
         };
 
-        this.canvas = node.window.getCanvas(idCanvas, this.dims);
+        this.canvas = W.getCanvas(idCanvas, this.dims);
         this.fp = new FacePainter(this.canvas);
         this.fp.draw(new FaceVector(this.features));
 
         var sc_options = {
             id: 'cf_controls',
             features:
-                JSUS.mergeOnKey(FaceVector.defaults, this.features, 'value'),
+                J.mergeOnKey(FaceVector.defaults, this.features, 'value'),
             change: this.change,
             fieldset: {id: this.id + '_controls_fieldest',
                        legend: this.controls.legend || 'Controls'
@@ -40662,7 +40661,7 @@ if (!Array.prototype.indexOf) {
         this.fp.redraw(fv);
         // Without merging wrong values are passed as attributes
         this.sc.init({
-            features: JSUS.mergeOnKey(FaceVector.defaults, features, 'value')
+            features: J.mergeOnKey(FaceVector.defaults, features, 'value')
         });
         this.sc.refresh();
     };
@@ -40677,7 +40676,7 @@ if (!Array.prototype.indexOf) {
         this.fp.redraw(fv);
 
         var sc_options = {
-            features: JSUS.mergeOnKey(FaceVector.defaults, fv, 'value'),
+            features: J.mergeOnKey(FaceVector.defaults, fv, 'value'),
             change: this.change
         };
         this.sc.init(sc_options);
@@ -40689,7 +40688,7 @@ if (!Array.prototype.indexOf) {
     // FacePainter
     // The class that actually draws the faces on the Canvas
     function FacePainter(canvas, settings) {
-        this.canvas = new node.window.Canvas(canvas);
+        this.canvas = new W.Canvas(canvas);
         this.scaleX = canvas.width / ChernoffFaces.defaults.canvas.width;
         this.scaleY = canvas.height / ChernoffFaces.defaults.canvas.heigth;
     }
@@ -40703,8 +40702,8 @@ if (!Array.prototype.indexOf) {
 
         //console.log('Face Scale ' + face.scaleY + ' ' + face.scaleX );
 
-        var x = x || this.canvas.centerX;
-        var y = y || this.canvas.centerY;
+        x = x || this.canvas.centerX;
+        y = y || this.canvas.centerY;
 
         this.drawHead(face, x, y);
 
@@ -40895,7 +40894,7 @@ if (!Array.prototype.indexOf) {
 
     //TODO Scaling ?
     FacePainter.computeFaceOffset = function(face, offset, y) {
-        var y = y || 0;
+        y = y || 0;
         //var pos = y - face.head_radius * face.scaleY +
         //          face.head_radius * face.scaleY * 2 * offset;
         var pos = y - face.head_radius + face.head_radius * 2 * offset;
@@ -40904,7 +40903,7 @@ if (!Array.prototype.indexOf) {
     };
 
     FacePainter.computeEyebrowOffset = function(face, y) {
-        var y = y || 0;
+        y = y || 0;
         var eyemindistance = 2;
         return FacePainter.computeFaceOffset(face, face.eye_height, y) -
             eyemindistance - face.eyebrow_eyedistance;
@@ -41090,7 +41089,7 @@ if (!Array.prototype.indexOf) {
         var out = {};
         for (var key in FaceVector.defaults) {
             if (FaceVector.defaults.hasOwnProperty(key)) {
-                if (!JSUS.in_array(key,
+                if (!J.inArray(key,
                             ['color', 'lineWidth', 'scaleX', 'scaleY'])) {
 
                     out[key] = FaceVector.defaults[key].min +
@@ -41190,8 +41189,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('ChoiceManager', ChoiceManager);
 
@@ -41691,7 +41688,7 @@ if (!Array.prototype.indexOf) {
         opts = opts || {};
         i = -1, len = this.forms.length;
         for ( ; ++i < len ; ) {
-            form = this.forms[i]
+            form = this.forms[i];
             obj.forms[form.id] = form.getValues(opts);
             if (obj.forms[form.id].choice === null) {
                 obj.missValues.push(form.id);
@@ -41744,8 +41741,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('ChoiceTable', ChoiceTable);
 
@@ -42561,7 +42556,7 @@ if (!Array.prototype.indexOf) {
             throw new Error('ChoiceTable.renderSpecial: unknown type: ' + type);
         }
         td.className = className;
-        td.id = this.id + this.separator + 'special-cell-' + type
+        td.id = this.id + this.separator + 'special-cell-' + type;
         return td;
     };
 
@@ -43255,8 +43250,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('ChoiceTableGroup', ChoiceTableGroup);
 
@@ -44391,7 +44384,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Controls.version = '0.5.0';
+    Controls.version = '0.5.1';
     Controls.description = 'Wraps a collection of user-inputs controls.';
 
     Controls.title = 'Controls';
@@ -44406,7 +44399,7 @@ if (!Array.prototype.indexOf) {
      * which is stored and forwarded to Controls.init.
      *
      *  The  options object can have the following attributes:
-     *   - Any option that can be passed to `node.window.List` constructor.
+     *   - Any option that can be passed to `W.List` constructor.
      *   - `change`: Event to fire when contents change.
      *   - `features`: Collection of collection attributes for individual
      *                 controls.
@@ -44451,13 +44444,13 @@ if (!Array.prototype.indexOf) {
     }
 
     Controls.prototype.add = function(root, id, attributes) {
-        // TODO: node.window.addTextInput
-        //return node.window.addTextInput(root, id, attributes);
+        // TODO: replace W.addTextInput 
+        //return W.addTextInput(root, id, attributes);
     };
 
     Controls.prototype.getItem = function(id, attributes) {
-        // TODO: node.window.addTextInput
-        //return node.window.getTextInput(id, attributes);
+        // TODO: replace W.addTextInput
+        //return W.getTextInput(id, attributes);
     };
 
     // ## Controls methods
@@ -44470,7 +44463,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} options Optional. Configuration options.
      *
      * The  options object can have the following attributes:
-     *   - Any option that can be passed to `node.window.List` constructor.
+     *   - Any option that can be passed to `W.List` constructor.
      *   - `change`: Event to fire when contents change.
      *   - `features`: Collection of collection attributes for individual
      *                 controls.
@@ -44490,12 +44483,10 @@ if (!Array.prototype.indexOf) {
         this.list = new W.List(options);
         this.listRoot = this.list.getRoot();
 
-        if (!options.features) {
-            return;
+        if (options.features) {
+            this.features = options.features;
+            this.populate();
         }
-
-        this.features = options.features;
-        this.populate();
     };
 
     /**
@@ -44518,8 +44509,11 @@ if (!Array.prototype.indexOf) {
                 idButton = this.options.submit.id;
                 this.option.submit = this.option.submit.name;
             }
-            this.submit = node.window.addButton(this.bodyDiv, idButton,
-                    this.options.submit, this.options.attributes);
+            this.submit = W.add('button', this.bodyDiv,
+                                J.merge(this.options.attributes, {
+                                    id: idButton,
+                                    innerHTML: this.options.submit
+                                }));
 
             this.submit.onclick = function() {
                 if (that.options.change) {
@@ -44566,8 +44560,11 @@ if (!Array.prototype.indexOf) {
                     };
                 }
 
-                if (attributes.label) {
-                    W.addLabel(container, elem, null, attributes.label);
+                if (attributes.label) {                    
+                    W.add('label', container, {
+                        'for': elem.id,
+                        innerHTML: attributes.label
+                    });
                 }
 
                 // Element added to the list.
@@ -44589,7 +44586,7 @@ if (!Array.prototype.indexOf) {
         var key, el;
         for (key in this.features) {
             if (this.features.hasOwnProperty(key)) {
-                el = node.window.getElementById(key);
+                el = W.getElementById(key);
                 if (el) {
                     // node.log('KEY: ' + key, 'DEBUG');
                     // node.log('VALUE: ' + el.value, 'DEBUG');
@@ -44609,7 +44606,7 @@ if (!Array.prototype.indexOf) {
         out = {};
         for (key in this.features) {
             if (this.features.hasOwnProperty(key)) {
-                el = node.window.getElementById(key);
+                el = W.getElementById(key);
                 if (el) out[key] = Number(el.value);
             }
         }
@@ -44617,7 +44614,7 @@ if (!Array.prototype.indexOf) {
     };
 
     Controls.prototype.highlight = function(code) {
-        return node.window.highlight(this.listRoot, code);
+        return W.highlight(this.listRoot, code);
     };
 
     // ## Sub-classes
@@ -44630,7 +44627,7 @@ if (!Array.prototype.indexOf) {
     SliderControls.prototype.__proto__ = Controls.prototype;
     SliderControls.prototype.constructor = SliderControls;
 
-    SliderControls.version = '0.2.1';
+    SliderControls.version = '0.2.2';
     SliderControls.description = 'Collection of Sliders.';
 
     SliderControls.title = 'Slider Controls';
@@ -44648,11 +44645,16 @@ if (!Array.prototype.indexOf) {
     }
 
     SliderControls.prototype.add = function(root, id, attributes) {
-        return node.window.addSlider(root, id, attributes);
+        attributes = attributes || {};
+        attributes.id = id;
+        attributes.type = 'range';
+        return W.add('input', root, attributes);
     };
 
     SliderControls.prototype.getItem = function(id, attributes) {
-        return node.window.getSlider(id, attributes);
+        attributes = attributes || {};
+        attributes.id = id;
+        return W.get('input', attributes);
     };
 
     /**
@@ -44719,7 +44721,7 @@ if (!Array.prototype.indexOf) {
     function RadioControls(options) {
         Controls.call(this,options);
         this.groupName = ('undefined' !== typeof options.name) ? options.name :
-            node.window.generateUniqueId();
+            W.generateUniqueId();
         this.radioElem = null;
     }
 
@@ -44767,37 +44769,33 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof attributes.name) {
             attributes.name = this.groupName;
         }
-
-        elem = node.window.addRadioButton(root, id, attributes);
+        attributes.id = id;
+        attributes.type = 'radio';
+        elem = W.add('input', root, attributes);
         // Adding the text for the radio button
         elem.appendChild(document.createTextNode(attributes.label));
         return elem;
     };
 
     RadioControls.prototype.getItem = function(id, attributes) {
-        //console.log('ADDDING radio');
-        //console.log(attributes);
+        attributes = attributes || {};
         // add the group name if not specified
         // TODO: is this a javascript bug?
         if ('undefined' === typeof attributes.name) {
-            //                  console.log(this);
-            //                  console.log(this.name);
-            //                  console.log('MODMOD ' + this.name);
             attributes.name = this.groupName;
         }
-        //console.log(attributes);
-        return node.window.getRadioButton(id, attributes);
+        attributes.id = id;
+        attributes.type = 'radio';
+        return W.get('input', attributes);
     };
 
     // Override getAllValues for Radio Controls
     RadioControls.prototype.getValues = function() {
-
-        for (var key in this.features) {
+        var key, el;
+        for (key in this.features) {
             if (this.features.hasOwnProperty(key)) {
-                var el = node.window.getElementById(key);
-                if (el.checked) {
-                    return el.value;
-                }
+                el = W.getElementById(key);
+                if (el.checked) return el.value;                
             }
         }
         return false;
@@ -44908,7 +44906,7 @@ if (!Array.prototype.indexOf) {
         var o, x, y;
         D3.call(this, options);
 
-        this.options = o = JSUS.merge(D3ts.defaults, options);
+        this.options = o = J.merge(D3ts.defaults, options);
         this.n = o.n;
         this.data = [0];
 
@@ -45014,7 +45012,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DebugInfo
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Display information about the state of a player
@@ -45025,15 +45023,13 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
-    var Table = node.window.Table;
+    var Table = W.Table;
 
     node.widgets.register('DebugInfo', DebugInfo);
 
     // ## Meta-data
 
-    DebugInfo.version = '0.6.0';
+    DebugInfo.version = '0.6.1';
     DebugInfo.description = 'Display basic info a client\'s status.';
 
     DebugInfo.title = 'Debug Info';
@@ -45279,20 +45275,18 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('DoneButton', DoneButton);
 
     // ## Meta-data
 
-    DoneButton.version = '0.2.0';
+    DoneButton.version = '0.2.1';
     DoneButton.description = 'Creates a button that if ' +
         'pressed emits node.done().';
 
     DoneButton.title = 'Done Button';
     DoneButton.className = 'donebutton';
 
-    DoneButton.text = 'I am done';
+    DoneButton.text = 'Done';
 
     // ## Dependencies
 
@@ -45475,7 +45469,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DynamicTable
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Extends the GameTable widgets by allowing dynamic reshaping
@@ -45490,21 +45484,18 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var GameStage = node.GameStage,
-    Table = node.window.Table,
-    HTMLRenderer = node.window.HTMLRenderer,
-    J = node.JSUS;
-
+    var GameStage = node.GameStage;
+    var Table = W.Table;
+    var HTMLRenderer = W.HTMLRenderer;
 
     node.widgets.register('DynamicTable', DynamicTable);
-
 
     DynamicTable.prototype = new Table();
     DynamicTable.prototype.constructor = Table;
 
 
     DynamicTable.id = 'dynamictable';
-    DynamicTable.version = '0.3.1';
+    DynamicTable.version = '0.3.2';
 
     DynamicTable.dependencies = {
         Table: {},
@@ -45513,7 +45504,6 @@ if (!Array.prototype.indexOf) {
     };
 
     function DynamicTable (options, data) {
-        //JSUS.extend(node.window.Table,this);
         Table.call(this, options, data);
         this.options = options;
 
@@ -45625,7 +45615,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EmailForm
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Displays a form to input email
@@ -45635,8 +45625,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('EmailForm', EmailForm);
 
@@ -46043,20 +46031,17 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J;
-    J = JSUS;
-
     // Register the widget in the widgets collection.
     node.widgets.register('EndScreen', EndScreen);
 
     // ## Add Meta-data
 
-    EndScreen.version = '0.3.0';
+    EndScreen.version = '0.3.1';
     EndScreen.description = 'Game end screen. With end game message, ' +
         'email form, and exit code.';
 
     EndScreen.title = 'End Screen';
-    EndScreen.className = 'end-screen';
+    EndScreen.className = 'endscreen';
 
     // ## Dependencies
 
@@ -46325,14 +46310,14 @@ if (!Array.prototype.indexOf) {
         if (this.showEmailForm) {
             node.widgets.append(this.emailForm, endScreenElement, {
                 title: false,
-                frame: false
+                panel: false
             });
         }
 
         if (this.showFeedbackForm) {
             node.widgets.append(this.feedback, endScreenElement, {
                 title: false,
-                frame: false
+                panel: false
             });
         }
 
@@ -46409,8 +46394,6 @@ if (!Array.prototype.indexOf) {
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('Feedback', Feedback);
 
@@ -46994,171 +46977,8 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
- * # GameBoard
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed
- *
- * Displays a table of currently connected players
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('GameBoard', GameBoard);
-
-    // ## Meta-data
-
-    GameBoard.version = '0.4.1';
-    GameBoard.description = 'Offer a visual representation of the state of ' +
-                            'all players in the game.';
-
-    GameBoard.title = 'Game Board';
-    GameBoard.className = 'gameboard';
-
-    /**
-     * ## GameBoard constructor
-     *
-     * `GameBoard` shows the currently connected players
-     */
-    function GameBoard(options) {
-        /**
-         * ### GameBoard.board
-         *
-         * The DIV wherein to display the players
-         */
-        this.board = null;
-
-        /**
-         * ### GameBoard.status
-         *
-         * The DIV wherein to display the status of the game board
-         */
-        this.status = null;
-    }
-
-    // ## GameBoard methods
-
-    /**
-     * ### GameBoard.append
-     *
-     * Appends widget to `this.bodyDiv` and updates the board
-     *
-     * @see GameBoard.updateBoard
-     */
-    GameBoard.prototype.append = function() {
-        this.status = node.window.addDiv(this.bodyDiv, 'gboard_status');
-        this.board = node.window.addDiv(this.bodyDiv, 'gboard');
-
-        this.updateBoard(node.game.pl);
-    };
-
-    GameBoard.prototype.listeners = function() {
-        var that = this;
-        node.on('UPDATED_PLIST', function() {
-            that.updateBoard(node.game.pl);
-        });
-    };
-
-    /**
-     * ### GameBoard.updateBoard
-     *
-     * Updates the information on the game board
-     *
-     * @see printLine
-     */
-    GameBoard.prototype.updateBoard = function(pl) {
-        var player, separator;
-        var that = this;
-
-        this.status.innerHTML = 'Updating...';
-
-        if (pl.size()) {
-            that.board.innerHTML = '';
-            pl.forEach( function(p) {
-                player = printLine(p);
-
-                W.write(player, that.board);
-
-                separator = printSeparator();
-                W.write(separator, that.board);
-            });
-        }
-        this.status.innerHTML = 'Connected players: ' + node.game.pl.length;
-    };
-
-    // ## Helper methods
-
-     /**
-     * ### printLine
-     *
-     * Returns a `String` describing the player passed in
-     *
-     * @param {Player} `p`. Player object which will be passed in by a call to
-     * `node.game.pl.forEach`.
-     *
-     * @return {String} A string describing the `Player` `p`.
-     *
-     * @see GameBoard.updateBoard
-     * @see nodegame-client/Player
-     */
-    function printLine(p) {
-
-        var line, levels, level;
-        levels = node.constants.stageLevels;
-
-        line = '[' + (p.name || p.id) + "]> \t";
-        line += '(' +  p.stage.round + ') ' + p.stage.stage + '.' +
-                p.stage.step;
-        line += ' ';
-
-        switch (p.stageLevel) {
-
-        case levels.UNINITIALIZED:
-            level = 'uninit.';
-            break;
-
-        case levels.INITIALIZING:
-            level = 'init...';
-            break;
-
-        case levels.INITIALIZING:
-            level = 'init!';
-            break;
-
-        case levels.LOADING:
-            level = 'loading';
-            break;
-
-        case levels.LOADED:
-            level = 'loaded';
-            break;
-
-        case levels.PLAYING:
-            level = 'playing';
-            break;
-        case levels.DONE:
-            level = 'done';
-            break;
-
-        default:
-            level = p.stageLevel;
-            break;
-        }
-
-        return line + '(' + level + ')';
-    }
-
-    function printSeparator() {
-        return W.getElement('hr', null, {style: 'color: #CCC;'});
-    }
-
-})(node);
-
-/**
  * # GameTable
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates a table that renders in each cell data captured by fired events
@@ -47176,20 +46996,11 @@ if (!Array.prototype.indexOf) {
 
     node.widgets.register('GameTable', GameTable);
 
-    // ## Defaults
+    // ## Meta-data.
+    GameTable.className = 'gametable';
+    GameTable.version = '0.3.1';
 
-    GameTable.defaults = {};
-    GameTable.defaults.id = 'gametable';
-    GameTable.defaults.fieldset = {
-        legend: 'Game Table',
-        id: 'gametable_fieldset'
-    };
-
-    // ## Meta-data
-
-    GameTable.version = '0.3';
-
-    // ## Dependencies
+    // ## Dependencies,
 
     GameTable.dependencies = {
         JSUS: {}
@@ -47197,7 +47008,6 @@ if (!Array.prototype.indexOf) {
 
     function GameTable(options) {
         this.options = options;
-        this.id = options.id;
         this.name = options.name || GameTable.name;
 
         this.root = null;
@@ -47209,7 +47019,7 @@ if (!Array.prototype.indexOf) {
 
         if (!this.plist) this.plist = new PlayerList();
 
-        this.gtbl = new node.window.Table({
+        this.gtbl = new W.Table({
             auto_update: true,
             id: options.id || this.id,
             render: options.render
@@ -47248,7 +47058,7 @@ if (!Array.prototype.indexOf) {
         node.on.plist(function(msg) {
             if (!msg.data.length) return;
 
-            //var diff = JSUS.arrayDiff(msg.data,that.plist.db);
+            //var diff = J.arrayDiff(msg.data,that.plist.db);
             var plist = new PlayerList({}, msg.data);
             var diff = plist.diff(that.plist);
             if (diff) {
@@ -47280,8 +47090,8 @@ if (!Array.prototype.indexOf) {
     GameTable.prototype.addLeft = function(state, player) {
         if (!state) return;
         state = new GameStage(state);
-        if (!JSUS.in_array({content:state.toString(), type: 'left'},
-                    this.gtbl.left)) {
+        if (!J.inArray({content:state.toString(), type: 'left'},
+                       this.gtbl.left)) {
 
             this.gtbl.add2Left(state.toString());
         }
@@ -47333,13 +47143,11 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('LanguageSelector', LanguageSelector);
 
     // ## Meta-data
 
-    LanguageSelector.version = '0.6.0';
+    LanguageSelector.version = '0.6.1';
     LanguageSelector.description = 'Display information about the current ' +
         'language and allows to change language.';
     LanguageSelector.title = 'Language';
@@ -47515,20 +47323,17 @@ if (!Array.prototype.indexOf) {
                 // Creates labeled buttons.
                 for (language in msg.data) {
                     if (msg.data.hasOwnProperty(language)) {
-                        that.optionsLabel[language] =
-                            W.getElement('label',
-                                         language + 'Label', {
-                                             'for': language + 'RadioButton'
-                                         });
+                        that.optionsLabel[language] = W.get('label', {
+                            id: language + 'Label',
+                            'for': language + 'RadioButton'
+                        });
 
-                        that.optionsDisplay[language] =
-                            W.getElement('input',
-                                         language + 'RadioButton', {
-                                             type: 'radio',
-                                             name: 'languageButton',
-                                             value: msg.data[language].name
-                                         }
-                                        );
+                        that.optionsDisplay[language] = W.get('input', {
+                            id: language + 'RadioButton', 
+                            type: 'radio',
+                            name: 'languageButton',
+                            value: msg.data[language].name
+                        });
 
                         that.optionsDisplay[language].onclick =
                             makeSetLanguageOnClick(language);
@@ -47538,7 +47343,7 @@ if (!Array.prototype.indexOf) {
                         that.optionsLabel[language].appendChild(
                             document.createTextNode(
                                 msg.data[language].nativeName));
-                        node.window.addElement('br', that.displayForm);
+                        W.add('br', that.displayForm);
                         that.optionsLabel[language].className =
                             'unselectedButtonLabel';
                         that.displayForm.appendChild(
@@ -47548,13 +47353,14 @@ if (!Array.prototype.indexOf) {
             }
             else {
 
-                that.displaySelection = W.getElement('select',
-                                                     'selectLanguage');
+                that.displaySelection = W.get('select', 'selectLanguage');
                 for (language in msg.data) {
                     that.optionsLabel[language] =
                         document.createTextNode(msg.data[language].nativeName);
-                    that.optionsDisplay[language] = node.window.getElement(
-                        'option', language + 'Option', { value: language });
+                    that.optionsDisplay[language] = W.get('option', {
+                        id: language + 'Option',
+                        value: language
+                    });
                     that.optionsDisplay[language].appendChild(
                         that.optionsLabel[language]);
                     that.displaySelection.appendChild(
@@ -47652,8 +47458,8 @@ if (!Array.prototype.indexOf) {
         node.on.lang(this.onLangCallback);
 
         // Display initialization.
-        this.displayForm = node.window.getElement('form', 'radioButtonForm');
-        this.loadingDiv = node.window.addDiv(this.displayForm);
+        this.displayForm = W.get('form', 'radioButtonForm');
+        this.loadingDiv = W.add('div', this.displayForm);
         this.loadingDiv.innerHTML = 'Loading language information...';
 
         this.loadLanguages();
@@ -47895,7 +47701,7 @@ if (!Array.prototype.indexOf) {
      */
     MoneyTalks.prototype.update = function(amount, clear) {
         var parsedAmount;
-        parsedAmount = JSUS.isNumber(amount);
+        parsedAmount = J.isNumber(amount);
         if (parsedAmount === false) {
             node.err('MoneyTalks.update: invalid amount: ' + amount);
             return;
@@ -48180,7 +47986,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MsgBar
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates a tool for sending messages to other connected clients
@@ -48191,14 +47997,13 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var JSUS = node.JSUS,
-        Table = W.Table;
+    var Table = W.Table;
 
     node.widgets.register('MsgBar', MsgBar);
 
     // ## Meta-data
 
-    MsgBar.version = '0.7.0';
+    MsgBar.version = '0.7.1';
     MsgBar.description = 'Send a nodeGame message to players';
 
     MsgBar.title = 'Send MSG';
@@ -48341,7 +48146,7 @@ if (!Array.prototype.indexOf) {
 
         if (key === 'stage' || key === 'to' || key === 'data') {
             try {
-                value = JSUS.parse(e.content.value);
+                value = J.parse(e.content.value);
             }
             catch (ex) {
                 value = e.content.value;
@@ -48354,7 +48159,7 @@ if (!Array.prototype.indexOf) {
                 value = '' + value;
             }
 
-            if ((!JSUS.isArray(value) && 'string' !== typeof value) ||
+            if ((!J.isArray(value) && 'string' !== typeof value) ||
                 ('string' === typeof value && value.trim() === '')) {
 
                 alert('Invalid "to" field');
@@ -48391,7 +48196,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NDDBBrowser
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates an interface to interact with an NDDB database
@@ -48415,7 +48220,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    NDDBBrowser.version = '0.2.0';
+    NDDBBrowser.version = '0.2.1';
     NDDBBrowser.description =
         'Provides a very simple interface to control a NDDB istance.';
 
@@ -48451,15 +48256,15 @@ if (!Array.prototype.indexOf) {
 
         function addButtons() {
             var id = this.id;
-            node.window.addEventButton(id + '_GO_TO_FIRST', '<<',
+            W.addEventButton(id + '_GO_TO_FIRST', '<<',
                 this.commandsDiv, 'go_to_first');
-            node.window.addEventButton(id + '_GO_TO_PREVIOUS', '<',
+            W.addEventButton(id + '_GO_TO_PREVIOUS', '<',
                 this.commandsDiv, 'go_to_previous');
-            node.window.addEventButton(id + '_GO_TO_NEXT', '>',
+            W.addEventButton(id + '_GO_TO_NEXT', '>',
                 this.commandsDiv, 'go_to_next');
-            node.window.addEventButton(id + '_GO_TO_LAST', '>>',
+            W.addEventButton(id + '_GO_TO_LAST', '>>',
                 this.commandsDiv, 'go_to_last');
-            node.window.addBreak(this.commandsDiv);
+            W.addBreak(this.commandsDiv);
         }
         function addInfoBar() {
             var span = this.commandsDiv.appendChild(
@@ -48688,8 +48493,6 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('Requirements', Requirements);
 
     // ## Meta-data
@@ -48842,6 +48645,13 @@ if (!Array.prototype.indexOf) {
          * Callback to be executed at the end of all tests
          */
         this.onFailure = null;
+        
+        /**
+         * ### Requirements.callbacksExecuted
+         *
+         * TRUE, the callbacks have been executed
+         */
+        this.callbacksExecuted = false;
 
         /**
          * ### Requirements.list
@@ -48900,12 +48710,14 @@ if (!Array.prototype.indexOf) {
      */
     Requirements.prototype.init = function(conf) {
         if ('object' !== typeof conf) {
-            throw new TypeError('Requirements.init: conf must be object.');
+            throw new TypeError('Requirements.init: conf must be object. ' +
+                                'Found: ' + conf);
         }
         if (conf.requirements) {
             if (!J.isArray(conf.requirements)) {
                 throw new TypeError('Requirements.init: conf.requirements ' +
-                                    'must be array or undefined.');
+                                    'must be array or undefined. Found: ' +
+                                    conf.requirements);
             }
             this.requirements = conf.requirements;
         }
@@ -48914,7 +48726,8 @@ if (!Array.prototype.indexOf) {
                 'function' !== typeof conf.onComplete) {
 
                 throw new TypeError('Requirements.init: conf.onComplete must ' +
-                                    'be function, null or undefined.');
+                                    'be function, null or undefined. Found: ' +
+                                    conf.onComplete);
             }
             this.onComplete = conf.onComplete;
         }
@@ -48923,7 +48736,8 @@ if (!Array.prototype.indexOf) {
                 'function' !== typeof conf.onSuccess) {
 
                 throw new TypeError('Requirements.init: conf.onSuccess must ' +
-                                    'be function, null or undefined.');
+                                    'be function, null or undefined. Found: ' +
+                                    conf.onSuccess);
             }
             this.onSuccess = conf.onSuccess;
         }
@@ -48932,7 +48746,8 @@ if (!Array.prototype.indexOf) {
                 'function' !== typeof conf.onFailure) {
 
                 throw new TypeError('Requirements.init: conf.onFailure must ' +
-                                    'be function, null or undefined.');
+                                    'be function, null or undefined. Found: ' +
+                                    conf.onFailure);
             }
             this.onFailure = conf.onFailure;
         }
@@ -48941,7 +48756,8 @@ if (!Array.prototype.indexOf) {
                 'number' !== typeof conf.maxExecTime) {
 
                 throw new TypeError('Requirements.init: conf.onMaxExecTime ' +
-                                    'must be number, null or undefined.');
+                                    'must be number, null or undefined. ' +
+                                    'Found: ' + conf.maxExecTime);
             }
             this.withTimeout = !!conf.maxExecTime;
             this.timeoutTime = conf.maxExecTime;
@@ -48973,7 +48789,8 @@ if (!Array.prototype.indexOf) {
                 'object' !== typeof arguments[i] ) {
 
                 throw new TypeError('Requirements.addRequirements: ' +
-                                    'requirements must be function or object.');
+                                    'requirements must be function or ' +
+                                    'object. Found: ' + arguments[i]);
             }
             this.requirements.push(arguments[i]);
         }
@@ -49001,7 +48818,7 @@ if (!Array.prototype.indexOf) {
         var errors, cbName, errMsg;
         if (!this.requirements.length) {
             throw new Error('Requirements.checkRequirements: no requirements ' +
-                            'to check found.');
+                            'to check.');
         }
 
         this.updateStillChecking(this.requirements.length, true);
@@ -49028,17 +48845,13 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        if (this.withTimeout) {
-            this.addTimeout();
-        }
+        if (this.withTimeout) this.addTimeout();        
 
         if ('undefined' === typeof display ? true : false) {
             this.displayResults(errors);
         }
 
-        if (this.isCheckingFinished()) {
-            this.checkingFinished();
-        }
+        if (this.isCheckingFinished()) this.checkingFinished();        
 
         return errors;
     };
@@ -49123,13 +48936,16 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### Requirements.CheckingFinished
+     * ### Requirements.checkingFinished
      *
-     * Cleans up timer and dots, and executes final requirements accordingly
+     * Clears up timer and dots, and executes final callbacks accordingly
      *
      * First, executes the `onComplete` callback in any case. Then if no
      * errors have been raised executes the `onSuccess` callback, otherwise
      * the `onFailure` callback.
+     *
+     * @param {boolean} force If TRUE, the function is executed again,
+     *   regardless of whether it was already executed. Default: FALSE
      *
      * @see this.onComplete
      * @see this.onSuccess
@@ -49137,12 +48953,16 @@ if (!Array.prototype.indexOf) {
      * @see this.stillCheckings
      * @see this.requirements
      */
-    Requirements.prototype.checkingFinished = function() {
+    Requirements.prototype.checkingFinished = function(force) {
         var results;
 
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId);
-        }
+        // Sometimes, if all requirements are almost synchronous, it
+        // can happen that this function is called twice (from resultCb
+        // and at the end of all requirements checkings.
+        if (this.callbacksExecuted && !force) return;        
+        this.callbacksExecuted = true;
+        
+        if (this.timeoutId) clearTimeout(this.timeoutId);        
 
         this.dots.stop();
 
@@ -49158,10 +48978,8 @@ if (!Array.prototype.indexOf) {
             node.say(this.sayResultsLabel, 'SERVER', results);
         }
 
-        if (this.onComplete) {
-            this.onComplete();
-        }
-
+        if (this.onComplete) this.onComplete();
+        
         if (this.hasFailed) {
             if (this.onFailure) this.onFailure();
         }
@@ -49199,7 +49017,7 @@ if (!Array.prototype.indexOf) {
 
         if (!J.isArray(results)) {
             throw new TypeError('Requirements.displayResults: results must ' +
-                                'be array.');
+                                'be array. Found: ' + results);
         }
 
         // No errors.
@@ -49286,7 +49104,8 @@ if (!Array.prototype.indexOf) {
             if (errors) {
                 if (!J.isArray(errors)) {
                     throw new Error('Requirements.checkRequirements: ' +
-                                    'errors must be array or undefined.');
+                                    'errors must be array or undefined. ' +
+                                    'Found: ' + errors);
                 }
                 that.displayResults(errors);
             }
@@ -49298,9 +49117,7 @@ if (!Array.prototype.indexOf) {
                 data: data
             });
 
-            if (that.isCheckingFinished()) {
-                that.checkingFinished();
-            }
+            if (that.isCheckingFinished()) that.checkingFinished();            
         };
 
         req = that.requirements[i];
@@ -49668,7 +49485,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualRound
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Display information about rounds and/or stage in the game
@@ -49682,13 +49499,11 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('VisualRound', VisualRound);
 
     // ## Meta-data
 
-    VisualRound.version = '0.7.0';
+    VisualRound.version = '0.7.1';
     VisualRound.description = 'Display number of current round and/or stage.' +
         'Can also display countdown and total number of rounds and/or stages.';
 
@@ -50151,7 +49966,7 @@ if (!Array.prototype.indexOf) {
      * @see EmptyDisplayMode.updateDisplay
      */
     EmptyDisplayMode.prototype.init = function(options) {
-        this.displayDiv = node.window.getDiv();
+        this.displayDiv = W.get('div');
         this.displayDiv.className = 'rounddiv';
 
         this.updateDisplay();
@@ -50265,29 +50080,29 @@ if (!Array.prototype.indexOf) {
      * @see CountUpStages.updateDisplay
      */
     CountUpStages.prototype.init = function(options) {
-        this.displayDiv = node.window.getDiv();
+        this.displayDiv = W.get('div');
         this.displayDiv.className = 'stagediv';
 
-        this.titleDiv = node.window.addElement('div', this.displayDiv);
+        this.titleDiv = W.add('div', this.displayDiv);
         this.titleDiv.className = 'title';
         this.titleDiv.innerHTML = 'Stage:';
 
         if (this.options.toTotal) {
-            this.curStageNumber = node.window.addElement('span',
+            this.curStageNumber = W.add('span',
                 this.displayDiv);
             this.curStageNumber.className = 'number';
         }
         else {
-            this.curStageNumber = node.window.addDiv(this.displayDiv);
+            this.curStageNumber = W.add('div', this.displayDiv);
             this.curStageNumber.className = 'number';
         }
 
         if (this.options.toTotal) {
-            this.textDiv = node.window.addElement('span', this.displayDiv);
+            this.textDiv = W.add('span', this.displayDiv);
             this.textDiv.className = 'text';
             this.textDiv.innerHTML = ' of ';
 
-            this.totStageNumber = node.window.addElement('span',
+            this.totStageNumber = W.add('span',
                 this.displayDiv);
             this.totStageNumber.className = 'number';
         }
@@ -50387,14 +50202,14 @@ if (!Array.prototype.indexOf) {
      * @see CountDownStages.updateDisplay
      */
     CountDownStages.prototype.init = function(options) {
-        this.displayDiv = node.window.getDiv();
+        this.displayDiv = W.get('div');
         this.displayDiv.className = 'stagediv';
 
-        this.titleDiv = node.window.addDiv(this.displayDiv);
+        this.titleDiv = W.add('div', this.displayDiv);
         this.titleDiv.className = 'title';
         this.titleDiv.innerHTML = 'Stages left: ';
 
-        this.stagesLeft = node.window.addDiv(this.displayDiv);
+        this.stagesLeft = W.add('div', this.displayDiv);
         this.stagesLeft.className = 'number';
 
         this.updateDisplay();
@@ -50514,29 +50329,28 @@ if (!Array.prototype.indexOf) {
      * @see CountUpRounds.updateDisplay
      */
     CountUpRounds.prototype.init = function(options) {
-        this.displayDiv = node.window.getDiv();
+        this.displayDiv = W.get('div');
         this.displayDiv.className = 'rounddiv';
 
-        this.titleDiv = node.window.addElement('div', this.displayDiv);
+        this.titleDiv = W.add('div', this.displayDiv);
         this.titleDiv.className = 'title';
         this.titleDiv.innerHTML = 'Round:';
 
         if (this.options.toTotal) {
-            this.curRoundNumber = node.window.addElement('span',
-                this.displayDiv);
+            this.curRoundNumber = W.add('span', this.displayDiv);
             this.curRoundNumber.className = 'number';
         }
         else {
-            this.curRoundNumber = node.window.addDiv(this.displayDiv);
+            this.curRoundNumber = W.add('div', this.displayDiv);
             this.curRoundNumber.className = 'number';
         }
 
         if (this.options.toTotal) {
-            this.textDiv = node.window.addElement('span', this.displayDiv);
+            this.textDiv = W.add('span', this.displayDiv);
             this.textDiv.className = 'text';
             this.textDiv.innerHTML = ' of ';
 
-            this.totRoundNumber = node.window.addElement('span',
+            this.totRoundNumber = W.add('span',
                 this.displayDiv);
             this.totRoundNumber.className = 'number';
         }
@@ -50637,14 +50451,14 @@ if (!Array.prototype.indexOf) {
      * @see CountDownRounds.updateDisplay
      */
     CountDownRounds.prototype.init = function(options) {
-        this.displayDiv = node.window.getDiv();
+        this.displayDiv = W.get('div');
         this.displayDiv.className = 'rounddiv';
 
-        this.titleDiv = node.window.addDiv(this.displayDiv);
+        this.titleDiv = W.add('div', this.displayDiv);
         this.titleDiv.className = 'title';
         this.titleDiv.innerHTML = 'Round left: ';
 
-        this.roundsLeft = node.window.addDiv(this.displayDiv);
+        this.roundsLeft = W.add('div', this.displayDiv);
         this.roundsLeft.className = 'number';
 
         this.updateDisplay();
@@ -50748,7 +50562,7 @@ if (!Array.prototype.indexOf) {
      */
      CompoundDisplayMode.prototype.init = function(options) {
         var index;
-        this.displayDiv = node.window.getDiv();
+        this.displayDiv = W.get('div');
 
         for (index in this.displayModes) {
             if (this.displayModes.hasOwnProperty(index)) {
@@ -50802,7 +50616,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualStage
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Shows current, previous and next stage.
@@ -50813,13 +50627,13 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var Table = node.window.Table;
+    var Table = W.Table;
 
     node.widgets.register('VisualStage', VisualStage);
 
     // ## Meta-data
 
-    VisualStage.version = '0.2.2';
+    VisualStage.version = '0.2.3';
     VisualStage.description =
         'Visually display current, previous and next stage of the game.';
 
@@ -50915,7 +50729,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualTimer
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Display a configurable timer for the game
@@ -50928,13 +50742,11 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    var J = node.JSUS;
-
     node.widgets.register('VisualTimer', VisualTimer);
 
     // ## Meta-data
 
-    VisualTimer.version = '0.9.0';
+    VisualTimer.version = '0.9.1';
     VisualTimer.description = 'Display a configurable timer for the game. ' +
         'Can trigger events. Only for countdown smaller than 1h.';
 
@@ -51533,12 +51345,11 @@ if (!Array.prototype.indexOf) {
          */
         this.timeLeft = null;
 
-        this.boxDiv = node.window.getDiv();
-        this.titleDiv = node.window.addDiv(this.boxDiv);
-        this.bodyDiv = node.window.addDiv(this.boxDiv);
+        this.boxDiv =   W.get('div');
+        this.titleDiv = W.add('div', this.boxDiv);
+        this.bodyDiv =  W.add('div', this.boxDiv);
 
         this.init(options);
-
     }
 
     TimerBox.prototype.init = function(options) {
@@ -51662,10 +51473,7 @@ if (!Array.prototype.indexOf) {
  * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
- * Display the number of connected / required players to start a game
- *
- * TODO: accepts functions for `texts` variables, so that they can
- * integrate current values
+ * Displays the number of connected/required players to start a game
  *
  * www.nodegame.org
  */
@@ -51729,10 +51537,10 @@ if (!Array.prototype.indexOf) {
             'disconnected. Please try again later.</span><br><br>',
 
         // #### tooManyPlayers
-        tooManyPlayers: function(widget, numberOfGameSlots) {
+        tooManyPlayers: function(widget, data) {
             return 'There are more players in this waiting room ' +
                 'than there are playslots in the game. Only ' +
-                 numberOfGameSlots + ' players will be selected ' +
+                data.nGames + ' players will be selected ' +
                 'to play the game.';
         },
 
@@ -51751,6 +51559,7 @@ if (!Array.prototype.indexOf) {
             'Ok, I got it.</a></h3><br><br>' +
             'Thank you for your participation.</span></h3><br><br>',
 
+        // #### exitCode
         exitCode: function(widget, data) {
             return '<br>You have been disconnected. ' +
                 ('undefined' !== typeof data.exit ?
@@ -51893,18 +51702,22 @@ if (!Array.prototype.indexOf) {
          *
          * @see WaitingRoom.setText
          * @see WaitingRoom.getText
+         * @see WaitingRoom.setTexts
+         * @see WaitingRoom.getTexts
          */
         this.texts = {};
 
         /**
-         * ### WaitingRoom.dispatchSound
+         * ### WaitingRoom.sounds
          *
-         * Flag that indicates that a sound should be played before dispatching
+         * List of custom sounds to play to the players
          *
-         * @see WaitingRoom.sounds.dispatch
-         * @see WaitingRoom.alertPlayer
+         * @see WaitingRoom.setSound
+         * @see WaitingRoom.getSound
+         * @see WaitingRoom.setSounds
+         * @see WaitingRoom.getSounds
          */
-        this.dispatchSound = null;
+        this.sounds = {};
     }
 
     // ## WaitingRoom methods
@@ -51925,6 +51738,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} conf Configuration object.
      */
     WaitingRoom.prototype.init = function(conf) {
+        
         if ('object' !== typeof conf) {
             throw new TypeError('WaitingRoom.init: conf must be object. ' +
                                 'Found: ' + conf);
@@ -52002,31 +51816,10 @@ if (!Array.prototype.indexOf) {
         }
 
         // Sounds.
-        
-        if (conf.dispatchSound) {
-            if ('boolean' !== typeof conf.dispatchSound &&
-                'string' !== typeof conf.dispatchSound) {
-
-                throw new TypeError('WaitingRoom.init: ' +
-                                    'conf.dispatchSound must be boolean, ' +
-                                    'string or undefined. Found: ' +
-                                    conf.dispatchSound);
-            }
-            this.dispatchSound = (true === conf.dispatchSound) ?
-                WaitingRoom.sounds.dispatch : conf.dispatchSound;
-        }
+        this.setSounds(conf.sounds);
 
         // Texts.
-debugger
-        this.setText('disconnect', conf.disconnectText);
-        this.setText('waitedTooLong', conf.waitedTooLongText);
-        this.setText('notEnoughPlayers', conf.notEnoughPlayersText);
-        this.setText('roomClosed', conf.roomClosedText);
-        this.setText('tooManyPlayers', conf.tooManyPlayersText);
-        this.setText('notSelectedClosed', conf.notSelectedClosedText);
-        this.setText('notSelectedOpen', conf.notSelectedOpenText);
-        this.setText('exitCode', conf.exitCodeText);
-
+        this.setTexts(conf.texts);
     };
 
     /**
@@ -52115,11 +51908,9 @@ debugger
                 this.connected + '</span>' + ' / ' + this.poolSize;
             this.playerCountTooHigh.style.display = '';
 
-            // TODO: check here (was a debugger).
-            
             // Update text.
             this.playerCountTooHigh.innerHTML =
-                this.getText('tooManyPlayers', numberOfGameSlots);
+                this.getText('tooManyPlayers', { nGames: numberOfGameSlots });
         }
         else {
             this.playerCount.innerHTML = this.connected + ' / ' + this.poolSize;
@@ -52199,7 +51990,7 @@ debugger
             else {
                 reportExitCode = that.getText('exitCode', msg.data);
 
-                if (data.action === 'NotEnoughPlayers') {                    
+                if (data.action === 'NotEnoughPlayers') {
                     that.bodyDiv.innerHTML = that.getText('notEnoughPlayers');
                     if (that.onTimeout) that.onTimeout(msg.data);
                     that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
@@ -52208,7 +51999,7 @@ debugger
 
                     if (false === data.shouldDispatchMoreGames ||
                         that.disconnectIfNotSelected) {
-                        
+
                         that.bodyDiv.innerHTML =
                             that.getText('notSelectedClosed');
 
@@ -52226,7 +52017,7 @@ debugger
 
         node.on.data('TIME', function(msg) {
             msg = msg || {};
-            console.log('TIME IS UP!');
+            node.info('waiting room: TIME IS UP!');
             that.stopTimer();
         });
 
@@ -52268,7 +52059,7 @@ debugger
 
     WaitingRoom.prototype.stopTimer = function() {
         if (this.timer) {
-            console.log('STOPPING TIMER');
+            node.info('waiting room: STOPPING TIMER');
             this.timer.destroy();
         }
     };
@@ -52291,20 +52082,23 @@ debugger
 
     WaitingRoom.prototype.alertPlayer = function() {
         var clearBlink, onFrame;
-
+        var sound;
+        
+        sound = this.getSound('dispatch');
+        
         // Play sound, if requested.
-        if (this.dispatchSound) JSUS.playSound(this.dispatchSound);
+        if (sound) J.playSound(sound);
 
         // If document.hasFocus() returns TRUE, then just one repeat is enough.
         if (document.hasFocus && document.hasFocus()) {
-            JSUS.blinkTitle('GAME STARTS!', { repeatFor: 1 });
+            J.blinkTitle('GAME STARTS!', { repeatFor: 1 });
         }
         // Otherwise we repeat blinking until an event that shows that the
         // user is active on the page happens, e.g. focus and click. However,
         // the iframe is not created yet, and even later. if the user clicks it
         // it won't be detected in the main window, so we need to handle it.
         else {
-            clearBlink = JSUS.blinkTitle('GAME STARTS!', {
+            clearBlink = J.blinkTitle('GAME STARTS!', {
                 stopOnFocus: true,
                 stopOnClick: window
             });
@@ -52328,30 +52122,100 @@ debugger
     };
 
     /**
-     * ### WaitingRoom.getText
+     * ### WaitingRoom.setSound
      *
-     * Returns the requested text
+     * Checks and assigns the value of a sound to play to user
      *
-     * @param {string} name The name of the text variable.
-     * @param {mixed} param Optional. Additional to pass to the callback, if any
+     * Throws an error if value is invalid
      *
-     * @return {string} The requested text
+     * @param {string} name The name of the sound to check
+     * @param {mixed} path Optional. The path to the audio file. If undefined
+     *    the default value from WaitingRoom.sounds is used
      *
-     * @see WaitingRoom.setText
+     * @see WaitingRoom.sounds
+     * @see WaitingRoom.getSound
+     * @see WaitingRoom.setSounds
+     * @see WaitingRoom.getSounds
      */
-    WaitingRoom.prototype.getText = function(name, param) {
-        var txt;
-        txt = this.texts[name];
-        if ('string' === typeof txt) return txt;
-        if ('function' === typeof txt) {
-            txt = txt(this, param);
-            if ('string' !== typeof txt) {
-                throw new TypeError('WaitingRoom.getText: cb "' + name +
-                                    'did not return a string. Found: ' + txt);
-            }
-            return txt;
-        }
-        throw new Error('WaitingRoom.getText: unknown text requested: ' + name);
+    WaitingRoom.prototype.setSound = function(name, value) {
+        strSetter(this, name, value, 'sounds', 'WaitingRoom.setSound');
+    };
+
+    /**
+     * ### WaitingRoom.setSounds
+     *
+     * Assigns multiple sounds at the same time
+     *
+     * @param {object} sounds Optional. Object containing sound paths
+     *
+     * @see WaitingRoom.sounds
+     * @see WaitingRoom.setSound
+     * @see WaitingRoom.getSound
+     * @see WaitingRoom.getSounds
+     */
+    WaitingRoom.prototype.setSounds = function(sounds) {
+        strSetterMulti(this, sounds, 'sounds', 'setSound',
+                       'WaitingRoom.setSounds');
+    };
+
+    /**
+     * ### WaitingRoom.getSound
+     *
+     * Returns the requested sound path
+     *
+     * @param {string} name The name of the sound variable.
+     * @param {mixed} param Optional. Additional info to pass to the
+     *   callback, if any
+     *
+     * @return {string} The requested sound
+     *
+     * @see WaitingRoom.sounds
+     * @see WaitingRoom.setSound
+     * @see WaitingRoom.getSound
+     * @see WaitingRoom.getSounds
+     */
+    WaitingRoom.prototype.getSound = function(name, param) {
+        return strGetter(this, name, 'sounds', 'WaitingRoom.getSound', param);
+    };
+
+    /**
+     * ### WaitingRoom.getSounds
+     *
+     * Returns an object with selected sounds (paths)
+     *
+     * @param {object|array} keys Optional. An object whose keys, or an array
+     *   whose values, are used of  to select the properties to return.
+     *   Default: all properties in the collection object.
+     * @param {object} param Optional. Object containing parameters to pass
+     *   to the sounds functions (if any)
+     *
+     * @return {object} out Selected sounds (paths)
+     *
+     * @see WaitingRoom.sounds
+     * @see WaitingRoom.setSound
+     * @see WaitingRoom.getSound
+     * @see WaitingRoom.setSounds
+     */
+    WaitingRoom.prototype.getSounds = function(keys, param) {
+        return strGetterMulti(this, 'sounds', 'getSound',
+                              'WaitingRoom.getSounds', keys, param);
+    };
+
+    /**
+     * ### WaitingRoom.getAllSounds
+     *
+     * Returns an object with all current sounds
+     *
+     * @param {object} param Optional. Object containing parameters to pass
+     *   to the sounds functions (if any)
+     *
+     * @return {object} out All current sounds
+     *
+     * @see WaitingRoom.getSound
+     */
+    WaitingRoom.prototype.getAllSounds = function(param) {
+        return strGetterMulti(this, 'sounds', 'getSound',
+                              'WaitingRoom.getAllSounds', undefined, param);
     };
 
     /**
@@ -52364,50 +52228,250 @@ debugger
      * @param {string} name The name of the property to check
      * @param {mixed} value Optional. The value for the text. If undefined
      *    the default value from WaitingRoom.texts is used
-     * @param {boolean} noDefault Optional. If true, no default value is
-     *    assigned in case value is undefined. Default: false
      *
-     * @return {string|function} The validated property's value
-     *
-     * @see WaitingRoom.init
      * @see WaitingRoom.texts
      * @see WaitingRoom.getText
+     * @see WaitingRoom.setTexts
+     * @see WaitingRoom.getTexts
      */
-    WaitingRoom.prototype.setText = function(name, value, noDefault) {
-        if ('undefined' === typeof value) {
-            if (!noDefault) this.texts[name] = WaitingRoom.texts[name];
-        }
-        else if ('string' === typeof value || 'function' === typeof value) {
-            this.texts[name] = value;
-        }
-        else {
-            throw new TypeError('WaitingRoom.setText: text "' + name +
-                                '" must be string, function or undefined. ' +
-                                'Found: ' + value);
-        }
-        return this.texts[name];
+    WaitingRoom.prototype.setText = function(name, value) {
+        strSetter(this, name, value, 'texts', 'WaitingRoom.setText');
     };
 
-    // ## Helper functions.
+    /**
+     * ### WaitingRoom.setTexts
+     *
+     * Assigns all texts
+     *
+     * @param {object} texts Optional. Object containing texts
+     *
+     * @see WaitingRoom.texts
+     * @see WaitingRoom.setText
+     * @see WaitingRoom.getText
+     * @see WaitingRoom.getTexts
+     */
+    WaitingRoom.prototype.setTexts = function(texts) {
+        strSetterMulti(this, texts, 'texts', 'setText', 'WaitingRoom.setTexts');
+    };
 
+    /**
+     * ### WaitingRoom.getText
+     *
+     * Returns the requested text
+     *
+     * @param {string} name The name of the text variable.
+     * @param {mixed} param Optional. Additional to pass to the callback, if any
+     *
+     * @return {string} The requested text
+     *
+     * @see WaitingRoom.texts
+     * @see WaitingRoom.setText
+     * @see WaitingRoom.setTexts
+     * @see WaitingRoom.getTexts
+     */
+    WaitingRoom.prototype.getText = function(name, param) {
+        return strGetter(this, name, 'texts',
+                         'WaitingRoom.getText', undefined, param);
+    };
+
+    /**
+     * ### WaitingRoom.getTexts
+     *
+     * Returns an object with selected texts
+     *
+     * @param {object|array} keys Optional. An object whose keys, or an array
+     *   whose values, are used of  to select the properties to return.
+     *   Default: all properties in the collection object.
+     * @param {object} param Optional. Object containing parameters to pass
+     *   to the sounds functions (if any)
+     *
+     * @return {object} out Selected texts
+     *
+     * @see WaitingRoom.texts
+     * @see WaitingRoom.setText
+     * @see WaitingRoom.getText
+     * @see WaitingRoom.setTexts
+     * @see WaitingRoom.getAllTexts
+     */
+    WaitingRoom.prototype.getTexts = function(keys, param) {
+        return strGetterMulti(this, 'texts', 'getText',
+                              'WaitingRoom.getTexts', keys, param);
+    };
+
+    /**
+     * ### WaitingRoom.getAllTexts
+     *
+     * Returns an object with all current texts
+     *
+     * @param {object|array} param Optional. Object containing parameters
+     *   to pass to the texts functions (if any)
+     *
+     * @return {object} out All current texts
+     *
+     * @see WaitingRoom.texts
+     * @see WaitingRoom.setText
+     * @see WaitingRoom.setTexts
+     * @see WaitingRoom.getText
+     */
+    WaitingRoom.prototype.getAllTexts = function(param) {
+        return strGetterMulti(this, 'texts', 'getText',
+                              'WaitingRoom.getAllTexts', undefined, param);
+    };
+
+    // ## Helper methods.
+
+    /**
+     * ### strGetter
+     *
+     * Returns the value a property from a collection in instance/constructor
+     *
+     * If the string is not found in the live instance, the default value
+     * from the same collection inside the contructor is returned instead.
+     *
+     * If the property is not found in the corresponding static
+     * collection in the constructor of the instance, an error is thrown.
+     *
+     * @param {object} that The main instance
+     * @param {string} name The name of the property inside the collection
+     * @param {string} collection The name of the collection inside the instance
+     * @param {string} method The name of the invoking method (for error string)
+     * @param {mixed} param Optional. If the value of the requested property
+     *   is a function, this parameter is passed to it to get a return value.
+     *
+     * @return {string} res The value of requested property as found
+     *   in the instance, or its default value as found in the constructor
+     */
+    function strGetter(that, name, collection, method, param) {
+        var res;
+        if (!that.constructor[collection].hasOwnProperty(name)) {
+            throw new Error(method + ': name not found: ' + name);
+        }
+        res = that[collection][name];
+        if ('function' === typeof res) {
+            res = res(that, param);
+            if ('string' !== typeof res) {
+                throw new TypeError(method + ': cb "' + name +
+                                    'did not return a string. Found: ' + res);
+            }
+        }
+        else if ('undefined' === typeof res) {
+            res = that.constructor[collection][name];
+        }
+        return res;
+    }
+
+    /**
+     * ### strGetterMulti
+     *
+     * Same as strGetter, but returns multiple values at once
+     *
+     * @param {object} that The main instance
+     * @param {string} collection The name of the collection inside the instance
+     * @param {string} getMethod The name of the method to get each value
+     * @param {string} method The name of the invoking method (for error string)
+     * @param {object|array} keys Optional. An object whose keys, or an array
+     *   whose values, are used of this object are to select the properties
+     *   to return. Default: all properties in the collection object.
+     * @param {mixed} param Optional. If the value of the requested property
+     *    is a function, this parameter is passed to it, when invoked to get
+     *    a return value. Default: undefined
+     *
+     * @return {string} res The requested value.
+     *
+     * @see strGetter
+     */
+    function strGetterMulti(that, collection, getMethod, method, keys, param) {
+        var out, k, len;
+        if (!keys) keys = that.constructor[collection];
+
+        out = {};
+        if (J.isArray(keys)) {
+            k = -1, len = keys.length;
+            for ( ; ++k < len; ) {
+                out[keys[k]] = that[getMethod](keys[k], param);
+            }
+        }
+        else {
+            for (k in keys) {
+                if (keys.hasOwnProperty(k)) {
+                    out[k] = that[getMethod](k, param);
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * ### strSetterMulti
+     *
+     * Same as strSetter, but sets multiple values at once
+     *
+     * @param {object} that The main instance
+     * @param {object} obj List of properties to set and their values
+     * @param {string} collection The name of the collection inside the instance
+     * @param {string} setMethod The name of the method to set each value
+     * @param {string} method The name of the invoking method (for error string)
+     *
+     * @see strSetter
+     */
+    function strSetterMulti(that, obj, collection, setMethod, method) {
+        var i, out;
+        out = out || {};
+        if ('object' !== typeof obj && 'undefined' !== typeof obj) {
+            throw new TypeError(method + ': ' +  collection +
+                                ' must be object or undefined. Found: ' + obj);
+        }
+        for (i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                that[setMethod](i, obj[i]);
+            }
+        }
+    }
+
+    /**
+     * ### strSetter
+     *
+     * Sets the value of a property in a collection if string, function or false
+     *
+     * @param {object} that The main instance
+     * @param {string} name The name of the property to set
+     * @param {string|function|false} value The value for the property
+     * @param {string} collection The name of the collection inside the instance
+     * @param {string} method The name of the invoking method (for error string)
+     *
+     * @see strSetter
+     */
+    function strSetter(that, name, value, collection, method) {
+        if ('undefined' === typeof that.constructor[collection][name]) {
+            throw new TypeError(method + ': name not found: ' + name);
+        }
+        if ('string' === typeof value ||
+            'function' === typeof value ||
+            false === value) {
+           
+            that[collection][name] = value;
+        }
+        else {
+            throw new TypeError(method + ': value for item "' + name +
+                                '" must be string, function or false. ' +
+                                'Found: ' + value);
+        }
+    }
 
 })(node);
 
 /**
  * # Wall
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * Creates a wall where log and other information is added
- * with a number and timestamp
+ * Creates a wall where logs and other info is added with number and timestamp
  *
  * www.nodegame.org
  */
 (function(node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     node.widgets.register('Wall', Wall);
 
@@ -52432,18 +52496,8 @@ debugger
      * `Wall` prints all LOG events into a PRE.
      *
      * @param {object} options Optional. Configuration options
-     * The options it can take are:
-     *
-     *   - id: The id of the PRE in which to write.
-     *   - name: The name of this Wall.
      */
     function Wall(options) {
-        /**
-         * ### Wall.id
-         *
-         * The id of the PRE in which to write
-         */
-        this.id = options.id || 'wall';
 
         /**
          * ### Wall.name
@@ -52471,7 +52525,7 @@ debugger
          *
          * The PRE in which to write
          */
-        this.wall = node.window.getElement('pre', this.id);
+        this.wall = W.get('pre', this.id);
     }
 
     // ## Wall methods
@@ -52479,7 +52533,7 @@ debugger
     /**
      * ### Wall.init
      *
-     * Initializes the instance.
+     * Initializes the instance
      *
      * If options are provided, the counter is set to `options.counter`
      * otherwise nothing happens.
@@ -52531,8 +52585,9 @@ debugger
      * If the document is ready, the buffer content is written into this.wall
      */
     Wall.prototype.debuffer = function() {
+        var i;
         if (document.readyState === 'complete' && this.buffer.length > 0) {
-            for (var i=0; i < this.buffer.length; i++) {
+            for (i=0; i < this.buffer.length; i++) {
                 this.write(this.buffer[i]);
             }
             this.buffer = [];
