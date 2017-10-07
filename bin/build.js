@@ -19,7 +19,6 @@ var rootDir = path.resolve(__dirname, '..') + '/';
 var distDir =  rootDir + 'build/';
 
 
-
 function loadTemplate(name) {
     return fs.readFileSync(path.join(__dirname, 'templates', name), 'utf-8');
 }
@@ -87,7 +86,9 @@ var ng_client = [
 
     rootDir + "lib/core/GameDB.js",
     rootDir + "lib/core/Game.js",
-    rootDir + "lib/core/Session.js",
+
+    // Not used for now.
+    // rootDir + "lib/core/Session.js",
 
 
     rootDir + "lib/core/Timer.js",
@@ -189,7 +190,7 @@ function build(options) {
     }
 
     // 0. Shelf.js
-    if (options.shelf || options.all) {
+    if (options.shelf) {
         if (!J.existsSync(shelfDir)) {
             console.log('  - ERR: shelf.js not found!');
         }
@@ -250,7 +251,7 @@ function build(options) {
         else {
             console.log('  - nodegame-window');
 
-            // Build custom shelf.js if not existing
+            // Build custom window if not existing
             if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
                 var window_build = ngWdir + 'bin/build.js';
                 console.log("\n  - building custom nodegame-window.js")
@@ -271,7 +272,7 @@ function build(options) {
         else {
             console.log('  - nodegame-widgets');
 
-            // Build custom shelf.js if not existing
+            // Build custom widgets.js if not existing
             if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
                 var widgets_build = ngWdgdir + 'bin/build.js';
                 console.log("\n  - building custom nodegame-widgets.js")

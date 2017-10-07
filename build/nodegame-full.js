@@ -473,773 +473,6 @@ if (!Array.prototype.indexOf) {
 }
 
 /**
- * # Shelf.JS
- * Copyright 2014 Stefano Balietti
- * GPL licenses.
- *
- * Persistent Client-Side Storage
- * ---
- */
-(function(exports) {
-
-    var version = '5.1';
-    var store, mainStorageType;
-
-    mainStorageType = "volatile";
-
-    store = exports.store = function(key, value, options, type) {
-        options = options || {};
-        type = (options.type && options.type in store.types) ?
-            options.type : store.type;
-
-        if (!type || !store.types[type]) {
-            store.log('Cannot save/load value. Invalid storage type ' +
-                      'selected: ' + type, 'ERR');
-            return;
-        }
-        store.log('Accessing ' + type + ' storage');
-
-        return store.types[type](key, value, options);
-    };
-
-    // Adding functions and properties to store
-    ///////////////////////////////////////////
-    store.prefix = "__shelf__";
-
-    store.verbosity = 0;
-    store.types = {};
-
-
-
-
-    //if Object.defineProperty works...
-    try {
-
-        Object.defineProperty(store, 'type', {
-            set: function(type) {
-                if ('undefined' === typeof store.types[type]) {
-                    store.log('Cannot set store.type to an invalid type: ' +
-                              type);
-                    return false;
-                }
-                mainStorageType = type;
-                return type;
-            },
-            get: function(){
-                return mainStorageType;
-            },
-            configurable: false,
-            enumerable: true
-        });
-    }
-    catch(e) {
-        store.type = mainStorageType; // default: memory
-    }
-
-    store.addType = function(type, storage) {
-        store.types[type] = storage;
-        store[type] = function(key, value, options) {
-            options = options || {};
-            options.type = type;
-            return store(key, value, options);
-        };
-
-        if (!store.type || store.type === "volatile") {
-            store.type = type;
-        }
-    };
-
-    // TODO: create unit test
-    store.onquotaerror = undefined;
-    store.error = function() {
-        console.log("shelf quota exceeded");
-        if ('function' === typeof store.onquotaerror) {
-            store.onquotaerror(null);
-        }
-    };
-
-    store.log = function(text) {
-        if (store.verbosity > 0) {
-            console.log('Shelf v.' + version + ': ' + text);
-        }
-
-    };
-
-    store.isPersistent = function() {
-        if (!store.types) return false;
-        if (store.type === "volatile") return false;
-        return true;
-    };
-
-    //if Object.defineProperty works...
-    try {
-        Object.defineProperty(store, 'persistent', {
-            set: function(){},
-            get: store.isPersistent,
-            configurable: false
-        });
-    }
-    catch(e) {
-        // safe case
-        store.persistent = false;
-    }
-
-    store.decycle = function(o) {
-        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-            o = JSON.decycle(o);
-        }
-        return o;
-    };
-
-    store.retrocycle = function(o) {
-        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-            o = JSON.retrocycle(o);
-        }
-        return o;
-    };
-
-    store.stringify = function(o) {
-        if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-            throw new Error('JSON.stringify not found. Received non-string' +
-                            'value and could not serialize.');
-        }
-
-        o = store.decycle(o);
-        return JSON.stringify(o);
-    };
-
-    store.parse = function(o) {
-        if ('undefined' === typeof o) return undefined;
-        if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-            try {
-                o = JSON.parse(o);
-            }
-            catch (e) {
-                store.log('Error while parsing a value: ' + e, 'ERR');
-                store.log(o);
-            }
-        }
-
-        o = store.retrocycle(o);
-        return o;
-    };
-
-    // ## In-memory storage
-    // ### fallback to enable the API even if we can't persist data
-    (function() {
-
-        var memory = {},
-        timeout = {};
-
-        function copy(obj) {
-            return store.parse(store.stringify(obj));
-        }
-
-        store.addType("volatile", function(key, value, options) {
-
-            if (!key) {
-                return copy(memory);
-            }
-
-            if (value === undefined) {
-                return copy(memory[key]);
-            }
-
-            if (timeout[key]) {
-                clearTimeout(timeout[key]);
-                delete timeout[key];
-            }
-
-            if (value === null) {
-                delete memory[key];
-                return null;
-            }
-
-            memory[key] = value;
-            if (options.expires) {
-                timeout[key] = setTimeout(function() {
-                    delete memory[key];
-                    delete timeout[key];
-                }, options.expires);
-            }
-
-            return value;
-        });
-    }());
-
-}(
-    'undefined' !== typeof module && 'undefined' !== typeof module.exports ?
-        module.exports : this
-));
-
-/**
- * ## Amplify storage for Shelf.js
- * Copyright 2014 Stefano Balietti
- *
- * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- *
- * Important! When updating to next Amplify.JS release, remember to change:
- *
- * - JSON.stringify -> store.stringify to keep support for cyclic objects
- * - JSON.parse -> store.parse (cyclic objects)
- * - store.name -> store.prefix (check)
- * - rprefix -> regex
- * - "__amplify__" -> store.prefix
- *
- * ---
- */
-(function(exports) {
-
-    var store = exports.store;
-
-    if (!store) {
-	throw new Error('amplify.shelf.js: shelf.js core not found.');
-    }
-
-    if ('undefined' === typeof window) {
-	throw new Error('amplify.shelf.js:  window object not found.');
-    }
-
-    var regex = new RegExp("^" + store.prefix);
-    function createFromStorageInterface( storageType, storage ) {
-	store.addType( storageType, function( key, value, options ) {
-	    var storedValue, parsed, i, remove,
-	    ret = value,
-	    now = (new Date()).getTime();
-
-	    if ( !key ) {
-		ret = {};
-		remove = [];
-		i = 0;
-		try {
-		    // accessing the length property works around a localStorage bug
-		    // in Firefox 4.0 where the keys don't update cross-page
-		    // we assign to key just to avoid Closure Compiler from removing
-		    // the access as "useless code"
-		    // https://bugzilla.mozilla.org/show_bug.cgi?id=662511
-		    key = storage.length;
-
-		    while ( key = storage.key( i++ ) ) {
-			if ( regex.test( key ) ) {
-			    parsed = store.parse( storage.getItem( key ) );
-			    if ( parsed.expires && parsed.expires <= now ) {
-				remove.push( key );
-			    } else {
-				ret[ key.replace( rprefix, "" ) ] = parsed.data;
-			    }
-			}
-		    }
-		    while ( key = remove.pop() ) {
-			storage.removeItem( key );
-		    }
-		} catch ( error ) {}
-		return ret;
-	    }
-
-	    // protect against name collisions with direct storage
-	    key = store.prefix + key;
-
-	    if ( value === undefined ) {
-		storedValue = storage.getItem( key );
-		parsed = storedValue ? store.parse( storedValue ) : { expires: -1 };
-		if ( parsed.expires && parsed.expires <= now ) {
-		    storage.removeItem( key );
-		} else {
-		    return parsed.data;
-		}
-	    } else {
-		if ( value === null ) {
-		    storage.removeItem( key );
-		} else {
-		    parsed = store.stringify({
-			data: value,
-			expires: options.expires ? now + options.expires : null
-		    });
-		    try {
-			storage.setItem( key, parsed );
-			// quota exceeded
-		    } catch( error ) {
-			// expire old data and try again
-			store[ storageType ]();
-			try {
-			    storage.setItem( key, parsed );
-			} catch( error ) {
-			    throw store.error();
-			}
-		    }
-		}
-	    }
-
-	    return ret;
-	});
-    }
-
-    // localStorage + sessionStorage
-    // IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
-    for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
-	// try/catch for file protocol in Firefox and Private Browsing in Safari 5
-	try {
-	    // Safari 5 in Private Browsing mode exposes localStorage
-	    // but doesn't allow storing data, so we attempt to store and remove an item.
-	    // This will unfortunately give us a false negative if we're at the limit.
-	    window[ webStorageType ].setItem(store.prefix, "x" );
-	    window[ webStorageType ].removeItem(store.prefix );
-	    createFromStorageInterface( webStorageType, window[ webStorageType ] );
-	} catch( e ) {}
-    }
-
-    // globalStorage
-    // non-standard: Firefox 2+
-    // https://developer.mozilla.org/en/dom/storage#globalStorage
-    if ( !store.types.localStorage && window.globalStorage ) {
-	// try/catch for file protocol in Firefox
-	try {
-	    createFromStorageInterface( "globalStorage",
-			                window.globalStorage[ window.location.hostname ] );
-	    // Firefox 2.0 and 3.0 have sessionStorage and globalStorage
-	    // make sure we default to globalStorage
-	    // but don't default to globalStorage in 3.5+ which also has localStorage
-	    if ( store.type === "sessionStorage" ) {
-		store.type = "globalStorage";
-	    }
-	} catch( e ) {}
-    }
-
-    // userData
-    // non-standard: IE 5+
-    // http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx
-    (function() {
-	// IE 9 has quirks in userData that are a huge pain
-	// rather than finding a way to detect these quirks
-	// we just don't register userData if we have localStorage
-	if ( store.types.localStorage ) {
-	    return;
-	}
-
-	// append to html instead of body so we can do this from the head
-	var div = document.createElement( "div" ),
-	attrKey = store.prefix; // was "amplify" and not __amplify__
-	div.style.display = "none";
-	document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
-
-	// we can't feature detect userData support
-	// so just try and see if it fails
-	// surprisingly, even just adding the behavior isn't enough for a failure
-	// so we need to load the data as well
-	try {
-	    div.addBehavior( "#default#userdata" );
-	    div.load( attrKey );
-	} catch( e ) {
-	    div.parentNode.removeChild( div );
-	    return;
-	}
-
-	store.addType( "userData", function( key, value, options ) {
-	    div.load( attrKey );
-	    var attr, parsed, prevValue, i, remove,
-	    ret = value,
-	    now = (new Date()).getTime();
-
-	    if ( !key ) {
-		ret = {};
-		remove = [];
-		i = 0;
-		while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
-		    parsed = store.parse( attr.value );
-		    if ( parsed.expires && parsed.expires <= now ) {
-			remove.push( attr.name );
-		    } else {
-			ret[ attr.name ] = parsed.data;
-		    }
-		}
-		while ( key = remove.pop() ) {
-		    div.removeAttribute( key );
-		}
-		div.save( attrKey );
-		return ret;
-	    }
-
-	    // convert invalid characters to dashes
-	    // http://www.w3.org/TR/REC-xml/#NT-Name
-	    // simplified to assume the starting character is valid
-	    // also removed colon as it is invalid in HTML attribute names
-	    key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
-	    // adjust invalid starting character to deal with our simplified sanitization
-	    key = key.replace( /^-/, "_-" );
-
-	    if ( value === undefined ) {
-		attr = div.getAttribute( key );
-		parsed = attr ? store.parse( attr ) : { expires: -1 };
-		if ( parsed.expires && parsed.expires <= now ) {
-		    div.removeAttribute( key );
-		} else {
-		    return parsed.data;
-		}
-	    } else {
-		if ( value === null ) {
-		    div.removeAttribute( key );
-		} else {
-		    // we need to get the previous value in case we need to rollback
-		    prevValue = div.getAttribute( key );
-		    parsed = store.stringify({
-			data: value,
-			expires: (options.expires ? (now + options.expires) : null)
-		    });
-		    div.setAttribute( key, parsed );
-		}
-	    }
-
-	    try {
-		div.save( attrKey );
-		// quota exceeded
-	    } catch ( error ) {
-		// roll the value back to the previous value
-		if ( prevValue === null ) {
-		    div.removeAttribute( key );
-		} else {
-		    div.setAttribute( key, prevValue );
-		}
-
-		// expire old data and try again
-		store.userData();
-		try {
-		    div.setAttribute( key, parsed );
-		    div.save( attrKey );
-		} catch ( error ) {
-		    // roll the value back to the previous value
-		    if ( prevValue === null ) {
-			div.removeAttribute( key );
-		    } else {
-			div.setAttribute( key, prevValue );
-		    }
-		    throw store.error();
-		}
-	    }
-	    return ret;
-	});
-    }());
-
-}(this));
-
-/**
- * ## Cookie storage for Shelf.js
- * Copyright 2014 Stefano Balietti
- *
- * Original library from:
- * See http://code.google.com/p/cookies/
- */
-(function(exports) {
-
-    var store = exports.store;
-
-    if (!store) {
-	throw new Error('cookie.shelf.js: shelf.js core not found.');
-    }
-
-    if ('undefined' === typeof window) {
-	throw new Error('cookie.shelf.js: window object not found.');
-    }
-
-    var cookie = (function() {
-
-	var resolveOptions, assembleOptionsString, parseCookies, constructor;
-        var defaultOptions = {
-	    expiresAt: null,
-	    path: '/',
-	    domain:  null,
-	    secure: false
-	};
-
-	/**
-	 * resolveOptions - receive an options object and ensure all options
-         * are present and valid, replacing with defaults where necessary
-	 *
-	 * @access private
-	 * @static
-	 * @parameter Object options - optional options to start with
-	 * @return Object complete and valid options object
-	 */
-	resolveOptions = function(options){
-
-	    var returnValue, expireDate;
-
-	    if(typeof options !== 'object' || options === null){
-		returnValue = defaultOptions;
-	    }
-	    else {
-		returnValue = {
-		    expiresAt: defaultOptions.expiresAt,
-		    path: defaultOptions.path,
-		    domain: defaultOptions.domain,
-		    secure: defaultOptions.secure
-		};
-
-		if (typeof options.expiresAt === 'object' && options.expiresAt instanceof Date) {
-		    returnValue.expiresAt = options.expiresAt;
-		}
-		else if (typeof options.hoursToLive === 'number' && options.hoursToLive !== 0){
-		    expireDate = new Date();
-		    expireDate.setTime(expireDate.getTime() + (options.hoursToLive * 60 * 60 * 1000));
-		    returnValue.expiresAt = expireDate;
-		}
-
-		if (typeof options.path === 'string' && options.path !== '') {
-		    returnValue.path = options.path;
-		}
-
-		if (typeof options.domain === 'string' && options.domain !== '') {
-		    returnValue.domain = options.domain;
-		}
-
-		if (options.secure === true) {
-		    returnValue.secure = options.secure;
-		}
-	    }
-
-	    return returnValue;
-	};
-
-	/**
-	 * assembleOptionsString - analyze options and assemble appropriate string for setting a cookie with those options
-	 *
-	 * @access private
-	 * @static
-	 * @parameter options OBJECT - optional options to start with
-	 * @return STRING - complete and valid cookie setting options
-	 */
-	assembleOptionsString = function (options) {
-	    options = resolveOptions(options);
-
-	    return (
-		(typeof options.expiresAt === 'object' && options.expiresAt instanceof Date ? '; expires=' + options.expiresAt.toGMTString() : '') +
-		    '; path=' + options.path +
-		    (typeof options.domain === 'string' ? '; domain=' + options.domain : '') +
-		    (options.secure === true ? '; secure' : '')
-	    );
-	};
-
-	/**
-	 * parseCookies - retrieve document.cookie string and break it into a hash with values decoded and unserialized
-	 *
-	 * @access private
-	 * @static
-	 * @return OBJECT - hash of cookies from document.cookie
-	 */
-	parseCookies = function() {
-	    var cookies = {}, i, pair, name, value, separated = document.cookie.split(';'), unparsedValue;
-	    for(i = 0; i < separated.length; i = i + 1){
-		pair = separated[i].split('=');
-		name = pair[0].replace(/^\s*/, '').replace(/\s*$/, '');
-
-		try {
-		    value = decodeURIComponent(pair[1]);
-		}
-		catch(e1) {
-		    value = pair[1];
-		}
-
-                //						if (JSON && 'object' === typeof JSON && 'function' === typeof JSON.parse) {
-                //							try {
-                //								unparsedValue = value;
-                //								value = JSON.parse(value);
-                //							}
-                //							catch (e2) {
-                //								value = unparsedValue;
-                //							}
-                //						}
-
-		cookies[name] = store.parse(value);
-	    }
-	    return cookies;
-	};
-
-	constructor = function(){};
-
-
-	/**
-	 * get - get one, several, or all cookies
-	 *
-	 * @access public
-	 * @paramater Mixed cookieName - String:name of single cookie; Array:list of multiple cookie names; Void (no param):if you want all cookies
-	 * @return Mixed - Value of cookie as set; Null:if only one cookie is requested and is not found; Object:hash of multiple or all cookies (if multiple or all requested);
-	 */
-	constructor.prototype.get = function(cookieName) {
-
-	    var returnValue, item, cookies = parseCookies();
-
-	    if(typeof cookieName === 'string') {
-		returnValue = (typeof cookies[cookieName] !== 'undefined') ? cookies[cookieName] : null;
-	    }
-	    else if (typeof cookieName === 'object' && cookieName !== null) {
-		returnValue = {};
-		for (item in cookieName) {
-		    if (typeof cookies[cookieName[item]] !== 'undefined') {
-			returnValue[cookieName[item]] = cookies[cookieName[item]];
-		    }
-		    else {
-			returnValue[cookieName[item]] = null;
-		    }
-		}
-	    }
-	    else {
-		returnValue = cookies;
-	    }
-
-	    return returnValue;
-	};
-
-	/**
-	 * filter - get array of cookies whose names match the provided RegExp
-	 *
-	 * @access public
-	 * @paramater Object RegExp - The regular expression to match against cookie names
-	 * @return Mixed - Object:hash of cookies whose names match the RegExp
-	 */
-	constructor.prototype.filter = function (cookieNameRegExp) {
-	    var cookieName, returnValue = {}, cookies = parseCookies();
-
-	    if (typeof cookieNameRegExp === 'string') {
-		cookieNameRegExp = new RegExp(cookieNameRegExp);
-	    }
-
-	    for (cookieName in cookies) {
-		if (cookieName.match(cookieNameRegExp)) {
-		    returnValue[cookieName] = cookies[cookieName];
-		}
-	    }
-
-	    return returnValue;
-	};
-
-	/**
-	 * set - set or delete a cookie with desired options
-	 *
-	 * @access public
-	 * @paramater String cookieName - name of cookie to set
-	 * @paramater Mixed value - Any JS value. If not a string, will be JSON encoded; NULL to delete
-	 * @paramater Object options - optional list of cookie options to specify
-	 * @return void
-	 */
-	constructor.prototype.set = function(cookieName, value, options){
-	    if (typeof options !== 'object' || options === null) {
-		options = {};
-	    }
-
-	    if (typeof value === 'undefined' || value === null) {
-		value = '';
-		options.hoursToLive = -8760;
-	    }
-
-	    else if (typeof value !== 'string'){
-                //						if(typeof JSON === 'object' && JSON !== null && typeof store.stringify === 'function') {
-                //
-                //							value = JSON.stringify(value);
-                //						}
-                //						else {
-                //							throw new Error('cookies.set() received non-string value and could not serialize.');
-                //						}
-
-		value = store.stringify(value);
-	    }
-
-
-	    var optionsString = assembleOptionsString(options);
-
-	    document.cookie = cookieName + '=' + encodeURIComponent(value) + optionsString;
-	};
-
-	/**
-	 * del - delete a cookie (domain and path options must match those with which the cookie was set; this is really an alias for set() with parameters simplified for this use)
-	 *
-	 * @access public
-	 * @paramater MIxed cookieName - String name of cookie to delete, or Bool true to delete all
-	 * @paramater Object options - optional list of cookie options to specify (path, domain)
-	 * @return void
-	 */
-	constructor.prototype.del = function(cookieName, options) {
-	    var allCookies = {}, name;
-
-	    if(typeof options !== 'object' || options === null) {
-		options = {};
-	    }
-
-	    if(typeof cookieName === 'boolean' && cookieName === true) {
-		allCookies = this.get();
-	    }
-	    else if(typeof cookieName === 'string') {
-		allCookies[cookieName] = true;
-	    }
-
-	    for(name in allCookies) {
-		if(typeof name === 'string' && name !== '') {
-		    this.set(name, null, options);
-		}
-	    }
-	};
-
-	/**
-	 * test - test whether the browser is accepting cookies
-	 *
-	 * @access public
-	 * @return Boolean
-	 */
-	constructor.prototype.test = function() {
-	    var returnValue = false, testName = 'cT', testValue = 'data';
-
-	    this.set(testName, testValue);
-
-	    if(this.get(testName) === testValue) {
-		this.del(testName);
-		returnValue = true;
-	    }
-
-	    return returnValue;
-	};
-
-	/**
-	 * setOptions - set default options for calls to cookie methods
-	 *
-	 * @access public
-	 * @param Object options - list of cookie options to specify
-	 * @return void
-	 */
-	constructor.prototype.setOptions = function(options) {
-	    if(typeof options !== 'object') {
-		options = null;
-	    }
-
-	    defaultOptions = resolveOptions(options);
-	};
-
-	return new constructor();
-    })();
-
-    // if cookies are supported by the browser
-    if (cookie.test()) {
-
-	store.addType("cookie", function(key, value, options) {
-
-	    if ('undefined' === typeof key) {
-		return cookie.get();
-	    }
-
-	    if ('undefined' === typeof value) {
-		return cookie.get(key);
-	    }
-
-	    // Set to NULL means delete
-	    if (value === null) {
-		cookie.del(key);
-		return null;
-	    }
-
-	    return cookie.set(key, value, options);
-	});
-    }
-
-}(this));
-
-/**
  * # JSUS: JavaScript UtilS.
  * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
@@ -24481,7 +23714,8 @@ if (!Array.prototype.indexOf) {
         var w, frame, uri, frameOptions, frameAutoParse;
 
         if ('object' !== typeof step) {
-            throw new Error('Game.execStep: step must be object.');
+            throw new TypeError('Game.execStep: step must be object. Found: ' +
+                                step);
         }
 
         cb = this.plot.getProperty(step, 'cb');
@@ -24523,7 +23757,7 @@ if (!Array.prototype.indexOf) {
                     widgetRoot =  W.getElementById(widgetRoot);
                     widgetObj = this.node.widgets.append(widget.name,
                                                          widgetRoot,
-                                                         widget.options);
+                                                         widget.options);                   
                 }
                 this[widget.ref] = widgetObj;
             };
@@ -25507,360 +24741,6 @@ if (!Array.prototype.indexOf) {
     }
 
     // ## Closure
-})(
-    'undefined' != typeof node ? node : module.exports,
-    'undefined' != typeof node ? node : module.parent.exports
-);
-
-/**
- * # GameSession
- * Copyright(c) 2015 Stefano Balietti
- * MIT Licensed
- *
- * `nodeGame` session manager
- */
-(function(exports, node) {
-
-    "use strict";
-
-    // ## Global scope
-
-    var J = node.JSUS;
-
-    // Exposing constructor.
-    exports.GameSession = GameSession;
-    exports.GameSession.SessionManager = SessionManager;
-
-    GameSession.prototype = new SessionManager();
-    GameSession.prototype.constructor = GameSession;
-
-    /**
-     * ## GameSession constructor
-     *
-     * Creates a new instance of GameSession
-     *
-     * @param {NodeGameClient} node A reference to the node object.
-     */
-    function GameSession(node) {
-        SessionManager.call(this);
-
-        /**
-         * ### GameSession.node
-         *
-         * The reference to the node object.
-         */
-        this.node = node;
-
-        // Register default variables in the session.
-        this.register('player', {
-            set: function(p) {
-                node.createPlayer(p);
-            },
-            get: function() {
-                return node.player;
-            }
-        });
-
-        this.register('game.memory', {
-            set: function(value) {
-                node.game.memory.clear(true);
-                node.game.memory.importDB(value);
-            },
-            get: function() {
-                return (node.game.memory) ? node.game.memory.fetch() : null;
-            }
-        });
-
-        this.register('events.history', {
-            set: function(value) {
-                node.events.history.history.clear(true);
-                node.events.history.history.importDB(value);
-            },
-            get: function() {
-                return node.events.history ?
-                    node.events.history.history.fetch() : null;
-            }
-        });
-
-        this.register('stage', {
-            set: function() {
-                // GameSession.restoreStage
-            },
-            get: function() {
-                return node.player.stage;
-            }
-        });
-
-        this.register('node.env');
-    }
-
-
-//    GameSession.prototype.restoreStage = function(stage) {
-//
-//        try {
-//            // GOTO STATE
-//            node.game.execStage(node.plot.getStep(stage));
-//
-//            var discard = ['LOG',
-//                           'STATECHANGE',
-//                           'WINDOW_LOADED',
-//                           'BEFORE_LOADING',
-//                           'LOADED',
-//                           'in.say.STATE',
-//                           'UPDATED_PLIST',
-//                           'NODEGAME_READY',
-//                           'out.say.STATE',
-//                           'out.set.STATE',
-//                           'in.say.PLIST',
-//                           'STAGEDONE', // maybe not here
-//                           'out.say.HI'
-//                          ];
-//
-//            // RE-EMIT EVENTS
-//            node.events.history.remit(node.game.getStateLevel(), discard);
-//            node.info('game stage restored');
-//            return true;
-//        }
-//        catch(e) {
-//            node.err('could not restore game stage. ' +
-//                     'An error has occurred: ' + e);
-//            return false;
-//        }
-//
-//    };
-
-    /**
-     * ## SessionManager constructor
-     *
-     * Creates a new session manager.
-     */
-    function SessionManager() {
-
-        /**
-         * ### SessionManager.session
-         *
-         * Container of all variables registered in the session.
-         */
-        this.session = {};
-    }
-
-    // ## SessionManager methods
-
-    /**
-     * ### SessionManager.getVariable (static)
-     *
-     * Default session getter.
-     *
-     * @param {string} p The path to a variable included in _node_
-     * @return {mixed} The requested variable
-     */
-    SessionManager.getVariable = function(p) {
-        return J.getNestedValue(p, node);
-    };
-
-    /**
-     * ### SessionManager.setVariable (static)
-     *
-     * Default session setter.
-     *
-     * @param {string} p The path to the variable to set in _node_
-     * @param {mixed} value The value to set
-     */
-    SessionManager.setVariable = function(p, value) {
-        J.setNestedValue(p, value, node);
-    };
-
-    /**
-     * ### SessionManager.register
-     *
-     * Register a new variable to the session
-     *
-     * Overwrites previously registered variables with the same name.
-     *
-     * Usage example:
-     *
-     * ```javascript
-     * node.session.register('player', {
-     *       set: function(p) {
-     *           node.createPlayer(p);
-     *       },
-     *       get: function() {
-     *           return node.player;
-     *       }
-     * });
-     * ```
-     *
-     * @param {string} path A string containing a path to a variable
-     * @param {object} conf Optional. Configuration object containing setters
-     *   and getters
-     */
-    SessionManager.prototype.register = function(path, conf) {
-        if ('string' !== typeof path) {
-            throw new TypeError('SessionManager.register: path must be ' +
-                                'string.');
-        }
-        if (conf && 'object' !== typeof conf) {
-            throw new TypeError('SessionManager.register: conf must be ' +
-                                'object or undefined.');
-        }
-
-        this.session[path] = {
-
-            get: (conf && conf.get) ?
-                conf.get : function() {
-                    return J.getNestedValue(path, node);
-                },
-
-            set: (conf && conf.set) ?
-                conf.set : function(value) {
-                    J.setNestedValue(path, value, node);
-                }
-        };
-
-        return this.session[path];
-    };
-
-    /**
-     * ### SessionManager.unregister
-     *
-     * Unegister a variable from session
-     *
-     * @param {string} path A string containing a path to a variable previously
-     *   registered.
-     *
-     * @see SessionManager.register
-     */
-    SessionManager.prototype.unregister = function(path) {
-        if ('string' !== typeof path) {
-            throw new TypeError('SessionManager.unregister: path must be ' +
-                                'string.');
-        }
-        if (!this.session[path]) {
-            node.warn('SessionManager.unregister: path is not registered ' +
-                      'in the session: ' + path + '.');
-            return false;
-        }
-
-        delete this.session[path];
-        return true;
-    };
-
-    /**
-     * ### SessionManager.clear
-     *
-     * Unegister all registered session variables
-     *
-     * @see SessionManager.unregister
-     */
-    SessionManager.prototype.clear = function() {
-        this.session = {};
-    };
-
-    /**
-     * ### SessionManager.get
-     *
-     * Returns the value/s of one/all registered session variable/s
-     *
-     * @param {string|undefined} path A previously registred variable or
-     *   undefined to return all values
-     *
-     * @see SessionManager.register
-     */
-    SessionManager.prototype.get = function(path) {
-        var session = {};
-        // Returns one variable.
-        if ('string' === typeof path) {
-            return this.session[path] ? this.session[path].get() : undefined;
-        }
-        // Returns all registered variables.
-        else if ('undefined' === typeof path) {
-            for (path in this.session) {
-                if (this.session.hasOwnProperty(path)) {
-                    session[path] = this.session[path].get();
-                }
-            }
-            return session;
-        }
-        else {
-            throw new TypeError('SessionManager.get: path must be string or ' +
-                                'undefined.');
-        }
-    };
-
-    /**
-     * ### SessionManager.isRegistered
-     *
-     * Returns TRUE, if a variable is registred
-     *
-     * @param {string} path A previously registred variable
-     *
-     * @return {boolean} TRUE, if the variable is registered
-     *
-     * @see SessionManager.register
-     * @see SessionManager.unregister
-     */
-    SessionManager.prototype.isRegistered = function(path) {
-        if ('string' !== typeof path) {
-            throw new TypeError('SessionManager.isRegistered: path must be ' +
-                                'string.');
-        }
-        return this.session.hasOwnProperty(path);
-    };
-
-    /**
-     * ### SessionManager.serialize
-     *
-     * Returns an object containing that can be to restore the session
-     *
-     * The serialized session is an object containing _getter_, _setter_, and
-     * current value of each of the registered session variables.
-     *
-     * @return {object} session The serialized session
-     *
-     * @see SessionManager.restore
-     */
-    SessionManager.prototype.serialize = function() {
-        var session = {};
-        for (var path in this.session) {
-            if (this.session.hasOwnProperty(path)) {
-                session[path] = {
-                    value: this.session[path].get(),
-                    get: this.session[path].get,
-                    set: this.session[path].set
-                };
-            }
-        }
-        return session;
-    };
-
-    /**
-     * ### SessionManager.restore
-     *
-     * Restore a previously serialized session object
-     *
-     * @param {object} session A serialized session object
-     * @param {boolean} register Optional. If TRUE, every path is also
-     *    registered before being restored.
-     */
-    SessionManager.prototype.restore = function(session, register) {
-        var i;
-        if ('object' !== typeof session) {
-            throw new TypeError('SessionManager.restore: session must be ' +
-                                'object.');
-        }
-        register = 'undefined' !== typeof register ? register : true;
-        for (i in session) {
-            if (session.hasOwnProperty(i)) {
-                if (register) this.register(i, session[i]);
-                session[i].set(session[i].value);
-            }
-        }
-    };
-
-//    SessionManager.prototype.store = function() {
-//        //node.store(node.socket.id, this.get());
-//    };
-
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -28889,13 +27769,12 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NodeGameClient
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * nodeGame: Real-time social experiments in the browser.
+ * nodeGame: Online Real-Time Synchronous Experiments.
  *
- * `nodeGame` is a free, open source javascript framework for online,
- * multiplayer games in the browser.
+ * http://nodegame.org
  */
 (function(exports, parent) {
 
@@ -28909,7 +27788,6 @@ if (!Array.prototype.indexOf) {
         GameMsgGenerator = parent.GameMsgGenerator,
         Socket = parent.Socket,
         Game = parent.Game,
-        GameSession = parent.GameSession,
         Timer = parent.Timer,
         constants = parent.constants;
 
@@ -29088,7 +27966,8 @@ if (!Array.prototype.indexOf) {
          *
          * @experimental
          */
-        this.session = new GameSession(this);
+        // TODO: not used for now.
+        // this.session = new GameSession(this);
 
         /**
          * ### node.player
@@ -31033,18 +29912,19 @@ if (!Array.prototype.indexOf) {
             }
         });
 
-        /**
-         * ## in.get.SESSION
-         *
-         * Gets the value of a variable registered in the session
-         *
-         * If msg.text is undefined returns all session variables
-         *
-         * @see GameSession.get
-         */
-        node.events.ng.on( IN + get + 'SESSION', function(msg) {
-            return node.session.get(msg.text);
-        });
+// TODO: not used for now.        
+//         /**
+//          * ## in.get.SESSION
+//          *
+//          * Gets the value of a variable registered in the session
+//          *
+//          * If msg.text is undefined returns all session variables
+//          *
+//          * @see GameSession.get
+//          */
+//         node.events.ng.on( IN + get + 'SESSION', function(msg) {
+//             return node.session.get(msg.text);
+//         });
 
         /**
          * ## in.get.PLOT
@@ -33188,6 +32068,9 @@ if (!Array.prototype.indexOf) {
         // For IE8.
         iframe.frameBorder = 0;
 
+        // Avoid scrolling.
+        iframe.scrolling = "no";
+
         this.setFrame(iframe, frameName, root);
 
         if (this.frameElement) adaptFrame2HeaderPosition(this);
@@ -33794,7 +32677,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### GameWindow.getElementById
+     * ### GameWindow.getElementById | gid
      *
      * Returns the element with the given id
      *
@@ -33806,7 +32689,9 @@ if (!Array.prototype.indexOf) {
      *
      * @see GameWindow.getElementsByTagName
      */
-    GameWindow.prototype.getElementById = function(id) {
+    GameWindow.prototype.getElementById =
+        GameWindow.prototype.gid = function(id) {
+
         var el, frameDocument;
 
         frameDocument = this.getFrameDocument();
@@ -34323,6 +33208,16 @@ if (!Array.prototype.indexOf) {
             }
 
             func();
+
+            setTimeout(function() {
+                // Iframe might have been destroyed already, e.g. in a test.
+                if (!iframe || !iframe.contentWindow) return;
+                // Adjust min-height based on content.
+                iframe.style['min-height'] =
+                    (iframe.contentWindow.document.body.offsetHeight + 100) +
+                    'px';
+            });
+
         };
 
         if (loadCache) {
@@ -34490,8 +33385,10 @@ if (!Array.prototype.indexOf) {
      * @api private
      */
     function adaptFrame2HeaderPosition(W, oldHeaderPos) {
-        var position;
-        if (!W.frameElement) {
+        var position, frame, header;
+
+        frame = W.getFrame();
+        if (!frame) {
             throw new Error('adaptFrame2HeaderPosition: frame not found.');
         }
 
@@ -34499,33 +33396,42 @@ if (!Array.prototype.indexOf) {
         // fit the whole screen.
         position = W.headerPosition || 'top';
 
+        header = W.getHeader();
+
         // When we move from bottom to any other configuration, we need
         // to move the header before the frame.
         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
-            W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
+            W.getFrameRoot().insertBefore(W.headerElement, frame);
         }
 
-        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
+        W.removeClass(frame, 'ng_mainframe-header-[a-z-]*');
         switch(position) {
         case 'right':
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-r');
+            W.addClass(frame, 'ng_mainframe-header-vertical-r');
+            if (header) {
+                frame.style['padding-right'] = header.offsetWidth + 10 + 'px';
+            }
             break;
         case 'left':
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-l');
+            W.addClass(frame, 'ng_mainframe-header-vertical-l');
+            if (header) {
+                frame.style['padding-left'] = header.offsetWidth + 10 + 'px';
+            }
             break;
         case 'top':
-            W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
+            W.addClass(frame, 'ng_mainframe-header-horizontal-t');
             // There might be no header yet.
-            if (W.headerElement) {
-                W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
+            if (header) {
+                W.getFrameRoot().insertBefore(header, frame);
+                frame.style['padding-top'] = header.offsetHeight + 10 + 'px';
             }
             break;
         case 'bottom':
-            W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
+            W.addClass(frame, 'ng_mainframe-header-horizontal-b');
             // There might be no header yet.
-            if (W.headerElement) {
-                W.getFrameRoot().insertBefore(W.headerElement,
-                                              W.frameElement.nextSibling);
+            if (header) {
+                W.getFrameRoot().insertBefore(header, frame.nextSibling);
+                frame.style['padding-bottom'] = header.offsetHeight + 10 + 'px';
             }
             break;
         }
@@ -49614,6 +48520,24 @@ if (!Array.prototype.indexOf) {
          */
         this.oldStageId = null;
 
+        /**
+         * ### VisualRound.separator
+         *
+         * Stages and rounds are separated with this string, if needed
+         *
+         * E.g., Stage 3/5
+         */
+        this.separator = ' / ';
+
+        /**
+         * ### VisualRound.layout
+         *
+         * Display layout
+         *
+         * @see VisualRound.setLayout
+         */
+        this.layout = 'vertical';
+
     }
 
     // ## VisualRound methods
@@ -49679,11 +48603,21 @@ if (!Array.prototype.indexOf) {
         this.updateInformation();
 
         if (!this.options.displayModeNames) {
-            this.setDisplayMode(['COUNT_UP_ROUNDS_TO_TOTAL',
-                'COUNT_UP_STAGES_TO_TOTAL']);
+            this.setDisplayMode([
+                'COUNT_UP_ROUNDS_TO_TOTAL',
+                'COUNT_UP_STAGES_TO_TOTAL'
+            ]);
         }
         else {
             this.setDisplayMode(this.options.displayModeNames);
+        }
+
+        if ('undefined' !== typeof options.separator) {
+            this.separator = options.separator;
+        }
+
+        if ('undefined' !== typeof options.layout) {
+            this.layout = options.layout;
         }
 
         this.updateDisplay();
@@ -49702,9 +48636,7 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.displayMode
      */
     VisualRound.prototype.updateDisplay = function() {
-        if (this.displayMode) {
-            this.displayMode.updateDisplay();
-        }
+        if (this.displayMode) this.displayMode.updateDisplay();
     };
 
     /**
@@ -49732,61 +48664,60 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.init
      */
     VisualRound.prototype.setDisplayMode = function(displayModeNames) {
-        var index, compoundDisplayModeName, displayModes;
+        var i, len, compoundDisplayModeName, displayModes;
 
         // Validation of input parameter.
         if (!J.isArray(displayModeNames)) {
-            throw TypeError;
+            throw new TypeError('VisualRound.setDisplayMode: ' +
+                                'displayModeNames must be an array. Found: ' +
+                                displayModeNames);
         }
-
-        // Build compound name.
-        compoundDisplayModeName = '';
-        for (index in displayModeNames) {
-            if (displayModeNames.hasOwnProperty(index)) {
-                compoundDisplayModeName += displayModeNames[index] + '&';
-            }
+        len = displayModeNames.length;
+        if (len === 0) {
+            throw new Error('VisualRound.setDisplayMode: ' +
+                            'displayModeNames is empty.');
         }
-
-        // Remove trailing '&'.
-        compoundDisplayModeName = compoundDisplayModeName.substr(0,
-            compoundDisplayModeName, compoundDisplayModeName.length -1);
 
         if (this.displayMode) {
-            if (compoundDisplayModeName !== this.displayMode.name) {
-                this.deactivate(this.displayMode);
-            }
-            else {
-                return;
-            }
+            // Build compound name.
+            compoundDisplayModeName = displayModeNames.join('&');
+            // Nothing to do if mode is already active.
+            if (compoundDisplayModeName === this.displayMode.name) return;
+            this.deactivate(this.displayMode);
         }
+
+        i = -1;
+        for (; ++i < len; ) {
+            compoundDisplayModeName += displayModeNames[i];
+            if (i !== (len-1)) compoundDisplayModeName += '&';
+        }
+
 
         // Build `CompoundDisplayMode`.
         displayModes = [];
-        for (index in displayModeNames) {
-            if (displayModeNames.hasOwnProperty(index)) {
-                switch (displayModeNames[index]) {
-                    case 'COUNT_UP_STAGES_TO_TOTAL':
-                        displayModes.push(new CountUpStages(this,
-                            {toTotal: true}));
-                        break;
-                    case 'COUNT_UP_STAGES':
-                        displayModes.push(new CountUpStages(this));
-                        break;
-                    case 'COUNT_DOWN_STAGES':
-                        displayModes.push(new CountDownStages(this));
-                        break;
-                    case 'COUNT_UP_ROUNDS_TO_TOTAL':
-                        displayModes.push(new CountUpRounds(this,
-                            {toTotal: true}));
-                        break;
-                    case 'COUNT_UP_ROUNDS':
-                        displayModes.push(new CountUpRounds(this));
-                        break;
-                    case 'COUNT_DOWN_ROUNDS':
-                        displayModes.push(new CountDownRounds(this));
-                        break;
-                }
+        i = -1;
+        for (; ++i < len; ) {
+            switch (displayModeNames[i]) {
+            case 'COUNT_UP_STAGES_TO_TOTAL':
+                displayModes.push(new CountUpStages(this, { toTotal: true }));
+                break;
+            case 'COUNT_UP_STAGES':
+                displayModes.push(new CountUpStages(this));
+                break;
+            case 'COUNT_DOWN_STAGES':
+                displayModes.push(new CountDownStages(this));
+                break;
+            case 'COUNT_UP_ROUNDS_TO_TOTAL':
+                displayModes.push(new CountUpRounds(this, { toTotal: true }));
+                break;
+            case 'COUNT_UP_ROUNDS':
+                displayModes.push(new CountUpRounds(this));
+                break;
+            case 'COUNT_DOWN_ROUNDS':
+                displayModes.push(new CountDownRounds(this));
+                break;
             }
+
         }
         this.displayMode = new CompoundDisplayMode(this, displayModes);
         this.activate(this.displayMode);
@@ -49815,12 +48746,8 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.deactivate
      */
     VisualRound.prototype.activate = function(displayMode) {
-        if (this.bodyDiv) {
-            this.bodyDiv.appendChild(displayMode.displayDiv);
-        }
-        if (displayMode.activate) {
-            displayMode.activate();
-        }
+        if (this.bodyDiv) this.bodyDiv.appendChild(displayMode.displayDiv);
+        if (displayMode.activate) displayMode.activate();
     };
 
     /**
@@ -49836,18 +48763,15 @@ if (!Array.prototype.indexOf) {
      */
     VisualRound.prototype.deactivate = function(displayMode) {
         this.bodyDiv.removeChild(displayMode.displayDiv);
-        if (displayMode.deactivate) {
-            displayMode.deactivate();
-        }
+        if (displayMode.deactivate) displayMode.deactivate();
     };
 
     VisualRound.prototype.listeners = function() {
-        var that = this;
-
+        var that;
+        that = this;
         node.on('STEP_CALLBACK_EXECUTED', function() {
             that.updateInformation();
         });
-
         // TODO: Game over and init?
     };
 
@@ -49885,7 +48809,6 @@ if (!Array.prototype.indexOf) {
         }
         // Normal mode.
         else {
-
             this.curStage = stage.stage;
             // Stage can be indexed by id or number in the sequence.
             if ('string' === typeof this.curStage) {
@@ -49905,90 +48828,24 @@ if (!Array.prototype.indexOf) {
         this.updateDisplay();
     };
 
-   /**
-     * # EmptyDisplayMode
-     *
-     * Copyright(c) 2015 Stefano Balietti
-     * MIT Licensed
-     *
-     * Defines a displayMode for the `VisualRound` which displays nothing
-     */
-
-    /**
-     * ## EmptyDisplayMode constructor
-     *
-     * Display a displayMode which contains the bare minumum (nothing)
-     *
-     * @param {VisualRound} visualRound The `VisualRound` object to which the
-     *   displayMode belongs
-     * @param {object} options Optional. Configuration options
-     *
-     * @see VisualRound
-     */
-    function EmptyDisplayMode(visualRound, options) {
-
-        /**
-         * ### EmptyDisplayMode.name
-         *
-         * The name of the displayMode
-         */
-        this.name = 'EMPTY';
-        this.options = options || {};
-
-        /**
-         * ### EmptyDisplayMode.visualRound
-         *
-         * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
-         */
-        this.visualRound = visualRound;
-
-        /**
-         * ### EmptyDisplayMode.displayDiv
-         *
-         * The DIV in which the information is displayed
-         */
-        this.displayDiv = null;
-
-        this.init(this.options);
-    }
-
-    // ## EmptyDisplayMode methods
-
-    /**
-     * ### EmptyDisplayMode.init
-     *
-     * Initializes the instance
-     *
-     * @param {object} options The options taken
-     *
-     * @see EmptyDisplayMode.updateDisplay
-     */
-    EmptyDisplayMode.prototype.init = function(options) {
-        this.displayDiv = W.get('div');
-        this.displayDiv.className = 'rounddiv';
-
-        this.updateDisplay();
+    VisualRound.prototype.setLayout = function(layout) {
+        if ('string' !== typeof layout || layout.trim() === '') {
+            throw new TypeError('VisualRound.setLayout: layout must be ' +
+                                'a non-empty string. Found: ' + layout);
+        }
+        this.layout = layout;
+        if (this.displayMode) this.displayMode.setLayout(layout);
     };
 
-    /**
-     * ### EmptyDisplayMode.updateDisplay
-     *
-     * Does nothing
-     *
-     * @see VisualRound.updateDisplay
-     */
-    EmptyDisplayMode.prototype.updateDisplay = function() {};
+    // ## Display Modes.
 
     /**
      * # CountUpStages
      *
-     * Copyright(c) 2015 Stefano Balietti
+     * Copyright(c) 2017 Stefano Balietti
      * MIT Licensed
      *
-     * Defines a displayMode for the `VisualRound` which displays the current
-     * and, possibly, the total number of stages
+     * Display mode for `VisualRound` which with current/total number of stages
      */
 
     /**
@@ -50007,34 +48864,8 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound
      */
     function CountUpStages(visualRound, options) {
-        this.options = options || {};
 
-        /**
-         * ### CountUpStages.name
-         *
-         * The name of the displayMode
-         */
-        this.name = 'COUNT_UP_STAGES';
-
-        if (this.options.toTotal) {
-            this.name += '_TO_TOTAL';
-        }
-
-        /**
-         * ### CountUpStages.visualRound
-         *
-         * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
-         */
-        this.visualRound = visualRound;
-
-        /**
-         * ### CountUpStages.displayDiv
-         *
-         * The DIV in which the information is displayed
-         */
-        this.displayDiv = null;
+        generalConstructor(this, visualRound, 'COUNT_UP_STAGES', options);
 
         /**
          * ### CountUpStages.curStageNumber
@@ -50046,16 +48877,9 @@ if (!Array.prototype.indexOf) {
         /**
          * ### CountUpStages.totStageNumber
          *
-         * The element in which the total stage number is displayed
+         * The span in which the total stage number is displayed
          */
         this.totStageNumber = null;
-
-        /**
-         * ### CountUpStages.displayDiv
-         *
-         * The DIV in which the title is displayed
-         */
-        this.titleDiv = null;
 
         /**
          * ### CountUpStages.displayDiv
@@ -50064,7 +48888,8 @@ if (!Array.prototype.indexOf) {
          */
         this.textDiv = null;
 
-        this.init(this.options);
+        // Inits it!
+        this.init();
     }
 
     // ## CountUpStages methods
@@ -50074,39 +48899,23 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the instance
      *
-     * @param {object} options Optional. Configuration options. If
-     *   `options.toTotal == true`, then the total number of stages is displayed
-     *
      * @see CountUpStages.updateDisplay
      */
-    CountUpStages.prototype.init = function(options) {
-        this.displayDiv = W.get('div');
-        this.displayDiv.className = 'stagediv';
+    CountUpStages.prototype.init = function() {
+        generalInit(this, 'stagediv', 'Stage');
 
-        this.titleDiv = W.add('div', this.displayDiv);
-        this.titleDiv.className = 'title';
-        this.titleDiv.innerHTML = 'Stage:';
-
+        this.curStageNumber = W.append('span', this.contentDiv, {
+            className: 'number'
+        });
         if (this.options.toTotal) {
-            this.curStageNumber = W.add('span',
-                this.displayDiv);
-            this.curStageNumber.className = 'number';
+            this.textDiv = W.append('span', this.contentDiv, {
+                className: 'text',
+                innerHTML: this.visualRound.separator
+            });
+            this.totStageNumber = W.append('span', this.contentDiv, {
+                className: 'number'
+            });
         }
-        else {
-            this.curStageNumber = W.add('div', this.displayDiv);
-            this.curStageNumber.className = 'number';
-        }
-
-        if (this.options.toTotal) {
-            this.textDiv = W.add('span', this.displayDiv);
-            this.textDiv.className = 'text';
-            this.textDiv.innerHTML = ' of ';
-
-            this.totStageNumber = W.add('span',
-                this.displayDiv);
-            this.totStageNumber.className = 'number';
-        }
-
         this.updateDisplay();
     };
 
@@ -50129,7 +48938,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # CountDownStages
      *
-     * Copyright(c) 2015 Stefano Balietti
+     * Copyright(c) 2017 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
@@ -50149,29 +48958,7 @@ if (!Array.prototype.indexOf) {
      */
     function CountDownStages(visualRound, options) {
 
-        /**
-         * ### CountDownStages.name
-         *
-         * The name of the displayMode
-         */
-        this.name = 'COUNT_DOWN_STAGES';
-        this.options = options || {};
-
-        /**
-         * ### CountDownStages.visualRound
-         *
-         * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
-         */
-        this.visualRound = visualRound;
-
-        /**
-         * ### CountDownStages.displayDiv
-         *
-         * The DIV in which the information is displayed
-         */
-        this.displayDiv = null;
+        generalConstructor(this, visualRound, 'COUNT_DOWN_STAGES', options);
 
         /**
          * ### CountDownStages.stagesLeft
@@ -50180,14 +48967,7 @@ if (!Array.prototype.indexOf) {
          */
         this.stagesLeft = null;
 
-        /**
-         * ### CountDownStages.displayDiv
-         *
-         * The DIV in which the title is displayed
-         */
-        this.titleDiv = null;
-
-        this.init(this.options);
+        this.init();
     }
 
     // ## CountDownStages methods
@@ -50197,21 +48977,13 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the instance
      *
-     * @param {object} options Optional. Configuration options
-     *
      * @see CountDownStages.updateDisplay
      */
-    CountDownStages.prototype.init = function(options) {
-        this.displayDiv = W.get('div');
-        this.displayDiv.className = 'stagediv';
-
-        this.titleDiv = W.add('div', this.displayDiv);
-        this.titleDiv.className = 'title';
-        this.titleDiv.innerHTML = 'Stages left: ';
-
-        this.stagesLeft = W.add('div', this.displayDiv);
-        this.stagesLeft.className = 'number';
-
+    CountDownStages.prototype.init = function() {
+        generalInit(this, 'stagediv', 'Stage left');
+        this.stagesLeft = W.add('div', this.contentDiv, {
+            className: 'number'
+        });
         this.updateDisplay();
     };
 
@@ -50223,18 +48995,20 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.updateDisplay
      */
     CountDownStages.prototype.updateDisplay = function() {
-        if (this.visualRound.totStage === this.visualRound.curStage) {
+        var v;
+        v = this.visualRound;
+        if (v.totStage === v.curStage) {
             this.stagesLeft.innerHTML = 0;
-            return;
         }
-        this.stagesLeft.innerHTML =
-                (this.visualRound.totStage - this.visualRound.curStage) || '?';
+        else {
+            this.stagesLeft.innerHTML = (v.totStage - v.curStage) || '?';
+        }
     };
 
    /**
      * # CountUpRounds
      *
-     * Copyright(c) 2015 Stefano Balietti
+     * Copyright(c) 2017 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the current
@@ -50256,34 +49030,8 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound
      */
     function CountUpRounds(visualRound, options) {
-        this.options = options || {};
 
-        /**
-         * ### CountUpRounds.name
-         *
-         * The name of the displayMode
-         */
-        this.name = 'COUNT_UP_ROUNDS';
-
-        if (this.options.toTotal) {
-            this.name += '_TO_TOTAL';
-        }
-
-        /**
-         * ### CountUpRounds.visualRound
-         *
-         * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
-         */
-        this.visualRound = visualRound;
-
-        /**
-         * ### CountUpRounds.displayDiv
-         *
-         * The DIV in which the information is displayed
-         */
-        this.displayDiv = null;
+        generalConstructor(this, visualRound, 'COUNT_UP_ROUNDS', options);
 
         /**
          * ### CountUpRounds.curRoundNumber
@@ -50299,21 +49047,7 @@ if (!Array.prototype.indexOf) {
          */
         this.totRoundNumber = null;
 
-        /**
-         * ### CountUpRounds.displayDiv
-         *
-         * The DIV in which the title is displayed
-         */
-        this.titleDiv = null;
-
-        /**
-         * ### CountUpRounds.displayDiv
-         *
-         * The span in which the text ` of ` is displayed
-         */
-        this.textDiv = null;
-
-        this.init(this.options);
+        this.init();
     }
 
     // ## CountUpRounds methods
@@ -50328,33 +49062,23 @@ if (!Array.prototype.indexOf) {
      *
      * @see CountUpRounds.updateDisplay
      */
-    CountUpRounds.prototype.init = function(options) {
-        this.displayDiv = W.get('div');
-        this.displayDiv.className = 'rounddiv';
+    CountUpRounds.prototype.init = function() {
 
-        this.titleDiv = W.add('div', this.displayDiv);
-        this.titleDiv.className = 'title';
-        this.titleDiv.innerHTML = 'Round:';
+        generalInit(this, 'rounddiv', 'Round');
 
+        this.curRoundNumber = W.add('span', this.contentDiv, {
+            className: 'number'
+        });
         if (this.options.toTotal) {
-            this.curRoundNumber = W.add('span', this.displayDiv);
-            this.curRoundNumber.className = 'number';
-        }
-        else {
-            this.curRoundNumber = W.add('div', this.displayDiv);
-            this.curRoundNumber.className = 'number';
-        }
+            this.textDiv = W.add('span', this.contentDiv, {
+                className: 'text',
+                innerHTML: this.visualRound.separator
+            });
 
-        if (this.options.toTotal) {
-            this.textDiv = W.add('span', this.displayDiv);
-            this.textDiv.className = 'text';
-            this.textDiv.innerHTML = ' of ';
-
-            this.totRoundNumber = W.add('span',
-                this.displayDiv);
-            this.totRoundNumber.className = 'number';
+            this.totRoundNumber = W.add('span', this.contentDiv,  {
+                className: 'number'
+            });
         }
-
         this.updateDisplay();
     };
 
@@ -50378,7 +49102,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # CountDownRounds
      *
-     * Copyright(c) 2015 Stefano Balietti
+     * Copyright(c) 2017 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
@@ -50398,29 +49122,7 @@ if (!Array.prototype.indexOf) {
      */
     function CountDownRounds(visualRound, options) {
 
-        /**
-         * ### CountDownRounds.name
-         *
-         * The name of the displayMode
-         */
-        this.name = 'COUNT_DOWN_ROUNDS';
-        this.options = options || {};
-
-        /**
-         * ### CountDownRounds.visualRound
-         *
-         * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
-         */
-        this.visualRound = visualRound;
-
-        /**
-         * ### CountDownRounds.displayDiv
-         *
-         * The DIV in which the information is displayed
-         */
-        this.displayDiv = null;
+        generalConstructor(this, visualRound, 'COUNT_DOWN_ROUNDS', options);
 
         /**
          * ### CountDownRounds.roundsLeft
@@ -50429,14 +49131,7 @@ if (!Array.prototype.indexOf) {
          */
         this.roundsLeft = null;
 
-        /**
-         * ### CountDownRounds.displayDiv
-         *
-         * The DIV in which the title is displayed
-         */
-        this.titleDiv = null;
-
-        this.init(this.options);
+        this.init();
     }
 
     // ## CountDownRounds methods
@@ -50446,17 +49141,10 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the instance
      *
-     * @param {object} options Optional. Configuration options
-     *
      * @see CountDownRounds.updateDisplay
      */
-    CountDownRounds.prototype.init = function(options) {
-        this.displayDiv = W.get('div');
-        this.displayDiv.className = 'rounddiv';
-
-        this.titleDiv = W.add('div', this.displayDiv);
-        this.titleDiv.className = 'title';
-        this.titleDiv.innerHTML = 'Round left: ';
+    CountDownRounds.prototype.init = function() {
+        generalInit(this, 'rounddiv', 'Round Left');
 
         this.roundsLeft = W.add('div', this.displayDiv);
         this.roundsLeft.className = 'number';
@@ -50472,18 +49160,20 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.updateDisplay
      */
     CountDownRounds.prototype.updateDisplay = function() {
-        if (this.visualRound.totRound === this.visualRound.curRound) {
+        var v;
+        v = this.visualRound;
+        if (v.totRound === v.curRound) {
             this.roundsLeft.innerHTML = 0;
-            return;
         }
-        this.roundsLeft.innerHTML =
-                (this.visualRound.totRound - this.visualRound.curRound) || '?';
+        else {
+            this.roundsLeft.innerHTML = (v.totRound - v.curRound) || '?';
+        }
     };
 
     /**
      * # CompoundDisplayMode
      *
-     * Copyright(c) 2015 Stefano Balietti
+     * Copyright(c) 2017 Stefano Balietti
      * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the
@@ -50504,24 +49194,6 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound
      */
     function CompoundDisplayMode(visualRound, displayModes, options) {
-        var index;
-
-        /**
-         * ### CompoundDisplayMode.name
-         *
-         * The name of the displayMode
-         */
-        this.name = '';
-
-        for (index in displayModes) {
-            if (displayModes.hasOwnProperty(index)) {
-                this.name += displayModes[index].name + '&';
-            }
-        }
-
-        this.name = this.name.substr(0, this.name.length -1);
-
-        this.options = options || {};
 
         /**
          * ### CompoundDisplayMode.visualRound
@@ -50538,6 +49210,20 @@ if (!Array.prototype.indexOf) {
          * The array of displayModes to be used in combination
          */
         this.displayModes = displayModes;
+
+        /**
+         * ### CompoundDisplayMode.name
+         *
+         * The name of the displayMode
+         */
+        this.name = displayModes.join('&');
+
+        /**
+         * ### CompoundDisplayMode.options
+         *
+         * Current options
+         */
+        this.options = options || {};
 
         /**
          * ### CompoundDisplayMode.displayDiv
@@ -50561,17 +49247,13 @@ if (!Array.prototype.indexOf) {
      * @see CompoundDisplayMode.updateDisplay
      */
      CompoundDisplayMode.prototype.init = function(options) {
-        var index;
-        this.displayDiv = W.get('div');
-
-        for (index in this.displayModes) {
-            if (this.displayModes.hasOwnProperty(index)) {
-                this.displayDiv.appendChild(
-                    this.displayModes[index].displayDiv);
-            }
-        }
-
-        this.updateDisplay();
+         var i, len;
+         this.displayDiv = W.get('div');
+         i = -1, len = this.displayModes.length;
+         for (; ++i < len; ) {
+             this.displayDiv.appendChild(this.displayModes[i].displayDiv);
+         }
+         this.updateDisplay();
      };
 
     /**
@@ -50582,35 +49264,171 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.updateDisplay
      */
     CompoundDisplayMode.prototype.updateDisplay = function() {
-        var index;
-        for (index in this.displayModes) {
-            if (this.displayModes.hasOwnProperty(index)) {
-                this.displayModes[index].updateDisplay();
-            }
+        var i, len;
+        i = -1, len = this.displayModes.length;
+        for (; ++i < len; ) {
+            this.displayModes[i].updateDisplay();
         }
     };
 
     CompoundDisplayMode.prototype.activate = function() {
-        var index;
-        for (index in this.displayModes) {
-            if (this.displayModes.hasOwnProperty(index)) {
-                if (this.displayModes[index].activate) {
-                    this.displayModes[index].activate();
-                }
-            }
+        var i, len, d;
+        i = -1, len = this.displayModes.length;
+        for (; ++i < len; ) {
+            d = this.displayModes[i];
+            if (d.activate) this.displayModes[i].activate();
+            setLayout(d, this.visualRound.layout, i === (len-1));
         }
     };
 
     CompoundDisplayMode.prototype.deactivate = function() {
-        var index;
-        for (index in this.displayModes) {
-            if (this.displayModes.hasOwnProperty(index)) {
-                if (this.displayModes[index].deactivate) {
-                    this.displayMode[index].deactivate();
-                }
-            }
+        var i, len, d;
+        i = -1, len = this.displayModes.length;
+        for (; ++i < len; ) {
+            d = this.displayModes[i];
+            if (d.deactivate) d.deactivate();
         }
     };
+
+    CompoundDisplayMode.prototype.setLayout = function(layout) {
+        var i, len, d;
+        i = -1, len = this.displayModes.length;
+        for (; ++i < len; ) {
+            d = this.displayModes[i];
+            setLayout(d, layout, i === (len-1));
+        }
+    };
+
+    // ## Helper Methods.
+
+
+    function setLayout(d, layout, lastDisplay) {
+        if (layout === 'vertical' || layout === 'multimode_vertical' ||
+            layout === 'all_vertical') {
+
+            d.displayDiv.style.float = 'none';
+            d.titleDiv.style.float = 'none';
+            d.titleDiv.style['margin-right'] = '0px';
+            d.contentDiv.style.float = 'none';
+            return true;
+        }
+        if (layout === 'horizontal') {
+            d.displayDiv.style.float = 'none';
+            d.titleDiv.style.float = 'left';
+            d.titleDiv.style['margin-right'] = '6px';
+            d.contentDiv.style.float = 'right';
+            return true;
+        }
+        if (layout === 'multimode_horizontal') {
+            d.displayDiv.style.float = 'left';
+            d.titleDiv.style.float = 'none';
+            d.titleDiv.style['margin-right'] = '0px';
+            d.contentDiv.style.float = 'none';
+            if (!lastDisplay) {
+                d.displayDiv.style['margin-right'] = '10px';
+            }
+            return true;
+        }
+        if (layout === 'all_horizontal') {
+            d.displayDiv.style.float = 'left';
+            d.titleDiv.style.float = 'left';
+            d.titleDiv.style['margin-right'] = '6px';
+            d.contentDiv.style.float = 'right';
+            if (!lastDisplay) {
+                d.displayDiv.style['margin-right'] = '10px';
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * ### generalConstructor
+     *
+     * Sets up the basic attributes of visualization mode for VisualRound
+     *
+     * @param {object} that The visualization mode instance
+     * @param {VisualRound} visualRound The VisualRound instance
+     * @param {string} name The name of the visualization mode
+     * @param {object} options Additional options, e.g. 'toTotal'
+     */
+    function generalConstructor(that, visualRound, name, options) {
+
+        /**
+         * #### visualRound
+         *
+         * The `VisualRound` object to which the displayMode belongs
+         *
+         * @see VisualRound
+         */
+        that.visualRound = visualRound;
+
+        /**
+         * #### name
+         *
+         * The name of the displayMode
+         */
+        that.name = name;
+        if (options.toTotal) that.name += '_TO_TOTAL';
+
+        /**
+         * #### options
+         *
+         * The options for this instance
+         */
+        that.options = options || {};
+
+        /**
+         * #### displayDiv
+         *
+         * The DIV in which the information is displayed
+         */
+        that.displayDiv = null;
+
+        /**
+         * #### displayDiv
+         *
+         * The DIV in which the title is displayed
+         */
+        that.titleDiv = null;
+
+        /**
+         * #### contentDiv
+         *
+         * The DIV containing the actual information
+         */
+        that.contentDiv = null;
+
+        /**
+         * #### textDiv
+         *
+         * The span in which the text ` of ` is displayed
+         */
+        that.textDiv = null;
+
+    }
+
+    /**
+     * ### generalInit
+     *
+     * Adds three divs: a container with a nested title and content div
+     *
+     * Adds references to the instance: displayDiv, titleDiv, contentDiv.
+     *
+     * @param {object} The instance to which the references are added.
+     * @param {string} The name of the container div
+     */
+    function generalInit(that, containerName, title) {
+        that.displayDiv = W.get('div', { className: containerName });
+        that.titleDiv = W.add('div', that.displayDiv, {
+            className: 'title',
+            innerHTML: title
+        });
+        that.contentDiv = W.add('div', that.displayDiv, {
+            className: 'content'
+        });
+    }
 
 })(node);
 
@@ -50750,7 +49568,7 @@ if (!Array.prototype.indexOf) {
     VisualTimer.description = 'Display a configurable timer for the game. ' +
         'Can trigger events. Only for countdown smaller than 1h.';
 
-    VisualTimer.title = 'Time left';
+    VisualTimer.title = 'Time Left';
     VisualTimer.className = 'visualtimer';
 
     // ## Dependencies
@@ -51738,7 +50556,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} conf Configuration object.
      */
     WaitingRoom.prototype.init = function(conf) {
-        
+
         if ('object' !== typeof conf) {
             throw new TypeError('WaitingRoom.init: conf must be object. ' +
                                 'Found: ' + conf);
@@ -51988,7 +50806,7 @@ if (!Array.prototype.indexOf) {
             }
             // Not selected/no game/etc.
             else {
-                reportExitCode = that.getText('exitCode', msg.data);
+                reportExitCode = that.getText('exitCode', data);
 
                 if (data.action === 'NotEnoughPlayers') {
                     that.bodyDiv.innerHTML = that.getText('notEnoughPlayers');
@@ -52003,7 +50821,8 @@ if (!Array.prototype.indexOf) {
                         that.bodyDiv.innerHTML =
                             that.getText('notSelectedClosed');
 
-                        that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
+                        that.disconnect(that.bodyDiv.innerHTML +
+                                        reportExitCode);
                     }
                     else {
                         that.msgDiv.innerHTML = that.getText('notSelectedOpen');
@@ -52083,9 +50902,9 @@ if (!Array.prototype.indexOf) {
     WaitingRoom.prototype.alertPlayer = function() {
         var clearBlink, onFrame;
         var sound;
-        
+
         sound = this.getSound('dispatch');
-        
+
         // Play sound, if requested.
         if (sound) J.playSound(sound);
 
@@ -52270,8 +51089,7 @@ if (!Array.prototype.indexOf) {
      * @see WaitingRoom.getTexts
      */
     WaitingRoom.prototype.getText = function(name, param) {
-        return strGetter(this, name, 'texts',
-                         'WaitingRoom.getText', undefined, param);
+        return strGetter(this, name, 'texts', 'WaitingRoom.getText', param);
     };
 
     /**
@@ -52346,16 +51164,13 @@ if (!Array.prototype.indexOf) {
         if (!that.constructor[collection].hasOwnProperty(name)) {
             throw new Error(method + ': name not found: ' + name);
         }
-        res = that[collection][name];
+        res = that[collection][name] || that.constructor[collection][name];
         if ('function' === typeof res) {
             res = res(that, param);
             if ('string' !== typeof res) {
                 throw new TypeError(method + ': cb "' + name +
                                     'did not return a string. Found: ' + res);
             }
-        }
-        else if ('undefined' === typeof res) {
-            res = that.constructor[collection][name];
         }
         return res;
     }
@@ -52448,7 +51263,7 @@ if (!Array.prototype.indexOf) {
         if ('string' === typeof value ||
             'function' === typeof value ||
             false === value) {
-           
+
             that[collection][name] = value;
         }
         else {
