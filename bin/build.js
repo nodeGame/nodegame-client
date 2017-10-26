@@ -1,26 +1,26 @@
 #!/usr/bin/env node
 
-/**
- * # nodegame-client build script
- */
+//  # nodegame-client build script
+
 
 module.exports.build = build;
 module.exports.build_support = build_support;
 
 var smoosh = require('smoosh'),
-fs = require('fs'),
-path = require('path'),
-J = require('JSUS').JSUS;
+    fs = require('fs'),
+    path = require('path'),
+    J = require('JSUS').JSUS;
 
 var pkg = require('../package.json'),
-version = pkg.version;
+    version = pkg.version;
 
 var rootDir = path.resolve(__dirname, '..') + '/';
 var distDir =  rootDir + 'build/';
 
 
 function loadTemplate(name) {
-    return fs.readFileSync(path.join(__dirname, 'templates', name), 'utf-8');
+    return fs.readFileSync(
+               path.join(__dirname, 'templates', name), 'utf-8');
 }
 function write(filePath, str, mode) {
     fs.writeFileSync(filePath, str, { mode: mode || 0666 });
@@ -445,10 +445,10 @@ function smooshIt(conf) {
     }
 
     var text = conf.text || 'Build created!',
-    options = conf.options || {},
-    files = conf.files,
-    out = (path.extname(conf.out) === '.js') ? path.basename(conf.out, '.js')
-        : conf.out;
+        options = conf.options || {},
+        files = conf.files,
+        out = (path.extname(conf.out) === '.js') ?
+               path.basename(conf.out, '.js') : conf.out;
 
 
     // Configurations for file smooshing.

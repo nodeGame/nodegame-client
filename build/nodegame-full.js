@@ -1866,11 +1866,18 @@ if (!Array.prototype.indexOf) {
      *
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
+     * @param {function} cb Optional. A callback to execute one each shuffled
+     *   element (after re-positioning). This is always the last parameter, 
+     *   so if order is omitted, it goes second. The callback takes as input:
+     *     - the element
+     *     - the new order
+     *     - the old order
+     *
      *
      * @return {array} The order used to shuffle the nodes
      */
-    DOM.shuffleElements = function(parent, order) {
-        var i, len, idOrder, children, child;
+    DOM.shuffleElements = function(parent, order, cb) {
+        var i, len, numOrder, idOrder, children, child;
         var id;
         if (!JSUS.isNode(parent)) {
             throw new TypeError('DOM.shuffleElements: parent must be a node. ' +
@@ -1881,16 +1888,25 @@ if (!Array.prototype.indexOf) {
             return false;
         }
         if (order) {
-            if (!JSUS.isArray(order)) {
-                throw new TypeError('DOM.shuffleElements: order must array.' +
-                                   'Found: ' + order);
+            if ('undefined' === typeof cb && 'function' === typeof order) {
+                cb = order;
             }
-            if (order.length !== parent.children.length) {
-                throw new Error('DOM.shuffleElements: order length must ' +
-                                'match the number of children nodes.');
+            else {
+                if (!JSUS.isArray(order)) {
+                    throw new TypeError('DOM.shuffleElements: order must be ' +
+                                        'array. Found: ' + order);
+                }
+                if (order.length !== parent.children.length) {
+                    throw new Error('DOM.shuffleElements: order length must ' +
+                                    'match the number of children nodes.');
+                }
             }
         }
-
+        if (cb && 'function' !== typeof cb) {
+            throw new TypeError('DOM.shuffleElements: order must be ' +
+                                'array. Found: ' + order);
+        }
+        
         // DOM4 compliant browsers.
         children = parent.children;
 
@@ -1904,16 +1920,19 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // Get all ids.
         len = children.length;
         idOrder = new Array(len);
+        if (cb) numOrder = new Array(len);
         if (!order) order = JSUS.sample(0, (len-1));
         for (i = 0 ; i < len; i++) {
             id = children[order[i]].id;
             if ('string' !== typeof id || id === "") {
                 throw new Error('DOM.shuffleElements: no id found on ' +
-                                'child n. ' + order[i] + '.');
+                                'child n. ' + order[i]);
             }
             idOrder[i] = id;
+            if (cb) numOrder[i] = order[i];
         }
 
         // Two fors are necessary to follow the real sequence (Live List).
@@ -1921,6 +1940,7 @@ if (!Array.prototype.indexOf) {
         // could be unreliable.
         for (i = 0 ; i < len; i++) {
             parent.appendChild(children[idOrder[i]]);
+            if (cb) cb(children[idOrder[i]], i, numOrder[i]);
         }
         return idOrder;
     };
@@ -23757,7 +23777,7 @@ if (!Array.prototype.indexOf) {
                     widgetRoot =  W.getElementById(widgetRoot);
                     widgetObj = this.node.widgets.append(widget.name,
                                                          widgetRoot,
-                                                         widget.options);                   
+                                                         widget.options);
                 }
                 this[widget.ref] = widgetObj;
             };
@@ -29912,7 +29932,7 @@ if (!Array.prototype.indexOf) {
             }
         });
 
-// TODO: not used for now.        
+// TODO: not used for now.
 //         /**
 //          * ## in.get.SESSION
 //          *
@@ -31673,6 +31693,15 @@ if (!Array.prototype.indexOf) {
          */
         this.isIE = !!document.createElement('span').attachEvent;
 
+        /**
+         * ### GameWindow.willResizeFrame
+         *
+         * Boolean flag saying whether a call to resize the frame is in progress
+         *
+         * @see W.adjustFrameHeight
+         */
+        this.willResizeFrame = false;
+
         // Add setup functions.
         this.addDefaultSetups();
 
@@ -32077,6 +32106,13 @@ if (!Array.prototype.indexOf) {
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
+
+        // Add listener on resizing the page.
+        document.body.onresize = function() {
+            W.adjustFrameHeight(0, 120);
+        };
+
+
 
         return iframe;
     };
@@ -33140,6 +33176,71 @@ if (!Array.prototype.indexOf) {
         this.uriChannel = uriChannel;
     };
 
+    /**
+     * ### GameWindow.adjustFrameHeight
+     *
+     * Resets the min-height style of the iframe to fit its content properly
+     *
+     * Takes into the available height of the page, and the actual
+     * content of the iframe, which is stretched to either:
+     *
+     *  - (almost) till the end of the page,
+     *  - or to fit its content, if larger than page height (with scrollbar).
+     *
+     * @param {number} userMinHeight Optional. If set minHeight cannot be
+     *   less than this value. Default: 0
+     * @param {number} delay. If set, a timeout is created before the
+     *   the frame is actually adjusted. Multiple calls will be
+     *   evaluated only once at the end of a new timeout. Default: undefined
+     *
+     * @see W.willResizeFrame
+     */
+    GameWindow.prototype.adjustFrameHeight = (function() {
+        var nextTimeout, adjustIt;
+
+        adjustIt = function (userMinHeight) {
+            var iframe, minHeight, contentHeight;
+            iframe = W.getFrame();
+            // Iframe might have been destroyed already, e.g. in a test.
+            if (!iframe || !iframe.contentWindow) return;
+
+            // Try to find out how tall the frame should be.
+            minHeight = window.innerHeight || window.clientHeight;
+
+            contentHeight =
+                iframe.contentWindow.document.body.offsetHeight + 100;
+
+            if (minHeight < contentHeight) minHeight = contentHeight;
+            if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+
+            // Adjust min-height based on content.
+            iframe.style['min-height'] = minHeight + 'px';
+        };
+
+        return function(userMinHeight, delay) {
+            if ('undefined' === typeof delay) {
+                adjustIt(userMinHeight);
+                return;
+            }
+            if (W.willResizeFrame) {
+                nextTimeout = true
+                return;
+            }
+            W.willResizeFrame = setTimeout(function() {
+                W.willResizeFrame = null;
+                // If another timeout call was requested, do nothing now.
+                if (nextTimeout) {
+                    nextTimeout = false;
+                    W.adjustFrameHeight(userMinHeight, delay);
+                }
+                else {
+                    adjustIt(userMinHeight);
+                }
+            }, delay);
+        };
+
+    })();
+
     // ## Helper functions
 
     /**
@@ -33209,23 +33310,13 @@ if (!Array.prototype.indexOf) {
 
             func();
 
-            setTimeout(function() {
-                // Iframe might have been destroyed already, e.g. in a test.
-                if (!iframe || !iframe.contentWindow) return;
-                // Adjust min-height based on content.
-                iframe.style['min-height'] =
-                    (iframe.contentWindow.document.body.offsetHeight + 100) +
-                    'px';
-            });
-
+            // Important. We need a timeout (120), because some changes might
+            // take time to be reflected in the DOM.
+            W.adjustFrameHeight(0, 120);
         };
 
-        if (loadCache) {
-            reloadScripts(iframe, afterScripts);
-        }
-        else {
-            afterScripts();
-        }
+        if (loadCache) reloadScripts(iframe, afterScripts);
+        else afterScripts();
     }
 
     /**
@@ -33409,13 +33500,13 @@ if (!Array.prototype.indexOf) {
         case 'right':
             W.addClass(frame, 'ng_mainframe-header-vertical-r');
             if (header) {
-                frame.style['padding-right'] = header.offsetWidth + 10 + 'px';
+                frame.style['padding-right'] = header.offsetWidth + 50 + 'px';
             }
             break;
         case 'left':
             W.addClass(frame, 'ng_mainframe-header-vertical-l');
             if (header) {
-                frame.style['padding-left'] = header.offsetWidth + 10 + 'px';
+                frame.style['padding-left'] = header.offsetWidth + 50 + 'px';
             }
             break;
         case 'top':
@@ -33423,7 +33514,7 @@ if (!Array.prototype.indexOf) {
             // There might be no header yet.
             if (header) {
                 W.getFrameRoot().insertBefore(header, frame);
-                frame.style['padding-top'] = header.offsetHeight + 10 + 'px';
+                frame.style['padding-top'] = header.offsetHeight + 50 + 'px';
             }
             break;
         case 'bottom':
@@ -33431,7 +33522,7 @@ if (!Array.prototype.indexOf) {
             // There might be no header yet.
             if (header) {
                 W.getFrameRoot().insertBefore(header, frame.nextSibling);
-                frame.style['padding-bottom'] = header.offsetHeight + 10 + 'px';
+                frame.style['padding-bottom'] = header.offsetHeight + 50 + 'px';
             }
             break;
         }
@@ -35097,25 +35188,6 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### GameWindow.getScreenInfo
-     *
-     * Returns information about the screen in which nodeGame is running
-     *
-     * @return {object} A object containing the scren info
-     */
-    GameWindow.prototype.getScreenInfo = function() {
-        var screen = window.screen;
-        return {
-            height: screen.height,
-            widht: screen.width,
-            availHeight: screen.availHeight,
-            availWidth: screen.availWidht,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixedDepth
-        };
-    };
-
-    /**
      * ### GameWindow.getLoadingDots
      *
      * Creates and returns a span element with incrementing dots inside
@@ -35197,24 +35269,28 @@ if (!Array.prototype.indexOf) {
      * Creates an HTML button element that will emit an event when clicked
      *
      * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
+     * @param {string|object} attributes Optional. The attributes of the
+     *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
+     *
+     * @see GameWindow.get
      */
-    GameWindow.prototype.getEventButton =
-    function(event, text, id, attributes) {
-
+    GameWindow.prototype.getEventButton = function(event, attributes) {
         var b;
         if ('string' !== typeof event) {
             throw new TypeError('GameWindow.getEventButton: event must ' +
-                                'be string.');
+                                'be string. Found: ' + event);
         }
-        b = this.getButton(id, text, attributes);
-        b.onclick = function() {
-            node.emit(event);
-        };
+        if ('string' === typeof attributes) {
+            attributes = { innerHTML: attributes };
+        }
+        else if (!attributes) {
+            attributes = {};
+        }
+        if (!attributes.innerHTML) attributes.innerHTML = event;
+        b = this.get('button', attributes);
+        b.onclick = function() { node.emit(event); };
         return b;
     };
 
@@ -35223,30 +35299,21 @@ if (!Array.prototype.indexOf) {
      *
      * Adds an EventButton to the specified root element
      *
-     * If no valid root element is provided, it is append as last element
-     * in the current screen.
-     *
      * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
+     * @param {Element} root Optional. The root element. Default: last element
+     * on the page
+     * @param {string|object} attributes Optional. The attributes of the
+     *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
      *
+     * @see GameWindow.get
      * @see GameWindow.getEventButton
      */
-    GameWindow.prototype.addEventButton =
-    function(event, text, root, id, attributes) {
+    GameWindow.prototype.addEventButton = function(event, root, attributes) {
         var eb;
-
-        if (!event) return;
-        if (!root) {
-            root = this.getScreen();
-        }
-
-        eb = this.getEventButton(event, text, id, attributes);
-
+        eb = this.getEventButton(event, attributes);
+        if (!root) root = this.getScreen();
         return root.appendChild(eb);
     };
 
@@ -37755,7 +37822,7 @@ if (!Array.prototype.indexOf) {
             WidgetPrototype.className : options.className;
         widget.context = 'undefined' === typeof options.context ?
             WidgetPrototype.context : options.context;
-
+        widget.widgetName = widgetName;
         // Fixed properties.
 
         // Add random unique widget id.
@@ -37876,6 +37943,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Init default values.
+        options = options || {};
 
         // If no root is defined, use the body element of the main frame,
         // if none is found, use the document.body.
@@ -37884,7 +37952,11 @@ if (!Array.prototype.indexOf) {
             if (root) root = root.body;
             if (!root) root = document.body;
         }
-        options = options || {};
+        else if (root === W.getHeader() &&
+                 'undefined' === typeof options.panel) {
+
+            options.panel = false;
+        }
 
         // Check if it is a object (new widget).
         // If it is a string is the name of an existing widget.
@@ -37895,7 +37967,7 @@ if (!Array.prototype.indexOf) {
         tmp = options.panel === false ?
             [ 'ng_widget',  'no-panel', w.className ] :
             [ 'ng_widget', 'panel', 'panel-default', w.className ];
-        
+
         w.panelDiv = W.append('div', root, { className: tmp });
 
         // Optionally add title (and div).
@@ -37905,14 +37977,14 @@ if (!Array.prototype.indexOf) {
             w.setTitle(w.title, { className: tmp });
         }
 
-        // Add body (with or without panel).        
+        // Add body (with or without panel).
         tmp = options.panel !== false ? 'panel-body' : 'no-panel-body';
         w.bodyDiv = W.append('div', w.panelDiv, { className: tmp });
-        
+
         // Optionally add footer.
         if (w.footer) {
             tmp = options.panel === false ?
-                'no-panel-heading' : 'panel-heading';            
+                'no-panel-heading' : 'panel-heading';
             w.setFooter(w.footer);
         }
 
@@ -40652,7 +40724,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.2.0';
+    ChoiceTable.version = '1.3.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -40864,10 +40936,23 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceTable.order
          *
-         * The order of the choices as displayed (if shuffled)
+         * The current order of display of choices
+         *
+         * May differ from `originalOrder` if shuffled.
+         *
+         * @see ChoiceTable.originalOrder
          */
         this.order = null;
 
+        /**
+         * ### ChoiceTable.originalOrder
+         *
+         * The initial order of display of choices
+         *
+         * @see ChoiceTable.order
+         */
+        this.originalOrder = null;
+        
         /**
          * ### ChoiceTable.correctChoice
          *
@@ -41111,10 +41196,9 @@ if (!Array.prototype.indexOf) {
 
         // Set the groupOrder, if any.
         if ('number' === typeof options.groupOrder) {
-
             this.groupOrder = options.groupOrder;
         }
-        else if ('undefined' !== typeof options.group) {
+        else if ('undefined' !== typeof options.groupOrder) {
             throw new TypeError('ChoiceTable.init: options.groupOrder must ' +
                                 'be number or undefined. Found: ' +
                                 options.groupOrder);
@@ -41297,7 +41381,8 @@ if (!Array.prototype.indexOf) {
         // Save the order in which the choices will be added.
         this.order = J.seq(0, len-1);
         if (this.shuffleChoices) this.order = J.shuffle(this.order);
-
+        this.originalOrder = this.order;
+        
         // Build the table and choices at once (faster).
         if (this.table) this.buildTableAndChoices();
         // Or just build choices.
@@ -41905,6 +41990,7 @@ if (!Array.prototype.indexOf) {
             obj.choice = opts.processChoice.call(this, obj.choice);
         }
         if (this.shuffleChoices) {
+            obj.originalOrder = this.originalOrder;
             obj.order = this.order;
         }
         if (this.group === 0 || this.group) {
@@ -42161,7 +42247,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.2.0';
+    ChoiceTableGroup.version = '1.3.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
@@ -42306,6 +42392,13 @@ if (!Array.prototype.indexOf) {
         this.itemsById = {};
 
         /**
+         * ### ChoiceTableGroup.itemsMap
+         *
+         * Maps items ids to the position in the items array
+         */
+        this.itemsMap = {};
+        
+        /**
          * ### ChoiceTableGroup.choices
          *
          * Array of default choices (if passed as global parameter)
@@ -42331,9 +42424,22 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceTableGroup.order
          *
-         * The order of the items as displayed (if shuffled)
+         * The current order of display of choices
+         *
+         * May differ from `originalOrder` if shuffled.
+         *
+         * @see ChoiceTableGroup.originalOrder
          */
         this.order = null;
+
+        /**
+         * ### ChoiceTableGroup.originalOrder
+         *
+         * The initial order of display of choices
+         *
+         * @see ChoiceTable.order
+         */
+        this.originalOrder = null;
 
         /**
          * ### ChoiceTableGroup.shuffleItems
@@ -42678,11 +42784,11 @@ if (!Array.prototype.indexOf) {
         var len;
         if (!J.isArray(items)) {
             throw new TypeError('ChoiceTableGroup.setItems: ' +
-                                'items must be array.');
+                                'items must be array. Found: ' + items);
         }
         if (!items.length) {
             throw new Error('ChoiceTableGroup.setItems: ' +
-                            'items is empty array.');
+                            'items is an empty array.');
         }
 
         len = items.length;
@@ -42692,6 +42798,7 @@ if (!Array.prototype.indexOf) {
         // Save the order in which the items will be added.
         this.order = J.seq(0, len-1);
         if (this.shuffleItems) this.order = J.shuffle(this.order);
+        this.originalOrder = this.order;
 
         // Build the table and items at once (faster).
         if (this.table) this.buildTable();
@@ -43141,21 +43248,42 @@ if (!Array.prototype.indexOf) {
      * JSUS.shuffleElements
      */
     ChoiceTableGroup.prototype.shuffle = function(opts) {
-        var order, i, len, j, lenJ;
-        if (!this.items || !this.items.length) return;
-        order = J.shuffle(this.order);
+        var order, i, len, j, lenJ, that, cb, newOrder;
+        if (!this.items) return;
+        len = this.items.length;
+        if (!len) return;
+        that = this;
+        newOrder = new Array(len);
+        // Updates the groupOrder property of each item,
+        // and saves the order of items correctly.
+        cb = function(el, newPos, oldPos) {
+            var i;
+            i = el.id.split(that.separator);
+            i = that.orientation === 'H' ? i[2] : i[0];
+            i = that.itemsMap[i];
+            that.items[i].groupOrder = (newPos+1);
+            newOrder[newPos] = i;
+        };
+        order = J.shuffle(this.order);      
         if (this.orientation === 'H') {
-            J.shuffleElements(this.table, order);
+            J.shuffleElements(this.table, order, cb);
         }
         else {
-            i = -1, len = this.trs.length;
-            for ( ; ++i < len ; ) {
-                J.shuffleElements(this.trs[i], order);
+            // Here we maintain the columns manually. Each TR contains TD
+            // belonging to different items, we make sure the order is the
+            // same for all TR.
+            len = this.trs.length;
+            for ( i = -1 ; ++i < len ; ) {
+                J.shuffleElements(this.trs[i], order, cb);
+                // Call cb only on first iteration.
+                cb = undefined;
             }
         }
-        this.order = order;
+        this.order = newOrder;
     };
 
+
+    
     // ## Helper methods.
 
     /**
@@ -43229,8 +43357,9 @@ if (!Array.prototype.indexOf) {
      * @see mixinSettings
      */
     function getChoiceTable(that, i) {
-        var ct, s;
-        s = mixinSettings(that, that.itemsSettings[that.order[i]], i);
+        var ct, s, idx;
+        idx = that.order[i];
+        s = mixinSettings(that, that.itemsSettings[idx], i);
         ct = node.widgets.get('ChoiceTable', s);
         if (that.itemsById[ct.id]) {
             throw new Error('ChoiceTableGroup.buildTable: an item ' +
@@ -43241,7 +43370,8 @@ if (!Array.prototype.indexOf) {
                             'is missing a left cell: ' + s.id);
         }
         that.itemsById[ct.id] = ct;
-        that.items[i] = ct;
+        that.items[idx] = ct;
+        that.itemsMap[ct.id] = idx;
         return ct;
     }
 
@@ -44942,7 +45072,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Add Meta-data
 
-    EndScreen.version = '0.3.1';
+    EndScreen.version = '0.4.0';
     EndScreen.description = 'Game end screen. With end game message, ' +
         'email form, and exit code.';
 
@@ -45117,6 +45247,26 @@ if (!Array.prototype.indexOf) {
         }
 
         /**
+         * ### EndScreen.totalWinCb
+         *
+         * If defined, the return value is displayed inside the totalWin box
+         *
+         * Accepts two parameters: a data object (as sent from server), and
+         * the reference to the EndScreen.
+         */
+        if (options.totalWinCb) {
+            if ('function' === typeof options.totalWinCb) {
+                this.totalWinCb = options.totalWinCb;
+            }
+            else {
+                throw new TypeError('EndScreen constructor: ' +
+                                    'options.totalWinCb ' +
+                                    'must be function or undefined. ' +
+                                    'Found: ' + options.totalWinCb);
+            }
+        }
+
+        /**
          * ### EndScreen.emailForm
          *
          * EmailForm widget element
@@ -45160,7 +45310,11 @@ if (!Array.prototype.indexOf) {
         this.bodyDiv.appendChild(this.endScreenHTML);
     };
 
-    // makes the end screen
+    /**
+     * ### EndScreen.makeEndScreen
+     *
+     * Builds up the end screen (HTML + nested widgets)
+     */
     EndScreen.prototype.makeEndScreen = function() {
         var endScreenElement;
         var headerElement, messageElement;
@@ -45233,22 +45387,33 @@ if (!Array.prototype.indexOf) {
     // Implements the Widget.listeners method.
     EndScreen.prototype.listeners = function() {
         var that;
-
         that = this;
-
-        // Listeners added here are automatically removed
-        // when the widget is destroyed.
         node.on.data('WIN', function(message) {
-            var data;
-            var preWin, totalWin, exitCode;
-            var totalHTML, exitCodeHTML;
+            that.updateDisplay(message.data);
+        });
+    };
 
-            data = message.data;
-            exitCode = data.exit;
+    /**
+     * ### EndScreen.updateDisplay
+     *
+     * Updates the display
+     *
+     * @param {object} data An object containing the info to update. Format:
+     *    - total: The total won.
+     *    - exit: An exit code.
+     */
+    EndScreen.prototype.updateDisplay = function(data) {
+        var preWin, totalWin, exitCode;
+        var totalHTML, exitCodeHTML;
 
+        if (this.totalWinCb) {
+            totalWin = this.totalWinCb(data, this);
+        }
+        else {
             totalWin = J.isNumber(data.total, 0);
             if (totalWin === false) {
-                node.err('EndScreen error, invalid total win: ' + data.total);
+                node.err('EndScreen error, invalid total win: ' +
+                         data.total);
                 totalWin = 'Error: invalid total win.';
             }
             else if (data.partials) {
@@ -45268,24 +45433,27 @@ if (!Array.prototype.indexOf) {
                     }
                 }
             }
+            totalWin += ' ' + this.totalWinCurrency;
+        }
 
-            if ('string' !== typeof exitCode) {
-                node.err('EndScreen error, invalid exit code: ' + exitCode);
-                exitCode = 'Error: invalid exit code.';
-            }
+        exitCode = data.exit;
+        if ('string' !== typeof exitCode) {
+            node.err('EndScreen error, invalid exit code: ' + exitCode);
+            exitCode = 'Error: invalid exit code.';
+        }
 
-            totalHTML = that.totalWinInputElement;
-            exitCodeHTML = that.exitCodeInputElement;
+        totalHTML = this.totalWinInputElement;
+        exitCodeHTML = this.exitCodeInputElement;
 
-            if (totalHTML && that.showTotalWin) {
-                totalHTML.value = totalWin + ' ' + that.totalWinCurrency;
-            }
+        if (totalHTML && this.showTotalWin) {
+            totalHTML.value = totalWin;
+        }
 
-            if (exitCodeHTML && that.showExitCode) {
-                exitCodeHTML.value = exitCode;
-            }
-        });
+        if (exitCodeHTML && this.showExitCode) {
+            exitCodeHTML.value = exitCode;
+        }
     };
+
 })(node);
 
 /**
@@ -48536,7 +48704,7 @@ if (!Array.prototype.indexOf) {
          *
          * @see VisualRound.setLayout
          */
-        this.layout = 'vertical';
+        this.layout = null;
 
     }
 
@@ -48828,6 +48996,17 @@ if (!Array.prototype.indexOf) {
         this.updateDisplay();
     };
 
+    /**
+     * ### VisualRound.setLayout
+     *
+     * Arranges the relative position of the various elements of VisualRound
+     *
+     * @param {string} layout. Admitted values:
+     *   - 'vertical' (alias: 'multimode_vertical')
+     *   - 'horizontal'
+     *   - 'multimode_horizontal'
+     *   - 'all_horizontal'
+     */
     VisualRound.prototype.setLayout = function(layout) {
         if ('string' !== typeof layout || layout.trim() === '') {
             throw new TypeError('VisualRound.setLayout: layout must be ' +
@@ -49272,12 +49451,13 @@ if (!Array.prototype.indexOf) {
     };
 
     CompoundDisplayMode.prototype.activate = function() {
-        var i, len, d;
+        var i, len, d, layout;
+        layout = this.visualRound.layout;
         i = -1, len = this.displayModes.length;
         for (; ++i < len; ) {
             d = this.displayModes[i];
             if (d.activate) this.displayModes[i].activate();
-            setLayout(d, this.visualRound.layout, i === (len-1));
+            if (layout) setLayout(d, layout, i === (len-1));
         }
     };
 
@@ -50801,19 +50981,19 @@ if (!Array.prototype.indexOf) {
             data = msg.data || {};
 
             // Alert player he/she is about to play.
-            if (data.action === 'AllPlayersConnected') {
+            if (data.action === 'allPlayersConnected') {
                 that.alertPlayer();
             }
             // Not selected/no game/etc.
             else {
                 reportExitCode = that.getText('exitCode', data);
 
-                if (data.action === 'NotEnoughPlayers') {
-                    that.bodyDiv.innerHTML = that.getText('notEnoughPlayers');
+                if (data.action === 'notEnoughPlayers') {
+                    that.bodyDiv.innerHTML = that.getText(data.action);
                     if (that.onTimeout) that.onTimeout(msg.data);
                     that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
                 }
-                else if (data.action === 'NotSelected') {
+                else if (data.action === 'notSelected') {
 
                     if (false === data.shouldDispatchMoreGames ||
                         that.disconnectIfNotSelected) {
@@ -50828,7 +51008,7 @@ if (!Array.prototype.indexOf) {
                         that.msgDiv.innerHTML = that.getText('notSelectedOpen');
                     }
                 }
-                else if (data.action === 'Disconnect') {
+                else if (data.action === 'disconnect') {
                     that.disconnect(that.bodyDiv.innerHTML + reportExitCode);
                 }
             }
