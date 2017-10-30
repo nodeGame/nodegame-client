@@ -14,7 +14,7 @@ install:
 
 script:
 # Add nodegame-client tests here.
-  - ls -la node_modules
+  - ls -la node_modules/nodegame-client/node_modules/
   - npm test
   
 # Test Ultimatum game.
