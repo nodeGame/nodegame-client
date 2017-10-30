@@ -30,6 +30,6 @@
   , "engines": { "node": ">= 0.10.0" }
   , "scripts": {
       "test": "make test",
-      "test-ci": "mocha test/*.test.js"
+      "test-ci": "mocha test/"
   }
 }
