@@ -11,6 +11,7 @@ before_install:
 install:
   - npm install --only=dev
   - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --branch v4 --yes
+  - ln -s node_modules/nodegame-client/node_modules/socket.io-client node_modules/
 
 script:
 # Add nodegame-client tests here.
