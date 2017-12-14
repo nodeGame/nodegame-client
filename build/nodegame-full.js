@@ -23973,7 +23973,7 @@ if (!Array.prototype.indexOf) {
     Game.prototype.getCurrentStepObj = function() {
         return this.plot.getStep(this.getCurrentGameStage());
     };
-
+    
      /**
      * ### Game.getCurrentStep
      *
@@ -23982,6 +23982,23 @@ if (!Array.prototype.indexOf) {
      * @deprecated
      */
     Game.prototype.getCurrentStep = Game.prototype.getCurrentStepObj;
+
+    /**
+     * ### Game.getCurrentStageObj
+     *
+     * Returns the object representing the current game stage.
+     *
+     * The returning object includes all the properties, such as:
+     * _id_, _init_, etc.
+     *
+     * @return {object} The game-stage as defined in the stager.
+     *
+     * @see Stager
+     * @see GamePlot
+     */
+    Game.prototype.getCurrentStageObj = function() {
+        return this.plot.getStage(this.getCurrentGameStage());
+    };
 
     /**
      * ### Game.getCurrentStepProperty
@@ -50843,7 +50860,10 @@ if (!Array.prototype.indexOf) {
                 ('undefined' !== typeof data.exit ?
                  ('Please report this exit code: ' + data.exit) : '') +
                 '<br></h3>';
-        }
+        },
+
+        // #### playBot
+        playBot: 'Play With Bot'
     };
 
     /**
@@ -50973,6 +50993,13 @@ if (!Array.prototype.indexOf) {
          */
         this.disconnectIfNotSelected = null;
 
+        /**
+         * ### WaitingRoom.playWithBotOption
+         *
+         * Flag that indicates whether to display button that lets player begin
+         * the game with bots
+         */
+        this.playWithBotOption = null;
     }
 
     // ## WaitingRoom methods
@@ -50989,6 +51016,7 @@ if (!Array.prototype.indexOf) {
      *   - onSuccess: function executed when all tests succeed
      *   - waitTime: max waiting time to execute all tests (in milliseconds)
      *   - startDate: max waiting time to execute all tests (in milliseconds)
+     *   - playWithBotOption: display button to dispatch players with bots
      *
      * @param {object} conf Configuration object.
      */
@@ -51070,11 +51098,23 @@ if (!Array.prototype.indexOf) {
             this.disconnectIfNotSelected = false;
         }
 
-        // Sounds.
-        this.setSounds(conf.sounds);
+        if (conf.playWithBotOption) {
+            this.playWithBotOption = true;
+        }
+        else {
+            this.playWithBotOption = false;
+        }
 
-        // Texts.
-        this.setTexts(conf.texts);
+        if (this.playWithBotOption) {
+            this.playBotBtn = document.createElement('input');
+            this.playBotBtn.className = 'btn btn-secondary';
+            this.playBotBtn.value = this.getText('playBot');
+            this.playBotBtn.type = 'button';
+            this.playBotBtn.onclick = function () {
+                node.say('PLAYWITHBOT');
+            };
+            this.bodyDiv.appendChild(this.playBotBtn);
+        }
     };
 
     /**
@@ -51206,7 +51246,6 @@ if (!Array.prototype.indexOf) {
         if (this.waitTime) {
             this.startTimer();
         }
-
     };
 
     WaitingRoom.prototype.listeners = function() {
@@ -51219,6 +51258,13 @@ if (!Array.prototype.indexOf) {
                 node.warn('waiting room widget: invalid setup object: ' + conf);
                 return;
             }
+
+            // Sounds.
+            that.setSounds(conf.sounds);
+
+            // Texts.
+            that.setTexts(conf.texts);
+
             // Configure all requirements.
             that.init(conf);
 
