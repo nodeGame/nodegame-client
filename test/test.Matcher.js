@@ -12,6 +12,16 @@ var J = ngc.JSUS;
 var result, tmp;
 var matcher;
 
+
+matcher = new Matcher();
+matcher.generateMatches('roundrobin', 10, {
+    fixedRoles: true,
+    canMatchSameRole: false
+});
+
+console.log(matcher.matches);
+return;
+
 describe('Matcher', function() {
 
     describe('#constructor', function() {
