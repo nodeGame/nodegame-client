@@ -38,11 +38,11 @@
 
         if (node.conf.incomingAdded && !force) {
             node.err('node.addDefaultIncomingListeners: listeners already ' +
-                     'added once. Use the force flag to re-add.');
+                     'added. Use "force" to add again');
             return false;
         }
 
-        this.info('node: adding incoming listeners.');
+        this.info('node: adding incoming listeners');
 
         /**
          * ## in.say.BYE
@@ -283,8 +283,7 @@
          * Executes a game command (pause, resume, etc.)
          */
         node.events.ng.on( IN + say + 'GAMECOMMAND', function(msg) {
-            if (!checkGameCommandMsg(msg)) return;
-            node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+            emitGameCommandMsg(node, msg);
         });
 
         /**
@@ -294,8 +293,7 @@
          */
         node.events.ng.on( IN + get + 'GAMECOMMAND', function(msg) {
             var res;
-            if (!checkGameCommandMsg(msg)) return;
-            res = node.emit('NODEGAME_GAMECOMMAND_' + msg.text, msg.data);
+            res = emitGameCommandMsg(node, msg);
             if (!J.isEmpty(res)) {
                 // New key must contain msg.id.
                 node.say(msg.text + '_' + msg.id, msg.from, res);
@@ -428,21 +426,22 @@
     // ## Helper functions.
 
     /**
-     * ### checkGameCommandMsg
+     * ### emitGameCommandMsg
      *
-     * Checks that the incoming message contains a valid command and options
-     *
-     * Msg.data contains the options for the command. If string, it will be
-     * parsed with JSUS.parse
+     * Checks that the incoming message is valid, parses its data, and emits it
      *
      * @param {GameMsg} msg The incoming message
      *
+     * @return {mixed} The return value of the emit call
+     *
      * @see JSUS.parse
+     * @see node.emit
      */
-    function checkGameCommandMsg(msg) {
-        if ('string' !== typeof msg.text || msg.text.trim() === '') {
+    function emitGameCommandMsg(node, msg) {
+        var opts;
+        if ('string' !== typeof msg.text) {
             node.err('"in.' + msg.action + '.GAMECOMMAND": msg.text must be ' +
-                     'a non-empty string: ' + msg.text);
+                     'string. Found: ' + msg.text);
             return false;
         }
         if (!parent.constants.gamecommands[msg.text]) {
@@ -451,10 +450,8 @@
             return false;
         }
 
-        // Parse msg.data.
-        if ('string' === typeof msg.data) msg.data = J.parse(msg.data);
-
-        return true;
+        opts = 'string' === typeof msg.data ? J.parse(msg.data) : msg.data;
+        return node.emit('NODEGAME_GAMECOMMAND_' + msg.text, opts);
     }
 
 })(
