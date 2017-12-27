@@ -21680,6 +21680,9 @@ if (!Array.prototype.indexOf) {
      * @see Matcher.matches
      */
     Matcher.prototype.normalizeRound = function(round) {
+        if (!this.matches) {
+            throw new TypeError('Matcher.normalizeRound: no matches found.');
+        }
         if ('number' !== typeof round || isNaN(round) || round < 1) {
             throw new TypeError('Matcher.normalizeRound: round must be a ' +
                                 'number > 0. Found: ' + round);
@@ -23075,12 +23078,6 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports, parent) {
 
-
-    // TODO: delete afterwards.
-    var plroles = {};
-
-
-    
     "use strict";
 
     // ## Global scope
@@ -23528,7 +23525,7 @@ if (!Array.prototype.indexOf) {
     Game.prototype.isPaused = function() {
         return this.paused;
     };
-    
+
     /**
      * ### Game.pause
      *
@@ -23788,7 +23785,7 @@ if (!Array.prototype.indexOf) {
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
 
             matcherOptions = this.plot.getProperty(nextStep, 'matcher');
-            
+
             if (matcherOptions) {
 
                 // matches = [
@@ -23809,9 +23806,6 @@ if (!Array.prototype.indexOf) {
                     // TODO: Allow a more general modification of plot obj
                     // in remote clients via a new callback, e.g. remoteOptions.
                     remoteOptions = { plot: matches[i].options };
-
-                    if (!plroles[pid]) plroles[pid] = matches[i].options.role;
-                    else if (plroles[pid] !== matches[i].options.role) debugger;
 
                     if (curStep.stage === 0) {
                         node.remoteCommand('start', pid, {
@@ -27527,6 +27521,9 @@ if (!Array.prototype.indexOf) {
      * @see Matcher.matches
      */
     Matcher.prototype.normalizeRound = function(round) {
+        if (!this.matches) {
+            throw new TypeError('Matcher.normalizeRound: no matches found.');
+        }
         if ('number' !== typeof round || isNaN(round) || round < 1) {
             throw new TypeError('Matcher.normalizeRound: round must be a ' +
                                 'number > 0. Found: ' + round);
@@ -28862,17 +28859,20 @@ if (!Array.prototype.indexOf) {
     NGC.prototype.alias = function(alias, events, modifier) {
         var that;
         if ('string' !== typeof alias) {
-            throw new TypeError('node.alias: alias must be string.');
+            throw new TypeError('node.alias: alias must be string. Found: ' +
+                                alias);
         }
         if ('string' === typeof events) {
             events = [events];
         }
         if (!J.isArray(events)) {
-            throw new TypeError('node.alias: events must be array or string.');
+            throw new TypeError('node.alias: events must be array or string. ' +
+                                'Found: ' + events);
         }
         if (modifier && 'function' !== typeof modifier) {
             throw new TypeError(
-                'node.alias: modifier must be function or undefined.');
+                'node.alias: modifier must be function or undefined. Found: ' +
+                    modifier);
         }
 
         that = this;
@@ -29685,14 +29685,15 @@ if (!Array.prototype.indexOf) {
      *
      * Examples:
      *
-     * ```
-     *  // Redirect to http://mydomain/mygame/missing_auth
-     *  node.redirect('missing_auth', 'xxx');
+     * ```javascript
      *
-     *  // Redirect to external urls
-     *  node.redirect('http://www.google.com');
+     * // Redirect to http://mydomain/mygame/missing_auth
+     * node.redirect('missing_auth', 'xxx');
+     *
+     * // Redirect to external urls
+     * node.redirect('http://www.google.com');
      * ```
-     
+
      * @param {string} url the url of the redirection
      * @param {string} who A player id or any other valid _to_ field
      */
@@ -29740,7 +29741,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('node.remoteCommand: to must be string ' +
                                 'or array. Found: ' + to);
         }
-        if (options === "NODEGAME_GAMEOVER") debugger;
+
         // Stringify options, if any.
         if (options) options = J.stringify(options);
 
@@ -31289,6 +31290,7 @@ if (!Array.prototype.indexOf) {
      * Adds a battery of setup functions
      *
      * @param {boolean} force Whether to force re-adding the aliases
+     *
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultAliases = function(force) {
@@ -31315,7 +31317,14 @@ if (!Array.prototype.indexOf) {
         });
 
         // ### node.on.stage
-        this.alias('stage', 'in.set.STAGE');
+        this.alias('stage', 'STEPPING', function(cb) {
+            return function(curStep, newStep) {
+                if (curStep.stage !== newStep.stage) cb(curStep, newStep);
+            };
+        });
+    
+        // ### node.on.stage
+        this.alias('step', 'STEPPING');
 
         // ### node.on.plist
         this.alias('plist', ['in.set.PLIST', 'in.say.PLIST']);
@@ -31359,16 +31368,6 @@ if (!Array.prototype.indexOf) {
         this.alias('mdisconnect', 'in.say.MDISCONNECT', function(cb) {
             return function(msg) {
                 cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.stepdone
-        // Uses the step rule to determine when a step is DONE.
-        this.alias('stepdone', 'UPDATED_PLIST', function(cb) {
-            return function() {
-                if (that.game.shouldStep()) {
-                    cb.call(that.game, that.game.pl);
-                }
             };
         });
 
@@ -32112,8 +32111,7 @@ if (!Array.prototype.indexOf) {
          *
          * Content below/above/next to it needs to be slided accordingly.
          *
-         * @see adaptFrame2HeaderPosition
-         * @see W.adjustFrameHeight
+         * @see W.adjustHeaderOffset
          */
         this.headerOffset = 0;
 
@@ -32526,18 +32524,15 @@ if (!Array.prototype.indexOf) {
 
         this.setFrame(iframe, frameName, root);
 
-        if (this.frameElement) adaptFrame2HeaderPosition();
+        if (this.getHeader()) adaptFrame2HeaderPosition();
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
 
         // Add listener on resizing the page.
         document.body.onresize = function() {
-            console.log('RESIZE!!!!!!!!!!!!!!!!!!!!!!!!!!');
             W.adjustFrameHeight(0, 120);
         };
-
-
 
         return iframe;
     };
@@ -32925,6 +32920,8 @@ if (!Array.prototype.indexOf) {
         this.headerName = null;
         this.headerRoot = null;
         this.headerPosition = null;
+        this.headerOffset = 0;
+        this.adjustHeaderOffset(true);
     };
 
     /**
@@ -33620,70 +33617,15 @@ if (!Array.prototype.indexOf) {
      *   evaluated only once at the end of a new timeout. Default: undefined
      *
      * @see W.willResizeFrame
+     * @see W.adjustHeaderOffset
      */
-//     GameWindow.prototype.adjustFrameHeight = (function() {
-//         var nextTimeout, adjustIt;
-//
-//         adjustIt = function (userMinHeight) {
-//             var iframe, minHeight, contentHeight;
-//             var d;
-//
-//             iframe = W.getFrame();
-//             // Iframe might have been destroyed already, e.g. in a test.
-//             if (!iframe || !iframe.contentWindow) return;
-//
-//             // Try to find out how tall the frame should be.
-//             minHeight = window.innerHeight || window.clientHeight;
-//
-//             d = iframe.contentWindow.document;
-//
-//             contentHeight = Math.max(
-//                 d.body.offsetHeight,
-//                 d.body.scrollHeight
-//             );
-//
-//             // Rule of thumb.
-//             contentHeight += 120;
-//
-//             if (minHeight < contentHeight) minHeight = contentHeight;
-//             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
-//
-//             // Adjust min-height based on content.
-//             iframe.style['min-height'] = minHeight + 'px';
-//         };
-//
-//         return function(userMinHeight, delay) {
-//             if ('undefined' === typeof delay) {
-//                 adjustIt(userMinHeight);
-//                 return;
-//             }
-//             if (W.willResizeFrame) {
-//                 nextTimeout = true;
-//                 return;
-//             }
-//             W.willResizeFrame = setTimeout(function() {
-//                 W.willResizeFrame = null;
-//                 // If another timeout call was requested, do nothing now.
-//                 if (nextTimeout) {
-//                     nextTimeout = false;
-//                     W.adjustFrameHeight(userMinHeight, delay);
-//                 }
-//                 else {
-//                     adjustIt(userMinHeight);
-//                 }
-//             }, delay);
-//         };
-//
-//     })();
-
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
 
-        adjustIt = function (userMinHeight) {
+        adjustIt = function(userMinHeight) {
             var iframe, minHeight, contentHeight;
-            var b;
 
-            W.adjustHeaderPadding();
+            W.adjustHeaderOffset();
 
             iframe = W.getFrame();
             // Iframe might have been destroyed already, e.g. in a test.
@@ -33692,28 +33634,11 @@ if (!Array.prototype.indexOf) {
             // Try to find out how tall the frame should be.
             minHeight = window.innerHeight || window.clientHeight;
 
-            b = iframe.contentWindow.document.body;
-            if (false && 'function' === typeof getComputedStyle) {
-                contentHeight = parseFloat(getComputedStyle(b).height);
-            }
-            else {
-                contentHeight = b.offsetHeight;
-            }
-
-            // contentHeight = Math.max(
-                // d.body.offsetHeight,
-                // d.body.scrollHeight
-                // d.documentElement.offsetHeight,
-                // d.documentElement.scrollHeight,
-                // d.documentElement.clientHeight
-            // );
-
+            contentHeight = iframe.contentWindow.document.body.offsetHeight;
             // Rule of thumb.
-            contentHeight += 120;
+            contentHeight += 60;
 
-            if (W.headerPosition === "top") {
-                // contentHeight -= W.headerOffset;
-            }
+            if (W.headerPosition === "top") contentHeight += W.headerOffset;
 
             if (minHeight < contentHeight) minHeight = contentHeight;
             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
@@ -33746,68 +33671,87 @@ if (!Array.prototype.indexOf) {
 
     })();
 
+    /**
+     * ### GameWindow.adjustHeaderOffset
+     *
+     * Slides frame and/or infoPanel so that the header does not overlap
+     *
+     * Adjusts the CSS padding of the elements depending of the header
+     * position, but only if the size of of the header has changed from
+     * last time.
+     *
+     * @param {boolean} force Optional. If TRUE, padding is adjusted
+     *   regardless of whether the size of the header has changed
+     *   from last time
+     *
+     * @see W.headerOffset
+     */
+    GameWindow.prototype.adjustHeaderOffset = function(force) {
+        var position, frame, header, infoPanel, offset, offsetPx;
 
-    GameWindow.prototype.adjustHeaderPadding = (function() {
-        var extraPad;
-        extraPad = 0;
+        header = W.getHeader();
+        position = W.headerPosition;
 
-        return function() {
-            var position, frame, header, infoPanel, offset, offsetPx;
+        // Do not apply padding if nothing has changed.
+        if (!force &&
+            (!header && W.headerOffset ||
+             (position === "top" &&
+              header.offsetHeight === W.headerOffset))) {
 
-            console.log('PADDING!!!!!!!!!!!!!!!!!!');
+            return;
+        }
 
-            // TODO: here!
-            header = W.getHeader();
-            position = W.headerPosition;
+        frame = W.getFrame();
+        infoPanel = W.infoPanel;
+        // No frame nor infoPanel, nothing to do.
+        if (!frame && !infoPanel) return;
 
-            if (!header && !W.headerOffset ||
-                (position === "top" &&
-                 header.offsetHeight === W.headerOffset)) {
-
-                return;
+        switch(position) {
+        case 'top':
+            offset = header ? header.offsetHeight : 0;
+            offsetPx = offset + 'px';
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
+                frame.style['padding-top'] = 0;
             }
-
-            frame = W.getFrame();
-            infoPanel = W.infoPanel;
-            if (!frame && !infoPanel) return;
-
-            switch(position) {
-            case 'right':
-                offset = header.offsetWidth;
-                offsetPx = (offset + extraPad) + 'px';
-                if (frame) frame.style['padding-right'] = offsetPx;
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
+            else {
+                if (infoPanel && infoPanel.infoPanelDiv) {
+                    infoPanel.infoPanelDiv.style['padding-top'] = 0;
                 }
-                break;
-            case 'left':
-                offset = header.offsetWidth;
-                offsetPx = (offset + extraPad) + 'px';
-                if (frame) frame.style['padding-left'] = offsetPx;
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
-                }
-                break;
-            case 'top':
-                offset = header.offsetHeight;
-                offsetPx = (offset + extraPad) + 'px';
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
-                }
-                else frame.style['padding-top'] = offsetPx;
-
-                break;
-            case 'bottom':
-                offset = header.offsetHeight;
-                offsetPx = (offset + extraPad) + 'px';
-                frame.style['padding-bottom'] = offsetPx;
-                break;
+                frame.style['padding-top'] = offsetPx;
             }
+            break;
+        case 'bottom':
+            offset = header ? header.offsetHeight : 0;
+            offsetPx = offset + 'px';
+            frame.style['padding-bottom'] = offsetPx;
+            if (infoPanel && infoPanel.infoPanelDiv) {
+                infoPanel.infoPanelDiv.style['padding-top'] = 0;
+            }
+            break;
+        case 'right':
+            offset = header ? header.offsetWidth : 0;
+            offsetPx = offset + 'px';
+            if (frame) frame.style['padding-right'] = offsetPx;
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
+            }
+            break;
+        case 'left':
+            offset = header ? header.offsetWidth : 0;
+            offsetPx = offset + 'px';
+            if (frame) frame.style['padding-left'] = offsetPx;
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
+            }
+            break;
+        }
 
-            W.headerOffset = offset;
-        };
-    })();
-    
+        // Store the value of current offset.
+        W.headerOffset = offset;
+    };
+
+
     // ## Helper functions
 
     /**
@@ -34036,69 +33980,14 @@ if (!Array.prototype.indexOf) {
      *
      * The frame element must exists or an error will be thrown.
      *
-     * @param {GameWindow} W The current GameWindow object
      * @param {string} oldHeaderPos Optional. The previous position of the
      *   header
      *
      * @api private
      */
-//     function adaptFrame2HeaderPosition(W, oldHeaderPos) {
-//         var position, frame, header;
-//
-//         frame = W.getFrame();
-//         if (!frame) {
-//             throw new Error('adaptFrame2HeaderPosition: frame not found.');
-//         }
-//
-//         // If no header is found, simulate the 'top' position to better
-//         // fit the whole screen.
-//         position = W.headerPosition || 'top';
-//
-//         header = W.getHeader();
-//
-//         // When we move from bottom to any other configuration, we need
-//         // to move the header before the frame.
-//         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
-//             W.getFrameRoot().insertBefore(W.headerElement, frame);
-//         }
-//
-//         W.removeClass(frame, 'ng_mainframe-header-[a-z-]*');
-//         switch(position) {
-//         case 'right':
-//             W.addClass(frame, 'ng_mainframe-header-vertical-r');
-//             if (header) {
-//                 frame.style['padding-right'] = header.offsetWidth + 50+'px';
-//             }
-//             break;
-//         case 'left':
-//             W.addClass(frame, 'ng_mainframe-header-vertical-l');
-//             if (header) {
-//                 frame.style['padding-left'] = header.offsetWidth + 50+'px';
-//             }
-//             break;
-//         case 'top':
-//             W.addClass(frame, 'ng_mainframe-header-horizontal-t');
-//             // There might be no header yet.
-//             if (header) {
-//                 W.getFrameRoot().insertBefore(header, frame);
-//                 frame.style['padding-top'] = header.offsetHeight + 50+'px';
-//             }
-//             break;
-//         case 'bottom':
-//             W.addClass(frame, 'ng_mainframe-header-horizontal-b');
-//             // There might be no header yet.
-//             if (header) {
-//                 W.getFrameRoot().insertBefore(header, frame.nextSibling);
-//                 frame.style['padding-bottom'] = header.offsetHeight +50+'px';
-//             }
-//             break;
-//         }
-//     }
-
     function adaptFrame2HeaderPosition(oldHeaderPos) {
         var position, frame, header;
 
-        console.log('adaptFrame2Header!!!!!!!!!!!!!!!!!!');
         frame = W.getFrame();
         if (!frame) return;
 
@@ -35216,56 +35105,8 @@ if (!Array.prototype.indexOf) {
         else {
             options.onStep = null;
         }
-
-        /**
-         * ### InfoPanel.onStage
-         *
-         * Performs an action ('clear', 'open', 'close') at every new stage
-         *
-         * Default: null
-         */
-        if ('undefined' !== typeof options.onStage) {
-            if ('open' === options.onStage ||
-                'close' === options.onStage ||
-                'clear' ===  options.onStage) {
-
-                this.onStage = options.onStage;
-            }
-            else {
-                throw new TypeError('InfoPanel constructor: options.onStage ' +
-                                    'must be string "open", "close", "clear" ' +
-                                    'or undefined. Found: ' + options.onStage);
-            }
-        }
-        else {
-            options.onStage = null;
-        }
-
-        if (this.onStep || this.onStage) {
-            that = this;
-            node.events.game.on('STEPPING', function(curStep, newStep) {
-                var newStage;
-                newStage = curStep.stage !== newStep.stage;
-
-                if ((that.onStep === 'close' && that.isVisible) ||
-                    (newStage && that.onStage === 'close')) {
-
-                    that.close();
-                }
-                else if (that.onStep === 'open' ||
-                         (newStage && that.onStage === 'open')) {
-
-                    that.open();
-                }
-                else if (that.onStep === 'clear' ||
-                         (newStage && that.onStage === 'clear')) {
-
-                    that.clear();
-                }
-            });
-        }
     };
-
+    
     /**
      * ### InfoPanel.clear
      *
@@ -35274,7 +35115,7 @@ if (!Array.prototype.indexOf) {
     InfoPanel.prototype.clear = function() {
         this.infoPanelDiv.innerHTML = '';
         this.actionsLog.push({ clear: J.now() });
-        W.adjustHeaderPadding();
+        W.adjustHeaderOffset(true);
     };
 
     /**
@@ -35295,15 +35136,21 @@ if (!Array.prototype.indexOf) {
      *
      * Removes the Info Panel from the DOM and the internal references to it
      *
+     * @param {actionsLog} If TRUE, also the actions log is deleted, otherwise
+     *   a destroy action is added. Default: false.
+     *
      * @see InfoPanel.infoPanelDiv
      * @see InfoPanel._buttons
      */
-    InfoPanel.prototype.destroy = function() {
+    InfoPanel.prototype.destroy = function(actionsLog) {
         var i, len;
+        if (actionsLog) this.actionsLog = [];
+        else this.actionsLog.push({ destroy: J.now() });
+       
         if (this.infoPanelDiv.parentNode) {
             this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
         }
-        this.actionsLog.push({ destroy: J.now() });
+        this.isVisible = false;
         this.infoPanelDiv = null;
         i = -1, len = this._buttons.length;
         for ( ; ++i < len ; ) {
@@ -35311,7 +35158,7 @@ if (!Array.prototype.indexOf) {
                 this._buttons[i].parentNode.removeChild(this._buttons[i]);
             }
         }
-        W.adjustHeaderPadding();
+        W.adjustHeaderOffset(true);
     };
 
     /**
@@ -35342,7 +35189,7 @@ if (!Array.prototype.indexOf) {
         this.infoPanelDiv.style.display = 'block';
         this.isVisible = true;
         // Must be at the end.
-        W.adjustHeaderPadding();
+        W.adjustHeaderOffset(true);
     };
 
     /**
@@ -35360,7 +35207,7 @@ if (!Array.prototype.indexOf) {
         this.infoPanelDiv.style.display = 'none';
         this.isVisible = false;
         // Must be at the end.
-        W.adjustHeaderPadding();
+        W.adjustHeaderOffset(true);
     };
 
     /**
@@ -46444,7 +46291,7 @@ if (!Array.prototype.indexOf) {
         label: 'Any feedback about the experiment? Let us know here:',
         sent: 'Sent!'
     };
-    
+
     // ## Dependencies
 
     Feedback.dependencies = {
@@ -51945,6 +51792,8 @@ if (!Array.prototype.indexOf) {
             var data, reportExitCode;
             msg = msg || {};
             data = msg.data || {};
+
+            if (that.dots) that.dots.stop();
 
             // Alert player he/she is about to play.
             if (data.action === 'allPlayersConnected') {
