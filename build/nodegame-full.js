@@ -31322,7 +31322,7 @@ if (!Array.prototype.indexOf) {
                 if (curStep.stage !== newStep.stage) cb(curStep, newStep);
             };
         });
-    
+
         // ### node.on.stage
         this.alias('step', 'STEPPING');
 
@@ -35105,8 +35105,56 @@ if (!Array.prototype.indexOf) {
         else {
             options.onStep = null;
         }
+
+        /**
+         * ### InfoPanel.onStage
+         *
+         * Performs an action ('clear', 'open', 'close') at every new stage
+         *
+         * Default: null
+         */
+        if ('undefined' !== typeof options.onStage) {
+            if ('open' === options.onStage ||
+                'close' === options.onStage ||
+                'clear' ===  options.onStage) {
+
+                this.onStage = options.onStage;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStage ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStage);
+            }
+        }
+        else {
+            options.onStage = null;
+        }
+
+        if (this.onStep || this.onStage) {
+            that = this;
+            node.events.game.on('STEPPING', function(curStep, newStep) {
+                var newStage;
+                newStage = curStep.stage !== newStep.stage;
+
+                if ((that.onStep === 'close' && that.isVisible) ||
+                    (newStage && that.onStage === 'close')) {
+
+                    that.close();
+                }
+                else if (that.onStep === 'open' ||
+                         (newStage && that.onStage === 'open')) {
+
+                    that.open();
+                }
+                else if (that.onStep === 'clear' ||
+                         (newStage && that.onStage === 'clear')) {
+
+                    that.clear();
+                }
+            });
+        }
     };
-    
+
     /**
      * ### InfoPanel.clear
      *
@@ -35137,7 +35185,7 @@ if (!Array.prototype.indexOf) {
      * Removes the Info Panel from the DOM and the internal references to it
      *
      * @param {actionsLog} If TRUE, also the actions log is deleted, otherwise
-     *   a destroy action is added. Default: false.
+     *   the destroy action is added. Default: false.
      *
      * @see InfoPanel.infoPanelDiv
      * @see InfoPanel._buttons
@@ -35146,7 +35194,7 @@ if (!Array.prototype.indexOf) {
         var i, len;
         if (actionsLog) this.actionsLog = [];
         else this.actionsLog.push({ destroy: J.now() });
-       
+
         if (this.infoPanelDiv.parentNode) {
             this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
         }
@@ -35667,7 +35715,8 @@ if (!Array.prototype.indexOf) {
     GameWindow.prototype.getLoadingDots = function(len, id) {
         var spanDots, i, limit, intervalId;
         if (len & len < 0) {
-            throw new Error('GameWindow.getLoadingDots: len < 0.');
+            throw new Error('GameWindow.getLoadingDots: len cannot be < 0. ' +
+                            'Found: ' + len);
         }
         len = len || 5;
         spanDots = document.createElement('span');
