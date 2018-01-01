@@ -45,7 +45,7 @@
 
         this.info('node: adding internal listeners.');
 
-        function done(what) {
+        function done() {
             var res;
             node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
@@ -122,7 +122,7 @@
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
-            if (node.game.willBeDone) done('PLAYING');
+            if (node.game.willBeDone) done();
         });
 
         /**
