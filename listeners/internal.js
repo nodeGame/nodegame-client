@@ -45,12 +45,8 @@
 
         this.info('node: adding internal listeners.');
 
-        function done() {
+        function done(what) {
             var res;
-            // No incoming messages should be emitted before
-            // evaluating the step rule and definitely setting
-            // the stageLevel to DONE, otherwise the stage of
-            // other clients could change in between.
             node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
             node.game.beDone = false;
@@ -73,11 +69,13 @@
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var stageLevel;
-            stageLevel = node.game.getStageLevel();
+
+            // If willBeDone is not set, then PLAYING called DONE earlier.
+            // Can happen if node.done() is called before PLAYING.
+            if (!node.game.willBeDone) return;
 
             // TODO check >=.
-            if (stageLevel >= stageLevels.PLAYING) done();
+            if (node.game.getStageLevel() >= stageLevels.PLAYING) done();
             else node.game.willBeDone = true;
         });
 
@@ -124,7 +122,7 @@
             node.timer.setTimestamp('step', currentTime);
 
             // DONE was previously emitted, we just execute done handler.
-            if (node.game.willBeDone) done();
+            if (node.game.willBeDone) done('PLAYING');
         });
 
         /**

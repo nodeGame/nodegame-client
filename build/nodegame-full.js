@@ -24470,21 +24470,18 @@ if (!Array.prototype.indexOf) {
      * @see Game.shouldPublishUpdate
      */
     Game.prototype.publishUpdate = function(type, update) {
-        var node;
         if ('string' !== typeof type) {
-            throw new TypeError('Game.publishUpdate: type must be string.');
+            throw new TypeError('Game.publishUpdate: type must be string. ' +
+                               'Found: ' + type);
         }
         if (type !== 'stage' &&
             type !== 'stageLevel' &&
             type !== 'stateLevel') {
 
-            throw new Error(
-                'Game.publishUpdate: unknown update type (' + type + ')');
+            throw new Error('Game.publishUpdate: unknown update type: ' + type);
         }
-        node = this.node;
-
         if (this.shouldPublishUpdate(type, update)) {
-            node.socket.send(node.msg.create({
+            this.node.socket.send(this.node.msg.create({
                 target: constants.target.PLAYER_UPDATE,
                 data: update,
                 text: type,
@@ -30219,6 +30216,8 @@ if (!Array.prototype.indexOf) {
             var o = msg.data;
             o.player = msg.from, o.stage = msg.stage;
             node.game.memory.add(o);
+            // console.log(msg.from, 'DONE', msg.stage);
+            // console.log('oooooooooooooooooooooooooooo');
         });
 
         /**
@@ -30232,6 +30231,8 @@ if (!Array.prototype.indexOf) {
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
             var p;
             p = node.game.pl.updatePlayer(msg.from, msg.data);
+            console.log(msg.from, msg.data, msg.stage);
+            console.log('----------------------------');
             node.emit('UPDATED_PLIST', 'pupdate', p);
             if (node.game.shouldStep()) node.game.step();
             else if (node.game.shouldEmitPlaying()) node.emit('PLAYING');
@@ -33745,6 +33746,22 @@ if (!Array.prototype.indexOf) {
                 infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
             }
             break;
+        default:
+            // When header is destroyed, for example.
+            if (position !== null) {
+                throw new Error('GameWindow.adjustHeaderOffset: invalid ' +
+                                'header position. Found: ' + position);
+            }
+            if (header) {
+                throw new Error('GameWindow.adjustHeaderOffset: something ' +
+                                'is wrong. Header found, but position is ' +
+                                'null.');
+            }
+            // Remove all padding.
+            if (frame) frame.style.padding = 0;
+            if (infoPanel && infoPanel.infoPanelDiv) {
+                infoPanel.infoPanelDiv.padding = 0;
+            }
         }
 
         // Store the value of current offset.
@@ -46560,6 +46577,8 @@ if (!Array.prototype.indexOf) {
             charCounter = document.createElement('span');
             charCounter.className = 'feedback-char-count badge';
             charCounter.innerHTML = this.maxLength;
+            // Until no char is inserted is hidden.
+            charCounter.style.display = 'none';
             feedbackForm.appendChild(charCounter);
         }
 
@@ -46639,6 +46658,7 @@ if (!Array.prototype.indexOf) {
         if (updateUI) {
             submitButton.disabled = !res;
             if (charCounter) {
+                charCounter.style.display = length ? '' : 'none';
                 charCounter.style.backgroundColor = updateColor;
                 charCounter.innerHTML = updateCount;
             }
