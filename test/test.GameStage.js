@@ -1,6 +1,6 @@
 "use strict";
 
-var util = require('util'),
+var util = require('util');
 var should = require('should');
 
 var node = module.exports.node = require('../index.js');
