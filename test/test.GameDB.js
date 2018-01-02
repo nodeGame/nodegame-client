@@ -1,7 +1,7 @@
 "use strict";
 
-var util = require('util'),
-should = require('should');
+var util = require('util');
+var should = require('should');
 
 var log = console.log;
 
