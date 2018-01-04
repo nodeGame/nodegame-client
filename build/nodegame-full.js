@@ -19062,11 +19062,22 @@ if (!Array.prototype.indexOf) {
         /**
          * ### Socket.buffer
          *
-         * Buffer of queued messages
+         * Buffer of queued incoming messages
          *
          * @api private
          */
         this.buffer = [];
+
+        /**
+         * ### Socket.outBuffer
+         *
+         * Buffer of queued outgoing messages
+         *
+         * TODO: implement!
+         *
+         * @api private
+         */
+        // this.outBuffer = [];
 
         /**
          * ### Socket.session
@@ -19742,16 +19753,26 @@ if (!Array.prototype.indexOf) {
     Socket.prototype.send = function(msg) {
         var outEvent;
 
-        if (!this.isConnected()) {
-            this.node.err('Socket.send: cannot send message. No open socket.');
+        if (!msg.from || msg.from === this.node.UNDEFINED_PLAYER) {
+            this.node.err('Socket.send: cannot send message. ' +
+                          'Player undefined. Message discarded.');
             return false;
         }
 
-        if (!msg.from || msg.from === this.node.UNDEFINED_PLAYER) {
+        if (!this.isConnected()) {
             this.node.err('Socket.send: cannot send message. ' +
-                          'Player undefined.');
+                          'No open socket. Message discarded.');
+
+            // TODO: test this
+            // this.outBuffer.push(msg);
             return false;
         }
+
+        // TODO: test this
+        // if (!this.node.game.isReady()) {
+        //     this.outBuffer.push(msg);
+        //     return false;
+        // }
 
         // Emit out event, if required.
         if (this.emitOutMsg) {
@@ -23914,17 +23935,24 @@ if (!Array.prototype.indexOf) {
         // inserted in the plot, or be already in the plot.
         role = this.plot.getProperty(nextStep, 'role');
 
-        if (!role) role = null;
-        else if (role === true) role = this.role;
-        else if ('function' === typeof role) role = role.call(this);
-
-        if (role === null && this.getProperty('roles') !== null) {
-            throw new Error('Game.gotoStep: "role" is null, but "roles" ' +
-                            'are found in step ' + nextStep);
+        if (role === true) {
+            if (!this.role) {
+                throw new Error('Game.gotoStep: "role" is true, but no ' +
+                                'previous role is found in step ' + nextStep);
+            }
         }
+        else {
+            if (!role) role = null;
+            else if ('function' === typeof role) role = role.call(this);
+        
+            if (role === null && this.getProperty('roles') !== null) {
+                throw new Error('Game.gotoStep: "role" is null, but "roles" ' +
+                                'are found in step ' + nextStep);
+            }
 
-        // Overwrites step properties if a role is set.
-        this.setRole(role, true);
+            // Overwrites step properties if a role is set.
+            this.setRole(role, true);
+        }
 
         partner = this.plot.getProperty(nextStep, 'partner');
         if (!partner) partner = null;
@@ -24890,15 +24918,17 @@ if (!Array.prototype.indexOf) {
                                 this.getCurrentGameStage());
             }
             roles = this.getProperty('roles');
+            // If FALSE, does not check the roles object, but let set the role.
             if (!roles) {
-                throw new Error('Game.setRole: trying to set role "' + role +
-                                '", but \'roles\' not found in current step: ' +
+                throw new Error('Game.setRole: trying to set role "' +
+                                role + '", but \'roles\' not found in ' +
+                                'current step: ' +
                                 this.getCurrentGameStage());
             }
             roleObj = roles[role];
             if (!roleObj) {
-                throw new Error('Game.setRole: role "' + role + '" not found ' +
-                                'in current step: ' +
+                throw new Error('Game.setRole: role "' + role +
+                                '" not found in current step: ' +
                                 this.getCurrentGameStage());
             }
 
@@ -24908,6 +24938,7 @@ if (!Array.prototype.indexOf) {
                     this.plot.tmpCache(prop, roleObj[prop]);
                 }
             }
+            
         }
         else if (role !== null) {
             throw new TypeError('Game.setRole: role must be string or null. ' +
@@ -29519,7 +29550,8 @@ if (!Array.prototype.indexOf) {
 
         game = this.game;
         if (game.willBeDone || game.getStageLevel() >= GETTING_DONE) {
-            this.err('node.done: done already called in this step.');
+            this.err('node.done: done already called in step: ' +
+                     game.getCurrentGameStage());
             return false;
         }
 
@@ -29588,6 +29620,9 @@ if (!Array.prototype.indexOf) {
         // Keep track that the game will be done (done is asynchronous)
         // to avoid calling `node.done` multiple times in the same stage.
         game.willBeDone = true;
+
+        // TODO: it is possible that DONE messages (in.set.DATA) are sent
+        // to server before PLAYING is set. Is this OK?
 
         // Args can be the original arguments array, or
         // the one returned by the done callback.
@@ -30216,8 +30251,6 @@ if (!Array.prototype.indexOf) {
             var o = msg.data;
             o.player = msg.from, o.stage = msg.stage;
             node.game.memory.add(o);
-            // console.log(msg.from, 'DONE', msg.stage);
-            // console.log('oooooooooooooooooooooooooooo');
         });
 
         /**
@@ -30231,8 +30264,6 @@ if (!Array.prototype.indexOf) {
         node.events.ng.on( IN + say + 'PLAYER_UPDATE', function(msg) {
             var p;
             p = node.game.pl.updatePlayer(msg.from, msg.data);
-            console.log(msg.from, msg.data, msg.stage);
-            console.log('----------------------------');
             node.emit('UPDATED_PLIST', 'pupdate', p);
             if (node.game.shouldStep()) node.game.step();
             else if (node.game.shouldEmitPlaying()) node.emit('PLAYING');
@@ -30526,10 +30557,6 @@ if (!Array.prototype.indexOf) {
 
         function done() {
             var res;
-            // No incoming messages should be emitted before
-            // evaluating the step rule and definitely setting
-            // the stageLevel to DONE, otherwise the stage of
-            // other clients could change in between.
             node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
             node.game.beDone = false;
@@ -30552,11 +30579,13 @@ if (!Array.prototype.indexOf) {
          */
         this.events.ng.on('DONE', function() {
             // Execute done handler before updating stage.
-            var stageLevel;
-            stageLevel = node.game.getStageLevel();
+
+            // If willBeDone is not set, then PLAYING called DONE earlier.
+            // Can happen if node.done() is called before PLAYING.
+            if (!node.game.willBeDone) return;
 
             // TODO check >=.
-            if (stageLevel >= stageLevels.PLAYING) done();
+            if (node.game.getStageLevel() >= stageLevels.PLAYING) done();
             else node.game.willBeDone = true;
         });
 
