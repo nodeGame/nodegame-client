@@ -3395,7 +3395,8 @@ if (!Array.prototype.indexOf) {
 
             return _keys(obj, myLevel, 0, curParent, options.concat,
                          allKeys, leafKeys, levelKeys, separator,
-                         options.array || [], keys, options.skip, options.cb);
+                         options.array || [], keys, options.skip || {},
+                         options.cb);
         }
 
         function _keys(obj, level, curLevel, curParent,
@@ -3412,28 +3413,26 @@ if (!Array.prototype.indexOf) {
                         (leafKeys && (isLevel || !isObj)) ||
                         (levelKeys && isLevel)) {
 
-                        if (!skipKeys || !skipKeys[key]) {
-                            if (concatKeys) {
-                                tmp = curParent + key;
+                        if (concatKeys) {
+                            tmp = curParent + key;
+                            if (!skipKeys[tmp]) {
                                 if (cb) _doCb(tmp, res, cb);
                                 else res.push(tmp);
-
-                            }
-                            else {
-                                if (uniqueKeys){
-                                    if (!uniqueKeys[key]) {
-                                        if (cb) _doCb(key, res, cb);
-                                        else res.push(key);
-                                        uniqueKeys[key] = true;
-                                    }
-                                }
-                                else {
-                                    if (cb) _doCb(key, res, cb);
-                                    else res.push(key);
-                                }
                             }
                         }
-
+                        else if (!skipKeys[key]) {
+                            if (uniqueKeys){
+                                if (!uniqueKeys[key]) {
+                                    if (cb) _doCb(key, res, cb);
+                                    else res.push(key);
+                                    uniqueKeys[key] = true;
+                                }
+                            }
+                            else {
+                                if (cb) _doCb(key, res, cb);
+                                else res.push(key);
+                            }
+                        }
                     }
                     if (isObj && (curLevel < level)) {
                         _keys(obj[key], level, (curLevel+1),
@@ -23944,7 +23943,7 @@ if (!Array.prototype.indexOf) {
         else {
             if (!role) role = null;
             else if ('function' === typeof role) role = role.call(this);
-        
+
             if (role === null && this.getProperty('roles') !== null) {
                 throw new Error('Game.gotoStep: "role" is null, but "roles" ' +
                                 'are found in step ' + nextStep);
@@ -24918,7 +24917,6 @@ if (!Array.prototype.indexOf) {
                                 this.getCurrentGameStage());
             }
             roles = this.getProperty('roles');
-            // If FALSE, does not check the roles object, but let set the role.
             if (!roles) {
                 throw new Error('Game.setRole: trying to set role "' +
                                 role + '", but \'roles\' not found in ' +
@@ -24938,7 +24936,7 @@ if (!Array.prototype.indexOf) {
                     this.plot.tmpCache(prop, roleObj[prop]);
                 }
             }
-            
+
         }
         else if (role !== null) {
             throw new TypeError('Game.setRole: role must be string or null. ' +
@@ -25846,70 +25844,84 @@ if (!Array.prototype.indexOf) {
         /**
          * ### node
          *
-         * Internal reference to node.
+         * Internal reference to node
          */
         this.node = node;
 
         /**
          * ### name
          *
-         * Internal name of the timer.
+         * Internal name of the timer
          */
         this.name = options.name || 'timer_' + J.randomInt(0, 1000000);
 
         /**
          * ### GameTimer.status
          *
-         * Numerical index keeping the current the state of the GameTimer obj.
+         * Numerical index keeping the current the state of the GameTimer obj
          */
         this.status = GameTimer.UNINITIALIZED;
 
         /**
          * ### GameTimer.options
          *
-         * The current settings for the GameTimer.
+         * The current settings for the GameTimer
          */
         this.options = options;
 
         /**
          * ### GameTimer.timerId
          *
-         * The ID of the javascript interval.
+         * The ID of the javascript interval
          */
         this.timerId = null;
 
         /**
          * ### GameTimer.timeLeft
          *
-         * Total running time of timer.
+         * Total running time of timer
          */
         this.milliseconds = null;
 
         /**
          * ### GameTimer.timeLeft
          *
-         * Milliseconds left before time is up.
+         * Milliseconds left before time is up
          */
         this.timeLeft = null;
 
         /**
+         * ### GameTimer.timeLeft
+         *
+         * Milliseconds left when the last stop was called
+         */
+        this.timeLeftAtStop = null;
+
+        /**
          * ### GameTimer.timePassed
          *
-         * Milliseconds already passed from the start of the timer.
+         * Milliseconds already passed from the start of the timer
          */
         this.timePassed = 0;
 
         /**
+         * ### GameTimer.timePassed
+         *
+         * Milliseconds already passed when the last stop was called
+         */
+        this.timePassedAtStop = null;
+
+        /**
          * ### GameTimer.update
          *
-         * The frequency of update for the timer (in milliseconds).
+         * The frequency of update for the timer (in milliseconds)
          */
         this.update = undefined;
 
         /**
          * ### GameTimer.updateRemaining
          *
-         * Milliseconds remaining for current update.
+         * Milliseconds remaining for current update
          */
         this.updateRemaining = 0;
 
@@ -26379,7 +26391,9 @@ if (!Array.prototype.indexOf) {
         clearInterval(this.timerId);
         clearTimeout(this.timerId);
         this.timerId = null;
+        this.timePassedAtStop = this.timePassed;
         this.timePassed = 0;
+        this.timeLeftAtStop = this.timeLeft;
         this.timeLeft = null;
         this.startPaused = null;
         this.updateRemaining = 0;
@@ -34490,30 +34504,28 @@ if (!Array.prototype.indexOf) {
      * Requires the waitScreen widget to be loaded.
      *
      * @param {string} text Optional. The text to be shown in the locked screen
+     * @param {number} countdown Optional. The expected max total time the 
+     *   the screen will stay locked (in ms). A countdown will be displayed
      *
+     * @see WaitScreen.lock
      * TODO: check if this can be called in any stage.
      */
-    GameWindow.prototype.lockScreen = function(text) {
-        var that;
-        that = this;
-
+    GameWindow.prototype.lockScreen = function(text, countdown) {
         if (!this.waitScreen) {
-            throw new Error('GameWindow.lockScreen: waitScreen not found.');
+            throw new Error('GameWindow.lockScreen: waitScreen not found');
         }
         if (text && 'string' !== typeof text) {
             throw new TypeError('GameWindow.lockScreen: text must be string ' +
-                                'or undefined');
+                                'or undefined. Found: ' + text);
         }
-        // Feb 16.02.2015
-        // Commented out the time-out part. It causes the browser to get stuck
-        // on a locked screen, because the method is invoked multiple times.
-        // If no further problem is found out, it can be eliminated.
-        // if (!this.isReady()) {
-        //   setTimeout(function() { that.lockScreen(text); }, 100);
-        // }
+        if (countdown && 'number' !== typeof countdown || countdown < 0) {
+            throw new TypeError('GameWindow.lockScreen: countdown must be ' +
+                                'a positive number or undefined. Found: ' +
+                                countdown);
+        }
         this.setScreenLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
-        this.waitScreen.lock(text);
+        this.waitScreen.lock(text, countdown);
         this.setScreenLevel('LOCKED');
     };
 
@@ -34683,10 +34695,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitScreen
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
- * Covers the screen with a gray layer, disables inputs, and displays a message
+ * Overlays the screen, disables inputs, and displays a message/timer
  *
  * www.nodegame.org
  */
@@ -34699,13 +34711,13 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    WaitScreen.version = '0.8.1';
-    WaitScreen.description = 'Show a standard waiting screen';
+    WaitScreen.version = '0.9.0';
+    WaitScreen.description = 'Shows a standard waiting screen';
 
     // ## Helper functions
 
     var inputTags, len;
-    inputTags = ['button', 'select', 'textarea', 'input'];
+    inputTags = [ 'button', 'select', 'textarea', 'input' ];
     len = inputTags.length;
 
     /**
@@ -34749,13 +34761,20 @@ if (!Array.prototype.indexOf) {
     }
 
     function event_REALLY_DONE(text) {
+        var countdown;
         text = text || W.waitScreen.defaultTexts.waiting;
         if (!node.game.shouldStep()) {
             if (W.isScreenLocked()) {
                 W.waitScreen.updateText(text);
             }
             else {
-                W.lockScreen(text);
+                if (node.game.timer.milliseconds) {
+                    // 2000 to make sure it does reach 0 and stays there.
+                    countdown = node.game.timer.milliseconds -
+                        node.timer.getTimeSince('step', true) + 2000;
+                    if (countdown < 0) countdown = 0;
+                }
+                W.lockScreen(text, countdown);
             }
         }
     }
@@ -34775,7 +34794,7 @@ if (!Array.prototype.indexOf) {
         text = text || W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML =
-                W.waitScreen.waitingDiv.innerHTML;
+                W.waitScreen.contentDiv.innerHTML;
             W.waitScreen.updateText(text);
         }
         else {
@@ -34849,6 +34868,42 @@ if (!Array.prototype.indexOf) {
         this.enabled = false;
 
         /**
+         * ### WaitScreen.contentDiv
+         *
+         * Div containing the main content of the wait screen
+         */
+        this.contentDiv = null;
+
+        /**
+         * ### WaitScreen.countdownDiv
+         *
+         * Div containing the countdown span and other text
+         *
+         * @see WaitScreen.countdown
+         * @see WaitScreen.countdownSpan
+         */
+        this.countdownDiv = null;
+
+        /**
+         * ### WaitScreen.countdownSpan
+         *
+         * Span containing a countdown timer for the max waiting
+         *
+         * @see WaitScreen.countdown
+         * @see WaitScreen.countdownDiv
+         */
+        this.countdownSpan = null;
+
+        /**
+         * ### WaitScreen.countdown
+         *
+         * Countdown of max waiting time
+         *
+         * @see WaitScreen.countdown
+         */
+        this.countdown = null;
+
+        /**
          * ### WaitScreen.text
          *
          * Default texts for default events
@@ -34910,18 +34965,22 @@ if (!Array.prototype.indexOf) {
      *
      * Locks the screen
      *
-     * Overlays a gray div on top of the page and disables all inputs.
+     * Overlays a gray div on top of the page and disables all inputs
      *
      * If called on an already locked screen, the previous text is destroyed.
      * Use `WaitScreen.updateText` to modify an existing text.
      *
      * @param {string} text Optional. If set, displays the text on top of the
      *   gray string
+     * @param {number} countdown Optional. The expected max total time the
+     *   the screen will stay locked (in ms). A countdown will be displayed,
+     *   at the end of which a text replaces the countdown, but the screen
+     *   stays locked until the unlock command is received.
      *
      * @see WaitScreen.unlock
      * @see WaitScren.updateText
      */
-    WaitScreen.prototype.lock = function(text) {
+    WaitScreen.prototype.lock = function(text, countdown) {
         var frameDoc;
         if ('undefined' === typeof document.getElementsByTagName) {
             node.warn('WaitScreen.lock: cannot lock inputs.');
@@ -34930,11 +34989,6 @@ if (!Array.prototype.indexOf) {
         lockUnlockedInputs(document);
 
         frameDoc = W.getFrameDocument();
-
-        // TODO: cleanup refactor.
-        // Using this for IE8 compatibility.
-        // frameDoc = W.getIFrameDocument(W.getFrame());
-
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
@@ -34942,11 +34996,51 @@ if (!Array.prototype.indexOf) {
                 this.root = W.getFrameRoot() || document.body;
             }
             this.waitingDiv = W.add('div', this.root, this.id);
+
+            this.contentDiv = W.add('div', this.waitingDiv,
+                                    'ng_waitscreen-content-div');
         }
         if (this.waitingDiv.style.display === 'none') {
             this.waitingDiv.style.display = '';
         }
-        this.waitingDiv.innerHTML = text;
+        this.contentDiv.innerHTML = text;
+
+        if (countdown) {
+            if (!this.countdownDiv) {
+                this.countdownDiv = W.add('span', this.waitingDiv,
+                                          'ng_waitscreen-countdown-div');
+                this.countdownDiv.innerHTML = '<br>Do Not Refresh the Page!' +
+                    '<br>Maximum Waiting Time: ';
+
+                this.countdownSpan = W.add('span', this.countdownDiv,
+                                           'ng_waitscreen-countdown-span');
+            }
+
+            this.countdown = countdown;
+            this.countdownSpan.innerHTML = formatCountdown(countdown);
+            this.countdownDiv.style.display = '';
+
+            this.countdownInterval = setInterval(function() {
+                var w;
+                w = W.waitScreen;
+                if (!W.isScreenLocked()) {
+                    clearInterval(w.countdownInterval);
+                    return;
+                }
+
+                w.countdown -= 1000;
+                if (w.countdown < 0) {
+                    clearInterval(w.countdownInterval);
+                    w.countdownDiv.innerHTML = '<br>Resuming soon...';
+                }
+                else {
+                    w.countdownSpan.innerHTML = formatCountdown(w.countdown);
+                }
+            }, 1000);
+        }
+        else if (this.countdownDiv) {
+            this.countdownDiv.style.display = 'none';
+        }
     };
 
     /**
@@ -34964,6 +35058,8 @@ if (!Array.prototype.indexOf) {
                 this.waitingDiv.style.display = 'none';
             }
         }
+        if (this.countdownInterval) clearInterval(this.countdownInterval);
+
         // Re-enables all previously locked input forms in the page.
         try {
             len = this.lockedInputs.length;
@@ -34990,10 +35086,11 @@ if (!Array.prototype.indexOf) {
     WaitScreen.prototype.updateText = function(text, append) {
         append = append || false;
         if ('string' !== typeof text) {
-            throw new TypeError('WaitScreen.updateText: text must be string.');
+            throw new TypeError('WaitScreen.updateText: text must be ' +
+                                'string. Found: ' + text);
         }
-        if (append) this.waitingDiv.innerHTML += text;
-        else this.waitingDiv.innerHTML = text;
+        if (append) this.contentDiv.innerHTML += text;
+        else this.contentDiv.innerHTML = text;
     };
 
     /**
@@ -35018,6 +35115,19 @@ if (!Array.prototype.indexOf) {
         // Removes previously registered listeners.
         this.disable();
     };
+
+
+    // ## Helper functions.
+
+    function formatCountdown(time) {
+        var out;
+        out = '';
+        time = J.parseMilliseconds(time);
+        if (time[2]) out += time[2] + ' min ';
+        if (time[3]) out += time[3] + ' sec';
+        return out || '--';
+    }
+
 
 })(
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
@@ -46376,7 +46486,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Feedback.version = '1.0.0';
+    Feedback.version = '1.0.1';
     Feedback.description = 'Displays a configurable feedback form';
 
     Feedback.title = 'Feedback';
@@ -47801,7 +47911,7 @@ if (!Array.prototype.indexOf) {
     };
 
     MoodGauge.prototype.append = function() {
-        node.widgets.append(this.gauge, this.bodyDiv);
+        node.widgets.append(this.gauge, this.bodyDiv, { panel: false });
     };
 
     MoodGauge.prototype.listeners = function() {};
