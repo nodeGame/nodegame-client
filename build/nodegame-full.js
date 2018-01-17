@@ -1864,7 +1864,7 @@ if (!Array.prototype.indexOf) {
      * @param {Node} parent The parent node
      * @param {array} order Optional. A pre-specified order. Defaults, random
      * @param {function} cb Optional. A callback to execute one each shuffled
-     *   element (after re-positioning). This is always the last parameter, 
+     *   element (after re-positioning). This is always the last parameter,
      *   so if order is omitted, it goes second. The callback takes as input:
      *     - the element
      *     - the new order
@@ -1903,7 +1903,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('DOM.shuffleElements: order must be ' +
                                 'array. Found: ' + order);
         }
-        
+
         // DOM4 compliant browsers.
         children = parent.children;
 
@@ -2730,7 +2730,8 @@ if (!Array.prototype.indexOf) {
             }
             else if (!JSUS.isArray(titles)) {
                 throw new TypeError(where + 'titles must be string, ' +
-                                    'array of strings or undefined.');
+                                    'array of strings or undefined. Found: ' +
+                                    titles);
             }
             rotationId = 0;
             period = options.period || 1000;
@@ -11658,7 +11659,7 @@ if (!Array.prototype.indexOf) {
 /**
  * # GameStage
  *
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
  * Representation of the stage of a game:
@@ -11741,7 +11742,7 @@ if (!Array.prototype.indexOf) {
             }
             if (gameStage.charAt(0) === '.') {
                 throw new Error('GameStage constructor: gameStage name ' +
-                                'cannot start with a dot.');
+                                'cannot start with a dot. Name: ' + gameStage);
             }
 
             tokens = gameStage.split('.');
@@ -11784,7 +11785,8 @@ if (!Array.prototype.indexOf) {
         else if ('number' === typeof gameStage) {
             if (gameStage % 1 !== 0) {
                throw new TypeError('GameStage constructor: gameStage ' +
-                                   'cannot be a non-integer number.');
+                                   'cannot be a non-integer number. Found: ' +
+                                   gameStage);
             }
             this.stage = gameStage;
             if (this.stage === 0) {
@@ -11799,7 +11801,8 @@ if (!Array.prototype.indexOf) {
         // Defaults or error.
         else if (gameStage !== null && 'undefined' !== typeof gameStage) {
             throw new TypeError('GameStage constructor: gameStage must be ' +
-                                'string, object, number, undefined, or null.');
+                                'string, object, number, undefined, or null. ' +
+                                'Found: ' + gameStage);
         }
 
         // At this point we must have positive numbers, or strings for step
@@ -11825,7 +11828,7 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new Error('GameStage constructor: gameStage.round must ' +
-                            'be number.');
+                            'be number. Found: ' + this.round);
         }
 
         if (err) {
@@ -11888,7 +11891,8 @@ if (!Array.prototype.indexOf) {
     GameStage.toHash = function(gs, str) {
         var hash, i, idx, properties, symbols;
         if (!gs || 'object' !== typeof gs) {
-            throw new TypeError('GameStage.toHash: gs must be object.');
+            throw new TypeError('GameStage.toHash: gs must be object. Found: ' +
+                                gs);
         }
         if (!str || !str.length) {
             return gs.stage + '.' + gs.step + '.' + gs.round;
@@ -24021,7 +24025,7 @@ if (!Array.prototype.indexOf) {
         var widget, widgetObj, widgetRoot;
         var widgetCb, widgetExit, widgetDone;
         var doneCb, origDoneCb, exitCb, origExitCb;
-        var w, frame, uri, frameOptions, frameAutoParse;
+        var w, frame, uri, frameOptions, frameAutoParse, reloadFrame;
 
         if ('object' !== typeof step) {
             throw new TypeError('Game.execStep: step must be object. Found: ' +
@@ -24162,10 +24166,6 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        // TODO: compare currently loaded frame, with
-        // requested frame. If it the same, and no forceReload flag is found
-        // it is not passed to W.loadFrame.
-
         // Handle frame loading natively, if required.
         if (frame) {
             w = this.node.window;
@@ -24201,21 +24201,43 @@ if (!Array.prototype.indexOf) {
             }
             else {
                 throw new TypeError('Game.execStep: frame must be string or ' +
-                                    'object: ' + frame + '. ' +
+                                    'object. Found: ' + frame + '. ' +
                                     'Step: ' + step);
 
             }
 
-            // In case we are not changing frame, we do not reload it,
-            // unless we are forced to.
-            if (uri === w.unprocessedUri && !frameOptions.forceReload) {
-                this.execCallback(cb);
+            // We reload the frame if (order matters):
+            // - regardless of uri, follows what frameOptions.reload says;
+            // - it is a different uri from previous step;
+            // - it is the same uri, but different stage or round.
+            if ('undefined' !== typeof frame.reload) {
+                reloadFrame = !!frame.reload;
             }
             else {
+                reloadFrame = uri !== w.unprocessedUri;
+                if (!reloadFrame) {
+                    // Get the previously played step
+                    // (-2, because current step is already inserted).
+                    reloadFrame =
+                        this._steppedSteps[this._steppedSteps.length-2];
+                    if (reloadFrame) {
+                        reloadFrame = (reloadFrame.round !== step.round ||
+                                       reloadFrame.stage !== step.stage);
+                    }
+                    else {
+                        reloadFrame = true;
+                    }
+                }
+            }
+
+            if (reloadFrame) {
                 // Auto load frame and wrap cb.
                 this.execCallback(function() {
                     this.node.window.loadFrame(uri, cb, frameOptions);
-                });
+                });                
+            }
+            else {
+                this.execCallback(cb);
             }
         }
         else {
@@ -26082,7 +26104,7 @@ if (!Array.prototype.indexOf) {
                 }
             }
             else {
-                this.timeup = this.timeup || 'TIMEUP'
+                this.timeup = this.timeup || 'TIMEUP';
             }
 
             if (options.hooks) {
@@ -37837,7 +37859,7 @@ if (!Array.prototype.indexOf) {
      * @see Widgets.get
      * @see Widget.init
      */
-    function Widget() { }
+    function Widget() {}
 
     /**
      * ### Widget.init
@@ -37848,7 +37870,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see Widgets.get
      */
-    Widget.prototype.init = function(options) { };
+    Widget.prototype.init = function(options) {};
 
     /**
      * ### Widget.listeners
@@ -37861,7 +37883,7 @@ if (!Array.prototype.indexOf) {
      * @see EventEmitter.setRecordChanges
      * @see Widgets.destroy
      */
-    Widget.prototype.listeners = function() { };
+    Widget.prototype.listeners = function() {};
 
     /**
      * ### Widget.append
@@ -37885,7 +37907,7 @@ if (!Array.prototype.indexOf) {
      * @see Widget.footerDiv
      * @see Widget.headingDiv
      */
-    Widget.prototype.append = function() { };
+    Widget.prototype.append = function() {};
 
     /**
      * ### Widget.getValues
@@ -37896,7 +37918,7 @@ if (!Array.prototype.indexOf) {
      *
      * @return {mixed} The values of the widget
      */
-    Widget.prototype.getValues = function(options) { };
+    Widget.prototype.getValues = function(options) {};
 
     /**
      * ### Widget.getValues
@@ -37907,7 +37929,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {mixed} values The values to store
      */
-    Widget.prototype.setValues = function(values) { };
+    Widget.prototype.setValues = function(values) {};
 
     /**
      * ### Widget.reset
@@ -37917,7 +37939,7 @@ if (!Array.prototype.indexOf) {
      * Deletes current selection, any highlighting, and other data
      * that the widget might have collected to far.
      */
-    Widget.prototype.reset = function(options) { };
+    Widget.prototype.reset = function(options) {};
 
     /**
      * ### Widget.highlight
@@ -37929,7 +37951,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {mixed} options Settings controlling the type of highlighting
      */
-    Widget.prototype.highlight = function(options) { };
+    Widget.prototype.highlight = function(options) {};
 
     /**
      * ### Widget.highlight
@@ -37945,7 +37967,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see Widget.highlighted
      */
-    Widget.prototype.unhighlight = function() { };
+    Widget.prototype.unhighlight = function() {};
 
     /**
      * ### Widget.isHighlighted
@@ -37965,7 +37987,7 @@ if (!Array.prototype.indexOf) {
      *
      * An enabled widget allows the user to interact with it
      */
-    Widget.prototype.enable = function() { };
+    Widget.prototype.enable = function() {};
 
     /**
      * ### Widget.disable
@@ -37974,7 +37996,7 @@ if (!Array.prototype.indexOf) {
      *
      * A disabled widget is still visible, but user cannot interact with it
      */
-    Widget.prototype.disable = function() { };
+    Widget.prototype.disable = function() {};
 
     /**
      * ### Widget.isDisabled
@@ -38094,8 +38116,8 @@ if (!Array.prototype.indexOf) {
                 }
                 else if ('object' !== typeof options) {
                     throw new TypeError('Widget.setTitle: options must ' +
-                        'be object or undefined. Found: ' +
-                        options);
+                                        'be object or undefined. Found: ' +
+                                        options);
                 }
                 this.headingDiv = W.add('div', this.panelDiv, options);
                 // Move it to before the body (IE cannot have undefined).
@@ -38114,8 +38136,8 @@ if (!Array.prototype.indexOf) {
             }
             else {
                 throw new TypeError(J.funcName(this.constructor) +
-                    '.setTitle: title must be string, ' +
-                    'HTML element or falsy. Found: ' + title);
+                                    '.setTitle: title must be string, ' +
+                                    'HTML element or falsy. Found: ' + title);
             }
         }
     };
@@ -38155,8 +38177,8 @@ if (!Array.prototype.indexOf) {
                 }
                 else if ('object' !== typeof options) {
                     throw new TypeError('Widget.setFooter: options must ' +
-                        'be object or undefined. Found: ' +
-                        options);
+                                        'be object or undefined. Found: ' +
+                                        options);
                 }
                 this.footerDiv = W.add('div', this.panelDiv, options);
             }
@@ -38172,8 +38194,8 @@ if (!Array.prototype.indexOf) {
             }
             else {
                 throw new TypeError(J.funcName(this.constructor) +
-                    '.setFooter: footer must be string, ' +
-                    'HTML element or falsy. Found: ' + title);
+                                    '.setFooter: footer must be string, ' +
+                                    'HTML element or falsy. Found: ' + title);
             }
         }
     };
@@ -38190,7 +38212,7 @@ if (!Array.prototype.indexOf) {
     Widget.prototype.setContext = function(context) {
         if ('string' !== typeof context) {
             throw new TypeError(J.funcName(this.constructor) + '.setContext: ' +
-                'context must be string. Found: ' + context);
+                                'context must be string. Found: ' + context);
 
         }
         W.removeClass(this.panelDiv, 'panel-[a-z]*');
@@ -38214,8 +38236,8 @@ if (!Array.prototype.indexOf) {
         }
         else if ('string' !== typeof context || context.trim() === '') {
             throw new TypeError(J.funcName(this.constructor) +
-                '.addFrame: context must be a non-empty ' +
-                'string or undefined. Found: ' + context);
+                                '.addFrame: context must be a non-empty ' +
+                                'string or undefined. Found: ' + context);
         }
         if (this.panelDiv) {
             if (this.panelDiv.className.indexOf('panel-') === -1) {
@@ -38243,21 +38265,21 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-    * ### Widget.setSound
-    *
-    * Checks and assigns the value of a sound to play to user
-    *
-    * Throws an error if value is invalid
-    *
-    * @param {string} name The name of the sound to check
-    * @param {mixed} path Optional. The path to the audio file. If undefined
-    *    the default value from Widget.sounds is used
-    *
-    * @see Widget.sounds
-    * @see Widget.getSound
-    * @see Widget.setSounds
-    * @see Widget.getSounds
-    */
+     * ### Widget.setSound
+     *
+     * Checks and assigns the value of a sound to play to user
+     *
+     * Throws an error if value is invalid
+     *
+     * @param {string} name The name of the sound to check
+     * @param {mixed} path Optional. The path to the audio file. If undefined
+     *    the default value from Widget.sounds is used
+     *
+     * @see Widget.sounds
+     * @see Widget.getSound
+     * @see Widget.setSounds
+     * @see Widget.getSounds
+     */
     Widget.prototype.setSound = function(name, value) {
         strSetter(this, name, value, 'sounds', 'Widget.setSound');
     };
@@ -38276,7 +38298,7 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.setSounds = function(sounds) {
         strSetterMulti(this, sounds, 'sounds', 'setSound',
-            J.funcName(this.constructor) + '.setSounds');
+                       J.funcName(this.constructor) + '.setSounds');
     };
 
     /**
@@ -38297,7 +38319,7 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.getSound = function(name, param) {
         return strGetter(this, name, 'sounds',
-            J.funcName(this.constructor) + '.getSound', param);
+                         J.funcName(this.constructor) + '.getSound', param);
     };
 
     /**
@@ -38320,8 +38342,8 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.getSounds = function(keys, param) {
         return strGetterMulti(this, 'sounds', 'getSound',
-            J.funcName(this.constructor)
-            + '.getSounds', keys, param);
+                              J.funcName(this.constructor)
+                              + '.getSounds', keys, param);
     };
 
     /**
@@ -38338,8 +38360,8 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.getAllSounds = function(param) {
         return strGetterMulti(this, 'sounds', 'getSound',
-            J.funcName(this.constructor)
-            + '.getAllSounds', undefined, param);
+                              J.funcName(this.constructor) + '.getAllSounds',
+                              undefined, param);
     };
 
     /**
@@ -38359,8 +38381,8 @@ if (!Array.prototype.indexOf) {
      * @see Widget.getTexts
      */
     Widget.prototype.setText = function(name, value) {
-        strSetter(this, name, value, 'texts', J.funcName(this.constructor)
-            + '.setText');
+        strSetter(this, name, value, 'texts',
+                  J.funcName(this.constructor) + '.setText');
     };
 
     /**
@@ -38377,7 +38399,7 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.setTexts = function(texts) {
         strSetterMulti(this, texts, 'texts', 'setText',
-            J.funcName(this.constructor) + '.setTexts');
+                       J.funcName(this.constructor) + '.setTexts');
     };
 
     /**
@@ -38397,7 +38419,7 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.getText = function(name, param) {
         return strGetter(this, name, 'texts',
-            J.funcName(this.constructor) + '.getText', param);
+                         J.funcName(this.constructor) + '.getText', param);
     };
 
     /**
@@ -38421,8 +38443,8 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.getTexts = function(keys, param) {
         return strGetterMulti(this, 'texts', 'getText',
-            J.funcName(this.constructor)
-            + '.getTexts', keys, param);
+                              J.funcName(this.constructor)
+                              + '.getTexts', keys, param);
     };
 
     /**
@@ -38442,8 +38464,8 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.getAllTexts = function(param) {
         return strGetterMulti(this, 'texts', 'getText',
-            J.funcName(this.constructor)
-            + '.getAllTexts', undefined, param);
+                              J.funcName(this.constructor)
+                              + '.getAllTexts', undefined, param);
     };
 
     // ## Helper methods.
@@ -38474,12 +38496,13 @@ if (!Array.prototype.indexOf) {
         if (!that.constructor[collection].hasOwnProperty(name)) {
             throw new Error(method + ': name not found: ' + name);
         }
-        res = that[collection][name] || that.constructor[collection][name];
+        res = 'undefined' !== typeof that[collection][name] ?
+            that[collection][name] : that.constructor[collection][name];
         if ('function' === typeof res) {
             res = res(that, param);
             if ('string' !== typeof res) {
                 throw new TypeError(method + ': cb "' + name +
-                    'did not return a string. Found: ' + res);
+                                    'did not return a string. Found: ' + res);
             }
         }
         return res;
@@ -38545,7 +38568,7 @@ if (!Array.prototype.indexOf) {
         var i;
         if ('object' !== typeof obj && 'undefined' !== typeof obj) {
             throw new TypeError(method + ': ' + collection +
-                ' must be object or undefined. Found: ' + obj);
+                                ' must be object or undefined. Found: ' + obj);
         }
         for (i in obj) {
             if (obj.hasOwnProperty(i)) {
@@ -38579,8 +38602,8 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new TypeError(method + ': value for item "' + name +
-                '" must be string, function or false. ' +
-                'Found: ' + value);
+                                '" must be string, function or false. ' +
+                                'Found: ' + value);
         }
     }
 
@@ -38589,7 +38612,7 @@ if (!Array.prototype.indexOf) {
 })(
     // Widgets works only in the browser environment.
     ('undefined' !== typeof node) ? node : module.parent.exports.node
-    );
+);
 
 /**
  * # Widgets
@@ -38839,9 +38862,12 @@ if (!Array.prototype.indexOf) {
             WidgetPrototype.sounds : options.sounds;
         widget.texts = 'undefined' === typeof options.texts ?
             WidgetPrototype.texts : options.texts;
-        widget.widgetName = widgetName;
+
+
         // Fixed properties.
 
+        // Widget Name.
+        widget.widgetName = widgetName;
         // Add random unique widget id.
         widget.wid = '' + J.randomInt(0,10000000000000000000);
         // Add enabled.
