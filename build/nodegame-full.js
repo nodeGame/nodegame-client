@@ -14536,7 +14536,7 @@ if (!Array.prototype.indexOf) {
  *
  * Push players to advance to next step, otherwise disconnects them.
  *
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, parent) {
@@ -14689,6 +14689,8 @@ if (!Array.prototype.indexOf) {
         };
 
         node.silly('push-manager: starting timer: ' + offset + ', ' + stage);
+        // console.log('push-manager: starting timer: ', offset, stage);
+
 
         that = this;
         pushCb = function() { that.pushGame.call(that, stage, conf); };
@@ -14715,6 +14717,7 @@ if (!Array.prototype.indexOf) {
     PushManager.prototype.clearTimer = function() {
         if (this.timer && !this.timer.isStopped()) {
             this.node.silly('push-manager: timer cleared.');
+            // console.log('push-manager: timer cleared.');
             this.timer.stop();
         }
     };
@@ -14747,7 +14750,7 @@ if (!Array.prototype.indexOf) {
         var m, node, replyWaitTime, checkPushWaitTime;
         node = this.node;
 
-        console.log('checking clients');
+        // console.log('push-manager: checking clients');
         node.silly('push-manager: checking clients.');
 
         if ('object' === typeof conf) {
@@ -14768,7 +14771,7 @@ if (!Array.prototype.indexOf) {
             if (p.stageLevel !== DONE &&
                 GameStage.compare(p.stage, stage) === 0) {
 
-                console.log('push needed');
+                // console.log('push needed: ', p.id);
                 node.warn('push needed: ' + p.id);
                 // Send push.
                 node.get(PUSH_STEP,
@@ -14843,7 +14846,7 @@ if (!Array.prototype.indexOf) {
         var msg;
         // No reply to GET, disconnect client.
         node.warn('push-manager: disconnecting: ' + p.id);
-
+        // console.log('push-manager: disconnecting: ' + p.id);
         msg = node.msg.create({
             target: 'SERVERCOMMAND',
             text: 'DISCONNECT',
@@ -24077,7 +24080,7 @@ if (!Array.prototype.indexOf) {
             };
 
             // Make the step callback.
-            // TODO: check. Does it work with roles?
+            // Notice: This works with roles also.
             if (cb) {
                 origCb = cb;
                 cb = function() {
@@ -24234,7 +24237,7 @@ if (!Array.prototype.indexOf) {
                 // Auto load frame and wrap cb.
                 this.execCallback(function() {
                     this.node.window.loadFrame(uri, cb, frameOptions);
-                });                
+                });
             }
             else {
                 this.execCallback(cb);
@@ -34526,7 +34529,7 @@ if (!Array.prototype.indexOf) {
      * Requires the waitScreen widget to be loaded.
      *
      * @param {string} text Optional. The text to be shown in the locked screen
-     * @param {number} countdown Optional. The expected max total time the 
+     * @param {number} countdown Optional. The expected max total time the
      *   the screen will stay locked (in ms). A countdown will be displayed
      *
      * @see WaitScreen.lock
@@ -35029,9 +35032,10 @@ if (!Array.prototype.indexOf) {
 
         if (countdown) {
             if (!this.countdownDiv) {
-                this.countdownDiv = W.add('span', this.waitingDiv,
+                this.countdownDiv = W.add('div', this.waitingDiv,
                                           'ng_waitscreen-countdown-div');
-                this.countdownDiv.innerHTML = '<br>Do Not Refresh the Page!' +
+
+                this.countdownDiv.innerHTML = '<br>Do not refresh the page!' +
                     '<br>Maximum Waiting Time: ';
 
                 this.countdownSpan = W.add('span', this.countdownDiv,
@@ -35053,7 +35057,8 @@ if (!Array.prototype.indexOf) {
                 w.countdown -= 1000;
                 if (w.countdown < 0) {
                     clearInterval(w.countdownInterval);
-                    w.countdownDiv.innerHTML = '<br>Resuming soon...';
+                    w.countdownDiv.style.display = 'none';
+                    w.contentDiv.innerHTML = 'Resuming soon...';
                 }
                 else {
                     w.countdownSpan.innerHTML = formatCountdown(w.countdown);
@@ -35147,7 +35152,7 @@ if (!Array.prototype.indexOf) {
         time = J.parseMilliseconds(time);
         if (time[2]) out += time[2] + ' min ';
         if (time[3]) out += time[3] + ' sec';
-        return out || '--';
+        return out || 0;
     }
 
 
@@ -36057,7 +36062,7 @@ if (!Array.prototype.indexOf) {
             prefix = arguments[2];
         }
 
-        if ('undefined' !== typeof prefix) {
+        if ('undefined' === typeof prefix) {
             prefix = 'ng_replace_';
         }
         else if (null === prefix) {
@@ -46111,6 +46116,10 @@ if (!Array.prototype.indexOf) {
     EndScreen.texts.exitCode = 'Your exit code:';
     EndScreen.texts.errTotalWin = 'Error: invalid total win.';
     EndScreen.texts.errExitCode = 'Error: invalid exit code.';
+    EndScreen.texts.copyButton = 'Copy';
+    EndScreen.texts.exitCopyMsg = 'Exit code copied to clipboard.';
+    EndScreen.texts.exitCopyError = 'Failed to copy exit code. Please copy it' +
+                                    ' manually.';
 
     // ## Dependencies
 
@@ -46324,6 +46333,8 @@ if (!Array.prototype.indexOf) {
         var headerElement, messageElement;
         var totalWinElement, totalWinParaElement, totalWinInputElement;
         var exitCodeElement, exitCodeParaElement, exitCodeInputElement;
+        var exitCodeBtn, exitCodeGroup;
+        var that = this;
 
         endScreenElement = document.createElement('div');
         endScreenElement.className = 'endscreen';
@@ -46357,6 +46368,7 @@ if (!Array.prototype.indexOf) {
 
         if (this.showExitCode) {
             exitCodeElement = document.createElement('div');
+            exitCodeElement.className = 'input-group';
 
             exitCodeParaElement = document.createElement('p');
             exitCodeParaElement.innerHTML = '<strong>' +
@@ -46364,12 +46376,26 @@ if (!Array.prototype.indexOf) {
                                             '</strong>';
 
             exitCodeInputElement = document.createElement('input');
+            exitCodeInputElement.id = 'exit_code';
             exitCodeInputElement.className = 'endscreen-exit-code ' +
                                              'form-control';
             exitCodeInputElement.setAttribute('disabled', 'true');
 
-            exitCodeParaElement.appendChild(exitCodeInputElement);
-            exitCodeElement.appendChild(exitCodeParaElement);
+            exitCodeGroup = document.createElement('span');
+            exitCodeGroup.className = 'input-group-btn';
+
+            exitCodeBtn = document.createElement('input');
+            exitCodeBtn.className = 'btn btn-secondary';
+            exitCodeBtn.value = this.getText('copyButton');
+            exitCodeBtn.type = 'button';
+            exitCodeBtn.onclick = function() {
+                that.copy(exitCodeInputElement.value);
+            };
+
+            exitCodeGroup.appendChild(exitCodeBtn);
+            endScreenElement.appendChild(exitCodeParaElement);
+            exitCodeElement.appendChild(exitCodeGroup);
+            exitCodeElement.appendChild(exitCodeInputElement);
 
             endScreenElement.appendChild(exitCodeElement);
             this.exitCodeInputElement = exitCodeInputElement;
@@ -46399,6 +46425,20 @@ if (!Array.prototype.indexOf) {
         node.on.data('WIN', function(message) {
             that.updateDisplay(message.data);
         });
+    };
+
+    EndScreen.prototype.copy = function(text) {
+        var inp = document.createElement('input');
+        try {
+            document.body.appendChild(inp);
+            inp.value = text;
+            inp.select();
+            document.execCommand('copy', false);
+            inp.remove();
+            alert(this.getText('exitCopyMsg'));
+        } catch (err) {
+            alert(this.getText('exitCopyError'));
+        }
     };
 
     /**
@@ -51499,7 +51539,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitingRoom
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2018 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Displays the number of connected/required players to start a game
@@ -51846,15 +51886,20 @@ if (!Array.prototype.indexOf) {
             this.playWithBotOption = false;
         }
 
-        if (this.playWithBotOption) {
+        if (this.playWithBotOption && !document.getElementById('bot_btn')) {
             this.playBotBtn = document.createElement('input');
             this.playBotBtn.className = 'btn btn-secondary btn-lg';
             this.playBotBtn.value = this.getText('playBot');
+            this.playBotBtn.id = 'bot_btn';
             this.playBotBtn.type = 'button';
-            this.playBotBtn.onclick = function () {
+            this.playBotBtn.onclick = function() {
                 that.playBotBtn.value = that.getText('connectingBots');
-                that.playBotBtn.setAttribute('disabled', true);
+                that.playBotBtn.disabled = true;
                 node.say('PLAYWITHBOT');
+                setTimeout(function() {
+                    that.playBotBtn.value = that.getText('playBot');
+                    that.playBotBtn.disabled = false;
+                }, 5000);
             };
             this.bodyDiv.appendChild(document.createElement('br'));
             this.bodyDiv.appendChild(this.playBotBtn);
@@ -52133,10 +52178,14 @@ if (!Array.prototype.indexOf) {
         var blink, sound;
 
         blink = this.getText('blinkTitle');
+
         sound = this.getSound('dispatch');
 
         // Play sound, if requested.
         if (sound) J.playSound(sound);
+
+        // If blinkTitle is falsy, don't blink the title.
+        if (!blink) return;
 
         // If document.hasFocus() returns TRUE, then just one repeat is enough.
         if (document.hasFocus && document.hasFocus()) {
