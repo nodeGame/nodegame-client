@@ -672,7 +672,7 @@ in case a threshold is hit.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">exactRecoveryCb</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">exactCbCalled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">changeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">changeHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">checkSize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="p">};</span>
     <span class="p">};</span>
 
@@ -1094,7 +1094,7 @@ this.changeHandler('init');</p>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">changehandler</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">changeHandler</span><span class="p">(</span><span class="s1">&#39;pconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
         <span class="p">},</span> <span class="s1">&#39;plManagerCon&#39;</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;in.say.PDISCONNECT&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">changeHandler</span><span class="p">(</span><span class="s1">&#39;pdisconnect&#39;</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>

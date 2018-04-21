@@ -172,6 +172,7 @@ other clients could change in between.</p>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">GETTING_DONE</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">beDone</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;REALLY_DONE&#39;</span><span class="p">);</span>
             <span class="nx">res</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">(</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">setStageLevel</span><span class="p">(</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">DONE</span><span class="p">);</span>
@@ -233,7 +234,6 @@ In case the handler returns FALSE, the process is stopped.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="kd">var</span> <span class="nx">stageLevel</span><span class="p">;</span>
-
             <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
 
 
@@ -248,12 +248,8 @@ In case the handler returns FALSE, the process is stopped.</p>
 <p>TODO check >=.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">&gt;=</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">done</span><span class="p">();</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">&gt;=</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">PLAYING</span><span class="p">)</span> <span class="nx">done</span><span class="p">();</span>
+            <span class="k">else</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">willBeDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">});</span>
 
 

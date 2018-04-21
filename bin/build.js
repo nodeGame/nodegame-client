@@ -1,27 +1,26 @@
 #!/usr/bin/env node
 
-/**
- * # nodegame-client build script
- */
+//  # nodegame-client build script
+
 
 module.exports.build = build;
 module.exports.build_support = build_support;
 
 var smoosh = require('smoosh'),
-fs = require('fs'),
-path = require('path'),
-J = require('JSUS').JSUS;
+    fs = require('fs'),
+    path = require('path'),
+    J = require('JSUS').JSUS;
 
 var pkg = require('../package.json'),
-version = pkg.version;
+    version = pkg.version;
 
 var rootDir = path.resolve(__dirname, '..') + '/';
 var distDir =  rootDir + 'build/';
 
 
-
 function loadTemplate(name) {
-    return fs.readFileSync(path.join(__dirname, 'templates', name), 'utf-8');
+    return fs.readFileSync(
+               path.join(__dirname, 'templates', name), 'utf-8');
 }
 function write(filePath, str, mode) {
     fs.writeFileSync(filePath, str, { mode: mode || 0666 });
@@ -87,7 +86,9 @@ var ng_client = [
 
     rootDir + "lib/core/GameDB.js",
     rootDir + "lib/core/Game.js",
-    rootDir + "lib/core/Session.js",
+
+    // Not used for now.
+    // rootDir + "lib/core/Session.js",
 
 
     rootDir + "lib/core/Timer.js",
@@ -189,7 +190,7 @@ function build(options) {
     }
 
     // 0. Shelf.js
-    if (options.shelf || options.all) {
+    if (options.shelf) {
         if (!J.existsSync(shelfDir)) {
             console.log('  - ERR: shelf.js not found!');
         }
@@ -250,7 +251,7 @@ function build(options) {
         else {
             console.log('  - nodegame-window');
 
-            // Build custom shelf.js if not existing
+            // Build custom window if not existing
             if (!J.existsSync(ngWdir + 'build/nodegame-window.js')) {
                 var window_build = ngWdir + 'bin/build.js';
                 console.log("\n  - building custom nodegame-window.js")
@@ -271,7 +272,7 @@ function build(options) {
         else {
             console.log('  - nodegame-widgets');
 
-            // Build custom shelf.js if not existing
+            // Build custom widgets.js if not existing
             if (!J.existsSync(ngWdgdir + 'build/nodegame-widgets.js')) {
                 var widgets_build = ngWdgdir + 'bin/build.js';
                 console.log("\n  - building custom nodegame-widgets.js")
@@ -444,10 +445,10 @@ function smooshIt(conf) {
     }
 
     var text = conf.text || 'Build created!',
-    options = conf.options || {},
-    files = conf.files,
-    out = (path.extname(conf.out) === '.js') ? path.basename(conf.out, '.js')
-        : conf.out;
+        options = conf.options || {},
+        files = conf.files,
+        out = (path.extname(conf.out) === '.js') ?
+               path.basename(conf.out, '.js') : conf.out;
 
 
     // Configurations for file smooshing.

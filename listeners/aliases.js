@@ -18,6 +18,7 @@
      * Adds a battery of setup functions
      *
      * @param {boolean} force Whether to force re-adding the aliases
+     *
      * @return {boolean} TRUE on success
      */
     NGC.prototype.addDefaultAliases = function(force) {
@@ -44,7 +45,14 @@
         });
 
         // ### node.on.stage
-        this.alias('stage', 'in.set.STAGE');
+        this.alias('stage', 'STEPPING', function(cb) {
+            return function(curStep, newStep) {
+                if (curStep.stage !== newStep.stage) cb(curStep, newStep);
+            };
+        });
+
+        // ### node.on.stage
+        this.alias('step', 'STEPPING');
 
         // ### node.on.plist
         this.alias('plist', ['in.set.PLIST', 'in.say.PLIST']);
@@ -88,16 +96,6 @@
         this.alias('mdisconnect', 'in.say.MDISCONNECT', function(cb) {
             return function(msg) {
                 cb.call(that.game, msg.data);
-            };
-        });
-
-        // ### node.on.stepdone
-        // Uses the step rule to determine when a step is DONE.
-        this.alias('stepdone', 'UPDATED_PLIST', function(cb) {
-            return function() {
-                if (that.game.shouldStep()) {
-                    cb.call(that.game, that.game.pl);
-                }
             };
         });
 

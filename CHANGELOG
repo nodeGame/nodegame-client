@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 4.0.0
+- Supporting `beDone` option to make game done immediately when going to a step (no frame loaded, no callback executed like in `willBeDone`).
+
 ## 3.5.4
 - Fixed `#node.setup('lang')`.
 - Fixed widget step markAttempt parameter type.

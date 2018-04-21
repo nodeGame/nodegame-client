@@ -1,7 +1,7 @@
 "use strict";
 
 var util = require('util');
-should = require('should');
+var should = require('should');
 
 var log = console.log;
 
@@ -390,7 +390,6 @@ describe('Timer', function() {
               node.game.resume();
               setTimeout(function() {
                   var totalPause;
-                  debugger
                   d1 = timer.getTimeSince('1');
                   d2 = timer.getTimeSince('1', true);
                   d0 = result.pausedTime;
