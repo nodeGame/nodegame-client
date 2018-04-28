@@ -12,7 +12,7 @@ before_install:
 
 install:
   - npm install --only=dev
-  - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --branch v4 --yes
+  - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --yes
   - mv node_modules/nodegame-client/node_modules/socket.io-client node_modules/
 
 script:
