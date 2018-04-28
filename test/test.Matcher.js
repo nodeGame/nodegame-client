@@ -19,9 +19,6 @@ matcher.generateMatches('roundrobin', 10, {
     canMatchSameRole: false
 });
 
-console.log(matcher.matches);
-return;
-
 describe('Matcher', function() {
 
     describe('#constructor', function() {
