@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 4.0.1
+- Better remote error logging (window.onerror).
+
 ## 4.0.0
 - Supporting `beDone` option to make game done immediately when going to a step (no frame loaded, no callback executed like in `willBeDone`).
 
