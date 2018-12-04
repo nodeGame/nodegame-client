@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 4.1.1
+- `#node.redirect` accepts arrays for recipients.
+
 ## 4.1.0
 - Antispoofing option.
 
