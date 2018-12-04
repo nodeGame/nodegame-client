@@ -5229,19 +5229,21 @@ if (!Array.prototype.indexOf) {
      * @param {mixed} n The value to check
      * @param {number} lower Optional. If set, n must be greater than lower
      * @param {number} upper Optional. If set, n must be smaller than upper
+     * @param {boolean} leq Optional. If TRUE, n can also be equal to lower
+     * @param {boolean} ueq Optional. If TRUE, n can also be equal to upper
      *
      * @return {boolean|number} The parsed integer, or FALSE if none was found
      *
      * @see PARSE.isFloat
      * @see PARSE.isNumber
      */
-    PARSE.isInt = function(n, lower, upper) {
+    PARSE.isInt = function(n, lower, upper, leq, ueq) {
         var regex, i;
         regex = /^-?\d+$/;
         if (!regex.test(n)) return false;
         i = parseInt(n, 10);
         if (i !== parseFloat(n)) return false;
-        return PARSE.isNumber(i, lower, upper);
+        return PARSE.isNumber(i, lower, upper, leq, ueq);
     };
 
     /**
@@ -5254,18 +5256,20 @@ if (!Array.prototype.indexOf) {
      * @param {mixed} n The value to check
      * @param {number} lower Optional. If set, n must be greater than lower
      * @param {number} upper Optional. If set, n must be smaller than upper
+     * @param {boolean} leq Optional. If TRUE, n can also be equal to lower
+     * @param {boolean} ueq Optional. If TRUE, n can also be equal to upper
      *
      * @return {boolean|number} The parsed float, or FALSE if none was found
      *
      * @see PARSE.isInt
      * @see PARSE.isNumber
      */
-    PARSE.isFloat = function(n, lower, upper) {
+    PARSE.isFloat = function(n, lower, upper, leq, ueq) {
         var regex;
         regex = /^-?\d*(\.\d+)?$/;
         if (!regex.test(n)) return false;
         if (n.toString().indexOf('.') === -1) return false;
-        return PARSE.isNumber(n, lower, upper);
+        return PARSE.isNumber(n, lower, upper, leq, ueq);
     };
 
     /**
@@ -5278,17 +5282,23 @@ if (!Array.prototype.indexOf) {
      * @param {mixed} n The value to check
      * @param {number} lower Optional. If set, n must be greater than lower
      * @param {number} upper Optional. If set, n must be smaller than upper
+     * @param {boolean} leq Optional. If TRUE, n can also be equal to lower
+     * @param {boolean} ueq Optional. If TRUE, n can also be equal to upper
      *
      * @return {boolean|number} The parsed number, or FALSE if none was found
      *
      * @see PARSE.isInt
      * @see PARSE.isFloat
      */
-    PARSE.isNumber = function(n, lower, upper) {
+    PARSE.isNumber = function(n, lower, upper, leq, ueq) {
         if (isNaN(n) || !isFinite(n)) return false;
         n = parseFloat(n);
-        if ('number' === typeof lower && n < lower) return false;
-        if ('number' === typeof upper && n > upper) return false;
+        if ('number' === typeof lower && (leq ? n <= lower : n < lower)) {
+            return false;            
+        }
+        if ('number' === typeof upper && (ueq ? n >= upper : n > upper)) {
+            return false;
+        }
         return n;
     };
 
@@ -10042,7 +10052,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '4.0.1';
+    node.version = '4.1.0';
 
 })(window);
 
@@ -19757,7 +19767,7 @@ if (!Array.prototype.indexOf) {
                               'spoofing, but socket does not support it.');
             }
         }
-        
+
         // Notify GameWindow (if existing, and if not default channel).
         if (this.node.window && !msg.data.channel.isDefault) {
             this.node.window.setUriChannel(this.channelName);
@@ -20015,7 +20025,7 @@ if (!Array.prototype.indexOf) {
         if (value) this.send = this.sendNoSpoof;
         else this.send = this.sendEasy;
     };
-    
+
     node.SocketFactory.register('SocketIo', SocketIo);
 
 })(
@@ -29815,7 +29825,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Commands
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
  * `nodeGame` commands for admins
@@ -29847,15 +29857,17 @@ if (!Array.prototype.indexOf) {
      * ```
 
      * @param {string} url the url of the redirection
-     * @param {string} who A player id or any other valid _to_ field
+     * @param {string|array} who A player id or any other valid _to_ field
      */
     NGC.prototype.redirect = function(url, who) {
         var msg;
         if ('string' !== typeof url) {
-            throw new TypeError('node.redirect: url must be string.');
+            throw new TypeError('node.redirect: url must be string. Found: ' +
+                                url);
         }
-        if ('string' !== typeof who) {
-            throw new TypeError('node.redirect: who must be string.');
+        if ('string' !== typeof who && !J.isArray(who)) {
+            throw new TypeError('node.redirect: who must be string. Found: ' +
+                                who);
         }
         msg = this.msg.create({
             target: this.constants.target.REDIRECT,
@@ -51635,7 +51647,7 @@ if (!Array.prototype.indexOf) {
     node.widgets.register('WaitingRoom', WaitingRoom);
     // ## Meta-data
 
-    WaitingRoom.version = '1.2.1';
+    WaitingRoom.version = '1.3.0';
     WaitingRoom.description = 'Displays a waiting room for clients.';
 
     WaitingRoom.title = 'Waiting Room';
@@ -51692,10 +51704,17 @@ if (!Array.prototype.indexOf) {
 
         // #### tooManyPlayers
         tooManyPlayers: function(widget, data) {
-            return 'There are more players in this waiting room ' +
-                'than there are playslots in the game. Only ' +
-                data.nGames + ' players will be selected ' +
-                'to play the game.';
+            var str;
+            str = 'There are more players in this waiting room ' +
+                'than playslots in the game. ';
+            if (widget.poolSize === 1) {
+                str += 'Each player will play individually.';
+            }
+            else {
+                str += 'Only ' + data.nGames + ' players will be selected ' +
+                    'to play the game.';
+            }
+            return str;
         },
 
         // #### notSelectedClosed
@@ -51722,10 +51741,39 @@ if (!Array.prototype.indexOf) {
         },
 
         // #### playBot
-        playBot: 'Play With Bot/s',
+        playBot: function(widget) {
+            if (widget.poolSize === widget.groupSize &&
+                widget.groupSize === 1) {
+
+                return 'Play';
+            }
+            if (widget.groupSize === 2) return 'Play With Bot';
+            return 'Play With Bots';
+        },
 
         // #### connectingBots
-        connectingBots: 'Connecting Bot/s, Please Wait...'
+        connectingBots:  function(widget) {
+            console.log(widget.poolSize, widget.groupSize);
+            if (widget.poolSize === widget.groupSize &&
+                widget.groupSize === 1) {
+
+                return 'Starting, Please Wait...';
+            }
+            if (widget.groupSize === 2) return 'Connecting Bot, Please Wait...';
+            return 'Connecting Bot/s, Please Wait...';
+        },
+
+        // #### selectTreatment
+        // Trailing space makes it nicer.
+        selectTreatment: 'Select Treatment ',
+
+        // #### gameTreatments
+        gameTreatments: 'Game:',
+
+        // #### defaultTreatments
+        defaultTreatments: 'Defaults:'
+
+        
     };
 
     /**
@@ -51755,8 +51803,12 @@ if (!Array.prototype.indexOf) {
          * ### WaitingRoom.nGames
          *
          * Total number of games to be dispatched
+         *
+         * Server will close the waiting room afterwards.
+         *
+         * Undefined means no limit.
          */
-        this.nGames = 0;
+        this.nGames = undefined;
 
         /**
          * ### WaitingRoom.groupSize
@@ -51858,10 +51910,47 @@ if (!Array.prototype.indexOf) {
         /**
          * ### WaitingRoom.playWithBotOption
          *
-         * Flag that indicates whether to display button that lets player begin
-         * the game with bots
+         * If TRUE, it displays a button to begin the game with bots
+         *
+         * This option is set by the server, local modifications will
+         * not have an effect if server does not allow it
+         *
+         * @see WaitingRoom.playBotBtn
          */
         this.playWithBotOption = null;
+
+        /**
+         * ### WaitingRoom.playBotBtn
+         *
+         * Reference to the button to play with bots
+         *
+         * Will be created if requested by options.
+         *
+         * @see WaitingRoom.playWithBotOption
+         */
+        this.playBotBtn = null;
+
+        /**
+         * ### WaitingRoom.selectTreatmentOption
+         *
+         * If TRUE, it displays a selector to choose the treatment of the game
+         *
+         * This option is set by the server, local modifications will
+         * not have an effect if server does not allow it
+         */
+        this.selectTreatmentOption = null;
+
+        /**
+         * ### WaitingRoom.treatmentBtn
+         *
+         * Holds the name of selected treatment
+         *
+         * Only used if `selectTreatmentOption` is enabled
+         *
+         * @see WaitingRoom.selectTreatmentOption
+         */
+        this.selectedTreatment = null;
+
     }
 
     // ## WaitingRoom methods
@@ -51871,6 +51960,8 @@ if (!Array.prototype.indexOf) {
      *
      * Setups the requirements widget
      *
+     * TODO: Update this doc (list of options).
+     *
      * Available options:
      *
      *   - onComplete: function executed with either failure or success
@@ -51878,7 +51969,8 @@ if (!Array.prototype.indexOf) {
      *   - onSuccess: function executed when all tests succeed
      *   - waitTime: max waiting time to execute all tests (in milliseconds)
      *   - startDate: max waiting time to execute all tests (in milliseconds)
-     *   - playWithBotOption: display button to dispatch players with bots
+     *   - playWithBotOption: displays button to dispatch players with bots
+     *   - selectTreatmentOption: displays treatment selector
      *
      * @param {object} conf Configuration object.
      */
@@ -51961,30 +52053,136 @@ if (!Array.prototype.indexOf) {
             this.disconnectIfNotSelected = false;
         }
 
-        if (conf.playWithBotOption) {
-            this.playWithBotOption = true;
-        }
-        else {
-            this.playWithBotOption = false;
-        }
+        if (conf.playWithBotOption) this.playWithBotOption = true;
+        else this.playWithBotOption = false;
+        if (conf.selectTreatmentOption) this.selectTreatmentOption = true;
+        else this.selectTreatmentOption = false;
 
         if (this.playWithBotOption && !document.getElementById('bot_btn')) {
-            this.playBotBtn = document.createElement('input');
-            this.playBotBtn.className = 'btn btn-secondary btn-lg';
-            this.playBotBtn.value = this.getText('playBot');
-            this.playBotBtn.id = 'bot_btn';
-            this.playBotBtn.type = 'button';
-            this.playBotBtn.onclick = function() {
-                that.playBotBtn.value = that.getText('connectingBots');
-                that.playBotBtn.disabled = true;
-                node.say('PLAYWITHBOT');
-                setTimeout(function() {
-                    that.playBotBtn.value = that.getText('playBot');
-                    that.playBotBtn.disabled = false;
-                }, 5000);
-            };
-            this.bodyDiv.appendChild(document.createElement('br'));
-            this.bodyDiv.appendChild(this.playBotBtn);
+            // Closure to create button group.
+            (function(w) {
+                var btnGroup = document.createElement('div');
+                btnGroup.role = 'group';
+                btnGroup['aria-label'] = 'Play Buttons';
+                btnGroup.className = 'btn-group';
+
+                var playBotBtn = document.createElement('input');
+                playBotBtn.className = 'btn btn-secondary btn-lg';
+                playBotBtn.value = w.getText('playBot');
+                playBotBtn.id = 'bot_btn';
+                playBotBtn.type = 'button';
+                playBotBtn.onclick = function() {
+                    w.playBotBtn.value = w.getText('connectingBots');
+                    w.playBotBtn.disabled = true;
+                    node.say('PLAYWITHBOT', 'SERVER', w.selectedTreatment);
+                    setTimeout(function() {
+                        w.playBotBtn.value = w.getText('playBot');
+                        w.playBotBtn.disabled = false;
+                    }, 5000);
+                };
+
+                btnGroup.appendChild(playBotBtn);
+
+                // Store reference in widget.
+                w.playBotBtn = playBotBtn;
+
+                if (w.selectTreatmentOption) {
+
+                    var btnGroupTreatments = document.createElement('div');
+                    btnGroupTreatments.role = 'group';
+                    btnGroupTreatments['aria-label'] = 'Select Treatment';
+                    btnGroupTreatments.className = 'btn-group';
+
+                    var btnTreatment = document.createElement('button');
+                    btnTreatment.className = 'btn btn-default btn-lg ' +
+                        'dropdown-toggle';
+                    btnTreatment['data-toggle'] = 'dropdown';
+                    btnTreatment['aria-haspopup'] = 'true';
+                    btnTreatment['aria-expanded'] = 'false';
+                    btnTreatment.innerHTML = w.getText('selectTreatment');
+
+                    var span = document.createElement('span');
+                    span.className = 'caret';
+
+                    btnTreatment.appendChild(span);
+
+                    var ul = document.createElement('ul');
+                    ul.className = 'dropdown-menu';
+                    ul.style = 'text-align: left';
+
+                    var li, a, t, liT1, liT2;
+                    if (conf.availableTreatments) {
+                        li = document.createElement('li');
+                        li.innerHTML = w.getText('gameTreatments');
+                        li.className = 'dropdown-header';
+                        ul.appendChild(li);
+                        for (t in conf.availableTreatments) {
+                            if (conf.availableTreatments.hasOwnProperty(t)) {
+                                li = document.createElement('li');
+                                li.id = t;
+                                a = document.createElement('a');
+                                a.href = '#';
+                                a.innerHTML = '<strong>' + t + '</strong>: ' +
+                                    conf.availableTreatments[t];
+                                li.appendChild(a);
+                                if (t === 'treatment_rotate') liT1 = li;
+                                else if (t === 'treatment_random') liT2 = li;
+                                else ul.appendChild(li);
+                            }
+                        }
+                        li = document.createElement('li');
+                        li.role = 'separator';
+                        li.className = 'divider';
+                        ul.appendChild(li);
+                        li = document.createElement('li');
+                        li.innerHTML = w.getText('defaultTreatments');
+                        li.className = 'dropdown-header';
+                        ul.appendChild(li);
+                        ul.appendChild(liT1);
+                        ul.appendChild(liT2);
+                    }
+
+                    btnGroupTreatments.appendChild(btnTreatment);
+                    btnGroupTreatments.appendChild(ul);
+
+                    btnGroup.appendChild(btnGroupTreatments);
+
+                    // Variable toggled controls if the dropdown menu
+                    // is displayed (we are not using bootstrap js files)
+                    // and we redo the job manually here.
+                    var toggled = false;
+                    btnTreatment.onclick = function() {
+                        if (toggled) {
+                            ul.style = 'display: none';
+                            toggled = false;
+                        }
+                        else {
+                            ul.style = 'display: block; text-align: left';
+                            toggled = true;
+                        }
+                    };
+
+                    ul.onclick = function(eventData) {
+                        var t;
+                        ul.style = 'display: none';
+                        t = eventData.target.parentNode.id;
+                        if (!t) t = eventData.target.parentNode.parentNode.id;
+                        console.log(eventData.target.parentNode);
+                        console.log(t);
+                        btnTreatment.innerHTML = t + ' ';
+                        btnTreatment.appendChild(span);
+                        w.selectedTreatment = t;
+                        toggled = false;
+                    };
+
+                    // Store Reference in widget.
+                    w.treatmentBtn = btnTreatment;
+                }
+                // Append button group.
+                w.bodyDiv.appendChild(document.createElement('br'));
+                w.bodyDiv.appendChild(btnGroup);
+
+            })(this);
         }
     };
 
@@ -52066,8 +52264,10 @@ if (!Array.prototype.indexOf) {
         var numberOfGameSlots, numberOfGames;
         if (this.connected > this.poolSize) {
             numberOfGames = Math.floor(this.connected / this.groupSize);
-            numberOfGames = numberOfGames > this.nGames ?
-                this.nGames : numberOfGames;
+            if ('undefined' !== typeof this.nGames) {
+                numberOfGames = numberOfGames > this.nGames ?
+                    this.nGames : numberOfGames;
+            }
             numberOfGameSlots = numberOfGames * this.groupSize;
 
             this.playerCount.innerHTML = '<span style="color:red">' +
