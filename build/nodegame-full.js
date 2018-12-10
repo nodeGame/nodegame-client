@@ -10586,7 +10586,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EventEmitter
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
  * Event emitter engine for `nodeGame`
@@ -10612,8 +10612,8 @@ if (!Array.prototype.indexOf) {
      */
     function EventEmitter(name, node) {
         if ('string' !== typeof name) {
-            throw new TypeError('EventEmitter constructor: ' +
-                                'name must be string.');
+            throw new TypeError('EventEmitter constructor: name must be ' +
+                                'string. Found: ' + name);
         }
 
         this.node = node;
@@ -10689,11 +10689,13 @@ if (!Array.prototype.indexOf) {
      * @see EventEmitter.off
      */
     EventEmitter.prototype.on = function(type, listener, label) {
-        if ('string' !== typeof type) {
-            throw new TypeError('EventEmitter.on: type must be string.');
+        if ('string' !== typeof type || type === '') {
+            throw new TypeError('EventEmitter.on: type must be a non-empty ' +
+                                'string. Found: ' + type);
         }
         if ('function' !== typeof listener) {
-            throw new TypeError('EventEmitter.on: listener must be function.');
+            throw new TypeError('EventEmitter.on: listener must be function.' +
+                                'Found: ' + listener);
         }
         if (label) {
             if ('string' === typeof label || 'number' === typeof label) {
@@ -10729,7 +10731,7 @@ if (!Array.prototype.indexOf) {
             this.changes.added.push({type: type, listener: listener});
         }
 
-        this.node.silly(this.name + '.on: added: ' + type + '.');
+        this.node.silly(this.name + '.on: added: ' + type);
     };
 
     /**
@@ -10929,19 +10931,19 @@ if (!Array.prototype.indexOf) {
 
         if ('string' !== typeof type) {
             throw new TypeError('EventEmitter.remove (' + this.name +
-                      '): type must be string.');
+                      '): type must be string. Found: ' + type);
         }
 
         if (listener &&
             ('function' !== typeof listener && 'string' !== typeof listener)) {
             throw new TypeError('EventEmitter.remove (' + this.name +
                                 '): listener must be function, string, or ' +
-                               'undefined.');
+                                'undefined. Found: ' + listener);
         }
 
         if ('string' === typeof listener && listener.trim() === '') {
             throw new Error('EventEmitter.remove (' + this.name + '): ' +
-                            'listener cannot be an empty string.');
+                            'listener cannot be an empty string');
         }
 
         if (this.events[type]) {
@@ -11034,11 +11036,11 @@ if (!Array.prototype.indexOf) {
                     });
                 }
             }
-            node.silly('ee.' + this.name + ' removed listener: ' + type + '.');
+            node.silly('ee.' + this.name + ' removed listener: ' + type);
         }
         else {
             node.warn('EventEmitter.remove (' + this.name + '): requested ' +
-                      'listener was not found for event ' + type + '.');
+                      'listener was not found for event ' + type);
         }
 
         return removed;
@@ -11180,7 +11182,7 @@ if (!Array.prototype.indexOf) {
         if ('boolean' === typeof record) this.recordChanges = record;
         else if ('undefined' !== typeof record) {
             throw new TypeError('EventEmitter.setRecordChanged: record must ' +
-                                'be boolean or undefined');
+                                'be boolean or undefined. Found: ' + record);
         }
         return this.recordChanges;
     };
@@ -11239,7 +11241,7 @@ if (!Array.prototype.indexOf) {
         var ee;
         if ('string' !== typeof name) {
             throw new TypeError('EventEmitterManager.destroyEE: name must be ' +
-                                'string.');
+                                'string. Found: ' + name);
         }
         if (!this.ee[name]) return false;
         delete this[name];
@@ -11277,7 +11279,8 @@ if (!Array.prototype.indexOf) {
 
         if ('string' !== typeof eventName) {
             throw new TypeError(
-                'EventEmitterManager.emit: eventName must be string.');
+                'EventEmitterManager.emit: eventName must be string. Found: ' +
+                    eventName);
         }
         res = [];
 
@@ -11355,7 +11358,8 @@ if (!Array.prototype.indexOf) {
 
         if ('string' !== typeof eventName) {
             throw new TypeError(
-                'EventEmitterManager.emit: eventName must be string.');
+                'EventEmitterManager.emit: eventName must be string. Found: ' +
+                    eventName);
         }
 
         len = arguments.length;
@@ -11410,14 +11414,14 @@ if (!Array.prototype.indexOf) {
     EventEmitterManager.prototype.remove = function(eventName, listener) {
         var res;
         if ('string' !== typeof eventName) {
-            throw new TypeError('EventEmitterManager.remove: ' +
-                                'eventName must be string.');
+            throw new TypeError('EventEmitterManager.remove: eventName ' +
+                                'must be string. Found: ' + eventName);
         }
         if (listener &&
             ('function' !== typeof listener && 'string' !== typeof listener)) {
             throw new TypeError('EventEmitter.remove (' + this.name +
                                 '): listener must be function, string, or ' +
-                                'undefined.');
+                                'undefined. Found: ' + listener);
         }
         res = {};
         res.ng = this.ng.remove(eventName, listener);
@@ -11439,11 +11443,11 @@ if (!Array.prototype.indexOf) {
         if (eventEmitterName && 'string' !== typeof eventEmitterName) {
             throw new TypeError('EventEmitterManager.printAll: ' +
                                 'eventEmitterName must be string or ' +
-                                'undefined.');
+                                'undefined. Found: ' + eventEmitterName);
         }
         if (eventEmitterName && !this.ee[eventEmitterName]) {
             throw new TypeError('EventEmitterManager.printAll: event' +
-                                'emitter not found: ' + eventEmitterName + '.');
+                                'emitter not found: ' + eventEmitterName);
         }
         if (eventEmitterName) {
             total = this.ee[eventEmitterName].printAll();
@@ -11455,7 +11459,7 @@ if (!Array.prototype.indexOf) {
             total += this.stage.printAll();
             total += this.step.printAll();
 
-            console.log('Total number of registered listeners: ' + total + '.');
+            console.log('Total number of registered listeners: ' + total);
         }
         return total;
     };
@@ -11470,13 +11474,13 @@ if (!Array.prototype.indexOf) {
     EventEmitterManager.prototype.getAll = function(eventEmitterName) {
         var events;
         if (eventEmitterName && 'string' !== typeof eventEmitterName) {
-            throw new TypeError('EventEmitterManager.printAll: ' +
+            throw new TypeError('EventEmitterManager.getAll: ' +
                                 'eventEmitterName must be string or ' +
-                                'undefined.');
+                                'undefined. Found: ' + eventEmitterName);
         }
         if (eventEmitterName && !this.ee[eventEmitterName]) {
-            throw new TypeError('EventEmitterManager.printAll: event' +
-                                'emitter not found: ' + eventEmitterName + '.');
+            throw new TypeError('EventEmitterManager.getAll: event' +
+                                'emitter not found: ' + eventEmitterName);
         }
         if (eventEmitterName) {
             events = this.ee[eventEmitterName].events;
@@ -31443,7 +31447,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # aliases
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
  * Event listener aliases.
@@ -31480,10 +31484,12 @@ if (!Array.prototype.indexOf) {
 
         // ### node.on.data
         this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+            if ('string' !== typeof text || text === '') {
+                throw new TypeError('node.on.data: text must be a non-empty ' +
+                                    'string. Found: ' + text);
+            }
             return function(msg) {
-                if (msg.text === text) {
-                    cb.call(that.game, msg);
-                }
+                if (msg.text === text) cb.call(that.game, msg);                
             };
         });
 
@@ -39515,11 +39521,11 @@ if (!Array.prototype.indexOf) {
         },
         incoming: function(w, data) {
             return '<span class="chat_others">' +
-                w.namesMap[w.sendersMap[data.id]] +
+                w.senderToNameMap[data.id] +
                 '</span>: </span class="chat_msg">' + data.msg + '</span>';
         },
         quit: function(w, data) {
-            return w.namesMap[w.sendersMap[data.id]] + ' quit the chat';
+            return w.senderToNameMap[data.id] + ' quit the chat';
         }
     };
 
@@ -39639,21 +39645,28 @@ if (!Array.prototype.indexOf) {
         this.recipientsIds = null;
 
         /**
-         * ### Chat.namesMap
+         * ### Chat.recipientToNameMap
          *
          * Map recipients ids to names
          */
-        this.namesMap = null;
+        this.recipientToNameMap = null;
 
         /**
-         * ### Chat.sendersMap
+         * ### Chat.recipientToSenderMap
+         *
+         * Map recipients ids to names
+         */
+        this.recipientToSenderMap = null;
+
+        /**
+         * ### Chat.senderToNameMap
          *
          * Map recipients ids to sender ids
          *
          * Note: The 'from' field of a message can be different 
          * from the 'to' field of its reply (e.g., for MONITOR)
          */
-        this.sendersMap = null;
+        this.senderToNameMap = null;
     }
 
     // ## Chat methods
@@ -39704,19 +39717,23 @@ if (!Array.prototype.indexOf) {
 
         // Build maps.
         this.recipientsIds = new Array(tmp.length);
-        this.namesMap = {};
-        this.sendersMap = {};
+        this.recipientToSenderMap = {};
+        this.recipientToNameMap = {};
+        this.senderToNameMap = {};
         for (i = 0; i < tmp.length; i++) {
             if ('string' === typeof tmp[i]) {
                 this.recipientsIds[i] = tmp[i];
-                this.namesMap[rec] = tmp[i];
-                this.sendersMap[rec] = tmp[i];
+                this.recipientToNameMap[tmp[i]] = tmp[i];
+                this.recipientToSenderMap[tmp[i]] = tmp[i];
+                this.senderToNameMap[tmp[i]] = tmp[i];
             }
             else if ('object' === typeof tmp[i]) {
                 rec = tmp[i].recipient;
                 this.recipientsIds[i] = rec;
-                this.namesMap[rec] = tmp[i].name || rec;
-                this.sendersMap[rec] = tmp[i].sender || rec;
+                this.recipientToSenderMap[rec] = tmp[i].sender || rec;
+                this.recipientToNameMap[rec] = tmp[i].name || rec;
+                this.senderToNameMap[tmp[i].sender || rec] =
+                    this.recipientToNameMap[rec];
             }
             else {
                 throw new TypeError('Chat.init: particpants array must ' +
@@ -39808,7 +39825,7 @@ if (!Array.prototype.indexOf) {
     Chat.prototype.listeners = function() {
         var that = this;
 
-        node.on.data(this.ChatEvent, function(msg) {
+        node.on.data(this.chatEvent, function(msg) {
             if (!that.handleMsg(msg)) return;
             that.stats.received++;
             // Store message if so requested.

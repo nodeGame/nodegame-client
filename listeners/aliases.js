@@ -1,6 +1,6 @@
 /**
  * # aliases
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
  * Event listener aliases.
@@ -37,10 +37,12 @@
 
         // ### node.on.data
         this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+            if ('string' !== typeof text || text === '') {
+                throw new TypeError('node.on.data: text must be a non-empty ' +
+                                    'string. Found: ' + text);
+            }
             return function(msg) {
-                if (msg.text === text) {
-                    cb.call(that.game, msg);
-                }
+                if (msg.text === text) cb.call(that.game, msg);                
             };
         });
 
