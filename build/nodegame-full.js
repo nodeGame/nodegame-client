@@ -19841,6 +19841,7 @@ if (!Array.prototype.indexOf) {
         this.socket.send(msg);
         this.node.info('S: ' + msg);
 
+        // TODO: check this.
         // Experimental code.
         if (this.journalOn) {
             this.journal.insert(msg);
@@ -36515,7 +36516,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # HTMLRenderer
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -36628,17 +36629,43 @@ if (!Array.prototype.indexOf) {
         });
 
         this.tm.addTrigger(function(el) {
-            var div, key, str;
+            var div, spanType, spanContent, span2, key, str;
             if (!el) return;
-            if (el.content && 'object' === typeof el.content) {
+            if (el.content &&
+                ('object' === typeof el.content ||
+                 'function' === typeof el.content)) {
+
                 div = document.createElement('div');
-                for (key in el.content) {
-                    if (el.content.hasOwnProperty(key)) {
-                        str = key + ':\t' + el.content[key];
-                        div.appendChild(document.createTextNode(str));
-                        div.appendChild(document.createElement('br'));
+                spanType = W.add('span', div);
+                spanType.innerHTML = typeof el.content;
+                spanType.className = 'ng_clickable bold';
+                
+                spanContent = W.add('span', div);
+                spanContent.style.display = 'none';
+                spanContent.className = 'ng_clickable';
+
+                if ('object' === typeof el.content) {
+                    for (key in el.content) {
+                        if (el.content.hasOwnProperty(key)) {
+                            str = key + ':\t' + el.content[key];
+                            spanContent.appendChild(document.createTextNode(str));
+                            spanContent.appendChild(document.createElement('br'));
+                        }
                     }
                 }
+                else {
+                    spanContent.innerHTML = el.content.toString();
+                }
+                spanType.onclick = function() {
+                    spanContent.style.display = '';
+                    spanType.style.display = 'none';
+                };
+
+                spanContent.onclick = function() {
+                    spanContent.style.display = 'none';
+                    spanType.style.display = '';
+                };
+                
                 return div;
             }
         });
@@ -38097,12 +38124,15 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Widget.collapse
      *
-     * Collapses the widget (hides the body and footer)
+     * Collapses the widget,  (hides the body and footer)
+     *
+     * Only, if it was previously appended to DOM
      *
      * @see Widget.uncollapse
      * @see Widget.isCollapsed
      */
     Widget.prototype.collapse = function() {
+        if (!this.panelDiv) return;
         this.bodyDiv.style.display = 'none';
         this.collapsed = true;
         if (this.collapseButton) {
@@ -38110,6 +38140,8 @@ if (!Array.prototype.indexOf) {
             this.collapseButton.title = 'Maximize';
         }
         if (this.footer) this.footer.style.display = 'none';
+        // Move into collapse target, if one is specified.
+        if (this.collapseTarget) this.collapseTarget.appendChild(this.panelDiv);
         this.emit('collapsed');
     };
 
@@ -38118,10 +38150,16 @@ if (!Array.prototype.indexOf) {
      *
      * Uncollapses the widget (shows the body and footer)
      *
+     * Only, if it was previously appended to DOM
+     *
      * @see Widget.collapse
      * @see Widget.isCollapsed
      */
     Widget.prototype.uncollapse = function() {
+        if (!this.panelDiv) return;
+        if (this.collapseTarget) {
+            this.originalRoot.appendChild(this.panelDiv);
+        }
         this.bodyDiv.style.display = '';
         this.collapsed = false;
         if (this.collapseButton) {
@@ -38187,16 +38225,18 @@ if (!Array.prototype.indexOf) {
      * Sets the 'display' property of `panelDiv` to 'none'
      *
      * @see Widget.show
+     * @see Widget.toggle
      */
     Widget.prototype.hide = function() {
         if (!this.panelDiv) return;
         this.panelDiv.style.display = 'none';
+        this.hidden = true;
     };
 
     /**
      * ### Widget.show
      *
-     * Show the widget, if it was previously appended and hidden
+     * Shows the widget, if it was previously appended and hidden
      *
      * Sets the 'display' property of `panelDiv` to ''
      *
@@ -38204,10 +38244,12 @@ if (!Array.prototype.indexOf) {
      *    property. Default: ''
      *
      * @see Widget.hide
+     * @see Widget.toggle
      */
     Widget.prototype.show = function(display) {
         if (this.panelDiv && this.panelDiv.style.display === 'none') {
             this.panelDiv.style.display = display || '';
+            this.hidden = false;
         }
     };
 
@@ -38223,12 +38265,20 @@ if (!Array.prototype.indexOf) {
      */
     Widget.prototype.toggle = function(display) {
         if (!this.panelDiv) return;
-        if (this.panelDiv.style.display === 'none') {
-            this.panelDiv.style.display = display || '';
-        }
-        else {
-            this.panelDiv.style.display = 'none';
-        }
+        if (this.hidden()) this.show();
+        else this.hide();
+    };
+
+    /**
+     * ### Widget.isHidden
+     *
+     * TRUE if widget is hidden or not yet appended
+     *
+     * @return {boolean} TRUE if widget is hidden, or if it was not
+     *   appended to the DOM yet
+     */
+    Widget.prototype.isHidden = function() {
+        return !!this.hidden;
     };
 
     /**
@@ -38323,7 +38373,7 @@ if (!Array.prototype.indexOf) {
                     var link, img;
                     link = document.createElement('span');
                     link.className = 'panel-collapse-link';
-                    link.style['margin-right'] = '8px';
+                    // link.style['margin-right'] = '8px';
                     img = document.createElement('img');
                     img.src = '/images/close_small.png';
                     link.appendChild(img);
@@ -38456,6 +38506,18 @@ if (!Array.prototype.indexOf) {
     Widget.prototype.removeFrame = function() {
         if (this.panelDiv) W.removeClass(this.panelDiv, 'panel-[a-z]*');
         if (this.bodyDiv) W.removeClass(this.bodyDiv, 'panel-body');
+    };
+
+
+    /**
+     * ### Widget.isAppended
+     *
+     * Returns TRUE if widget was appended to DOM (using Widget API)
+     *
+     * @return {boolean} TRUE, if node.widgets.append was called
+     */
+    Widget.prototype.isAppended = function() {
+        return this.appended;
     };
 
     /**
@@ -38868,7 +38930,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Widgets
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Helper class to interact with nodeGame widgets
@@ -38914,9 +38976,16 @@ if (!Array.prototype.indexOf) {
          */
         this.lastAppended = null;
 
+        /**
+         * ### Widgets.collapseTarget
+         *
+         * Collapsed widgets are by default moved inside element
+         */
+        this.collapseTarget = null;
+
         that = this;
         node.registerSetup('widgets', function(conf) {
-            var name, root;
+            var name, root, collapseTarget;
             if (!conf) return;
 
             // Add new widgets.
@@ -38956,6 +39025,24 @@ if (!Array.prototype.indexOf) {
                             that.append(name, root, conf.append[name]);
                         }
                     }
+                }
+            }
+
+            if (conf.collapseTarget) {
+                if ('function' === typeof conf.collapseTarget) {
+                    collapseTarget = conf.collapseTarget();
+                }
+                else if ('string' === typeof conf.collapseTarget) {
+                    collapseTarget = W.getElementById(conf.collapseTarget);
+                }
+                else if (J.isElement(conf.collapseTarget)) {
+                    collapseTarget = conf.collapseTarget;
+                }
+                if (!collapseTarget) {
+                    node.warn('setup widgets: could not find collapse target.');
+                }
+                else {
+                    that.collapseTarget = collapseTarget;
                 }
             }
 
@@ -39119,8 +39206,19 @@ if (!Array.prototype.indexOf) {
             WidgetPrototype.title : options.title;
         widget.footer = 'undefined' === typeof options.footer ?
             WidgetPrototype.footer : options.footer;
-        widget.className = 'undefined' === typeof options.className ?
-            WidgetPrototype.className : options.className;
+        widget.className = WidgetPrototype.className;
+        if (J.isArray(options.className)) {
+            widget.className += options.className.join(' ');
+        }
+        else if ('string' === typeof options.className) {
+            widget.className += options.className;
+        }
+        else if ('undefined' !== typeof options.className) {
+            throw new TypeError('widgets.append: className must be array, ' +
+                                'string, or undefined. Found: ' +
+                                options.className);
+        }
+
         widget.context = 'undefined' === typeof options.context ?
             WidgetPrototype.context : options.context;
         widget.sounds = 'undefined' === typeof options.sounds ?
@@ -39129,7 +39227,11 @@ if (!Array.prototype.indexOf) {
             WidgetPrototype.texts : options.texts;
         widget.collapsible = options.collapsible || false;
         widget.closable = options.closable || false;
+        widget.collapseTarget =
+            options.collapseTarget || this.collapseTarget || null;
         widget.hooks = {
+            hidden: [],
+            shown: [],
             collapsed: [],
             uncollapsed: [],
             disabled: [],
@@ -39143,12 +39245,16 @@ if (!Array.prototype.indexOf) {
         widget.widgetName = widgetName;
         // Add random unique widget id.
         widget.wid = '' + J.randomInt(0,10000000000000000000);
+        // Add appended.
+        widget.appended = false;
         // Add enabled.
         widget.disabled = null;
         // Add highlighted.
         widget.highlighted = null;
         // Add collapsed.
         widget.collapsed = null;
+        // Add hidden.
+        widget.hidden = null;
 
         // Call init.
         widget.init(options);
@@ -39282,11 +39388,18 @@ if (!Array.prototype.indexOf) {
         if ('string' === typeof w) w = this.get(w, options);
 
         // Add panelDiv (with or without panel).
-        tmp = options.panel === false ?
-            [ 'ng_widget',  'no-panel', w.className ] :
-            [ 'ng_widget', 'panel', 'panel-default', w.className ];
+        tmp = {
+            className: options.panel === false ?
+                [ 'ng_widget',  'no-panel', w.className ] :
+                [ 'ng_widget', 'panel', 'panel-default', w.className ]
+        };
 
-        w.panelDiv = W.append('div', root, { className: tmp });
+        // Dock it.
+        // TODO: handle multiple dockedd widgets.
+        if (options.docked) tmp.className.push('docked');
+
+        // Add div inside widget.
+        w.panelDiv = W.get('div', tmp);
 
         // Optionally add title (and div).
         if (options.title !== false && w.title) {
@@ -39312,7 +39425,15 @@ if (!Array.prototype.indexOf) {
         // User listeners.
         // attachListeners(w);
 
+        // Be hidden, if requested.
+        if (options.hidden) w.hide();
+
+        root.appendChild(w.panelDiv);
+
+        w.originalRoot = root;
+
         w.append();
+        w.appended = true;
 
         // Store reference of last appended widget.
         this.lastAppended = w;
@@ -39473,7 +39594,7 @@ if (!Array.prototype.indexOf) {
 //     }
 
     function checkDepErrMsg(w, d) {
-        var name = w.name || w.id;// || w.toString();
+        var name = w.name || w.id; // || w.toString();
         node.err(d + ' not found. ' + name + ' cannot be loaded.');
     }
 
@@ -39496,8 +39617,6 @@ if (!Array.prototype.indexOf) {
  * // TODO: add is...typing
  * // TODO: add bootstrap badge to count msg when collapsed
  * // TODO: check on data if message comes back
- * // TODO: fix no names and map
- * // TODO: check if removing privateData works (battery ended here).
  * // TODO: add proper inline doc
  *
  * www.nodegame.org
@@ -39521,11 +39640,11 @@ if (!Array.prototype.indexOf) {
         },
         incoming: function(w, data) {
             return '<span class="chat_others">' +
-                w.senderToNameMap[data.id] +
+                (w.senderToNameMap[data.id] || data.id) +
                 '</span>: </span class="chat_msg">' + data.msg + '</span>';
         },
         quit: function(w, data) {
-            return w.senderToNameMap[data.id] + ' quit the chat';
+            return (w.senderToNameMap[data.id] || data.id) + ' quit the chat';
         }
     };
 
@@ -39566,8 +39685,6 @@ if (!Array.prototype.indexOf) {
          * ### Chat.stats
          *
          * Some basic statistics about message counts
-         *
-         * @see Chat.submit
          */
         this.stats = {
             received: 0,
@@ -39578,9 +39695,9 @@ if (!Array.prototype.indexOf) {
         /**
          * ### Chat.receiverOnly
          *
-         * If TRUE, users cannot send messages (no submit and textarea)
+         * If TRUE, users cannot send messages (no textarea)
          *
-         * @see Chat.submit
+         * @see Chat.textarea
          */
         this.receiverOnly = false;
 
@@ -39617,18 +39734,11 @@ if (!Array.prototype.indexOf) {
         this.textarea = null;
 
         /**
-         * ### Chat.submit
+         * ### Chat.textarea
          *
-         * The submit button
+         * An initialMsg to display when the chat is open
          */
-        this.submit = null;
-
-        /**
-         * ### Chat.submitText
-         *
-         * The text on the submit button
-         */
-        this.submitText = null;
+        this.initialMsg = null;
 
         /**
          * ### Chat.displayNames
@@ -39663,7 +39773,7 @@ if (!Array.prototype.indexOf) {
          *
          * Map recipients ids to sender ids
          *
-         * Note: The 'from' field of a message can be different 
+         * Note: The 'from' field of a message can be different
          * from the 'to' field of its reply (e.g., for MONITOR)
          */
         this.senderToNameMap = null;
@@ -39680,7 +39790,6 @@ if (!Array.prototype.indexOf) {
      *
      * The  options object can have the following attributes:
      *   - `receiverOnly`: If TRUE, no message can be sent
-     *   - `submitText`: The text of the submit button
      *   - `chatEvent`: The event to fire when sending/receiving a message
      *   - `displayName`: Function which displays the sender's name
      */
@@ -39688,7 +39797,7 @@ if (!Array.prototype.indexOf) {
         var tmp, i, rec;
         options = options || {};
 
-        
+
         // Chat id.
         tmp = options.chatEvent;
         if (tmp) {
@@ -39697,11 +39806,11 @@ if (!Array.prototype.indexOf) {
                                     'empty string or undefined. Found: ' + tmp);
             }
             this.chatEvent = options.chatEvent;
-        }        
+        }
         else {
             this.chatEvent = 'CHAT';
         }
-        
+
         // Store.
         this.storeMsgs = !!options.storeMsgs;
         if (this.storeMsgs) {
@@ -39736,27 +39845,23 @@ if (!Array.prototype.indexOf) {
                     this.recipientToNameMap[rec];
             }
             else {
-                throw new TypeError('Chat.init: particpants array must ' +
+                throw new TypeError('Chat.init: participants array must ' +
                                     'contain string or object. Found: ' +
                                     tmp[i]);
             }
         }
 
-        // Chat button text.
-        tmp = options.submitText;
-        if (tmp) {
-            if ('string' === typeof tmp) {
-                throw new TypeError('Chat.init: submitText must be a non-' +
-                                    'empty string or undefined. Found: ' + tmp);
-            }
-            this.submitText = options.submitText;
-        }        
-        else {
-            this.submitText = 'Chat';
-        }
-        
         // Other.
         this.uncollapseOnMsg = options.uncollapseOnMsg || false;
+
+        if (options.initialMsg) {
+            if ('object' !== typeof options.initialMsg) {                
+                throw new TypeError('Chat.init: initialMsg must be ' +
+                                    'object or undefined. Found: ' +
+                                    options.initialMsg);
+            }
+            this.initialMsg = options.initialMsg;
+        }
     };
 
 
@@ -39772,43 +39877,38 @@ if (!Array.prototype.indexOf) {
 
             // Input group.
             inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group';
-            // Span group.
-            span = document.createElement('span');
-            span.className = 'input-group-btn';
 
             this.textarea = W.get('textarea', {
                 className: 'chat_textarea form-control'
             });
 
-            // Create buttons to send messages, if allowed.
-            this.submit = W.get('button', {
-                innerHTML: this.submitText,
-                // className: 'btn btn-sm btn-secondary'
-                className: 'btn btn-default chat_submit'
-            });
-
             ids = this.recipientsIds;
-            this.submit.onclick = function() {
+            this.textarea.onkeydown = function(e) {
                 var msg, to;
-                msg = that.readTextarea();
-                if (msg === '') {
-                    node.warn('no text, no chat message sent.');
-                    return;
+                var keyCode; 
+                e = e || window.event;
+                keyCode = e.keyCode || e.which;
+                if (keyCode==13) {
+                    msg = that.readTextarea();
+                    if (msg === '') {
+                        node.warn('no text, no chat message sent.');
+                        return;
+                    }
+                    // Simplify things, if there is only one recipient.
+                    to = ids.length === 1 ? ids[0] : ids;
+                    that.writeMsg('outgoing', { msg: msg }); // to not used now.
+                    node.say(that.chatEvent, to, msg);
                 }
-                // Simplify things, if there is only one recipient.
-                to = ids.length === 1 ? ids[0] : ids;
-                that.writeMsg('outgoing', { msg: msg }); // to not used now.
-                node.say(that.chatEvent, to, msg);
             };
-
+        
             inputGroup.appendChild(this.textarea);
-            span.appendChild(this.submit);
-            inputGroup.appendChild(span);
+            // inputGroup.appendChild(span);
             this.bodyDiv.appendChild(inputGroup);
         }
+
+        if (this.initialMsg) this.writeMsg('incoming', this.initialMsg);
     };
-    
+
     Chat.prototype.readTextarea = function() {
         var txt;
         txt = this.textarea.value;
@@ -39877,7 +39977,8 @@ if (!Array.prototype.indexOf) {
             participants: this.participants,
             totSent: this.stats.sent,
             totReceived: this.stats.received,
-            totUnread: this.stats.unread
+            totUnread: this.stats.unread,
+            initialMsg: this.initialMsg
         };
         if (this.db) out.msgs = db.fetch();
         return out;
@@ -45618,6 +45719,319 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
+ * # DebugWall
+ * Copyright(c) 2018 Stefano Balietti
+ * MIT Licensed
+ *
+ * Creates a wall where all incoming and outgoing messages are printed
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('DebugWall', DebugWall);
+
+    // ## Meta-data
+
+    DebugWall.version = '1.0.0';
+    DebugWall.description = 'Intercepts incoming and outgoing messages, and ' +
+        'logs and prints them numbered and timestamped. Warning! Modifies ' +
+        'core functions, therefore its usage in production is ' +
+        'not recommended.';
+
+    DebugWall.title = 'Debug Wall';
+    DebugWall.className = 'debugwall';
+
+    // ## Dependencies
+
+    DebugWall.dependencies = {
+        JSUS: {}
+    };
+
+    /**
+     * ## DebugWall constructor
+     *
+     * Creates a new DebugWall oject
+     */
+    function DebugWall() {
+
+        /**
+         * ### DebugWall.buttonsDiv
+         *
+         * Div contains controls for the display info inside the wall.
+         */
+        this.buttonsDiv = null;
+
+        /**
+         * ### DebugWall.hidden
+         *
+         * Keep tracks of what is hidden in the wall
+         */
+        this.hiddenTypes = {};
+
+        /**
+         * ### DebugWall.counterIn
+         *
+         * Counts number of incoming message printed on wall
+         */
+        this.counterIn = 0;
+
+        /**
+         * ### DebugWall.counterOut
+         *
+         * Counts number of outgoing message printed on wall
+         */
+        this.counterOut = 0;
+
+        /**
+         * ### DebugWall.counterLog
+         *
+         * Counts number of log entries printed on wall
+         */
+        this.counterLog = 0;
+
+        /**
+         * ### DebugWall.wall
+         *
+         * The table element in which to write
+         */
+        this.wall = null;
+
+        /**
+         * ### DebugWall.wallDiv
+         *
+         * The div element containing the wall (for scrolling)
+         */
+        this.wall = null;
+
+        /**
+         * ### DebugWall.origMsgInCb
+         *
+         * The original function that receives incoming msgs
+         */
+        this.origMsgInCb = null;
+
+        /**
+         * ### DebugWall.origMsgOutCb
+         *
+         * The original function that sends msgs
+         */
+        this.origMsgOutCb = null;
+
+        /**
+         * ### DebugWall.origLogCb
+         *
+         * The original log callback
+         */
+        this.origLogCb = null;
+    }
+
+    // ## DebugWall methods
+
+    /**
+     * ### DebugWall.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} options Optional. Configuration options
+     */
+    DebugWall.prototype.init = function(options) {
+        var that;
+        that = this;
+        if (options.msgIn !== false) {
+            this.origMsgInCb = node.socket.onMessage;
+            node.socket.onMessage = function(msg) {
+                that.write('in', that.makeTextIn(msg));
+                that.origMsgInCb.call(node.socket, msg);
+            };
+        }
+        if (options.msgOut !== false) {
+            this.origMsgOutCb = node.socket.send;
+            node.socket.send = function(msg) {
+                that.write('out', that.makeTextOut(msg));
+                that.origMsgOutCb.call(node.socket, msg);
+            };
+        }
+        if (options.log !== false) {
+            this.origLogCb = node.log;
+            node.log = function(txt, level, prefix) {
+                that.write(level || 'info',
+                           that.makeTextLog(txt, level, prefix));
+                that.origLogCb.call(node, txt, level, prefix);
+            };
+        }
+
+        if (options.hiddenTypes) {
+            if ('object' !== typeof hiddenTypes) {
+                throw new TypeError('DebugWall.init: hiddenTypes must be ' +
+                                    'object. Found: ' + hiddenTypes);
+            }
+            this.hiddenTypes = hiddenTypes;
+        }
+    };
+
+    DebugWall.prototype.destroy = function() {
+        if (this.origLogCb) node.log = this.origLogCb;
+        if (this.origMsgOutCb) node.socket.send = this.origMsgOutCb;
+        if (this.origMsgInCb) node.socket.onMessage = this.origMsgInCb;
+    };
+
+    DebugWall.prototype.append = function() {
+        var displayIn, displayOut, displayLog, that;
+        var btnGroup, cb, div;
+        this.buttonsDiv = W.add('div', this.bodyDiv, {
+            className: 'wallbuttonsdiv'
+        });
+
+        btnGroup = document.createElement('div');
+        btnGroup.role = 'group';
+        btnGroup['aria-label'] = 'Toggle visibility';
+        btnGroup.className = 'btn-group';
+
+        displayIn = W.add('button', btnGroup, {
+            innerHTML: 'Incoming',
+            className: 'btn btn-secondary'
+        });
+        displayOut = W.add('button', btnGroup, {
+            innerHTML: 'Outgoing',
+            className: 'btn btn-secondary'
+        });
+        displayLog = W.add('button', btnGroup, {
+            innerHTML: 'Log',
+            className: 'btn btn-secondary'
+        });
+
+        this.buttonsDiv.appendChild(btnGroup);
+
+        that = this;
+
+        cb = function(type) {
+            var items, i, vis, className;
+            className = 'wall_' + type;
+            items = that.wall.getElementsByClassName(className);
+            vis = items[0].style.display === '' ? 'none' : '';
+            for (i = 0; i < items.length; i++) {
+                items[i].style.display = vis;
+            }
+            that.hiddenTypes[type] = !!vis;
+        };
+
+        displayIn.onclick = function() { cb('in'); };
+        displayOut.onclick = function() { cb('out'); };
+        displayLog.onclick = function() { cb('log'); };
+
+        this.wallDiv = W.add('div', this.bodyDiv, { className: 'walldiv' });
+        this.wall = W.add('table', this.wallDiv);
+    };
+
+    /**
+     * ### DebugWall.write
+     *
+     * Writes argument as first entry of this.wall if document is fully loaded
+     *
+     * @param {string} type 'in', 'out', or 'log' (different levels)
+     * @param {string} text The text to write
+     */
+    DebugWall.prototype.shouldHide = function(type, text) {
+        return this.hiddenTypes[type];
+    };
+    /**
+     * ### DebugWall.write
+     *
+     * Writes argument as first entry of this.wall if document is fully loaded
+     *
+     * @param {string} type 'in', 'out', or 'log' (different levels)
+     * @param {string} text The text to write
+     */
+    DebugWall.prototype.write = function(type, text) {
+        var spanContainer, spanDots, spanExtra, counter, className;
+        var limit;
+        var TR, TDtext;
+        if (this.isAppended()) {
+
+            counter = type === 'in' ? ++this.counterIn :
+                (type === 'out' ? ++this.counterOut : ++this.counterLog);
+
+            limit = 200;
+            className = 'wall_' + type;
+            TR = W.add('tr', this.wall, { className: className });
+            if (type !== 'in' && type !== 'out') TR.className += ' wall_log';
+
+            if (this.shouldHide(type, text)) TR.style.display = 'none';
+
+            W.add('td', TR, { innerHTML: counter });
+            W.add('td', TR, { innerHTML: type });
+            W.add('td', TR, { innerHTML: J.getTimeM()});
+            TDtext = W.add('td', TR);
+
+            if (text.length > limit) {
+                spanContainer = W.add('span', TDtext, {
+                    className: className + '_click' ,
+                    innerHTML: text.substr(0, limit)
+                });
+                spanExtra = W.add('span', spanContainer, {
+                    className: className + '_extra',
+                    innerHTML: text.substr(limit, text.length),
+                    id: 'wall_' + type + '_' + counter,
+                    style: { display: 'none' }
+
+                });
+                spanDots = W.add('span', spanContainer, {
+                    className: className + '_dots',
+                    innerHTML: ' ...',
+                    id: 'wall_' + type + '_' + counter
+                });
+
+                spanContainer.onclick = function() {
+                    if (spanDots.style.display === 'none') {
+                        spanDots.style.display = '';
+                        spanExtra.style.display = 'none';
+                    }
+                    else {
+                        spanDots.style.display = 'none';
+                        spanExtra.style.display = '';
+                    }
+                };
+            }
+            else {
+                spanContainer = W.add('span', TDtext, {
+                    innerHTML: text
+                });
+            }
+            this.wallDiv.scrollTop = this.wallDiv.scrollHeight;
+        }
+        else {
+            node.warn('Wall not appended, cannot write.');
+        }
+    };
+
+    DebugWall.prototype.makeTextIn = function(msg) {
+        var text, d;
+        d = new Date(msg.created);
+        text = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() +
+            ':' + d.getMilliseconds();
+        text += ' | ' + msg.to + ' | ' + msg.target +
+            ' | ' + msg.action + ' | ' + msg.text + ' | ' + msg.data;
+        return text;
+    };
+
+
+    DebugWall.prototype.makeTextOut = function(msg) {
+        var text;
+        text = msg.from + ' | ' + msg.target + ' | ' + msg.action + ' | ' +
+            msg.text + ' | ' + msg.data;
+        return text;
+    };
+
+    DebugWall.prototype.makeTextLog = function(text, level, prefix) {
+        return text;
+    };
+
+})(node);
+
+/**
  * # DisconnectBox
  * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
@@ -51153,7 +51567,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualTimer
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2018 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Display a configurable timer for the game
@@ -51170,7 +51584,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualTimer.version = '0.9.1';
+    VisualTimer.version = '0.9.2';
     VisualTimer.description = 'Display a configurable timer for the game. ' +
         'Can trigger events. Only for countdown smaller than 1h.';
 
@@ -51288,12 +51702,6 @@ if (!Array.prototype.indexOf) {
      */
     VisualTimer.prototype.init = function(options) {
         var t, gameTimerOptions;
-
-        options = options || {};
-        if ('object' !== typeof options) {
-            throw new TypeError('VisualTimer.init: options must be ' +
-                                'object or undefined. Found: ' + options);
-        }
 
         // Important! Do not modify directly options, because it might
         // modify a step-property. Will manual clone later.
@@ -51894,7 +52302,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitingRoom
- * Copyright(c) 2018 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Displays the number of connected/required players to start a game
@@ -52369,7 +52777,7 @@ if (!Array.prototype.indexOf) {
 
                     var ul = document.createElement('ul');
                     ul.className = 'dropdown-menu';
-                    ul.style = 'text-align: left';
+                    ul.style['text-align'] = 'left';
 
                     var li, a, t, liT1, liT2;
                     if (conf.availableTreatments) {
@@ -52408,32 +52816,31 @@ if (!Array.prototype.indexOf) {
 
                     btnGroup.appendChild(btnGroupTreatments);
 
-                    // Variable toggled controls if the dropdown menu
-                    // is displayed (we are not using bootstrap js files)
+                    // We are not using bootstrap js files
                     // and we redo the job manually here.
-                    var toggled = false;
                     btnTreatment.onclick = function() {
-                        if (toggled) {
-                            ul.style = 'display: none';
-                            toggled = false;
+                        // When '' is hidden by bootstrap class.
+                        if (ul.style.display === '') {
+                            ul.style.display = 'block';
                         }
                         else {
-                            ul.style = 'display: block; text-align: left';
-                            toggled = true;
+                            ul.style.display = '';
                         }
                     };
 
                     ul.onclick = function(eventData) {
                         var t;
-                        ul.style = 'display: none';
-                        t = eventData.target.parentNode.id;
+                        t = eventData.target;
+                        // When '' is hidden by bootstrap class.
+                        ul.style.display = '';
+                        t = t.parentNode.id;
+                        // Clicked on description?
                         if (!t) t = eventData.target.parentNode.parentNode.id;
-                        console.log(eventData.target.parentNode);
-                        console.log(t);
+                        // Nothing relevant clicked (e.g., header).
+                        if (!t) return;
                         btnTreatment.innerHTML = t + ' ';
                         btnTreatment.appendChild(span);
                         w.selectedTreatment = t;
-                        toggled = false;
                     };
 
                     // Store Reference in widget.
@@ -52760,142 +53167,6 @@ if (!Array.prototype.indexOf) {
     WaitingRoom.prototype.destroy = function() {
         if (this.dots) this.dots.stop();
         node.deregisterSetup('waitroom');
-    };
-
-})(node);
-
-/**
- * # Wall
- * Copyright(c) 2017 Stefano Balietti
- * MIT Licensed
- *
- * Creates a wall where logs and other info is added with number and timestamp
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('Wall', Wall);
-
-    // ## Meta-data
-
-    Wall.version = '0.3.1';
-    Wall.description = 'Intercepts all LOG events and prints them into a PRE ' +
-                       'element with an ordinal number and a timestamp.';
-
-    Wall.title = 'Wall';
-    Wall.className = 'wall';
-
-    // ## Dependencies
-
-    Wall.dependencies = {
-        JSUS: {}
-    };
-
-    /**
-     * ## Wall constructor
-     *
-     * `Wall` prints all LOG events into a PRE.
-     *
-     * @param {object} options Optional. Configuration options
-     */
-    function Wall(options) {
-
-        /**
-         * ### Wall.name
-         *
-         * The name of this Wall
-         */
-        this.name = options.name || this.name;
-
-        /**
-         * ### Wall.buffer
-         *
-         * Buffer for logs which are to be logged before the document is ready
-         */
-        this.buffer = [];
-
-        /**
-         * ### Wall.counter
-         *
-         * Counts number of entries on wall
-         */
-        this.counter = 0;
-
-        /**
-         * ### Wall.wall
-         *
-         * The PRE in which to write
-         */
-        this.wall = W.get('pre', this.id);
-    }
-
-    // ## Wall methods
-
-    /**
-     * ### Wall.init
-     *
-     * Initializes the instance
-     *
-     * If options are provided, the counter is set to `options.counter`
-     * otherwise nothing happens.
-     */
-    Wall.prototype.init = function(options) {
-        options = options || {};
-        this.counter = options.counter || this.counter;
-    };
-
-    Wall.prototype.append = function() {
-        return this.bodyDiv.appendChild(this.wall);
-    };
-
-    /**
-     * ### Wall.listeners
-     *
-     * Wall has a listener to the `LOG` event
-     */
-    Wall.prototype.listeners = function() {
-        var that = this;
-        node.on('LOG', function(msg) {
-            that.debuffer();
-            that.write(msg);
-        });
-    };
-
-
-    /**
-     *  ### Wall.write
-     *
-     * Writes argument as first entry of this.wall if document is fully loaded
-     *
-     * Writes into this.buffer if document is not ready yet.
-     */
-    Wall.prototype.write = function(text) {
-        var mark;
-        if (document.readyState !== 'complete') {
-            this.buffer.push(text);
-        }
-        else {
-            mark = this.counter++ + ') ' + J.getTime() + ' ';
-            this.wall.innerHTML = mark + text + "\n" + this.wall.innerHTML;
-        }
-    };
-
-    /**
-     * ### Wall.debuffer
-     *
-     * If the document is ready, the buffer content is written into this.wall
-     */
-    Wall.prototype.debuffer = function() {
-        var i;
-        if (document.readyState === 'complete' && this.buffer.length > 0) {
-            for (i=0; i < this.buffer.length; i++) {
-                this.write(this.buffer[i]);
-            }
-            this.buffer = [];
-        }
     };
 
 })(node);
