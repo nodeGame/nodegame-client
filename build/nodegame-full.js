@@ -39609,7 +39609,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Chat
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Creates a simple configurable chat
@@ -39645,7 +39645,9 @@ if (!Array.prototype.indexOf) {
         },
         quit: function(w, data) {
             return (w.senderToNameMap[data.id] || data.id) + ' quit the chat';
-        }
+        },
+        textareaPlaceholder: 'Type something and press enter ' +
+            'to send the message'
     };
 
     // ## Meta-data
@@ -39879,7 +39881,8 @@ if (!Array.prototype.indexOf) {
             inputGroup = document.createElement('div');
 
             this.textarea = W.get('textarea', {
-                className: 'chat_textarea form-control'
+                className: 'chat_textarea form-control',
+                placeholder: this.getText('textareaPlaceholder')
             });
 
             ids = this.recipientsIds;
@@ -39888,8 +39891,10 @@ if (!Array.prototype.indexOf) {
                 var keyCode; 
                 e = e || window.event;
                 keyCode = e.keyCode || e.which;
-                if (keyCode==13) {
+                if (keyCode === 13) {
                     msg = that.readTextarea();
+                    
+                    // Move cursor at the beginning.
                     if (msg === '') {
                         node.warn('no text, no chat message sent.');
                         return;
@@ -39898,6 +39903,8 @@ if (!Array.prototype.indexOf) {
                     to = ids.length === 1 ? ids[0] : ids;
                     that.writeMsg('outgoing', { msg: msg }); // to not used now.
                     node.say(that.chatEvent, to, msg);
+                    // Make sure the cursor goes back to top.
+                    setTimeout(function() { that.textarea.value = ''; });
                 }
             };
         
@@ -39983,7 +39990,7 @@ if (!Array.prototype.indexOf) {
         if (this.db) out.msgs = db.fetch();
         return out;
     };
-
+    
 })(node);
 
 /**
