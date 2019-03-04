@@ -5037,6 +5037,35 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ## PARSE.isMobileAgent
+     *
+     * Returns TRUE if a user agent is for a mobile device
+     *
+     * @param {string} agent Optional. The user agent to check. Default:
+     *   navigator.userAgent
+     *
+     * @return {boolean} TRUE if a user agent is for a mobile device
+     */
+    PARSE.isMobileAgent = function(agent) {
+        var rx;
+        if (!agent){
+            if (!navigator) {
+                throw new Error('JSUS.isMobileAgent: agent undefined and ' +
+                                'no navigator. Are you in the browser?');
+            }
+            agent = navigator.userAgent;
+        }
+        else if ('string' !== typeof agent) {
+            throw new TypeError('JSUS.isMobileAgent: agent must be undefined ' +
+                                'or string. Found: ' + agent);
+        }
+        rx = new RegExp('Android|webOS|iPhone|iPad|BlackBerry|' +
+                        'Windows Phone|Opera Mini|IEMobile|Mobile', 'i');
+
+        return rx.test(agent);
+    };
+
+    /**
      * ## PARSE.tokenize
      *
      * Splits a string in tokens that users can specified as input parameter.
@@ -5294,7 +5323,7 @@ if (!Array.prototype.indexOf) {
         if (isNaN(n) || !isFinite(n)) return false;
         n = parseFloat(n);
         if ('number' === typeof lower && (leq ? n <= lower : n < lower)) {
-            return false;            
+            return false;
         }
         if ('number' === typeof upper && (ueq ? n >= upper : n > upper)) {
             return false;
@@ -16202,7 +16231,7 @@ if (!Array.prototype.indexOf) {
     /**
      * #### Block.next
      *
-     * Gets the next item in a hierarchy of Blocksg
+     * Gets the next item in a hierarchy of Blocks
      *
      * If there is not next item, false is returned.
      * If the next item is another Block, next is called recursively.
@@ -16806,7 +16835,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager stages and steps
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
@@ -16831,12 +16860,12 @@ if (!Array.prototype.indexOf) {
 
     var BLOCK_DEFAULT           = blockTypes.BLOCK_DEFAULT;
     var BLOCK_STAGEBLOCK        = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE             = blockTypes. BLOCK_STAGE;
-    var BLOCK_STEPBLOCK         = blockTypes. BLOCK_STEPBLOCK;
+    var BLOCK_STAGE             = blockTypes.BLOCK_STAGE;
+    var BLOCK_STEPBLOCK         = blockTypes.BLOCK_STEPBLOCK;
     var BLOCK_STEP              = blockTypes.BLOCK_STEP;
 
     var BLOCK_ENCLOSING         = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS   = blockTypes. BLOCK_ENCLOSING_STEPS;
+    var BLOCK_ENCLOSING_STEPS   = blockTypes.BLOCK_ENCLOSING_STEPS;
     var BLOCK_ENCLOSING_STAGES  = blockTypes.BLOCK_ENCLOSING_STAGES;
 
     /**
@@ -16855,9 +16884,8 @@ if (!Array.prototype.indexOf) {
         checkStepValidity(step, 'addStep');
 
         if (this.steps.hasOwnProperty(step.id)) {
-            throw new Error('Stager.addStep: step id already ' +
-                            'existing: ' + step.id +
-                            '. Use extendStep to modify it.');
+            throw new Error('Stager.addStep: step "' + step.id + '" already ' +
+                            'existing, use extendStep to modify it');
         }
         this.steps[step.id] = step;
     };
@@ -16895,8 +16923,8 @@ if (!Array.prototype.indexOf) {
         id = stage.id;
 
         if (this.stages.hasOwnProperty(id)) {
-            throw new Error('Stager.addStage: stage id already existing: ' +
-                            id + '. Use extendStage to modify it.');
+            throw new Error('Stager.addStage: stage "' + id + '" already ' +
+                            'existing, use extendStage to modify it');
         }
 
         // The stage contains only 1 step inside given through the callback
@@ -16944,8 +16972,7 @@ if (!Array.prototype.indexOf) {
         }
         step = this.steps[stepId];
         if (!step) {
-            throw new Error('Stager.cloneStep: step not found: ' +
-                            stepId);
+            throw new Error('Stager.cloneStep: step not found: ' + stepId);
         }
         step = J.clone(step);
         step.id = newStepId;
@@ -16968,11 +16995,12 @@ if (!Array.prototype.indexOf) {
     Stager.prototype.cloneStage = function(stageId, newStageId) {
         var stage;
         if ('string' !== typeof stageId) {
-            throw new TypeError('Stager.cloneStage: stageId must be string.');
+            throw new TypeError('Stager.cloneStage: stageId must be string.' +
+                               'Found: ' + stageId);
         }
         if ('string' !== typeof newStageId) {
             throw new TypeError('Stager.cloneStage: newStageId must ' +
-                                'be string.');
+                                'be string. Found: ' + newStageId);
         }
         if (this.stages[newStageId]) {
             throw new Error('Stager.cloneStage: newStageId already taken: ' +
@@ -16980,8 +17008,7 @@ if (!Array.prototype.indexOf) {
         }
         stage = this.stages[stageId];
         if (!stage) {
-            throw new Error('Stager.cloneStage: stage not found: ' +
-                            stageId + '.');
+            throw new Error('Stager.cloneStage: stage not found: ' + stageId);
         }
         stage = J.clone(stage);
         stage.id = newStageId;
@@ -17009,8 +17036,8 @@ if (!Array.prototype.indexOf) {
         if (!curBlock.isType(BLOCK_ENCLOSING_STEPS) &&
             !curBlock.isType(BLOCK_STEPBLOCK)) {
 
-            throw new Error('Stager.step: step cannot be added at this ' +
-                            'point. Have you add at least one stage? ', step);
+            throw new Error('Stager.step: step "' +  step + '" cannot be ' +
+                            'added here. Have you add at least one stage?');
         }
 
         checkFinalized(this, 'step');
@@ -17086,7 +17113,7 @@ if (!Array.prototype.indexOf) {
                 nRepeats <= 0) {
 
                 throw new Error('Stager.repeat: nRepeats must be a positive ' +
-                                'number. Found: ' + nRepeats + '.');
+                                'number. Found: ' + nRepeats);
             }
 
             positions = checkPositionsParameter(positions, 'repeat');
@@ -17198,7 +17225,7 @@ if (!Array.prototype.indexOf) {
 
         if ('function' !== typeof loopFunc) {
             throw new TypeError('Stager.' + type + ': loopFunc must be ' +
-                                'function. Found: ' + loopFunc + '.');
+                                'function. Found: ' + loopFunc);
         }
 
         positions = checkPositionsParameter(positions, type);
@@ -17332,15 +17359,15 @@ if (!Array.prototype.indexOf) {
         alias = tokens.alias;
         if (id === alias) {
             throw new Error('Stager.' + method + ': id equal to alias: ' +
-                            nameAndAlias + '.');
+                            nameAndAlias);
         }
         if (alias && !that.stages[id]) {
             throw new Error('Stager.' + method + ': alias is referencing ' +
-                            'non-existing stage: ' + id + '.');
+                            'non-existing stage: ' + id);
         }
         if (alias && that.stages[alias]) {
             throw new Error('Stager.' + method + ': alias is not unique: ' +
-                            alias + '.');
+                            alias);
         }
         return tokens;
     }
@@ -17362,12 +17389,13 @@ if (!Array.prototype.indexOf) {
      * @api private
      */
     function checkStepValidity(step, method) {
-        if ('object' !== typeof step) {
-            throw new TypeError('Stager.' + method + ': step must be object.');
+        if (step === null || 'object' !== typeof step) {
+            throw new TypeError('Stager.' + method + ': step must be ' +
+                                'object. Found: ' + step);
         }
         if ('function' !== typeof step.cb) {
             throw new TypeError('Stager.' + method + ': step.cb must be ' +
-                                'function.');
+                                'function. Found: ' + step.cb);
         }
         checkStageStepId(method, 'step', step.id);
     }
@@ -17395,12 +17423,12 @@ if (!Array.prototype.indexOf) {
         }
         if ((!stage.steps && !stage.cb) || (stage.steps && stage.cb)) {
             throw new TypeError('Stager.' + method + ': stage must have ' +
-                                'either a steps or a cb property.');
+                                'either a steps or a cb property');
         }
         if (J.isArray(stage.steps)) {
             if (!stage.steps.length) {
                 throw new Error('Stager.' + method + ': stage.steps cannot ' +
-                                'be empty.');
+                                'be empty');
             }
         }
         else if (stage.steps) {
@@ -17430,7 +17458,7 @@ if (!Array.prototype.indexOf) {
             if (that.steps[id]) {
                 throw new Error('Stager.' + method + ': step is object, ' +
                                 'but a step with the same id already ' +
-                                'exists: ', id);
+                                'exists: ' + id);
             }
             // Add default callback, if missing.
             if (!step.cb) step.cb = that.getDefaultCallback();
@@ -17444,7 +17472,7 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new TypeError('Stager.' + method + ': step must be ' +
-                                'string or object.');
+                                'string or object. Found: ' + step);
         }
 
         // A new step is created if not found (performs validation).
@@ -17480,7 +17508,7 @@ if (!Array.prototype.indexOf) {
             if (that.stages[id]) {
                 throw new Error('Stager.' + method + ': stage is object, ' +
                                 'but a stage with the same id already ' +
-                                'exists: ', id);
+                                'exists: ' + id);
             }
 
             // If both cb and steps are missing, adds steps array,
@@ -17497,7 +17525,7 @@ if (!Array.prototype.indexOf) {
                 if (that.steps[id]) {
                     throw new Error('Stager.' + method + ': stage has ' +
                                     'cb property, but a step with the same ' +
-                                    'id is already defined: ' + id + '.');
+                                    'id is already defined: ' + id);
                 }
                 that.addStep({ id: id, cb: stage.cb });
                 delete stage.cb;
@@ -17528,7 +17556,7 @@ if (!Array.prototype.indexOf) {
         }
         else {
             throw new TypeError('Stager.' + method + ': stage must be ' +
-                                'string or object.');
+                                'string or object. Found: ' + stage);
         }
 
         return alias || id;
@@ -37966,7 +37994,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Widget
- * Copyright(c) 2018 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Prototype of a widget class
@@ -38122,6 +38150,17 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Widget.isHighlighted
+     *
+     * Returns TRUE if widget is currently docked
+     *
+     * @return {boolean} TRUE, if widget is currently docked
+     */
+    Widget.prototype.isDocked = function() {
+        return !!this.docked;
+    };
+
+    /**
      * ### Widget.collapse
      *
      * Collapses the widget,  (hides the body and footer)
@@ -38188,7 +38227,9 @@ if (!Array.prototype.indexOf) {
      *
      * An enabled widget allows the user to interact with it
      */
-    Widget.prototype.enable = function() {};
+    Widget.prototype.enable = function() {
+        this.disabled = false;
+    };
 
     /**
      * ### Widget.disable
@@ -38197,7 +38238,9 @@ if (!Array.prototype.indexOf) {
      *
      * A disabled widget is still visible, but user cannot interact with it
      */
-    Widget.prototype.disable = function() {};
+    Widget.prototype.disable = function() {
+        this.disabled = true;
+    };
 
     /**
      * ### Widget.isDisabled
@@ -38816,7 +38859,7 @@ if (!Array.prototype.indexOf) {
             res = res(that, param);
             if ('string' !== typeof res) {
                 throw new TypeError(method + ': cb "' + name +
-                                    'did not return a string. Found: ' + res);
+                                    ' did not return a string. Found: ' + res);
             }
         }
         return res;
@@ -38977,6 +39020,27 @@ if (!Array.prototype.indexOf) {
         this.lastAppended = null;
 
         /**
+         * ### Widgets.docked
+         *
+         * List of docked widgets
+         */
+        this.docked = [];
+
+        /**
+         * ### Widgets.dockedHidden
+         *
+         * List of hidden docked widgets (cause not enough space on page)
+         */
+        this.dockedHidden = [];
+
+        /**
+         * ### Widgets.boxSelector
+         *
+         * A box selector widget containing hidden docked widgets
+         */
+        this.boxSelector = null
+
+        /**
          * ### Widgets.collapseTarget
          *
          * Collapsed widgets are by default moved inside element
@@ -38998,9 +39062,7 @@ if (!Array.prototype.indexOf) {
             }
 
             // Destroy all existing widgets.
-            if (conf.destroyAll) {
-                that.destroyAll();
-            }
+            if (conf.destroyAll) that.destroyAll();            
 
             // Append existing widgets.
             if (conf.append) {
@@ -39176,10 +39238,11 @@ if (!Array.prototype.indexOf) {
                             'dependencies.');
         }
 
+        // NOT USED ANY MORE.
         // Add default properties to the user options.
-        if (WidgetPrototype.defaults) {
-            J.mixout(options, J.clone(WidgetPrototype.defaults));
-        }
+        // if (WidgetPrototype.defaults) {
+        //     J.mixout(options, J.clone(WidgetPrototype.defaults));
+        // }
 
         // Create widget.
         widget = new WidgetPrototype(options);
@@ -39208,10 +39271,10 @@ if (!Array.prototype.indexOf) {
             WidgetPrototype.footer : options.footer;
         widget.className = WidgetPrototype.className;
         if (J.isArray(options.className)) {
-            widget.className += options.className.join(' ');
+            widget.className += ' ' + options.className.join(' ');
         }
         else if ('string' === typeof options.className) {
-            widget.className += options.className;
+            widget.className += ' ' + options.className;
         }
         else if ('undefined' !== typeof options.className) {
             throw new TypeError('widgets.append: className must be array, ' +
@@ -39219,6 +39282,9 @@ if (!Array.prototype.indexOf) {
                                 options.className);
         }
 
+        widget.panel = 'undefined' === typeof options.panel ?
+            WidgetPrototype.panel : options.panel;
+        
         widget.context = 'undefined' === typeof options.context ?
             WidgetPrototype.context : options.context;
         widget.sounds = 'undefined' === typeof options.sounds ?
@@ -39317,6 +39383,17 @@ if (!Array.prototype.indexOf) {
                     break;
                 }
             }
+
+            // Remove from lastAppended.
+            if (this.lastAppended && this.lastAppended.wid === widget.wid) {
+                node.warn('node.widgets.lastAppended destroyed.');
+                this.lastAppended = null;
+            }
+
+            // Remove from docked.
+            if (this.docked) closeDocked(widget.wid, false);
+            
+            this.emit('destroyed');
         };
 
         // Store widget instance (e.g. used for destruction).
@@ -39351,7 +39428,8 @@ if (!Array.prototype.indexOf) {
      * @see Widgets.get
      */
     Widgets.prototype.append = function(w, root, options) {
-        var tmp;
+        var tmp, lastDocked, right;
+        var dockedMargin;
 
         if ('string' !== typeof w && 'object' !== typeof w) {
             throw new TypeError('Widgets.append: w must be string or object. ' +
@@ -39379,7 +39457,7 @@ if (!Array.prototype.indexOf) {
         else if (root === W.getHeader() &&
                  'undefined' === typeof options.panel) {
 
-            options.panel = false;
+            options.panel = w.panel || false;
         }
 
         // Check if it is a object (new widget).
@@ -39395,8 +39473,11 @@ if (!Array.prototype.indexOf) {
         };
 
         // Dock it.
-        // TODO: handle multiple dockedd widgets.
-        if (options.docked) tmp.className.push('docked');
+        if (options.docked) {            
+            tmp.className.push('docked');
+            this.docked.push(w);
+            w.docked = true;
+        }
 
         // Add div inside widget.
         w.panelDiv = W.get('div', tmp);
@@ -39434,6 +39515,9 @@ if (!Array.prototype.indexOf) {
 
         w.append();
         w.appended = true;
+
+        // Make sure the distance from the right side is correct.
+        if (w.docked) setRightStyle(w);
 
         // Store reference of last appended widget.
         this.lastAppended = w;
@@ -39598,7 +39682,106 @@ if (!Array.prototype.indexOf) {
         node.err(d + ' not found. ' + name + ' cannot be loaded.');
     }
 
-    //Expose Widgets to the global object.
+    // ### closeDocked
+    //
+    // Shifts docked widgets on page and remove a widget from the docked list
+    //
+    // @param {string} wid The widget id
+    // @param {boolean} remove TRUE, if widget should be removed from
+    //    docked list. Default: FALSE.
+    //
+    // @return {boolean} TRUE if a widget with given wid was found
+    function closeDocked(wid, hide) {
+        var d, i, len, width, closed;
+        d = node.widgets.docked;
+        len = d.length;
+        for (i = 0; i < len; i++) {
+            if (width) {
+                d[i].panelDiv.style.right =
+                    (getPxNum(d[i].panelDiv.style.right) - width) + 'px';
+            }
+            else if (d[i].wid === wid) {
+                width = d[i].dockedOffsetWidth;
+                // Remove from docked list.
+                closed = node.widgets.docked.splice(i, 1)[0];
+                if (hide) {
+                    node.widgets.dockedHidden.push(closed);
+                    closed.hide();
+
+                    if (!node.widgets.boxSelector) {
+                        node.widgets.boxSelector =
+                            node.widgets.append('BoxSelector', document.body, {
+                                className: 'docked-left',
+                                getId: function(i) { return i.wid; },
+                                getText: function(i) { return i.title; },
+                                onclick: function(i, id) {
+                                    i.show();
+                                    // First add back to docked list,
+                                    // then set right style.
+                                    node.widgets.docked.push(i);
+                                    setRightStyle(i);
+                                    this.removeItem(id);
+                                    if (this.items.length === 0) {
+                                        this.destroy();
+                                        node.widgets.boxSelector = null;
+                                    }
+                                },
+                            });
+                        
+                    }
+                    node.widgets.boxSelector.addItem(closed);
+                }
+                // Decrement len and i.
+                len--;
+                i--;                
+            }
+        }
+        return !!width;
+    }
+
+    function setRightStyle(w) {
+        var dockedMargin, safeMargin;
+        var lastDocked, right, ws, tmp;
+        
+        safeMargin = 200;
+        dockedMargin = 20;
+        
+        ws = node.widgets;
+        
+        right = 0;
+        // The widget w has been already added to the docked list.
+        if (ws.docked.length > 1) {
+            lastDocked = ws.docked[(ws.docked.length - 2)];
+            right = getPxNum(lastDocked.panelDiv.style.right);
+            right += lastDocked.panelDiv.offsetWidth;
+        }
+        right += dockedMargin;
+
+        w.panelDiv.style.right = (right + "px");
+
+        // Check if there is enough space on page?
+        tmp = 0;
+        right += w.panelDiv.offsetWidth + safeMargin;
+        while (ws.docked.length > 1 &&
+               right > window.innerWidth &&
+               tmp < (ws.docked.length - 1)) {
+
+            // Make some space...
+            // right -= ws.docked[tmp].dockedOffsetWidth;
+            closeDocked(ws.docked[tmp].wid, true);
+            tmp++;
+        }
+        // Store final offsetWidth in widget, because we need it after
+        // it is destroyed.
+        w.dockedOffsetWidth = w.panelDiv.offsetWidth + dockedMargin;
+    }
+
+    // Returns the numeric value of string containg 'px' at the end, e.g. 20px.
+    function getPxNum(str) {
+        return parseInt(str.substring(0, str.length - 2), 10);
+    }
+
+    // Expose Widgets to the global object.
     node.widgets = new Widgets();
 
 })(
@@ -39606,6 +39789,264 @@ if (!Array.prototype.indexOf) {
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
+/**
+ * # BoxSelector
+ * Copyright(c) 2019 Stefano Balietti
+ * MIT Licensed
+ *
+ * Creates a simple box that opens a menu of items to choose from
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    var NDDB =  node.NDDB;
+
+    node.widgets.register('BoxSelector', BoxSelector);
+
+    // ## Meta-data
+
+    BoxSelector.version = '1.0.0';
+    BoxSelector.description = 'Creates a simple box that opens a menu ' +
+        'of items to choose from.';
+
+    BoxSelector.panel = false;
+    BoxSelector.title = false;
+    BoxSelector.className = 'boxselector';
+
+    // ## Dependencies
+
+    BoxSelector.dependencies = {
+        JSUS: {}
+    };
+
+    /**
+     * ## BoxSelector constructor
+     *
+     * `BoxSelector` is a simple configurable chat
+     *
+     * @see BoxSelector.init
+     */
+    function BoxSelector() {
+
+        /**
+         * ### BoxSelector.button
+         *
+         * The button that if pressed shows the items
+         *
+         * @see BoxSelector.ul
+         */
+        this.button = null;
+        
+        /**
+         * ### BoxSelector.buttonText
+         *
+         * The text on the button
+         *
+         * @see BoxSelector.button
+         */
+        this.buttonText = '';
+
+        /**
+         * ### BoxSelector.items
+         *
+         * List of items to choose from
+         */
+        this.items = [];
+
+        /**
+         * ### BoxSelector.onclick
+         *
+         * A callback to call when an item from the list is clicked
+         *
+         * Callback is executed with the BoxSelector instance as context.
+         *
+         * Optional. If not specified, items won't be clickable.
+         *
+         * @see BoxSelector.items
+         */
+        this.onclick = null;
+
+        /**
+         * ### BoxSelector.getText
+         *
+         * A callback that renders an element into a text
+         */
+        this.getText = null;
+
+        /**
+         * ### BoxSelector.getId
+         *
+         * A callback that returns the id of an item
+         *
+         * Default: returns item.id.
+         */
+        this.getId = function(item) { return item.id; };
+
+        /**
+         * ### BoxSelector.ul
+         *
+         * The HTML UL element displaying the list of items
+         *
+         * @see BoxSelector.items
+         */
+        this.ul = null;
+    }
+
+    // ## BoxSelector methods
+
+    /**
+     * ### BoxSelector.init
+     *
+     * Initializes the widget
+     *
+     * @param {object} options Configuration options.
+     */
+    BoxSelector.prototype.init = function(options) {
+        if (options.onclick) {
+            if ('function' !== typeof options.onclick) {
+                throw new Error('BoxSelector.init: options.getId must be ' +
+                                'function or undefined. Found: ' +
+                                options.getId);
+            }    
+            this.onclick = options.onclick;
+        }
+        
+        if ('function' !== typeof options.getText) {
+            throw new Error('BoxSelector.init: options.getText must be ' +
+                            'function. Found: ' + options.getText);
+        }
+        this.getText = options.getText;
+
+        if (options.getId && 'function' !== typeof options.getId) {
+            throw new Error('BoxSelector.init: options.getId must be ' +
+                            'function or undefined. Found: ' + options.getId);
+        }
+        this.getId = options.getId;
+
+    
+    };
+
+
+    BoxSelector.prototype.append = function() {
+        var that, ul, btn, btnGroup, toggled;
+        
+        btnGroup = W.add('div', this.bodyDiv);
+        btnGroup.role = 'group';
+        btnGroup['aria-label'] = 'Select Items';
+        btnGroup.className = 'btn-group dropup';
+        
+        // Here we create the Button holding the treatment.
+        btn = this.button = W.add('button', btnGroup);
+        btn.className = 'btn btn-default btn dropdown-toggle';
+        btn['data-toggle'] = 'dropdown';
+        btn['aria-haspopup'] = 'true';
+        btn['aria-expanded'] = 'false';
+        btn.innerHTML = this.buttonText + '&nbsp;';
+
+        W.add('span', btn, { className: 'caret' });
+        
+        // Here the create the UL of treatments.
+        // It will be populated later.
+        ul = this.ul = W.add('ul', btnGroup);
+        ul.className = 'dropdown-menu';
+        ul.style.display = 'none';
+
+        // Variable toggled controls if the dropdown menu
+        // is displayed (we are not using bootstrap js files)
+        // and we redo the job manually here.
+        toggled = false;
+        btn.onclick = function() {
+            if (toggled) {
+                ul.style.display = 'none';
+                toggled = false;
+            }
+            else {
+                ul.style.display = 'block';
+                toggled = true;
+            }
+        };
+        
+        if (this.onclick) {
+            that = this;
+            ul.onclick = function(eventData) {
+                var id, i, len;
+                id = eventData.target;
+                // When '' is hidden by bootstrap class.
+                ul.style.display = '';
+                toggled = false;
+                id = id.parentNode.id;
+                // Clicked on description?
+                if (!id) id = eventData.target.parentNode.parentNode.id;
+                // Nothing relevant clicked (e.g., header).
+                if (!id) return;
+                len = that.items.length;
+                // Call the onclick.
+                for ( i = 0 ; i < len ; i++) {
+                    if (that.getId(that.items[i]) === id) {
+                        that.onclick.call(that, that.items[i], id);
+                        break;
+                    }
+                }
+            };
+        }
+    };
+
+    BoxSelector.prototype.addItem = function(item) {
+        var ul, li, a, tmp;
+        ul = this.ul;
+        li = document.createElement('li');
+        // Text.
+        tmp = this.getText(item);
+        if (!tmp || 'string' !== typeof tmp) {
+            throw new Error('BoxSelector.addItem: getText did not return a ' +
+                            'string. Found: ' + tmp + '. Item: ' + item);
+        }
+        if (this.onclick) {
+            a = document.createElement('a');
+            a.href = '#';
+            a.innerHTML = tmp;        
+            li.appendChild(a);
+        }
+        else {
+            li.innerHTML = tmp;        
+        }
+        // Id.
+        tmp = this.getId(item);
+        if (!tmp || 'string' !== typeof tmp) {
+            throw new Error('BoxSelector.addItem: getId did not return a ' +
+                            'string. Found: ' + tmp + '. Item: ' + item);
+        }
+        li.id = tmp;
+        li.className = 'dropdown-header';
+        ul.appendChild(li);
+        this.items.push(item);
+    };
+
+    BoxSelector.prototype.removeItem = function(id) {
+        var i, len, elem;
+        len = this.items.length;
+        for ( i = 0 ; i < len ; i++) {
+            if (this.getId(this.items[i]) === id) {
+                elem = W.gid(id);
+                this.ul.removeChild(elem);
+                return this.items.splice(i, 1);
+            }
+        }
+        return false;
+    };
+
+    BoxSelector.prototype.getValues = function() {
+        return this.items;
+    };
+
+    // ## Helper functions.
+
+
+})(node);
 
 /**
  * # Chat
@@ -39632,22 +40073,36 @@ if (!Array.prototype.indexOf) {
     // ## Texts.
 
     Chat.texts = {
-        me: 'Me',
         outgoing: function(w, data) {
-            // Id could be defined as a specific to (not used now).
-            return '<span class="chat_me">' + w.getText('me') +
-                '</span>: </span class="chat_msg">' + data.msg + '</span>';
+            return data.msg;
+            // return '<span class="chat_msg_me">' + data.msg + '</span>';
         },
         incoming: function(w, data) {
-            return '<span class="chat_others">' +
-                (w.senderToNameMap[data.id] || data.id) +
-                '</span>: </span class="chat_msg">' + data.msg + '</span>';
+            var str;
+            str = '<span>';
+            if (w.recipientsIds.length > 1) {
+                str += '<span class="chat_id_other">' +
+                    (w.senderToNameMap[data.id] || data.id) + '</span>: ';
+            }
+            str += data.msg + '</span>';
+            return str;
         },
         quit: function(w, data) {
-            return (w.senderToNameMap[data.id] || data.id) + ' quit the chat';
+            return (w.senderToNameMap[data.id] || data.id) + ' left the chat';
         },
-        textareaPlaceholder: 'Type something and press enter ' +
-            'to send the message'
+        noMoreParticipants: function(w, data) {
+            return 'No active participant left. Chat disabled.';
+        },
+        // For both collapse and uncollapse.
+        collapse: function(w, data) {
+            return (w.senderToNameMap[data.id] || data.id) + ' ' +
+                (data.collapsed ? 'mini' : 'maxi') + 'mized the chat';
+        },
+        textareaPlaceholder: function(w) {
+            return w.useSubmitButton ? 'Type something' :
+                'Type something and press enter to send';
+        },
+        submitButton: 'Send'
     };
 
     // ## Meta-data
@@ -39695,9 +40150,30 @@ if (!Array.prototype.indexOf) {
         };
 
         /**
+         * ### Chat.submitButton
+         *
+         * Button to send a text to server
+         *
+         * @see Chat.useSubmitButton
+         */
+        this.submitButton = null;
+
+        /**
+         * ### Chat.useSubmitButton
+         *
+         * If TRUE, a button is added to send messages else ENTER sends msgs
+         *
+         * By default, this is TRUE on mobile devices.
+         *
+         * @see Chat.submitButton
+         * @see Chat.receiverOnly
+         */
+        this.useSubmitButton = null;
+
+        /**
          * ### Chat.receiverOnly
          *
-         * If TRUE, users cannot send messages (no textarea)
+         * If TRUE, users cannot send messages (no textarea and submit button)
          *
          * @see Chat.textarea
          */
@@ -39736,49 +40212,64 @@ if (!Array.prototype.indexOf) {
         this.textarea = null;
 
         /**
-         * ### Chat.textarea
+         * ### Chat.initialMsg
          *
-         * An initialMsg to display when the chat is open
+         * An object with an initial msg and the id of sender (if not self)
+         *
+         * Example:
+         *
+         * ```
+         * {
+         *   id: '1234', // Optional, add only this is an 'incoming' msg.
+         *   msg: 'the text'
+         * }
          */
         this.initialMsg = null;
 
         /**
-         * ### Chat.displayNames
-         *
-         * Array of names of the recipient/s of the message
-         */
-        this.displayNames = null;
-
-        /**
          * ### Chat.recipientsIds
          *
-         * Array of ids of the recipient/s of the message
+         * Array of ids of current recipients of messages
          */
         this.recipientsIds = null;
 
         /**
-         * ### Chat.recipientToNameMap
+         * ### Chat.recipientsIdsQuitted
          *
-         * Map recipients ids to names
+         * Array of ids of  recipients that have previously quitted the chat
          */
-        this.recipientToNameMap = null;
-
-        /**
-         * ### Chat.recipientToSenderMap
-         *
-         * Map recipients ids to names
-         */
-        this.recipientToSenderMap = null;
+        this.recipientsIdsQuitted = null;
 
         /**
          * ### Chat.senderToNameMap
          *
-         * Map recipients ids to sender ids
+         * Map sender id (msg.from) to display name
          *
          * Note: The 'from' field of a message can be different
          * from the 'to' field of its reply (e.g., for MONITOR)
          */
         this.senderToNameMap = null;
+
+        /**
+         * ### Chat.recipientToNameMap
+         *
+         * Map recipient id (msg.to) to display name
+         */
+        this.recipientToNameMap = null;
+
+        /**
+         * ### Chat.senderToRecipientMap
+         *
+         * Map sender id (msg.from) to recipient id (msg.to)
+         */
+        this.senderToRecipientMap = null;
+
+        /**
+         * ### Chat.recipientToSenderMap
+         *
+         * Map recipient id (msg.to) to sender id (msg.from)
+         */
+        this.recipientToSenderMap = null;
     }
 
     // ## Chat methods
@@ -39793,12 +40284,11 @@ if (!Array.prototype.indexOf) {
      * The  options object can have the following attributes:
      *   - `receiverOnly`: If TRUE, no message can be sent
      *   - `chatEvent`: The event to fire when sending/receiving a message
-     *   - `displayName`: Function which displays the sender's name
      */
     Chat.prototype.init = function(options) {
-        var tmp, i, rec;
+        var tmp, i, rec, sender, that;
         options = options || {};
-
+        that = this;
 
         // Chat id.
         tmp = options.chatEvent;
@@ -39819,6 +40309,10 @@ if (!Array.prototype.indexOf) {
             if (!this.db) this.db = new NDDB();
         }
 
+        // Button or send on Enter?.
+        this.useSubmitButton = 'undefined' === typeof options.useSubmitButton ?
+            J.isMobileAgent() : !!options.useSubmitButton;
+
         // Participants.
         tmp = options.participants;
         if (!J.isArray(tmp) || !tmp.length) {
@@ -39828,23 +40322,30 @@ if (!Array.prototype.indexOf) {
 
         // Build maps.
         this.recipientsIds = new Array(tmp.length);
+        this.recipientsIdsQuitted = [];
         this.recipientToSenderMap = {};
         this.recipientToNameMap = {};
         this.senderToNameMap = {};
+        this.senderToRecipientMap = {};
+
         for (i = 0; i < tmp.length; i++) {
+            // Everything i the same if string.
             if ('string' === typeof tmp[i]) {
                 this.recipientsIds[i] = tmp[i];
                 this.recipientToNameMap[tmp[i]] = tmp[i];
                 this.recipientToSenderMap[tmp[i]] = tmp[i];
+                this.senderToRecipientMap[tmp[i]] = tmp[i];
                 this.senderToNameMap[tmp[i]] = tmp[i];
             }
+            // Sender may be different from receiver if object.
             else if ('object' === typeof tmp[i]) {
                 rec = tmp[i].recipient;
+                sender = tmp[i].sender;
                 this.recipientsIds[i] = rec;
-                this.recipientToSenderMap[rec] = tmp[i].sender || rec;
+                this.recipientToSenderMap[rec] = sender || rec;
                 this.recipientToNameMap[rec] = tmp[i].name || rec;
-                this.senderToNameMap[tmp[i].sender || rec] =
-                    this.recipientToNameMap[rec];
+                this.senderToRecipientMap[sender] = rec;
+                this.senderToNameMap[sender] = this.recipientToNameMap[rec];
             }
             else {
                 throw new TypeError('Chat.init: participants array must ' +
@@ -39856,20 +40357,44 @@ if (!Array.prototype.indexOf) {
         // Other.
         this.uncollapseOnMsg = options.uncollapseOnMsg || false;
 
+        this.printStartTime = options.printStartTime || false;
+        this.printNames = options.printNames || false;
+
         if (options.initialMsg) {
-            if ('object' !== typeof options.initialMsg) {                
+            if ('object' !== typeof options.initialMsg) {
                 throw new TypeError('Chat.init: initialMsg must be ' +
                                     'object or undefined. Found: ' +
                                     options.initialMsg);
             }
             this.initialMsg = options.initialMsg;
         }
+
+        this.on('uncollapsed', function() {
+            // Make sure that we do not have the title highlighted any more.
+            that.setTitle(that.title);
+            if (that.recipientsIds.length) {
+                node.say(that.chatEvent + '_COLLAPSE',
+                         that.recipientsIds, false);
+            }
+        });
+
+        this.on('collapsed', function() {
+            if (that.recipientsIds.length) {
+                node.say(that.chatEvent + '_COLLAPSE',
+                         that.recipientsIds, true);
+            }
+        });
+
+        this.on('destroyed', function() {
+            if (that.recipientsIds.length) {
+                node.say(that.chatEvent + '_QUIT', that.recipientsIds);
+            }
+        });
     };
 
 
     Chat.prototype.append = function() {
-        var that;
-        var inputGroup, span, ids;
+        var that, inputGroup, initialText;
 
         this.chatDiv = W.get('div', { className: 'chat_chat' });
         this.bodyDiv.appendChild(this.chatDiv);
@@ -39879,41 +40404,62 @@ if (!Array.prototype.indexOf) {
 
             // Input group.
             inputGroup = document.createElement('div');
+            inputGroup.className = 'chat_inputgroup';
 
             this.textarea = W.get('textarea', {
                 className: 'chat_textarea form-control',
                 placeholder: this.getText('textareaPlaceholder')
             });
-
-            ids = this.recipientsIds;
-            this.textarea.onkeydown = function(e) {
-                var msg, to;
-                var keyCode; 
-                e = e || window.event;
-                keyCode = e.keyCode || e.which;
-                if (keyCode === 13) {
-                    msg = that.readTextarea();
-                    
-                    // Move cursor at the beginning.
-                    if (msg === '') {
-                        node.warn('no text, no chat message sent.');
-                        return;
-                    }
-                    // Simplify things, if there is only one recipient.
-                    to = ids.length === 1 ? ids[0] : ids;
-                    that.writeMsg('outgoing', { msg: msg }); // to not used now.
-                    node.say(that.chatEvent, to, msg);
-                    // Make sure the cursor goes back to top.
-                    setTimeout(function() { that.textarea.value = ''; });
-                }
-            };
-        
             inputGroup.appendChild(this.textarea);
-            // inputGroup.appendChild(span);
+
+            if (this.useSubmitButton) {
+                this.submitButton = W.get('button', {
+                    className: 'btn-sm btn-info form-control chat_submit',
+                    innerHTML: this.getText('submitButton')
+                });
+                this.submitButton.onclick = function() {
+                    sendMsg(that);
+                };
+                inputGroup.appendChild(this.submitButton);
+            }
+            else {
+                this.textarea.onkeydown = function(e) {
+                    e = e || window.event;
+                    if ((e.keyCode || e.which) === 13) sendMsg(that);
+                };
+            }
+
             this.bodyDiv.appendChild(inputGroup);
         }
 
-        if (this.initialMsg) this.writeMsg('incoming', this.initialMsg);
+        if (this.printStartTime) {
+            W.add('div', this.chatDiv, {
+                innerHTML: Date(J.getDate()),
+                className: 'chat_event'
+            });
+            initialText = true;
+        }
+
+        if (this.printNames) {
+            W.add('div', this.chatDiv, {
+                className: 'chat_event',
+                innerHTML: 'Participants: ' +
+                    J.keys(this.senderToNameMap).join(', ')
+            });
+            initialText = true;
+        }
+
+        if (initialText) {
+            W.add('div', this.chatDiv, {
+                className: 'chat_event',
+                innerHTML: '&nbsp;'
+            });
+        }
+
+        if (this.initialMsg) {
+            this.writeMsg(this.initialMsg.id ? 'incoming' : 'outgoing',
+                          this.initialMsg);
+        }
     };
 
     Chat.prototype.readTextarea = function() {
@@ -39924,8 +40470,12 @@ if (!Array.prototype.indexOf) {
     };
 
     Chat.prototype.writeMsg = function(code, data) {
-        W.add('span', this.chatDiv, { innerHTML: this.getText(code, data) });
-        W.writeln('', this.chatDiv);
+        var c;
+        c = (code === 'incoming' || code === 'outgoing') ? code : 'event';
+        W.add('div', this.chatDiv, {
+            innerHTML: this.getText(code, data),
+            className: 'chat_msg chat_msg_' + c
+        });
         this.chatDiv.scrollTop = this.chatDiv.scrollHeight;
     };
 
@@ -39948,10 +40498,33 @@ if (!Array.prototype.indexOf) {
         });
 
         node.on.data(this.chatEvent + '_QUIT', function(msg) {
+            var i, len, rec;
             if (!that.handleMsg(msg)) return;
             that.writeMsg('quit', { id: msg.from });
+            len = that.recipientsIds.length;
+            for ( i = 0 ; i < len ; i++) {
+                if (that.recipientsIds[i] ===
+                    that.senderToRecipientMap[msg.from]) {
+
+                    rec = that.recipientsIds.splice(i, 1);
+                    that.recipientsIdsQuitted.push(rec);
+
+                    if (that.recipientsIds.length === 0) {
+                        that.writeMsg('noMoreParticipants');
+                        that.disable();
+                    }
+                    break;
+                }
+            }
+            node.warn('Chat: participant quitted not found: ' + msg.from);
+        });
+
+        node.on.data(this.chatEvent + '_COLLAPSE', function(msg) {
+            if (!that.handleMsg(msg)) return;
+            that.writeMsg('collapse', { id: msg.from, collapsed: msg.data});
         });
     };
+
 
     Chat.prototype.handleMsg = function(msg) {
         var from, args;
@@ -39973,14 +40546,21 @@ if (!Array.prototype.indexOf) {
         return true;
     };
 
-    Chat.prototype.destroy = function() {
-        node.say(this.chatEvent + '_QUIT', this.recipientsIds);
+    Chat.prototype.disable = function() {
+        if (this.submitButton) this.submitButton.disabled = true;
+        this.textarea.disabled = true;
+        this.disabled = true;
+    };
+
+    Chat.prototype.enable = function() {
+        if (this.submitButton) this.submitButton.disabled = false;
+        this.textarea.disabled = false;
+        this.disabled = false;
     };
 
     Chat.prototype.getValues = function() {
         var out;
         out = {
-            names: this.displayNames,
             participants: this.participants,
             totSent: this.stats.sent,
             totReceived: this.stats.received,
@@ -39990,7 +40570,37 @@ if (!Array.prototype.indexOf) {
         if (this.db) out.msgs = db.fetch();
         return out;
     };
-    
+
+    // ## Helper functions.
+
+    // ### sendMsg
+    // Reads the textarea and delivers the msg to the server.
+    function sendMsg(that) {
+        var msg, to, ids;
+
+        // No msg sent.
+        if (that.isDisabled()) return;
+
+        msg = that.readTextarea();
+
+        // Move cursor at the beginning.
+        if (msg === '') {
+            node.warn('Chat: message has no text, not sent.');
+            return;
+        }
+        // Simplify things, if there is only one recipient.
+        ids = that.recipientsIds;
+        if (ids.length === 0) {
+            node.warn('Chat: empty recipient list, message not sent.');
+            return;
+        }
+        to = ids.length === 1 ? ids[0] : ids;
+        that.writeMsg('outgoing', { msg: msg }); // to not used now.
+        node.say(that.chatEvent, to, msg);
+        // Make sure the cursor goes back to top.
+        setTimeout(function() { that.textarea.value = ''; });
+    }
+
 })(node);
 
 /**
@@ -52357,6 +52967,22 @@ if (!Array.prototype.indexOf) {
         // #### blinkTitle
         blinkTitle: 'GAME STARTS!',
 
+        // #### waitingForConf
+        waitingForConf: 'Waiting to receive data',
+
+        // #### executionMode
+        executionMode: function(w) {
+            var startDate;
+            if (w.executionMode === 'WAIT_FOR_N_PLAYERS') {
+                return 'Waiting for All Players to Connect: ';
+            }
+            if (w.executionMode === 'WAIT_FOR_DISPATCH') {
+                return 'Task will start soon. Please be patient.';
+            }
+            // TIMEOUT.
+            return 'Task will start at: <br>' + w.startDate;
+        },
+
         // #### disconnect
         disconnect: '<span style="color: red">You have been ' +
             '<strong>disconnected</strong>. Please try again later.' +
@@ -52501,6 +53127,13 @@ if (!Array.prototype.indexOf) {
         this.waitTime = null;
 
         /**
+         * ### WaitingRoom.executionMode
+         *
+         * The execution mode.
+         */
+        this.executionMode = null;
+
+        /**
          * ### WaitingRoom.startDate
          *
          * The exact date and time when the game starts
@@ -52515,13 +53148,13 @@ if (!Array.prototype.indexOf) {
         this.timeoutId = null;
 
         /**
-         * ### WaitingRoom.playerCountDiv
+         * ### WaitingRoom.execModeDiv
          *
          * Div containing the span for displaying the number of players
          *
          * @see WaitingRoom.playerCount
          */
-        this.playerCountDiv = null;
+        this.execModeDiv = null;
 
         /**
          * ### WaitingRoom.playerCount
@@ -52657,6 +53290,13 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('WaitingRoom.init: conf must be object. ' +
                                 'Found: ' + conf);
         }
+
+        // It receives the TEXTS AND SOUNDS only first.
+        if (!conf.executionMode) return;
+
+        // TODO: check types and conditions?
+        this.executionMode = conf.executionMode;
+
         if (conf.onTimeout) {
             if ('function' !== typeof conf.onTimeout) {
                 throw new TypeError('WaitingRoom.init: conf.onTimeout must ' +
@@ -52675,11 +53315,10 @@ if (!Array.prototype.indexOf) {
                                     'Found: ' + conf.waitTime);
             }
             this.waitTime = conf.waitTime;
-            this.startTimer();
         }
-        // TODO: check conditions?
+
         if (conf.startDate) {
-            this.setStartDate(conf.startDate);
+            this.startDate = new Date(conf.startDate).toString();
         }
 
         if (conf.poolSize) {
@@ -52729,10 +53368,17 @@ if (!Array.prototype.indexOf) {
             this.disconnectIfNotSelected = false;
         }
 
+
         if (conf.playWithBotOption) this.playWithBotOption = true;
         else this.playWithBotOption = false;
         if (conf.selectTreatmentOption) this.selectTreatmentOption = true;
         else this.selectTreatmentOption = false;
+
+
+        // Display Exec Mode.
+        this.displayExecMode();
+
+        // Button for bots and treatments.
 
         if (this.playWithBotOption && !document.getElementById('bot_btn')) {
             // Closure to create button group.
@@ -52743,7 +53389,7 @@ if (!Array.prototype.indexOf) {
                 btnGroup.className = 'btn-group';
 
                 var playBotBtn = document.createElement('input');
-                playBotBtn.className = 'btn btn-secondary btn-lg';
+                playBotBtn.className = 'btn btn-primary btn-lg';
                 playBotBtn.value = w.getText('playBot');
                 playBotBtn.id = 'bot_btn';
                 playBotBtn.type = 'button';
@@ -52931,7 +53577,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### WaitingRoom.updateDisplay
      *
-     * Displays the state of the waiting room on screen
+     * Displays the state of the waiting room on screen (player count)
      *
      * @see WaitingRoom.updateState
      */
@@ -52959,39 +53605,51 @@ if (!Array.prototype.indexOf) {
         }
     };
 
-    WaitingRoom.prototype.append = function() {
-        this.playerCountDiv = document.createElement('div');
-        this.playerCountDiv.id = 'player-count-div';
+    /**
+     * ### WaitingRoom.displayExecMode
+     *
+     * Builds the basic layout of the execution mode
+     *
+     * @see WaitingRoom.executionMode
+     */
+    WaitingRoom.prototype.displayExecMode = function() {
+        this.bodyDiv.innerHTML = '';
 
-        this.playerCountDiv.appendChild(
-            document.createTextNode('Waiting for All Players to Connect: '));
+        this.execModeDiv = document.createElement('div');
+        this.execModeDiv.id = 'exec-mode-div';
 
+        this.execModeDiv.innerHTML = this.getText('executionMode');
+
+        // TODO: add only on some modes? Depending on settings?
         this.playerCount = document.createElement('p');
         this.playerCount.id = 'player-count';
-        this.playerCountDiv.appendChild(this.playerCount);
+        this.execModeDiv.appendChild(this.playerCount);
 
         this.playerCountTooHigh = document.createElement('div');
         this.playerCountTooHigh.style.display = 'none';
-        this.playerCountDiv.appendChild(this.playerCountTooHigh);
-
-        this.dots = W.getLoadingDots();
-        this.playerCountDiv.appendChild(this.dots.span);
-
-        this.bodyDiv.appendChild(this.playerCountDiv);
+        this.execModeDiv.appendChild(this.playerCountTooHigh);
 
         this.startDateDiv = document.createElement('div');
-        this.bodyDiv.appendChild(this.startDateDiv);
         this.startDateDiv.style.display= 'none';
+        this.execModeDiv.appendChild(this.startDateDiv);
+
+        this.dots = W.getLoadingDots();
+        this.execModeDiv.appendChild(this.dots.span);
+
+        this.bodyDiv.appendChild(this.execModeDiv);
 
         this.msgDiv = document.createElement('div');
         this.bodyDiv.appendChild(this.msgDiv);
 
-        if (this.startDate) {
-            this.setStartDate(this.startDate);
-        }
-        if (this.waitTime) {
-            this.startTimer();
-        }
+
+        // if (this.startDate) this.setStartDate(this.startDate);
+        if (this.waitTime) this.startTimer();
+
+    };
+
+    WaitingRoom.prototype.append = function() {
+        // Configuration will arrive soon.
+        this.bodyDiv.innerHTML = this.getText('waitingForConf');
     };
 
     WaitingRoom.prototype.listeners = function() {
@@ -53005,14 +53663,17 @@ if (!Array.prototype.indexOf) {
                 return;
             }
 
-            // Sounds.
-            that.setSounds(conf.sounds);
-
-            // Texts.
-            that.setTexts(conf.texts);
-
-            // Configure all requirements.
-            that.init(conf);
+            // It receives 2 conf messages.
+            if (!conf.executionMode) {
+                // Sounds.
+                that.setSounds(conf.sounds);
+                // Texts.
+                that.setTexts(conf.texts);
+            }
+            else {
+                // Configure all requirements.
+                that.init(conf);
+            }
 
             return conf;
         });
@@ -53099,12 +53760,6 @@ if (!Array.prototype.indexOf) {
         node.on.data('ROOM_CLOSED', function() {
             that.disconnect(that.getText('roomClosed'));
         });
-    };
-
-    WaitingRoom.prototype.setStartDate = function(startDate) {
-        this.startDate = new Date(startDate).toString();
-        this.startDateDiv.innerHTML = 'Game starts at: <br>' + this.startDate;
-        this.startDateDiv.style.display = '';
     };
 
     WaitingRoom.prototype.stopTimer = function() {
