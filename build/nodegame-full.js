@@ -13158,7 +13158,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GamePlot
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Wraps a stager and exposes methods to navigate through the sequence
@@ -14142,9 +14142,8 @@ if (!Array.prototype.indexOf) {
             return res;
         }
 
-        // Not found.
-        if (arguments.length < 3) notFound = null;
-        return notFound;
+        // Return notFound.
+        return 'undefined' === typeof notFound ? null : notFound;
     };
 
     /**
@@ -17838,7 +17837,7 @@ if (!Array.prototype.indexOf) {
                 out.unfinishedBlocks.push(this.unfinishedBlocks[i].clone());
             }
         }
-        
+
         return out;
     };
 
@@ -23235,7 +23234,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Game
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Handles the flow of the game
@@ -25018,7 +25017,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} property The name of the property
      * @param {mixed} nf Optional. The return value in case the
-     *   requested property is not found. Default: null. 
+     *   requested property is not found. Default: null.
      *
      * @return {mixed} The value of the requested step property
      *
@@ -25026,26 +25025,6 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.getProperty = function(prop, nf) {
         return this.plot.getProperty(this.getCurrentGameStage(), prop, nf);
-    };
-
-    /**
-     * ### Game.getProperty
-     *
-     * Returns the requested step property from the game plot
-     *
-     * @param {string} property The name of the property
-     * @param {mixed} notFound Optional. The return value in case the
-     *   requested property is not found. Default: null
-     *
-     * @return {mixed} The value of the requested step property
-     *
-     * @see GamePlot.getProperty
-     */
-    Game.prototype.__getProperty = function(property, notFound) {
-        var gs;
-        gs = this.getCurrentGameStage();
-        if (arguments.length < 2) return this.plot.getProperty(gs, property);
-        return this.plot.getProperty(gs, property, notFound);
     };
 
     /**
@@ -39814,6 +39793,8 @@ if (!Array.prototype.indexOf) {
  *
  * Creates a button that if pressed goes to the previous step
  *
+ * // TODO: check the changes to node.game.getProperty
+ *
  * www.nodegame.org
  */
 (function(node) {
@@ -39979,17 +39960,16 @@ if (!Array.prototype.indexOf) {
         // Locks the back button in case of a timeout.
         node.on('PLAYING', function() {
             var prop, step;
-            debugger
             step = getPreviousStep(that);
-            if (!step) that.disable();
+            // It might be enabled already, but we do it again.
+            if (step) that.enable();
+            // Check options.
             prop = node.game.getProperty('backbutton');
-            if (prop === false || (prop && prop.enableOnPlaying === false)) {
+            if (!step || prop === false ||
+                (prop && prop.enableOnPlaying === false)) {
+
                 // It might be disabled already, but we do it again.
                 that.disable();
-            }
-            else {
-                // It might be enabled already, but we do it again.
-                that.enable();
             }
             if ('string' === typeof prop) that.button.value = prop;
             else if (prop && prop.text) that.button.value = prop.text;
