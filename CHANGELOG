@@ -1,5 +1,11 @@
 # nodegame-client change log
 
+## 5.0.0
+- `#node.game.getProperty()` simplified. Does not distinguish between return values undefined and null. Developer must specified 'not found' return value.
+- `#Stager.getState()`  has a finalize parameter.
+- `#node.say()` accepts an array as TO parameter (note: the maximum lenght recipients is controlled by the server).
+- Minor cleanup and fixes.
+
 ## 4.1.1
 - `#node.redirect` accepts arrays for recipients.
 
