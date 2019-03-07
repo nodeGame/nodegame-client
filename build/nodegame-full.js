@@ -15869,15 +15869,15 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Block
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Blocks contain items that can be sorted in the sequence.
  *
- * Blocks can also contains other block as items, and in this case all
+ * Blocks can also contain other blocks as items, in this case all
  * items are sorted recursevely.
  *
- * Each item must contain a id (unique within the block), and a type parameter.
+ * Each item must contain an id (unique within the block), and a type parameter.
  * Optionally, a `positions` parameter, controlling the positions that the item
  * can take in the sequence, can be be passed along.
  *
@@ -15910,12 +15910,12 @@ if (!Array.prototype.indexOf) {
 
     var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
     var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE       = blockTypes. BLOCK_STAGE;
-    var BLOCK_STEPBLOCK   = blockTypes. BLOCK_STEPBLOCK;
+    var BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
+    var BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
     var BLOCK_STEP        = blockTypes.BLOCK_STEP;
 
     var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS    = blockTypes. BLOCK_ENCLOSING_STEPS;
+    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
     var BLOCK_ENCLOSING_STAGES   = blockTypes.BLOCK_ENCLOSING_STAGES;
 
 
@@ -15927,7 +15927,6 @@ if (!Array.prototype.indexOf) {
      * @param {object} options Configuration object
      */
     function Block(options) {
-
         if ('object' !== typeof options) {
             throw new TypeError('Block constructor: options must be object: ' +
                                 options);
@@ -17794,15 +17793,19 @@ if (!Array.prototype.indexOf) {
      * defaultStepRule, defaultGlobals, defaultProperties, onInit,
      * onGameover, blocks.
      *
+     * // TODO: the finalize param does not do what expected
+     * @param {boolean} finalize. If TRUE, it calls finalize before
+     *   cloning the stager. Default: TRUE.
+     *
      * @return {object} Clone of the Stager's state
      *
      * @see Stager.setState
      * @see Stager.finalize
      */
-    Stager.prototype.getState = function() {
+    Stager.prototype.getState = function(finalize) {
         var out, i, len;
-
-        this.finalize();
+        finalize = 'undefined' === typeof finalize ? true : !!finalize;
+        if (finalize) this.finalize();
 
         out = J.clone({
             steps:               this.steps,
@@ -17828,6 +17831,14 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             out.blocks.push(this.blocks[i].clone());
         }
+        if (!finalize) {
+            out.unfinishedBlocks = [];
+            i = -1, len = this.unfinishedBlocks.length;
+            for ( ; ++i < len ; ) {
+                out.unfinishedBlocks.push(this.unfinishedBlocks[i].clone());
+            }
+        }
+        
         return out;
     };
 
@@ -18589,7 +18600,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager blocks operations
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
@@ -18604,12 +18615,12 @@ if (!Array.prototype.indexOf) {
 
     var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
     var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE       = blockTypes. BLOCK_STAGE;
-    var BLOCK_STEPBLOCK   = blockTypes. BLOCK_STEPBLOCK;
+    var BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
+    var BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
     var BLOCK_STEP        = blockTypes.BLOCK_STEP;
 
     var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS    = blockTypes. BLOCK_ENCLOSING_STEPS;
+    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
     var BLOCK_ENCLOSING_STAGES   = blockTypes.BLOCK_ENCLOSING_STAGES;
 
     /**
@@ -18637,7 +18648,8 @@ if (!Array.prototype.indexOf) {
             positions = arguments[1];
 
             if ('string' !== typeof id) {
-                throw new TypeError('Stager.stepBlock: id must be string.');
+                throw new TypeError('Stager.stepBlock: id must be string. ' +
+                                    'Found: ' + id);
             }
             if (this.blocksIds[id]) {
                 throw new Error('Stager.stepBlock: non-unique id: ' + id);
@@ -18677,7 +18689,8 @@ if (!Array.prototype.indexOf) {
             positions = arguments[1];
 
             if ('string' !== typeof id) {
-                throw new TypeError('Stager.stageBlock: id must be string.');
+                throw new TypeError('Stager.stageBlock: id must be string. ' +
+                                   'Found: ' + id);
             }
             if (this.blocksIds[id]) {
                 throw new Error('Stager.stageBlock: non-unique id: ' + id);
@@ -24997,6 +25010,24 @@ if (!Array.prototype.indexOf) {
         return this.globals;
     };
 
+
+    /**
+     * ### Game.getProperty
+     *
+     * Returns the requested step property from the game plot
+     *
+     * @param {string} property The name of the property
+     * @param {mixed} nf Optional. The return value in case the
+     *   requested property is not found. Default: null. 
+     *
+     * @return {mixed} The value of the requested step property
+     *
+     * @see GamePlot.getProperty
+     */
+    Game.prototype.getProperty = function(prop, nf) {
+        return this.plot.getProperty(this.getCurrentGameStage(), prop, nf);
+    };
+
     /**
      * ### Game.getProperty
      *
@@ -25010,7 +25041,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see GamePlot.getProperty
      */
-    Game.prototype.getProperty = function(property, notFound) {
+    Game.prototype.__getProperty = function(property, notFound) {
         var gs;
         gs = this.getCurrentGameStage();
         if (arguments.length < 2) return this.plot.getProperty(gs, property);
@@ -39062,7 +39093,7 @@ if (!Array.prototype.indexOf) {
             }
 
             // Destroy all existing widgets.
-            if (conf.destroyAll) that.destroyAll();            
+            if (conf.destroyAll) that.destroyAll();
 
             // Append existing widgets.
             if (conf.append) {
@@ -39189,10 +39220,11 @@ if (!Array.prototype.indexOf) {
      * A `.destroy` method is added to the widget that perform the
      * following operations:
      *
-     *   - calls original widget.destroy method, if defined,
      *   - removes the widget from DOM (if it was appended),
      *   - removes listeners defined during the creation,
-     *   - and remove the widget from Widget.instances
+     *   - and remove the widget from Widget.instances,
+     *   - invoke the event 'destroyed'.
+     *
      *
      * Finally a reference to the widget is kept in `Widgets.instances`.
      *
@@ -39208,7 +39240,7 @@ if (!Array.prototype.indexOf) {
      */
     Widgets.prototype.get = function(widgetName, options) {
         var WidgetPrototype, widget;
-        var changes, origDestroy;
+        var changes;
         var that;
         if ('string' !== typeof widgetName) {
             throw new TypeError('Widgets.get: widgetName must be string.' +
@@ -39227,7 +39259,7 @@ if (!Array.prototype.indexOf) {
         WidgetPrototype = J.getNestedValue(widgetName, this.widgets);
 
         if (!WidgetPrototype) {
-            throw new Error('Widgets.get: ' + widgetName + ' not found.');
+            throw new Error('Widgets.get: ' + widgetName + ' not found');
         }
 
         node.info('creating widget ' + widgetName  +
@@ -39235,21 +39267,11 @@ if (!Array.prototype.indexOf) {
 
         if (!this.checkDependencies(WidgetPrototype)) {
             throw new Error('Widgets.get: ' + widgetName + ' has unmet ' +
-                            'dependencies.');
+                            'dependencies');
         }
-
-        // NOT USED ANY MORE.
-        // Add default properties to the user options.
-        // if (WidgetPrototype.defaults) {
-        //     J.mixout(options, J.clone(WidgetPrototype.defaults));
-        // }
 
         // Create widget.
         widget = new WidgetPrototype(options);
-
-        // TODO: check do we need this?
-        // Re-inject defaults.
-        // widget.defaults = options;
 
         // Set ID.
         if ('undefined' !== typeof options.id) {
@@ -39267,6 +39289,8 @@ if (!Array.prototype.indexOf) {
         // Set prototype values or options values.
         widget.title = 'undefined' === typeof options.title ?
             WidgetPrototype.title : options.title;
+        widget.panel = 'undefined' === typeof options.panel ?
+            WidgetPrototype.panel : options.panel;
         widget.footer = 'undefined' === typeof options.footer ?
             WidgetPrototype.footer : options.footer;
         widget.className = WidgetPrototype.className;
@@ -39281,10 +39305,6 @@ if (!Array.prototype.indexOf) {
                                 'string, or undefined. Found: ' +
                                 options.className);
         }
-
-        widget.panel = 'undefined' === typeof options.panel ?
-            WidgetPrototype.panel : options.panel;
-        
         widget.context = 'undefined' === typeof options.context ?
             WidgetPrototype.context : options.context;
         widget.sounds = 'undefined' === typeof options.sounds ?
@@ -39337,25 +39357,23 @@ if (!Array.prototype.indexOf) {
             node.events.setRecordChanges(false);
         }
 
-        origDestroy = widget.destroy;
-
         // If any listener was added or removed, the original situation will
         // be restored when the widget is destroyed.
         // The widget is also automatically removed from parent.
         widget.destroy = function() {
             var i, len, ee, eeName;
 
-            try {
-                // Call original function.
-                if ('function' === typeof origDestroy) origDestroy.call(widget);
-                // Remove the widget's div from its parent.
-                if (widget.panelDiv && widget.panelDiv.parentNode) {
-                    widget.panelDiv.parentNode.removeChild(widget.panelDiv);
+            (function() {
+                try {
+                    // Remove the widget's div from its parent.
+                    if (widget.panelDiv && widget.panelDiv.parentNode) {
+                        widget.panelDiv.parentNode.removeChild(widget.panelDiv);
+                    }
                 }
-            }
-            catch(e) {
-                node.warn(widgetName + '.destroy: error caught. ' + e + '.');
-            }
+                catch(e) {
+                    node.warn(widgetName + '.destroy: error caught: ' + e);
+                }
+            })();
 
             if (changes) {
                 for (eeName in changes) {
@@ -39392,7 +39410,7 @@ if (!Array.prototype.indexOf) {
 
             // Remove from docked.
             if (this.docked) closeDocked(widget.wid, false);
-            
+
             this.emit('destroyed');
         };
 
@@ -39454,10 +39472,9 @@ if (!Array.prototype.indexOf) {
             if (root) root = root.body;
             if (!root) root = document.body;
         }
-        else if (root === W.getHeader() &&
-                 'undefined' === typeof options.panel) {
 
-            options.panel = w.panel || false;
+        if ('undefined' === typeof options.panel) {
+            if (root === W.getHeader()) options.panel = false;
         }
 
         // Check if it is a object (new widget).
@@ -39473,7 +39490,7 @@ if (!Array.prototype.indexOf) {
         };
 
         // Dock it.
-        if (options.docked) {            
+        if (options.docked) {
             tmp.className.push('docked');
             this.docked.push(w);
             w.docked = true;
@@ -39727,13 +39744,13 @@ if (!Array.prototype.indexOf) {
                                     }
                                 },
                             });
-                        
+
                     }
                     node.widgets.boxSelector.addItem(closed);
                 }
                 // Decrement len and i.
                 len--;
-                i--;                
+                i--;
             }
         }
         return !!width;
@@ -39742,12 +39759,12 @@ if (!Array.prototype.indexOf) {
     function setRightStyle(w) {
         var dockedMargin, safeMargin;
         var lastDocked, right, ws, tmp;
-        
+
         safeMargin = 200;
         dockedMargin = 20;
-        
+
         ws = node.widgets;
-        
+
         right = 0;
         // The widget w has been already added to the docked list.
         if (ws.docked.length > 1) {
@@ -39789,6 +39806,241 @@ if (!Array.prototype.indexOf) {
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
+/**
+ * # BackButton
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
+ * MIT Licensed
+ *
+ * Creates a button that if pressed goes to the previous step
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('BackButton', BackButton);
+
+    // ## Meta-data
+
+    BackButton.version = '0.1.0';
+    BackButton.description = 'Creates a button that if ' +
+        'pressed goes to the previous step.';
+
+    BackButton.title = false;
+    BackButton.className = 'backbutton';
+    BackButton.texts.back = 'Back';
+
+    // ## Dependencies
+
+    BackButton.dependencies = {
+        JSUS: {}
+    };
+
+    /**
+     * ## BackButton constructor
+     *
+     * Creates a new instance of BackButton
+     *
+     * @param {object} options Optional. Configuration options.
+     *   If a `button` option is specified, it sets it as the clickable
+     *   button. All other options are passed to the init method.
+     *
+     * @see BackButton.init
+     */
+    function BackButton(options) {
+        var that;
+        that = this;
+
+        /**
+         * ### BackButton.button
+         *
+         * The HTML element.
+         */
+        if ('object' === typeof options.button) {
+            this.button = options.button;
+        }
+        else if ('undefined' === typeof options.button) {
+            this.button = document.createElement('input');
+            this.button.type = 'button';
+        }
+        else {
+            throw new TypeError('BackButton constructor: options.button must ' +
+                                'be object or undefined. Found: ' +
+                                options.button);
+        }
+
+        /**
+         * ### BackButton.acrossStages
+         *
+         * If TRUE, the Back button allows to go back within the same stage only
+         *
+         * Default: FALSE
+         */
+        this.acrossStages = null;
+
+        /**
+         * ### BackButton.acrossRounds
+         *
+         * If TRUE, the Back button allows to go back within the same stage only
+         *
+         * Default: TRUE
+         */
+        this.acrossRounds = null;
+
+        this.button.onclick = function() {
+            var res;
+            res = getPreviousStep(that);
+            if (!res) return;
+            res = node.game.gotoStep(res);
+            if (res) that.disable();
+        };
+    }
+
+    // ## BackButton methods
+
+    /**
+     * ### BackButton.init
+     *
+     * Initializes the instance
+     *
+     * Available options are:
+     *
+     * - id: id of the HTML button, or false to have none. Default:
+     *     BackButton.className
+     * - className: the className of the button (string, array), or false
+     *     to have none. Default bootstrap classes: 'btn btn-lg btn-primary'
+     * - text: the text on the button. Default: BackButton.text
+     * - acrossStages: if TRUE, allows going back to previous stages.
+     *     Default: FALSE
+     * - acrossRounds: if TRUE, allows going back to previous rounds in
+     *     the same stage. Default: TRUE
+     *
+     * @param {object} options Optional. Configuration options
+     */
+    BackButton.prototype.init = function(options) {
+        var tmp;
+        options = options || {};
+
+        //Button
+        if ('undefined' === typeof options.id) {
+            tmp = BackButton.className;
+        }
+        else if ('string' === typeof options.id) {
+            tmp = options.id;
+        }
+        else if (false === options.id) {
+            tmp = '';
+        }
+        else {
+            throw new TypeError('BackButton.init: options.id must ' +
+                                'be string, false, or undefined. Found: ' +
+                                options.id);
+        }
+        this.button.id = tmp;
+
+        if ('undefined' === typeof options.className) {
+            tmp  = 'btn btn-lg btn-secondary';
+        }
+        else if (options.className === false) {
+            tmp = '';
+        }
+        else if ('string' === typeof options.className) {
+            tmp = options.className;
+        }
+        else if (J.isArray(options.className)) {
+            tmp = options.className.join(' ');
+        }
+        else  {
+            throw new TypeError('BackButton.init: options.className must ' +
+                                'be string, array, or undefined. Found: ' +
+                                options.className);
+        }
+        this.button.className = tmp;
+
+        // Button text.
+        this.button.value = 'string' === typeof options.text ?
+            options.text : this.getText('back');
+
+        this.acrossStages = 'undefined' === typeof options.acrossStages ?
+            false : !!options.acrossStages;
+        this.acrossRounds = 'undefined' === typeof options.acrossRounds ?
+            true : !!options.acrossRounds;
+    };
+
+    BackButton.prototype.append = function() {
+        this.bodyDiv.appendChild(this.button);
+    };
+
+    BackButton.prototype.listeners = function() {
+        var that = this;
+
+        // Locks the back button in case of a timeout.
+        node.on('PLAYING', function() {
+            var prop, step;
+            debugger
+            step = getPreviousStep(that);
+            if (!step) that.disable();
+            prop = node.game.getProperty('backbutton');
+            if (prop === false || (prop && prop.enableOnPlaying === false)) {
+                // It might be disabled already, but we do it again.
+                that.disable();
+            }
+            else {
+                // It might be enabled already, but we do it again.
+                that.enable();
+            }
+            if ('string' === typeof prop) that.button.value = prop;
+            else if (prop && prop.text) that.button.value = prop.text;
+        });
+    };
+
+    /**
+     * ### BackButton.disable
+     *
+     * Disables the back button
+     */
+    BackButton.prototype.disable = function() {
+        this.button.disabled = 'disabled';
+    };
+
+    /**
+     * ### BackButton.enable
+     *
+     * Enables the back button
+     */
+    BackButton.prototype.enable = function() {
+        this.button.disabled = false;
+    };
+
+    // ## Helper functions.
+
+    /**
+     * ### getPreviousStage
+     *
+     * Returns the previous step accordingly with widget's settings
+     *
+     * @param {BackButton} that The current instance
+     *
+     * @return {GameStage|Boolean} The previous step or FALSE if none is found
+     */
+    function getPreviousStep(that) {
+        var curStage,  prevStage;
+        curStage = node.game.getCurrentGameStage();
+        if (curStage.stage === 0) return;
+        prevStage = node.game.getPreviousStep();
+        if (prevStage.stage === 0) return;
+        if ((curStage.stage > prevStage.stage) && !that.acrossStages) {
+            return false;
+        }
+        if ((curStage.round > prevStage.round) && !that.acrossRounds) {
+            return false;
+        }
+        return prevStage;
+    }
+
+})(node);
 
 /**
  * # BoxSelector
@@ -40058,7 +40310,7 @@ if (!Array.prototype.indexOf) {
  * // TODO: add is...typing
  * // TODO: add bootstrap badge to count msg when collapsed
  * // TODO: check on data if message comes back
- * // TODO: add proper inline doc
+ * // TODO: highlight better incoming msg. Play sound?
  *
  * www.nodegame.org
  */
@@ -40113,6 +40365,8 @@ if (!Array.prototype.indexOf) {
 
     Chat.title = 'Chat';
     Chat.className = 'chat';
+
+    Chat.panel = false;
 
     // ## Dependencies
 
@@ -40284,10 +40538,24 @@ if (!Array.prototype.indexOf) {
      * The  options object can have the following attributes:
      *   - `receiverOnly`: If TRUE, no message can be sent
      *   - `chatEvent`: The event to fire when sending/receiving a message
+     *   - `useSubmitButton`: If TRUE, a submit button is added, otherwise
+     *        messages are sent by pressing ENTER. Default: TRUE on mobiles
+     *   - `storeMsgs`: If TRUE, a copy of every message is stored in a db
+     *        a local db
+     *   - `participants`: An array containing the ids of participants,
+     *        cannot be empty
+     *   - `initialMsg`: Initial message to be displayed as soon as the chat
+     *        is opened.
+     *   - `uncollapseOnMsg`: If TRUE, a minimized chat will automatically
+     *        open when receiving a msg. Default: FALSE.
+     *   - `printStartTime`: If TRUE, the initial time of the chat is
+     *        printed at the beginning of the chat. Default: FALSE.
+     *   - `printNames`: If TRUE, the names of the participants of the chat
+     *        is printed at the beginning of the chat. Default: FALSE.
      */
     Chat.prototype.init = function(options) {
         var tmp, i, rec, sender, that;
-        options = options || {};
+
         that = this;
 
         // Chat id.
@@ -40392,7 +40660,6 @@ if (!Array.prototype.indexOf) {
         });
     };
 
-
     Chat.prototype.append = function() {
         var that, inputGroup, initialText;
 
@@ -40462,6 +40729,13 @@ if (!Array.prototype.indexOf) {
         }
     };
 
+    /**
+     * ### Chat.readTextarea
+     *
+     * Reads the value of the textarea, trims it, and removes it from textarea
+     *
+     * @return {string} The current value in the textarea
+     */
     Chat.prototype.readTextarea = function() {
         var txt;
         txt = this.textarea.value;
@@ -40469,6 +40743,21 @@ if (!Array.prototype.indexOf) {
         return txt.trim();
     };
 
+    /**
+     * ### Chat.writeMsg
+     *
+     * Writes (and formats) a message (or an event) in the message area
+     *
+     * Chat is scrolled up so that the message is last always on focus.
+     *
+     * @param {string} code A value indicating the the type of msg. Available:
+     *   'incoming', 'outgoing', and anything else.
+     * @param {string} data The content of the message
+     *
+     * @return {string} The current value in the textarea
+     *
+     * @see Chat.chatDiv
+     */
     Chat.prototype.writeMsg = function(code, data) {
         var c;
         c = (code === 'incoming' || code === 'outgoing') ? code : 'event';
@@ -40525,7 +40814,20 @@ if (!Array.prototype.indexOf) {
         });
     };
 
-
+    /**
+     * ### Chat.handleMsg
+     *
+     * Checks a (incoming) message and takes some actions
+     *
+     * If chat is minimized, it maximizes it if option `uncollapseOnMsg`
+     * it TRUE; otherwise, it increments the stats for unread messages.
+     *
+     * @param {string} msg The content of the message
+     *
+     * @return {boolean} TRUE if the message is valid
+     *
+     * @see Chat.chatDiv
+     */
     Chat.prototype.handleMsg = function(msg) {
         var from, args;
         from = msg.from;
@@ -40536,9 +40838,9 @@ if (!Array.prototype.indexOf) {
         if (this.isCollapsed()) {
             if (this.uncollapseOnMsg) {
                 this.uncollapse();
+                this.stats.unread = 0;
             }
             else {
-                // TODO: highlight better. Play sound?
                 this.setTitle('<strong>' + this.title + '</strong>');
                 this.stats.unread++;
             }
@@ -42829,10 +43131,12 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChoiceTable
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Creates a configurable table where each cell is a selectable choice
+ *
+ * // TODO: register time for each current choice if selectMultiple is on?
  *
  * www.nodegame.org
  */
@@ -42844,7 +43148,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.3.0';
+    ChoiceTable.version = '1.3.1';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -42897,8 +43201,7 @@ if (!Array.prototype.indexOf) {
          * The listener function
          */
         this.listener = function(e) {
-            var name, value, td, oldSelected;
-
+            var name, value, td;
             // Relative time.
             if ('string' === typeof that.timeFrom) {
                 that.timeCurrentChoice = node.timer.getTimeSince(that.timeFrom);
@@ -42927,22 +43230,27 @@ if (!Array.prototype.indexOf) {
             // One more click.
             that.numberOfClicks++;
 
-            // If only 1 selection allowed, remove selection from oldSelected.
-            if (!that.selectMultiple) {
-                oldSelected = that.selected;
-                if (oldSelected) J.removeClass(oldSelected, 'selected');
+            // Click on an already selected choice.
+            if (that.isChoiceCurrent(value)) {
+                that.unsetCurrentChoice(value);
+                J.removeClass(td, 'selected');
+            }
+            // Click on a new choice.
+            else {
+                that.setCurrentChoice(value);
+                J.addClass(td, 'selected');
 
-                if (that.isChoiceCurrent(value)) {
-                    that.unsetCurrentChoice(value);
+                if (that.selectMultiple) {
+                    that.selected.push(td);
                 }
                 else {
-                    that.currentChoice = value;
-                    J.addClass(td, 'selected');
+                    // If only 1 selection allowed, remove old selection.
+                    if (that.selected) J.removeClass(that.selected, 'selected');
                     that.selected = td;
                 }
             }
 
-            // Remove any warning/error from form on click.
+            // Remove any warning/errors on click.
             if (that.isHighlighted()) that.unhighlight();
         };
 
@@ -43109,7 +43417,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceTable.selected
          *
-         * Currently selected cell/s
+         * Currently selected TD elements
          *
          * @see ChoiceTable.currentChoice
          */
@@ -43288,6 +43596,11 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof options.selectMultiple) tmp = false;
         else tmp = !!options.selectMultiple;
         this.selectMultiple = tmp;
+        // Make an array for currentChoice and selected.
+        if (tmp) {
+            this.selected = [];
+            this.currentChoice = [];
+        }
 
         // Option requiredChoice, if any.
         if ('number' === typeof options.requiredChoice) {
@@ -43770,8 +44083,9 @@ if (!Array.prototype.indexOf) {
                 }
             }
             else {
-                throw new TypeError('ChoiceTable.setCorrectChoice: choices ' +
-                                    'must be non-empty array.');
+                throw new TypeError('ChoiceTable.setCorrectChoice: choice ' +
+                                    'must be non-empty array. Found: ' +
+                                    choice);
             }
         }
         this.correctChoice = choice;
@@ -43996,7 +44310,8 @@ if (!Array.prototype.indexOf) {
         else {
             if ('string' !== typeof choice && 'number' !== typeof choice) {
                 throw new TypeError('ChoiceTable.unsetCurrentChoice: choice ' +
-                                    'must be string, number or undefined.');
+                                    'must be string, number or ' +
+                                    'undefined. Found: ' + choice);
             }
             i = -1, len = this.currentChoice.length;
             for ( ; ++i < len ; ) {
@@ -44024,7 +44339,7 @@ if (!Array.prototype.indexOf) {
         }
         else if ('string' !== typeof choice) {
             throw new TypeError('ChoiceTable.isChoiceCurrent: choice ' +
-                                'must be string or number.');
+                                'must be string or number. Found: ' + choice);
         }
         if (!this.selectMultiple) {
             return this.currentChoice === choice;
@@ -44036,8 +44351,8 @@ if (!Array.prototype.indexOf) {
                     return true;
                 }
             }
-            return false;
         }
+        return false;
     };
 
     /**
@@ -46168,7 +46483,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DebugInfo
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Display information about the state of a player
@@ -46185,7 +46500,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    DebugInfo.version = '0.6.1';
+    DebugInfo.version = '0.6.2';
     DebugInfo.description = 'Display basic info a client\'s status.';
 
     DebugInfo.title = 'Debug Info';
@@ -46238,9 +46553,17 @@ if (!Array.prototype.indexOf) {
      * @see DebugInfo.updateAll
      */
     DebugInfo.prototype.init = function(options) {
+        var that;
         if ('number' === typeof options.intervalTime) {
             this.intervalTime = options.intervalTime;
         }
+
+        that = this;
+        this.on('destroyed', function() {
+            clearInterval(that.interval);
+            that.interval = null;
+            node.silly('DebugInfo destroyed.');
+        });
     };
 
     /**
@@ -46327,17 +46650,11 @@ if (!Array.prototype.indexOf) {
 
     };
 
-    DebugInfo.prototype.destroy = function() {
-        clearInterval(this.interval);
-        this.interval = null;
-        node.silly('DebugInfo destroyed.');
-    };
-
 })(node);
 
 /**
  * # DebugWall
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Creates a wall where all incoming and outgoing messages are printed
@@ -46487,12 +46804,13 @@ if (!Array.prototype.indexOf) {
             }
             this.hiddenTypes = hiddenTypes;
         }
-    };
 
-    DebugWall.prototype.destroy = function() {
-        if (this.origLogCb) node.log = this.origLogCb;
-        if (this.origMsgOutCb) node.socket.send = this.origMsgOutCb;
-        if (this.origMsgInCb) node.socket.onMessage = this.origMsgInCb;
+        this.on('destroyed', function() {
+            if (that.origLogCb) node.log = that.origLogCb;
+            if (that.origMsgOutCb) node.socket.send = that.origMsgOutCb;
+            if (that.origMsgInCb) node.socket.onMessage = that.origMsgInCb;
+        });
+
     };
 
     DebugWall.prototype.append = function() {
@@ -46650,7 +46968,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DisconnectBox
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Shows a disconnect button
@@ -46665,13 +46983,18 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    DisconnectBox.version = '0.2.2';
+    DisconnectBox.version = '0.2.3';
     DisconnectBox.description =
         'Visually display current, previous and next stage of the game.';
 
-    DisconnectBox.title = 'Disconnect';
+    DisconnectBox.title = false;
+    DisconnectBox.panel = false;
     DisconnectBox.className = 'disconnectbox';
-    DisconnectBox.texts.leave = "Leave Experiment";
+
+    DisconnectBox.texts = {
+        leave: 'Leave Experiment',
+        left: 'You Left'
+    };
 
     // ## Dependencies
 
@@ -46701,12 +47024,16 @@ if (!Array.prototype.indexOf) {
      * @see DisconnectBox.writeStage
      */
     DisconnectBox.prototype.append = function() {
-        this.disconnectButton = W.get('button', this.getText('leave'));
-        this.disconnectButton.className = 'btn btn-lg';
-        this.bodyDiv.appendChild(this.disconnectButton);
+        var that = this;
+        this.disconnectButton = W.add('button', this.bodyDiv, {
+            innerHTML: this.getText('leave'),
+            className: 'btn btn-lg'
+        });
 
         this.disconnectButton.onclick = function() {
+            that.disconnectButton.disabled = true;
             node.socket.disconnect();
+            that.disconnectButton.innerHTML = that.getText('left');
         };
     };
 
@@ -46715,18 +47042,21 @@ if (!Array.prototype.indexOf) {
 
         this.ee = node.getCurrentEventEmitter();
         this.ee.on('SOCKET_DISCONNECT', function DBdiscon() {
-            console.log('DB got socket_diconnect');
-            that.disconnectButton.disabled = true;
+            // console.log('DB got socket_diconnect');
         });
 
         this.ee.on('SOCKET_CONNECT', function DBcon() {
-            console.log('DB got socket_connect');
+            // console.log('DB got socket_connect');
+            if (that.disconnectButton.disabled) {
+                that.disconnectButton.disabled = false;
+                that.disconnectButton.innerHTML = that.getText('leave');
+            }
         });
-    };
 
-    DisconnectBox.prototype.destroy = function() {
-        this.ee.off('SOCKET_DISCONNECT', 'DBdiscon');
-        this.ee.off('SOCKET_CONNECT', 'DBcon');
+        this.on('destroyed', function() {
+            that.ee.off('SOCKET_DISCONNECT', 'DBdiscon');
+            that.ee.off('SOCKET_CONNECT', 'DBcon');
+        });
     };
 
 
@@ -46734,7 +47064,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DoneButton
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates a button that if pressed emits node.done()
@@ -46749,11 +47079,11 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    DoneButton.version = '0.2.2';
+    DoneButton.version = '1.0.0';
     DoneButton.description = 'Creates a button that if ' +
         'pressed emits node.done().';
 
-    DoneButton.title = 'Done Button';
+    DoneButton.title = false;
     DoneButton.className = 'donebutton';
     DoneButton.texts.done = 'Done';
 
@@ -46861,18 +47191,9 @@ if (!Array.prototype.indexOf) {
         }
         this.button.className = tmp;
 
-        this._setText = this.setText;
-        this.setText = function(text, value) {
-            this._setText(text, value);
-            this.button.value = value;
-        };
         // Button text.
-        if ('undefined' !== typeof options.text) {
-            this.setText('done', options.text);
-        }
-        else {
-            this.button.value = this.getText('done');
-        }
+        this.button.value = 'string' === typeof options.text ?
+            options.text : this.getText('done');
     };
 
     DoneButton.prototype.append = function() {
@@ -46899,9 +47220,8 @@ if (!Array.prototype.indexOf) {
                 // It might be enabled already, but we do it again.
                 that.enable();
             }
-            if (prop && prop.text) {
-                that.button.value = prop.text;
-            }
+            if ('string' === typeof prop) that.button.value = prop;
+            else if (prop && prop.text) that.button.value = prop.text;
         });
     };
 
@@ -46921,26 +47241,6 @@ if (!Array.prototype.indexOf) {
      */
     DoneButton.prototype.enable = function() {
         this.button.disabled = false;
-    };
-
-    /**
-     * ### DoneButton.setText
-     *
-     * Set the text for the done button
-     *
-     * @param {string} text Optional. The text of the button.
-     *   Default: DoneButton.text
-     */
-    DoneButton.prototype.setText = function(text) {
-        if ('undefined' === typeof text) {
-            text = DoneButton.text;
-        }
-        else if ('string' !== typeof text) {
-            throw new TypeError('DoneButton.setText: text must ' +
-                                'be string or undefined. Found: ' +
-                                typeof text);
-        }
-        this.button.value = text;
     };
 
 })(node);
@@ -50599,10 +50899,10 @@ if (!Array.prototype.indexOf) {
 
             return conf;
         });
-    };
 
-    Requirements.prototype.destroy = function() {
-        node.deregisterSetup('requirements');
+        this.on('destroyed', function() {
+            node.deregisterSetup('requirements');
+        });
     };
 
     // ## Helper methods.
@@ -52184,7 +52484,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualTimer
- * Copyright(c) 2018 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Display a configurable timer for the game
@@ -52293,7 +52593,6 @@ if (!Array.prototype.indexOf) {
          * Internal timers are destroyed when widget is destroyed or cleared
          *
          * @see VisualTimer.gameTimer
-         * @see VisualTimer.destroy
          * @see VisualTimer.clear
          */
         this.internalTimer = null;
@@ -52726,19 +53025,20 @@ if (!Array.prototype.indexOf) {
                     that.stop();
                 }
             }
-       });
-    };
+        });
 
-    VisualTimer.prototype.destroy = function() {
-        if (this.internalTimer) {
-            node.timer.destroyTimer(this.gameTimer);
-            this.internalTimer = null;
-        }
-        else {
-            this.gameTimer.removeHook('VisualTimer_' + this.wid);
-        }
-        this.bodyDiv.removeChild(this.mainBox.boxDiv);
-        this.bodyDiv.removeChild(this.waitBox.boxDiv);
+        // Handle destroy.
+        this.on('destroyed', function() {
+            if (that.internalTimer) {
+                node.timer.destroyTimer(that.gameTimer);
+                that.internalTimer = null;
+            }
+            else {
+                that.gameTimer.removeHook('VisualTimer_' + that.wid);
+            }
+            that.bodyDiv.removeChild(that.mainBox.boxDiv);
+            that.bodyDiv.removeChild(that.waitBox.boxDiv);
+        });
     };
 
    /**
@@ -53505,6 +53805,12 @@ if (!Array.prototype.indexOf) {
 
             })(this);
         }
+
+        // Handle destroy.
+        this.on('destroyed', function() {
+            if (that.dots) that.dots.stop();
+            node.deregisterSetup('waitroom');
+        });
     };
 
     /**
@@ -53824,11 +54130,6 @@ if (!Array.prototype.indexOf) {
                 frame.addEventListener('mouseover', onFrame, false);
             });
         }
-    };
-
-    WaitingRoom.prototype.destroy = function() {
-        if (this.dots) this.dots.stop();
-        node.deregisterSetup('waitroom');
     };
 
 })(node);
