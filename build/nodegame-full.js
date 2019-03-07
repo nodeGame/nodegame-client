@@ -43070,7 +43070,9 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             form = this.forms[i];
             obj.forms[form.id] = form.getValues(opts);
-            if (obj.forms[form.id].choice === null) {
+            if (obj.forms[form.id].choice === null ||
+                (form.selectMultiple && !obj.forms[form.id].choice.length)) {
+
                 obj.missValues.push(form.id);
             }
             if (opts.markAttempt && !obj.forms[form.id].isCorrect) {
@@ -44517,20 +44519,23 @@ if (!Array.prototype.indexOf) {
 
         this.attempts = [];
         this.numberOfClicks = 0;
-        this.currentChoice = null;
         this.timeCurrentChoice = null;
 
-        if (this.selected) {
-            if (!this.selectMultiple) {
+        if (this.selectMultiple) {
+            i = -1, len = this.selected.length;
+            for ( ; ++i < len ; ) {
+                J.removeClass(this.selected[i], 'selected');
+            }
+            this.selected = [];
+            this.currentChoice = [];
+       
+        }
+        else {
+            if (this.selected) {
                 J.removeClass(this.selected, 'selected');
+                this.selected = null;
+                this.currentChoice = null;
             }
-            else {
-                i = -1, len = this.selected.length;
-                for ( ; ++i < len ; ) {
-                    J.removeClass(this.selected[i], 'selected');
-                }
-            }
-            this.selected = null;
         }
 
         if (this.textArea) this.textArea.value = '';
