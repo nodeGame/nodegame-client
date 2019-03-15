@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 5.0.1
+- Stager methods cleanup and better error messages.
+- Fixed tests.
+
 ## 5.0.0
 - `#node.game.getProperty()` simplified. Does not distinguish between return values undefined and null. Developer must specified 'not found' return value.
 - `#Stager.getState()`  has a finalize parameter.
