@@ -693,7 +693,7 @@ function initGame(node, stager) {
     mynode = node || ngc.getClient();
     mynode.verbosity = -1000;
     mynode.setup('plot', sstate);
-    mynode.createPlayer({ id: 'testid' });
+    mynode.createPlayer({ id: 'testid', sid: '111111' });
     mynode.game.start({ step: false });
     return mynode.game;
 }

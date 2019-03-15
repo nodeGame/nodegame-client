@@ -134,7 +134,7 @@ describe('Game', function() {
         before(function() {
             stager = ngc.getStager();
             node = ngc.getClient();
-            node.createPlayer({id: '1'});
+            node.createPlayer({ id: '1', sid: '111111' });
             node.verbosity = -1000;
 
             tmp = { loops: [], counter: 1 };
@@ -299,7 +299,7 @@ describe('Game', function() {
         before(function() {
             stager = ngc.getStager();
             node = ngc.getClient();
-            node.createPlayer({id: '1'});
+            node.createPlayer({id: '1', sid: '11111111'});
             node.verbosity = -1000;
 
             tmp = { loops: [], counter: 1 };

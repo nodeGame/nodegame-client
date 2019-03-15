@@ -78,7 +78,7 @@ describe('Timer', function() {
    describe('#createTimer with pause', function() {
        before(function() {
            var state;
-           node.createPlayer({ id: 'A' });
+           node.createPlayer({ id: 'A', sid: 'AAAAAA' });
            state = stager.next('1').getState();
            node.game.plot.stager.setState(state);
            node.game.start();
@@ -111,7 +111,7 @@ describe('Timer', function() {
        before(function() {
            var state;
            node.game.stop();
-           node.createPlayer({ id: 'A' });
+           node.createPlayer({ id: 'A', sid: 'AAAAAA' });
            state = stager.getState()
            node.setup('plot', state);
            node.game.start();
