@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## current
+- Step property frame===true keeps the same frame (useful in widget steps).
+
 ## 5.0.1
 - Stager methods cleanup and better error messages.
 - Fixed tests.
