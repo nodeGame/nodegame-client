@@ -5322,10 +5322,10 @@ if (!Array.prototype.indexOf) {
     PARSE.isNumber = function(n, lower, upper, leq, ueq) {
         if (isNaN(n) || !isFinite(n)) return false;
         n = parseFloat(n);
-        if ('number' === typeof lower && (leq ? n <= lower : n < lower)) {
+        if ('number' === typeof lower && (leq ? n < lower : n <= lower)) {
             return false;
         }
-        if ('number' === typeof upper && (ueq ? n >= upper : n > upper)) {
+        if ('number' === typeof upper && (ueq ? n > upper : n >= upper)) {
             return false;
         }
         return n;
@@ -10083,7 +10083,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.0.0';
+    node.version = '5.0.1';
 
 })(window);
 
@@ -24258,6 +24258,7 @@ if (!Array.prototype.indexOf) {
                     // is impossible to check if the values are OK).
                     if (values &&
                         (values.missValues === true ||
+                         (values.missValues && values.missValues.length) ||
                          values.choice === null ||
                          values.isCorrect === false)) {
 
@@ -24314,12 +24315,16 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // TRUE means keep whatever it is. Useful to be specified in some cases.
+        if (frame === true) frame = undefined;
+            
+        
         // Handle frame loading natively, if required.
         if (frame) {
             w = this.node.window;
             if (!w) {
                 throw new Error('Game.execStep: frame option in step ' +
-                                step + ', but nodegame-window is not loaded.');
+                                step + ', but nodegame-window is not loaded');
             }
             frameOptions = {};
             if ('function' === typeof frame) frame = frame.call(node.game);
@@ -38134,15 +38139,23 @@ if (!Array.prototype.indexOf) {
      *
      * Hightlights the user interface of the widget in some way
      *
-     * If widget was not appended, i.e. no `panelDiv` has been created,
-     * it should issue a war.
+     * By default, it adds a red border around the bodyDiv.
+     *
+     * If widget was not appended, i.e., no `panelDiv` has been created,
+     * nothing happens.
      *
      * @param {mixed} options Settings controlling the type of highlighting
      */
-    Widget.prototype.highlight = function(options) {
-        if (this.isHighlighted()) return;
+    Widget.prototype.highlight = function(border) {
+        if (border && 'string' !== typeof border) {
+            throw new TypeError(J.funcName(this.constructor) + '.highlight: ' +
+                                'border must be string or undefined. Found: ' +
+                                border);
+        }
+        if (!this.isAppended() || this.isHighlighted()) return;
         this.highlighted = true;
-        this.emit('highlighted', options);
+        this.bodyDiv.style.border = border  || '3px solid red';
+        this.emit('highlighted', border);
     };
 
     /**
@@ -38150,19 +38163,18 @@ if (!Array.prototype.indexOf) {
      *
      * Hightlights the user interface of the widget in some way
      *
-     * Should mark the state of widget as `highlighted`.
+     * Should mark the state of widget as not `highlighted`.
      *
-     * If widget was not appended, i.e. no `panelDiv` has been created,
-     * it should raise an error.
+     * If widget was not appended, i.e., no `panelDiv` has been created,
+     * nothing happens.
      *
-     * @param {mixed} options Settings controlling the type of highlighting
-     *
-     * @see Widget.highlighted
+     * @see Widget.highlight
      */
-    Widget.prototype.unhighlight = function(options) {
+    Widget.prototype.unhighlight = function() {
         if (!this.isHighlighted()) return;
         this.highlighted = false;
-        this.emit('unhighlighted', options);
+        this.bodyDiv.style.border = '';
+        this.emit('unhighlighted');
     };
 
     /**
@@ -39551,9 +39563,9 @@ if (!Array.prototype.indexOf) {
         if ('string' === typeof w) w = this.get(w, options);
 
         // Add panelDiv (with or without panel).
+        tmp = options.panel === false ? true : w.panel === false;
         tmp = {
-            className: options.panel === false ?
-                [ 'ng_widget',  'no-panel', w.className ] :
+            className: tmp ? [ 'ng_widget',  'no-panel', w.className ] :
                 [ 'ng_widget', 'panel', 'panel-default', w.className ]
         };
 
@@ -42641,11 +42653,11 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceManager.version = '1.1.0';
+    ChoiceManager.version = '1.2.0';
     ChoiceManager.description = 'Groups together and manages a set of ' +
         'selectable choices forms (e.g. ChoiceTable).';
 
-    ChoiceManager.title = 'Complete the forms below';
+    ChoiceManager.title = false;
     ChoiceManager.className = 'choicemanager';
 
     // ## Dependencies
@@ -42708,15 +42720,6 @@ if (!Array.prototype.indexOf) {
         this.shuffleForms = null;
 
         /**
-         * ### ChoiceManager.shuffleForms
-         *
-         * TRUE, each form separately stored under node.widgets.instances
-         *
-         * Default: FALSE
-         */
-        this.storeRefForms = null;
-
-        /**
          * ### ChoiceManager.group
          *
          * The name of the group where the list belongs, if any
@@ -42729,6 +42732,20 @@ if (!Array.prototype.indexOf) {
          * The order of the list within the group
          */
         this.groupOrder = null;
+
+        /**
+         * ### ChoiceManager.formsOptions
+         *
+         * An object containing options to be added to every form
+         *
+         * Options are added only if forms are specified as object literals,
+         * and can be overriden by each individual form.
+         */
+        this.formsOptions =  {
+            title: false,
+            frame: false,
+            storeRef: false
+        };
 
         /**
          * ### ChoiceManager.freeText
@@ -42767,7 +42784,7 @@ if (!Array.prototype.indexOf) {
      *       if 'string', the text will be added inside the the textarea
      *   - forms: the forms to displayed, formatted as explained in
      *       `ChoiceManager.setForms`
-     *   - storeRefForms: if TRUE, forms are added under node.widgets.instances
+     *   - formsOptions: a set of default options to add to every form
      *
      * @param {object} options Configuration options
      *
@@ -42812,21 +42829,33 @@ if (!Array.prototype.indexOf) {
         }
         else if ('undefined' !== typeof options.mainText) {
             throw new TypeError('ChoiceManager.init: options.mainText must ' +
-                                'be string, undefined. Found: ' +
+                                'be string or undefined. Found: ' +
                                 options.mainText);
         }
 
-        this.storeRefForms = !!options.storeRefForms || false;
-
-        // After all configuration options are evaluated, add forms.
+        // formsOptions.
+        if ('undefined' !== typeof options.formsOptions) {
+            if ('object' !== typeof options.formsOptions) {
+                throw new TypeError('ChoiceManager.init: options.formsOptions' +
+                                    ' must be object or undefined. Found: ' +
+                                    options.formsOptions);
+            }
+            if (options.formsOptions.hasOwnProperty('name')) {
+                throw new Error('ChoiceManager.init: options.formsOptions ' +
+                                'cannot contain property name. Found: ' +
+                                options.formsOptions);
+            }
+            this.formsOptions = J.mixin(this.formsOptions,
+                                        options.formsOptions);
+        }
 
         this.freeText = 'string' === typeof options.freeText ?
             options.freeText : !!options.freeText;
 
-        // Add the forms.
-        if ('undefined' !== typeof options.forms) {
-            this.setForms(options.forms);
-        }
+
+        // After all configuration options are evaluated, add forms.
+
+        if ('undefined' !== typeof options.forms) this.setForms(options.forms);
     };
 
     /**
@@ -42887,7 +42916,8 @@ if (!Array.prototype.indexOf) {
             form = parsedForms[i];
             if (!node.widgets.isWidget(form)) {
                 if ('string' === typeof form.name) {
-                    form.storeRef = !!form.storeRef || this.storeRefForms;
+                    // Add defaults.
+                    J.mixout(form, this.formsOptions);
                     form = node.widgets.get(form.name, form);
                 }
                 if (!node.widgets.isWidget(form)) {
@@ -43216,7 +43246,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.3.1';
+    ChoiceTable.version = '1.4.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -43252,6 +43282,13 @@ if (!Array.prototype.indexOf) {
         this.table = null;
 
         /**
+         * ### ChoiceTable.choicesSetSize
+         *
+         * How many choices can be on the same row/column
+         */
+        this.choicesSetSize = null;
+
+        /**
          * ### ChoiceTable.tr
          *
          * Reference to TR elements of the table
@@ -43270,6 +43307,15 @@ if (!Array.prototype.indexOf) {
          */
         this.listener = function(e) {
             var name, value, td;
+            var i, len;
+
+            e = e || window.event;
+            td = e.target || e.srcElement;
+
+            // Not a clickable choice.
+            if ('undefined' === typeof that.choicesIds[td.id]) return;
+
+
             // Relative time.
             if ('string' === typeof that.timeFrom) {
                 that.timeCurrentChoice = node.timer.getTimeSince(that.timeFrom);
@@ -43279,12 +43325,6 @@ if (!Array.prototype.indexOf) {
                 that.timeCurrentChoice = Date.now ?
                     Date.now() : new Date().getTime();
             }
-
-            e = e || window.event;
-            td = e.target || e.srcElement;
-
-            // Not a clickable choice.
-            if ('undefined' === typeof that.choicesIds[td.id]) return;
 
             // Id of elements are in the form of name_value or name_item_value.
             value = td.id.split(that.separator);
@@ -43302,9 +43342,28 @@ if (!Array.prototype.indexOf) {
             if (that.isChoiceCurrent(value)) {
                 that.unsetCurrentChoice(value);
                 J.removeClass(td, 'selected');
+
+                if (that.selectMultiple) {
+                    // Remove selected TD (need to keep this clean for reset).
+                    i = -1, len = that.selected.length;
+                    for ( ; ++i < len ; ) {
+                        if (that.selected[i].id === td.id) {
+                            that.selected.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+                else {
+                    that.selected = null;
+                }
             }
             // Click on a new choice.
             else {
+
+                // Have we exhausted available choices?
+                if ('number' === typeof that.selectMultiple &&
+                    that.selected.length === that.selectMultiple) return;
+
                 that.setCurrentChoice(value);
                 J.addClass(td, 'selected');
 
@@ -43661,8 +43720,17 @@ if (!Array.prototype.indexOf) {
         this.shuffleChoices = tmp;
 
         // Option selectMultiple, default false.
-        if ('undefined' === typeof options.selectMultiple) tmp = false;
-        else tmp = !!options.selectMultiple;
+        tmp = options.selectMultiple;
+        if ('undefined' === typeof tmp) {
+            tmp = false;
+        }
+        else if ('boolean' !== typeof tmp) {
+            tmp = J.isInt(tmp, 1);
+            if (!tmp) {
+                throw new Error('ChoiceTable.init: selectMultiple must be ' +
+                                'undefined or an integer > 1. Found: ' + tmp);
+            }
+        }
         this.selectMultiple = tmp;
         // Make an array for currentChoice and selected.
         if (tmp) {
@@ -43672,6 +43740,19 @@ if (!Array.prototype.indexOf) {
 
         // Option requiredChoice, if any.
         if ('number' === typeof options.requiredChoice) {
+            if (!J.isInt(options.requiredChoice, 0)) {
+                throw new Error('ChoiceTable.init: if number, requiredChoice ' +
+                                'must a positive integer. Found: ' +
+                                options.requiredChoice);
+            }
+            if ('number' === typeof this.selectMultiple &&
+                options.requiredChoice > this.selectMultiple) {
+
+                throw new Error('ChoiceTable.init: requiredChoice cannot be ' +
+                                'larger than selectMultiple. Found: ' +
+                                options.requiredChoice + ' > ' +
+                                this.selectMultiple);
+            }
             this.requiredChoice = options.requiredChoice;
         }
         else if ('boolean' === typeof options.requiredChoice) {
@@ -43679,7 +43760,7 @@ if (!Array.prototype.indexOf) {
         }
         else if ('undefined' !== typeof options.requiredChoice) {
             throw new TypeError('ChoiceTable.init: options.requiredChoice ' +
-                                'be number or boolean or undefined. Found: ' +
+                                'be number, boolean or undefined. Found: ' +
                                 options.requiredChoice);
         }
 
@@ -43845,9 +43926,20 @@ if (!Array.prototype.indexOf) {
         if ('undefined' !== typeof options.correctChoice) {
             if (this.requiredChoice) {
                 throw new Error('ChoiceTable.init: cannot specify both ' +
-                                'options requiredChoice and correctChoice.');
+                                'options requiredChoice and correctChoice');
             }
             this.setCorrectChoice(options.correctChoice);
+        }
+
+        // Add the correct choices.
+        if ('undefined' !== typeof options.choicesSetSize) {
+            if (!J.isInt(options.choicesSetSize, 0)) {
+                throw new Error('ChoiceTable.init: choicesSetSize must be ' +
+                                'undefined or an integer > 0. Found: ' +
+                                options.choicesSetSize);
+            }
+
+            this.choicesSetSize = options.choicesSetSize;
         }
     };
 
@@ -43927,40 +44019,62 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceTable.order
      * @see ChoiceTable.renderChoice
      * @see ChoiceTable.orientation
+     * @see ChoiceTable.choicesSetSize
      */
-    ChoiceTable.prototype.buildTable = function() {
-        var i, len, tr, H;
+    ChoiceTable.prototype.buildTable = (function() {
 
-        len = this.choicesCells.length;
-
-        // Start adding tr/s and tds based on the orientation.
-        i = -1, H = this.orientation === 'H';
-
-        if (H) {
-            tr = createTR(this, 'main');
-            // Add horizontal choices title.
-            if (this.leftCell) tr.appendChild(this.leftCell);
-        }
-        // Main loop.
-        for ( ; ++i < len ; ) {
-            if (!H) {
-                tr = createTR(this, 'left');
-                // Add vertical choices title.
-                if (i === 0 && this.leftCell) {
-                    tr.appendChild(this.leftCell);
-                    tr = createTR(this, i);
-                }
+        function makeSet(i, len, H, doSets) {
+            var tr, counter;
+            counter = 0;
+            // Start adding tr/s and tds based on the orientation.
+            if (H) {
+                tr = createTR(this, 'main');
+                // Add horizontal choices title.
+                if (this.leftCell) tr.appendChild(this.leftCell);
             }
-            // Clickable cell.
-            tr.appendChild(this.choicesCells[i]);
+            // Main loop.
+            for ( ; ++i < len ; ) {
+                if (!H) {
+                    tr = createTR(this, 'left');
+                    // Add vertical choices title.
+                    if (i === 0 && this.leftCell) {
+                        tr.appendChild(this.leftCell);
+                        tr = createTR(this, i);
+                    }
+                }
+                // Clickable cell.
+                tr.appendChild(this.choicesCells[i]);
+                // Stop if we reached set size (still need to add the right).
+                if (doSets && ++counter >= this.choicesSetSize) break;
+            }
+            if (this.rightCell) {
+                if (!H) tr = createTR(this, 'right');
+                tr.appendChild(this.rightCell);
+            }
+
+            // Start a new set, if necessary.
+            if (i !== len) makeSet.call(this, i, len, H, doSets);
         }
-        if (this.rightCell) {
-            if (!H) tr = createTR(this, 'right');
-            tr.appendChild(this.rightCell);
-        }
-        // Enable onclick listener.
-        this.enable();
-    };
+
+        return function() {
+            var i, len, H, doSets;
+
+            if (!this.choicesCells) {
+                throw new Error('ChoiceTable.buildTable: choices not set, ' +
+                                'cannot build table. Id: ' + this.id);
+            }
+
+            H = this.orientation === 'H';
+            len = this.choicesCells.length;
+            doSets = 'number' === typeof this.choicesSetSize;
+
+            // Recursively makes sets
+            makeSet.call(this, -1, len, H, doSets);
+
+            // Enable onclick listener.
+            this.enable();
+        };
+    })();
 
     /**
      * ### ChoiceTable.buildTableAndChoices
@@ -45663,7 +45777,8 @@ if (!Array.prototype.indexOf) {
         obj = {
             id: this.id,
             order: this.order,
-            items: {}
+            items: {},
+            isCorrect: true
         };
         opts = opts || {};
         // Make sure reset is done only at the end.
@@ -45675,7 +45790,10 @@ if (!Array.prototype.indexOf) {
             obj.items[tbl.id] = tbl.getValues(opts);
             if (obj.items[tbl.id].choice === null) {
                 obj.missValues = true;
-                if (tbl.requiredChoice) toHighlight = true;
+                if (tbl.requiredChoice) {
+                    toHighlight = true;
+                    obj.isCorrect = false;
+                }
             }
             if (obj.items[tbl.id].isCorrect === false && opts.highlight) {
                 toHighlight = true;
@@ -46346,6 +46464,662 @@ if (!Array.prototype.indexOf) {
             }
         }
         return false;
+    };
+
+})(node);
+
+/**
+ * # CustomInput
+ * Copyright(c) 2019 Stefano Balietti
+ * MIT Licensed
+ *
+ * Creates a configurable input form with validation
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('CustomInput', CustomInput);
+
+    // ## Meta-data
+
+    CustomInput.version = '0.4.0';
+    CustomInput.description = 'Creates a configurable input form';
+
+    CustomInput.title = false;
+    CustomInput.panel = false;
+    CustomInput.className = 'custominput';
+
+    CustomInput.types = {
+        text: true,
+        number: true,
+        'float': true,
+        'int': true,
+        date: true
+    };
+
+    CustomInput.texts = {
+        numericErr: function(w) {
+            var str, p, inc;
+            p = w.params;
+            // Weird, but valid, case.
+            if (p.exactly) return 'Must enter ' + p.lower;
+            // Others.
+            inc = '(inclusive)';
+            str = 'Must be a';
+            if (w.type === 'float') str += 'floating point';
+            else if (w.type === 'int') str += 'n integer';
+            str += ' number ';
+            if (p.between) {
+                str += 'between ' + p.lower;
+                if (p.leq) str += inc;
+                str += ' and ' + p.upper;
+                if (p.ueq) str += inc;
+            }
+            else if ('undefined' !== typeof p.lower) {
+                str += 'greater than ';
+                if (p.leq) str += 'or equal to ';
+                str += p.lower;
+            }
+            else {
+                str += 'less than ';
+                if (p.leq) str += 'or equal to ';
+                str += p.upper;
+            }
+            return str;
+        },
+        textErr: function(w, len) {
+            var str, p;
+            p = w.params;
+            str = 'Must be ';
+            if (p.exactly) {
+                str += 'exactly ' + (p.lower + 1);
+            }
+            else if (p.between) {
+                str += 'between ' + p.lower + ' and ' + p.upper;
+            }
+            else if ('undefined' !== typeof p.lower) {
+                str += ' more than ' + (p.lower -1);
+            }
+            else if ('undefined' !== typeof p.upper) {
+                str += ' less than ' + (p.upper + 1);
+            }
+            str += ' characters long';
+            if (p.between) str += ' (extremes included)';
+            str += '. Current length: ' + len;
+            return str;
+        },
+        dateErr: function(w, invalid) {
+            return invalid ? 'Date is invalid' : 'Must follow format ' +
+                w.params.format;
+        },
+        emptyErr: function(w) {
+            return 'Cannot be empty'
+        }
+    };
+
+    // ## Dependencies
+
+    CustomInput.dependencies = {
+        JSUS: {}
+    };
+
+    /**
+     * ## CustomInput constructor
+     *
+     * Creates a new instance of CustomInput
+     *
+     * @param {object} options Optional. Configuration options.
+     *   If a `table` option is specified, it sets it as the clickable
+     *   table. All other options are passed to the init method.
+     */
+    function CustomInput(options) {
+
+        /**
+         * ### CustomInput.input
+         *
+         * The HTML input element
+         */
+        this.input = null;
+
+        /**
+         * ### CustomInput.placeholder
+         *
+         * The placeholder text for the input form
+         *
+         * Some types preset it automatically
+         */
+        this.placeholder = null;
+
+        /**
+         * ### CustomInput.inputWidth
+         *
+         * The width of the input form as string (css attribute)
+         *
+         * Some types preset it automatically
+         */
+        this.inputWidth = null;
+
+        /**
+         * ### CustomInput.type
+         *
+         * The type of input
+         */
+        this.type = null;
+
+        /**
+         * ### CustomInput.preprocess
+         *
+         * The function that preprocess the input before validation
+         *
+         * The function receives the input form and must modify it directly
+         */
+        this.preprocess = null;
+
+        /**
+         * ### CustomInput.validation
+         *
+         * The validation function for the input
+         *
+         * The function returns an error message in case of error.
+         */
+        this.validation = null;
+
+        /**
+         * ### CustomInput.postprocess
+         *
+         * The function that postprocess the input after validation
+         *
+         * The function returns the postprocessed valued
+         */
+        this.postprocess = null;
+
+        /**
+         * ### CustomInput.params
+         *
+         * Object containing extra validation params
+         *
+         * This object is populated by the init function
+         */
+        this.params = {};
+
+        /**
+         * ### CustomInput.errorBox
+         *
+         * An HTML element displayed when a validation error occurs
+         */
+        this.errorBox = null;
+
+        /**
+         * ### CustomInput.mainText
+         *
+         * A text preceeding the date selector
+         */
+        this.mainText = null;
+
+        /**
+         * ### CustomInput.requiredChoice
+         *
+         * If TRUE, the input form cannot be left empty
+         *
+         * Default: TRUE
+         */
+        this.requiredChoice = null;
+    }
+
+    // ## CustomInput methods
+
+    /**
+     * ### CustomInput.init
+     *
+     * Initializes the instance
+     *
+     * @param {object} opts Configuration options
+     */
+    CustomInput.prototype.init = function(opts) {
+        var tmp, that, e, isText;
+        that = this;
+        e = 'CustomInput.init: ';
+
+        // TODO: this becomes false later on. Why???
+        this.requiredChoice = !!opts.requiredChoice;
+
+        if (opts.type) {
+            if (!CustomInput.types[opts.type]) {
+                throw new Error(e + 'type not supported: ' + opts.type);
+            }
+            this.type = opts.type;
+        }
+        else {
+            this.type = 'text';
+        }
+
+        if (opts.validation) {
+            if ('function' !== typeof opts.validation) {
+                throw new TypeError(e + 'validation must be function ' +
+                                    'or undefined. Found: ' +
+                                    opts.validation);
+            }
+            this.validation = opts.validation;
+        }
+        else {
+            // Add default validations based on type.
+
+            if (this.type === 'number' || this.type === 'float' ||
+                this.type === 'int' || this.type === 'text') {
+
+                isText = this.type === 'text';
+
+                // Greater than.
+                if ('undefined' !== typeof opts.min) {
+                    tmp = J.isNumber(opts.min);
+                    if (false === tmp) {
+                        throw new TypeError(e + 'min must be number or ' +
+                                            'undefined. Found: ' + opts.min);
+                    }
+                    this.params.lower = opts.min;
+                    this.params.leq = true;
+                }
+                // Less than.
+                if ('undefined' !== typeof opts.max) {
+                    tmp = J.isNumber(opts.max);
+                    if (false === tmp) {
+                        throw new TypeError(e + 'max must be number or ' +
+                                            'undefined. Found: ' + opts.max);
+                    }
+                    this.params.upper = opts.max;
+                    this.params.ueq = true;
+                }
+
+                if (opts.strictlyGreater) this.params.leq = false;
+                if (opts.strictlyLess) this.params.ueq = false;
+
+                // Checks on both min and max.
+                if ('undefined' !== typeof this.params.lower &&
+                    'undefined' !== typeof this.params.upper) {
+
+                    if (this.params.lower > this.params.upper) {
+                        throw new TypeError(e + 'min cannot be greater ' +
+                                            'than max. Found: ' +
+                                            opts.min + '> ' + opts.max);
+                    }
+                    // Exact length.
+                    if (this.params.lower === this.params.upper) {
+                        if (!this.params.leq || !this.params.ueq) {
+
+                            throw new TypeError(e + 'min cannot be equal to ' +
+                                                'max when strictlyGreater or ' +
+                                                'strictlyLess are set. ' +
+                                                'Found: ' + opts.min);
+                        }
+                        if (this.type === 'int' || this.type === 'text') {
+                            if (J.isFloat(this.params.lower)) {
+
+
+                                throw new TypeError(e + 'min cannot be a ' +
+                                                    'floating point number ' +
+                                                    'and equal to ' +
+                                                    'max, when type ' +
+                                                    'is not "float". Found: ' +
+                                                    opts.min);
+                            }
+                        }
+                        // Store this to create better error strings.
+                        this.params.exactly = true;
+                    }
+                    else {
+                        // Store this to create better error strings.
+                        this.params.between = true;
+                    }
+                }
+
+                // Checks for text only.
+                if (isText) {
+                    if ('undefined' !== typeof this.params.lower) {
+                        if (this.params.lower < 0) {
+                            throw new TypeError(e + 'min cannot be negative ' +
+                                                'when type is "text". Found: ' +
+                                                this.params.lower);
+                        }
+                        if (!this.params.leq) this.params.lower++;
+                    }
+                    if ('undefined' !== typeof this.params.upper) {
+                        if (this.params.upper < 0) {
+                            throw new TypeError(e + 'max cannot be negative ' +
+                                                'when type is "text". Found: ' +
+                                                this.params.upper);
+                        }
+                        if (!this.params.ueq) this.params.upper--;
+                    }
+
+                    tmp = function(value) {
+                        var len, p, out, err;
+                        p = that.params;
+                        len = value.length;
+                        out = { value: value };
+                        if (p.exactly) {
+                            err = len !== p.lower;
+                        }
+                        else {
+                            if (('undefined' !== typeof p.lower &&
+                                 len < p.lower) ||
+                                ('undefined' !== typeof p.upper &&
+                                 len > p.upper)) {
+
+                                err = true;
+                            }
+                        }
+                        if (err) out.err = that.getText('textErr', len);
+                        return out;
+                    };
+                }
+                else {
+                    tmp = (function() {
+                        var cb;
+                        if (that.type === 'float') cb = J.isFloat;
+                        else if (that.type === 'int') cb = J.isInt;
+                        else cb = J.isNumber;
+                        return function(value) {
+                            var res, p;
+                            p = that.params;
+                            res = cb(value, p.lower, p.upper, p.leq, p.ueq);
+                            if (res !== false) return { value: res };
+                            return {
+                                value: value,
+                                err: that.getText('numericErr')
+                            };
+                        };
+                    })();
+                }
+
+                // Preset inputWidth.
+                if (this.params.upper) {
+                    if (this.params.upper < 10) this.inputWidth = '100px';
+                    else if (this.params.upper < 20) this.inputWidth = '200px';
+                }
+
+            }
+            else if (this.type === 'date') {
+                if ('undefined' !== typeof opts.format) {
+                    // TODO: use regex.
+                    if (opts.format !== 'mm-dd-yy' &&
+                        opts.format !== 'dd-mm-yy' &&
+                        opts.format !== 'mm-dd-yyyy' &&
+                        opts.format !== 'dd-mm-yyyy' &&
+                        opts.format !== 'mm.dd.yy' &&
+                        opts.format !== 'dd.mm.yy' &&
+                        opts.format !== 'mm.dd.yyyy' &&
+                        opts.format !== 'dd.mm.yyyy' &&
+                        opts.format !== 'mm/dd/yy' &&
+                        opts.format !== 'dd/mm/yy' &&
+                        opts.format !== 'mm/dd/yyyy' &&
+                        opts.format !== 'dd/mm/yyyy') {
+
+                        throw new Error(e + 'date format is invalid. Found: ' +
+                                        opts.format);
+                    }
+                    this.params.format = opts.format;
+                }
+                else {
+                    this.params.format = 'mm/dd/yyyy';
+                }
+
+                this.params.sep = this.params.format.charAt(2);
+                tmp = this.params.format.split(this.params.sep);
+                this.params.yearDigits = tmp[2].length;
+                this.params.dayPos = tmp[0].charAt(0) === 'd' ? 0 : 1;
+                this.params.monthPos =  this.params.dayPos ? 0 : 1;
+
+
+                // Preset inputWidth.
+                if (this.params.yearDigits === 2) this.inputWidth = '100px';
+                else this.inputWidth = '150px';
+
+                // Preset placeholder.
+                this.placeholder = this.params.format;
+
+                tmp = function(value) {
+                    var p, tokens, tmp, err, res, dayNum, l1, l2;
+                    p = that.params;
+
+                    // Is the format valid.
+
+                    tokens = value.split(p.sep);
+                    if (tokens.length !== 3) {
+                        return { err: that.getText('dateErr') };
+                    }
+
+                    // Year.
+                    if (tokens[2].length !== p.yearDigits) {
+                        return { err: that.getText('dateErr') };
+                    }
+
+                    // Now we check if the date is valid.
+
+                    res = {};
+                    if (p.yearDigits === 2) {
+                        l1 = -1;
+                        l2 = 100;
+                    }
+                    else {
+                        l1 = -1
+                        l2 = 10000;
+                    }
+                    tmp = J.isInt(tokens[2], l1, l2);
+                    if (tmp !== false) res.year = tmp;
+                    else err = true;
+
+
+                    // Month.
+                    tmp = J.isInt(tokens[p.monthPos], 1, 12, 1, 1);
+                    if (!tmp) err = true;
+                    else res.month = tmp;
+                    // 31 or 30 days?
+                    if (tmp === 1 || tmp === 3 || tmp === 5 || tmp === 7 ||
+                        tmp === 8 || tmp === 10 || tmp === 12) {
+
+                        dayNum = 31;
+                    }
+                    else if (tmp !== 2) {
+                        dayNum = 30;
+                    }
+                    else {
+                        // Is it leap year?
+                        dayNum = (res.year % 4 === 0 && res.year % 100 !== 0) ||
+                            res.year % 400 === 0 ? 29 : 28;
+                    }
+                    res.month = tmp;
+                    // Day.
+                    tmp = J.isInt(tokens[p.dayPos], 1, dayNum, 1, 1);
+                    if (!tmp) err = true;
+                    else res.day = tmp;
+
+                    //
+                    if (err) res.err = that.getText('dateErr', true);
+                    return res;
+                };
+            }
+            // TODO: add other types, e.g. date, int and email.
+
+            this.validation = function(value) {
+                var res;
+                if (that.requiredChoice && value.trim() === '') {
+                    res = { err: that.getText('emptyErr') };
+                }
+                else {
+                    res = tmp(value);
+                }
+                return res;
+            };
+        }
+
+        if (opts.preprocess) {
+            if ('function' !== typeof opts.preprocess) {
+                throw new TypeError(e + 'preprocess must be function or ' +
+                                    'undefined. Found: ' + opts.preprocess);
+            }
+            this.preprocess = opts.preprocess;
+        }
+        if (opts.mainText) {
+            if ('string' !== typeof opts.mainText) {
+                throw new TypeError(e + 'mainText must be string or ' +
+                                    'undefined. Found: ' + opts.mainText);
+            }
+            this.mainText = opts.mainText;
+        }
+        if (opts.placeholder) {
+            if ('string' !== typeof opts.placeholder) {
+                throw new TypeError(e + 'placeholder must be string or ' +
+                                    'undefined. Found: ' + opts.placeholder);
+            }
+            this.placeholder = opts.placeholder;
+        }
+        if (opts.width) {
+            if ('string' !== typeof opts.width) {
+                throw new TypeError(e + 'width must be string or ' +
+                                    'undefined. Found: ' + opts.width);
+            }
+            this.inputWidth = opts.width;
+        }
+    };
+
+
+    /**
+     * ### CustomInput.append
+     *
+     * Implements Widget.append
+     *
+     * @see Widget.append
+     */
+    CustomInput.prototype.append = function() {
+        var that, timeout;
+        that = this;
+
+        // MainText.
+        if (this.mainText) {
+            this.spanMainText = W.append('span', this.bodyDiv, {
+                className: 'custominput-maintext',
+                innerHTML: this.mainText
+            });
+        }
+
+        this.input = W.append('input', this.bodyDiv);
+        if (this.placeholder) this.input.placeholder = this.placeholder;
+        if (this.inputWidth) this.input.style.width = this.inputWidth;
+
+        this.errorBox = W.append('div', this.bodyDiv, { className: 'errbox' });
+
+        this.input.oninput = function() {
+            if (timeout) clearTimeout(timeout);
+            if (that.isHighlighted()) that.unhighlight();
+            if (that.preprocess) that.preprocess(that.input);
+            timeout = setTimeout(function() {
+                var res;
+                if (that.validation) {
+                    res = that.validation(that.input.value);
+                    if (res.err) that.setError(res.err);
+                }
+            }, 500);
+        };
+        this.input.onclick = function() {
+            if (that.isHighlighted()) that.unhighlight();
+
+        };
+    };
+
+    /**
+     * ### CustomInput.setError
+     *
+     * Set the error msg inside the errorBox and call highlight
+     *
+     * @param {string} The error msg (can contain HTML)
+     *
+     * @see CustomInput.highlight
+     * @see CustomInput.errorBox
+     */
+    CustomInput.prototype.setError = function(err) {
+        this.errorBox.innerHTML = err;
+        this.highlight();
+    };
+
+    /**
+     * ### CustomInput.highlight
+     *
+     * Highlights the choice table
+     *
+     * @param {string} The style for the table's border.
+     *   Default '3px solid red'
+     *
+     * @see CustomInput.highlighted
+     */
+    CustomInput.prototype.highlight = function(border) {
+        if (border && 'string' !== typeof border) {
+            throw new TypeError('CustomInput.highlight: border must be ' +
+                                'string or undefined. Found: ' + border);
+        }
+        if (!this.input || this.highlighted) return;
+        this.input.style.border = border || '3px solid red';
+        this.highlighted = true;
+        this.emit('highlighted', border);
+    };
+
+    /**
+     * ### CustomInput.unhighlight
+     *
+     * Removes highlight from the choice table
+     *
+     * @see CustomInput.highlighted
+     */
+    CustomInput.prototype.unhighlight = function() {
+        if (!this.input || this.highlighted !== true) return;
+        this.input.style.border = '';
+        this.highlighted = false;
+        this.errorBox.innerHTML = '';
+        this.emit('unhighlighted');
+    };
+
+    /**
+     * ### CustomInput.reset
+     *
+     * Resets the widget
+     */
+    CustomInput.prototype.reset = function() {
+        if (this.input) this.input.value = '';
+        if (this.isHighilighted()) this.unhighlight();
+    };
+
+    /**
+     * ### CustomInput.getValues
+     *
+     * Returns the value currently in the input
+     *
+     * The postprocess function is called if specified
+     *
+     * @param {object} opts Optional. Configures the return value.
+     *
+     * @return {mixed} The value in the input
+     *
+     * @see CustomInput.verifyChoice
+     * @see CustomInput.reset
+     */
+    CustomInput.prototype.getValues = function(opts) {
+        var res, valid;
+        opts = opts || {};
+        res = this.input.value;
+        res = this.validation ? this.validation(res) : { value: res };
+        res.isCorrect = valid = !res.err;
+        if (this.postprocess) res.value = this.postprocess(res.value, valid);
+        if (!valid) {
+            this.setError(res.err);
+            res.isCorrect = false;
+        }
+        else if (opts.reset) {
+            this.reset();
+        }
+        res.id = this.id;
+        return res;
     };
 
 })(node);
@@ -48179,7 +48953,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Feedback.version = '1.1.0';
+    Feedback.version = '1.2.0';
     Feedback.description = 'Displays a configurable feedback form';
 
     Feedback.title = 'Feedback';
@@ -48265,7 +49039,7 @@ if (!Array.prototype.indexOf) {
         }
         else if (J.isNumber(options.maxAttemptLength, 0) !== false) {
             this.maxAttemptLength = Math.max(this.maxLength,
-                                                     options.maxAttemptLength);
+                                             options.maxAttemptLength);
         }
         else {
             throw new TypeError('Feedback constructor: ' +
@@ -48289,6 +49063,18 @@ if (!Array.prototype.indexOf) {
         else {
             this.showCharCount = !!options.showCount;
         }
+
+        /**
+         * ### Feedback.showSubmit
+         *
+         * If TRUE, the submit button is shown
+         *
+         * Default: true
+         *
+         * @see Feedback.submitButton
+         */
+        this.showSubmit = 'undefined' === typeof options.showSubmit ?
+            true : !!options.showSubmit;        
 
         /**
          * ### Feedback.onsubmit
@@ -48401,36 +49187,44 @@ if (!Array.prototype.indexOf) {
         feedbackTextarea.setAttribute('rows', '3');
         feedbackForm.appendChild(feedbackTextarea);
 
-        submit = document.createElement('input');
-        submit.className = 'btn btn-lg btn-primary';
-        submit.setAttribute('type', 'submit');
-        submit.setAttribute('value', 'Submit feedback');
-        feedbackForm.appendChild(submit);
+        if (this.showSubmit) {
+            submit = document.createElement('input');
+            submit.className = 'btn btn-lg btn-primary';
+            submit.setAttribute('type', 'submit');
+            submit.setAttribute('value', 'Submit feedback');
+            feedbackForm.appendChild(submit);
+            
+            // Add listeners.
+            J.addEvent(feedbackForm, 'submit', function(event) {
+                event.preventDefault();
+                that.getValues(that.onsubmit);
+            });
+
+            // Store reference.
+            this.submitButton = submit;
+        }
 
         if (this.showCharCount) {
             charCounter = document.createElement('span');
             charCounter.className = 'feedback-char-count badge';
-            charCounter.innerHTML = this.maxLength;
-            // Until no char is inserted is hidden.
-            charCounter.style.display = 'none';
+            charCounter.innerHTML = this.maxLength;            
             feedbackForm.appendChild(charCounter);
+
+            // Store reference.
+            this.charCounter = charCounter;
         }
 
-        // Add listeners.
-        J.addEvent(feedbackForm, 'submit', function(event) {
-            event.preventDefault();
-            that.getValues(that.onsubmit);
-        });
-
         J.addEvent(feedbackForm, 'input', function(event) {
+            if (that.isHighlighted()) that.unhighlight();
             that.verifyFeedback(false, true);
         });
-
+        J.addEvent(feedbackForm, 'click', function(event) {
+            if (that.isHighlighted()) that.unhighlight();
+        });
+        
         // Store references.
-        this.submitButton = submit;
         this.feedbackHTML = feedbackHTML;
         this.textareaElement = feedbackTextarea;
-        this.charCounter = charCounter || null;
 
         // Check it once at the beginning to initialize counter.
         this.verifyFeedback(false, true);
@@ -48490,9 +49284,8 @@ if (!Array.prototype.indexOf) {
         }
 
         if (updateUI) {
-            submitButton.disabled = !res;
+            if (submitButton) submitButton.disabled = !res;
             if (charCounter) {
-                charCounter.style.display = length ? '' : 'none';
                 charCounter.style.backgroundColor = updateColor;
                 charCounter.innerHTML = updateCount;
             }
@@ -48586,7 +49379,8 @@ if (!Array.prototype.indexOf) {
                 timeBegin: this.timeInputBegin,
                 feedback: feedback,
                 attempts: this.attempts,
-                valid: res
+                valid: res,
+                isCorrect: res
             };
         }
 
@@ -48644,7 +49438,7 @@ if (!Array.prototype.indexOf) {
                                 'string or undefined. Found: ' + border);
         }
         if (!this.feedbackHTML || this.highlighted === true) return;
-        this.feedbackHTML.style.border = border || '3px solid red';
+        this.textareaElement.style.border = border || '3px solid red';
         this.highlighted = true;
         this.emit('highlighted', border);
     };
@@ -48658,7 +49452,7 @@ if (!Array.prototype.indexOf) {
      */
     Feedback.prototype.unhighlight = function() {
         if (!this.feedbackHTML || this.highlighted !== true) return;
-        this.feedbackHTML.style.border = '';
+        this.textareaElement.style.border = '';
         this.highlighted = false;
         this.emit('unhighlighted');
     };
@@ -48677,6 +49471,34 @@ if (!Array.prototype.indexOf) {
         if (this.isHighlighted()) this.unhighlight();
     };
 
+    /**
+     * ### Feedback.disable
+     *
+     * Disables clicking on the table and removes CSS 'clicklable' class
+     */
+    Feedback.prototype.disable = function() {
+        if (this.disabled === true) return;
+        this.disabled = true;
+        if (this.submitElement) this.submitElement.disabled = true;
+        this.textareaElement.disabled = true;
+        this.emit('disabled');
+    };
+
+    /**
+     * ### Feedback.enable
+     *
+     * Enables clicking on the table and adds CSS 'clicklable' class
+     *
+     * @return {function} cb The event listener function
+     */
+    Feedback.prototype.enable = function() {
+        if (this.disabled === false || !this.textareaElement) return;
+        this.disabled = false;
+        if (this.submitElement) this.submitElement.disabled = false;
+        this.textareaElement.disabled = false;
+        this.emit('enabled');
+    };
+    
     // ## Helper functions.
 
     /**
@@ -50604,7 +51426,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualRound
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * Display information about rounds and/or stage in the game
@@ -50626,7 +51448,7 @@ if (!Array.prototype.indexOf) {
     VisualRound.description = 'Display number of current round and/or stage.' +
         'Can also display countdown and total number of rounds and/or stages.';
 
-    VisualRound.title = 'Round info';
+    VisualRound.title = false;
     VisualRound.className = 'visualround';
 
     VisualRound.texts.round = 'Round';
