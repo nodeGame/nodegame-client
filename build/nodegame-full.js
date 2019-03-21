@@ -24320,7 +24320,7 @@ if (!Array.prototype.indexOf) {
 
         w = this.node.window;
         // Handle frame loading natively, if required.
-        if (frame) {            
+        if (frame) {
             if (!w) {
                 throw new Error('Game.execStep: frame option in step ' +
                                 step + ', but nodegame-window is not loaded');
@@ -43189,12 +43189,13 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             form = this.forms[i];
             obj.forms[form.id] = form.getValues(opts);
-            if (obj.forms[form.id].choice === null ||
-                (form.selectMultiple && !obj.forms[form.id].choice.length)) {
+            if (obj.forms[form.id].requiredChoice &&
+                (obj.forms[form.id].choice === null ||
+                 (form.selectMultiple && !obj.forms[form.id].choice.length))) {
 
                 obj.missValues.push(form.id);
             }
-            if (opts.markAttempt && !obj.forms[form.id].isCorrect) {
+            if (opts.markAttempt && obj.forms[form.id].isCorrect === false) {
                 obj.isCorrect = false;
             }
         }
@@ -43690,7 +43691,7 @@ if (!Array.prototype.indexOf) {
         that = this;
 
         if (!this.id) {
-            throw new TypeError('ChoiceTable.init: options.id is missing.');
+            throw new TypeError('ChoiceTable.init: options.id is missing');
         }
 
         // Option orientation, default 'H'.
@@ -43759,7 +43760,7 @@ if (!Array.prototype.indexOf) {
             this.requiredChoice = options.requiredChoice;
         }
         else if ('boolean' === typeof options.requiredChoice) {
-            this.requiredChoice = options.requiredChoice ? 1 : 0;
+            this.requiredChoice = options.requiredChoice ? 1 : null;
         }
         else if ('undefined' !== typeof options.requiredChoice) {
             throw new TypeError('ChoiceTable.init: options.requiredChoice ' +
@@ -44383,7 +44384,7 @@ if (!Array.prototype.indexOf) {
     ChoiceTable.prototype.enable = function() {
         if (this.disabled === false) return;
         if (!this.table) {
-            throw new Error('ChoiceTable.enable: table not defined.');
+            throw new Error('ChoiceTable.enable: table not defined');
         }
         this.disabled = false;
         J.addClass(this.table, 'clickable');
@@ -46948,8 +46949,9 @@ if (!Array.prototype.indexOf) {
 
             this.validation = function(value) {
                 var res;
-                if (that.requiredChoice && value.trim() === '') {
-                    res = { err: that.getText('emptyErr') };
+                if (value.trim() === '') {
+                    res = that.requiredChoice ?
+                        { err: that.getText('emptyErr') } : { value: '' };
                 }
                 else {
                     res = tmp(value);
