@@ -13243,7 +13243,10 @@ if (!Array.prototype.indexOf) {
             var tmpCache, handler;
             tmpCache = {};
             handler = function(prop, value) {
-                if ('string' === typeof prop) {
+                if ('undefined' === typeof prop) {
+                    return tmpCache;
+                }
+                else if ('string' === typeof prop) {
                     if (arguments.length === 1) return tmpCache[prop];
                     tmpCache[prop] = value;
                     return value;
@@ -23904,7 +23907,7 @@ if (!Array.prototype.indexOf) {
         var node;
 
         // Steps references.
-        var curStep, curStepObj, curStageObj, nextStepObj, nextStageObj;
+        var curStep, curStageObj, nextStepObj, nextStageObj;
 
         // Flags that we need to execute the stage init function.
         var stageInit;
@@ -23919,18 +23922,21 @@ if (!Array.prototype.indexOf) {
         // Sent to every client (if syncStepping and if necessary).
         var remoteOptions;
 
+        // Value of exit cb for a step.
+        var curStepExitCb;
+
         if (!this.isSteppable()) {
-            throw new Error('Game.gotoStep: game cannot be stepped.');
+            throw new Error('Game.gotoStep: game cannot be stepped');
         }
 
         if ('string' !== typeof nextStep && 'object' !== typeof nextStep) {
             throw new TypeError('Game.gotoStep: nextStep must be ' +
-                                'an object or a string.');
+                                'an object or a string. Found: ' + nextStep);
         }
 
         if (options && 'object' !== typeof options) {
             throw new TypeError('Game.gotoStep: options must be object or ' +
-                                'undefined.');
+                                'undefined. Found: ' + options);
         }
 
         node = this.node;
@@ -23946,13 +23952,14 @@ if (!Array.prototype.indexOf) {
         // Clear push-timer.
         this.pushManager.clearTimer();
 
-        // Clear the cache of temporary changes to steps.
-        this.plot.tmpCache.clear();
-
         curStep = this.getCurrentGameStage();
         curStageObj = this.plot.getStage(curStep);
-        curStepObj = this.plot.getStep(curStep);
+        // We need to call getProperty because getStep does not mixin tmpCache.
+        curStepExitCb = this.plot.getProperty(curStep, 'exit');
 
+        // Clear the cache of temporary changes to steps.
+        this.plot.tmpCache.clear();
+        
         // Sends start / step command to connected clients if option is on.
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
 
@@ -24001,11 +24008,11 @@ if (!Array.prototype.indexOf) {
         }
 
         // Calling exit function of the step.
-        if (curStepObj && curStepObj.exit) {
+        if (curStepExitCb) {
             this.setStateLevel(constants.stateLevels.STEP_EXIT);
             this.setStageLevel(constants.stageLevels.EXITING);
 
-            curStepObj.exit.call(this);
+            curStepExitCb.call(this);
         }
 
         // Listeners from previous step are cleared (must be done after exit).
@@ -39487,8 +39494,9 @@ if (!Array.prototype.indexOf) {
                 }
             }
 
-            // Remove from docked.
+            // Remove from docked or adjust frame height.
             if (this.docked) closeDocked(widget.wid, false);
+            else if (node.window) node.window.adjustFrameHeight(undefined, 120);
 
             // In case the widget is stored somewhere else, set destroyed.
             this.destroyed = true;
@@ -49361,7 +49369,7 @@ if (!Array.prototype.indexOf) {
         feedback = getFeedback.call(this);
 
         if (opts.keepBreaks) feedback = feedback.replace(/\n\r?/g, '<br />');
-        
+
         if (opts.verify !== false) res = this.verifyFeedback(opts.markAttempt,
                                                              opts.updateUI);
 
@@ -49527,7 +49535,7 @@ if (!Array.prototype.indexOf) {
         if (!this.charCounter) return;
         this.charCounter.style.display = 'none';
     };
-    
+
     // ## Helper functions.
 
     /**
@@ -49541,7 +49549,8 @@ if (!Array.prototype.indexOf) {
      */
     function getFeedback() {
         var out;
-        out = this.textareaElement ? this.textareaElement.value : this._feedback;
+        out = this.textareaElement ?
+            this.textareaElement.value : this._feedback;
         return out ? out.trim() : out;
     }
 

@@ -3,6 +3,8 @@
 ## current
 - Step property frame===true keeps the same frame (useful in widget steps).
 - Game.execStep calls W.adjustFrameHeight even when no new frame is loaded. This fixes the problem of incorrect frame height in some cases.
+- Widget-step exit callback is correctly called.
+- `#GamePlot.tmpCache()` called with no parameter returns the whole cache.
 
 ## 5.0.1
 - Stager methods cleanup and better error messages.
