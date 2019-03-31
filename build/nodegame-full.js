@@ -5322,10 +5322,10 @@ if (!Array.prototype.indexOf) {
     PARSE.isNumber = function(n, lower, upper, leq, ueq) {
         if (isNaN(n) || !isFinite(n)) return false;
         n = parseFloat(n);
-        if ('number' === typeof lower && (leq ? n < lower : n <= lower)) {
+        if ('number' === typeof lower && (leq ? n <= lower : n < lower)) {
             return false;
         }
-        if ('number' === typeof upper && (ueq ? n > upper : n >= upper)) {
+        if ('number' === typeof upper && (ueq ? n >= upper : n > upper)) {
             return false;
         }
         return n;
@@ -23959,7 +23959,7 @@ if (!Array.prototype.indexOf) {
 
         // Clear the cache of temporary changes to steps.
         this.plot.tmpCache.clear();
-        
+
         // Sends start / step command to connected clients if option is on.
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
 
@@ -31928,7 +31928,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameWindow
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * API to interface nodeGame with the browser window
@@ -31952,9 +31952,9 @@ if (!Array.prototype.indexOf) {
     var constants, windowLevels, screenLevels;
     var CB_EXECUTED, WIN_LOADING, lockedUpdate;
 
-    if (!J) throw new Error('GameWindow: JSUS not found. Aborting.');
+    if (!J) throw new Error('GameWindow: JSUS not found');
     DOM = J.require('DOM');
-    if (!DOM) throw new Error('GameWindow: J.require("DOM") failed.');
+    if (!DOM) throw new Error('GameWindow: J.require("DOM") failed');
 
     constants = node.constants;
     windowLevels = constants.windowLevels;
@@ -32479,31 +32479,23 @@ if (!Array.prototype.indexOf) {
      */
     GameWindow.prototype.reset = function() {
         // Unlock screen, if currently locked.
-        if (this.isScreenLocked()) {
-            this.unlockScreen();
-        }
+        if (this.isScreenLocked()) this.unlockScreen();
 
-        // Remove widgets, if Widgets exists.
-        if (node.widgets) {
-            node.widgets.destroyAll();
-        }
+        // Remove widgets, if widgets exists.
+        if (node.widgets) node.widgets.destroyAll();
 
         // Remove loaded frame, if one is found.
-        if (this.getFrame()) {
-            this.destroyFrame();
-        }
+        if (this.getFrame()) this.destroyFrame();
 
         // Remove header, if one is found.
-        if (this.getHeader()) {
-            this.destroyHeader();
-        }
+        if (this.getHeader()) this.destroyHeader();
 
         this.areLoading = 0;
 
         // Clear all caches.
         this.clearCache();
 
-        node.silly('node-window: reseted.');
+        node.silly('node-window: reseted');
     };
 
     /**
@@ -32890,6 +32882,9 @@ if (!Array.prototype.indexOf) {
         this.frameWindow = null;
         this.frameDocument = null;
         this.frameRoot = null;
+
+        // Destroy lost widgets.
+        node.widgets.garbageCollection();
     };
 
     /**
@@ -32901,7 +32896,7 @@ if (!Array.prototype.indexOf) {
         var iframe, frameName, frameDocument;
         iframe = this.getFrame();
         if (!iframe) {
-            throw new Error('GameWindow.clearFrame: cannot detect frame.');
+            throw new Error('GameWindow.clearFrame: frame not found');
         }
 
         frameName = iframe.name || iframe.id;
@@ -32937,6 +32932,9 @@ if (!Array.prototype.indexOf) {
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);
+
+        // Destroy lost widgets.
+        node.widgets.garbageCollection();
     };
 
     /**
@@ -33171,9 +33169,12 @@ if (!Array.prototype.indexOf) {
         var header;
         header = this.getHeader();
         if (!header) {
-            throw new Error('GameWindow.clearHeader: cannot detect header.');
+            throw new Error('GameWindow.clearHeader: cannot detect header');
         }
         this.headerElement.innerHTML = '';
+
+        // Destroy lost widgets.
+        node.widgets.garbageCollection();
     };
 
     /**
@@ -38922,9 +38923,10 @@ if (!Array.prototype.indexOf) {
             that[collection][name] : that.constructor[collection][name];
         if ('function' === typeof res) {
             res = res(that, param);
-            if ('string' !== typeof res) {
-                throw new TypeError(method + ': cb "' + name +
-                                    ' did not return a string. Found: ' + res);
+            if ('string' !== typeof res && res !== false) {
+                throw new TypeError(method + ': cb "' + name + '" did not ' +
+                                    'return neither string or false. Found: ' +
+                                    res);
             }
         }
         return res;
@@ -39178,22 +39180,10 @@ if (!Array.prototype.indexOf) {
 
         // Garbage collection.
         node.on('FRAME_LOADED', function() {
-            var w, i, fd;
-            fd = W.getFrameDocument();
-            w = node.widgets.instances;
-            for (i = 0; i < w.length; i++) {
-                // Check if widget is not on page any more.
-                if (w[i].isAppended() &&
-                    (fd && !fd.contains(w[i].panelDiv)) &&
-                    !document.body.contains(w[i].panelDiv)) {
-
-                    w[i].destroy();
-                    i--;
-                }
-            }
+            node.widgets.garbageCollection();
         });
 
-        node.info('node-widgets: loading.');
+        node.info('node-widgets: loading');
     }
 
     // ## Widgets methods
@@ -39391,14 +39381,22 @@ if (!Array.prototype.indexOf) {
         widget.widgetName = widgetName;
         // Add random unique widget id.
         widget.wid = '' + J.randomInt(0,10000000000000000000);
-        // Add enabled.
+
+        // UI properties.
+
         widget.disabled = null;
-        // Add highlighted.
         widget.highlighted = null;
-        // Add collapsed.
         widget.collapsed = null;
-        // Add hidden.
         widget.hidden = null;
+        widget.docked = null
+
+        // Properties that will modify the UI of the widget once appended.
+
+        if (options.disabled) widget._disabled = true;
+        if (options.highlighted) widget._highlighted = true;
+        if (options.collapsed) widget._collapsed = true;
+        if (options.hidden) widget._hidden = true;
+        if (options.docked) widget._docked = true;
 
         // Call init.
         widget.init(options);
@@ -39581,7 +39579,7 @@ if (!Array.prototype.indexOf) {
         };
 
         // Dock it.
-        if (options.docked) {
+        if (options.docked || w._docked) {
             tmp.className.push('docked');
             this.docked.push(w);
             w.docked = true;
@@ -39611,13 +39609,15 @@ if (!Array.prototype.indexOf) {
         // Optionally set context.
         if (w.context) w.setContext(w.context);
 
-        // Be hidden, if requested.
-        if (options.hidden) w.hide();
+        // Adapt UI, if requested.
+        if (options.hidden || w._hidden) w.hide();
+        if (options.collapsed || w._collapsed) w.collapse();
+        if (options.disabled || w._disabled) w.disable();
+        if (options.highlighted || w._highlighted) w.highlight();
 
+        // Append.
         root.appendChild(w.panelDiv);
-
         w.originalRoot = root;
-
         w.append();
 
         // Make sure the distance from the right side is correct.
@@ -39722,6 +39722,32 @@ if (!Array.prototype.indexOf) {
             }
         }
         return true;
+    };
+
+    /**
+     * ### Widgets.garbageCollection
+     *
+     * Destroys previously appended widgets nowehere to be found on page
+     *
+     * @return {array} res List of destroyed widgets
+     */
+    Widgets.prototype.garbageCollection = function() {
+        var w, i, fd, res;
+        res = [];
+        fd = W.getFrameDocument();
+        w = node.widgets.instances;
+        for (i = 0; i < w.length; i++) {
+            // Check if widget is not on page any more.
+            if (w[i].isAppended() &&
+                (fd && !fd.contains(w[i].panelDiv)) &&
+                !document.body.contains(w[i].panelDiv)) {
+
+                res.push(w[i]);
+                w[i].destroy();
+                i--;
+            }
+        }
+        return res;
     };
 
     // ## Helper functions
@@ -42713,8 +42739,21 @@ if (!Array.prototype.indexOf) {
          * ### ChoiceManager.forms
          *
          * The array available forms
+         *
+         * @see ChoiceManager.formsById
          */
         this.forms = null;
+
+        /**
+         * ### ChoiceManager.forms
+         *
+         * A map form id to form
+         *
+         * Note: if a form does not have an id, it will not be added here.
+         *
+         * @see ChoiceManager.forms
+         */
+        this.formsById = null;
 
         /**
          * ### ChoiceManager.order
@@ -42898,7 +42937,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.buildTableAndForms
      */
     ChoiceManager.prototype.setForms = function(forms) {
-        var form, i, len, parsedForms;
+        var form, formsById, i, len, parsedForms;
         if ('function' === typeof forms) {
             parsedForms = forms.call(node.game);
             if (!J.isArray(parsedForms)) {
@@ -42921,6 +42960,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Manual clone forms.
+        formsById = {};
         forms = new Array(len);
         i = -1;
         for ( ; ++i < len ; ) {
@@ -42932,15 +42972,23 @@ if (!Array.prototype.indexOf) {
                     form = node.widgets.get(form.name, form);
                 }
                 if (!node.widgets.isWidget(form)) {
-                    throw new Error('ChoiceManager.buildDl: one of the forms ' +
-                                    'is not a widget-like element: ' +
-                                    parsedForms[i]);
+                    throw new Error('ChoiceManager.setForms: one of the ' +
+                                    'forms is not a widget-like element: ' +
+                                    form);
                 }
             }
             forms[i] = form;
+            if (form.id) {
+                if (formsById[form.id]) {
+                    throw new Error('ChoiceManager.setForms: duplicated ' +
+                                    'form id: ' + form.id);
+                }
+                formsById[form.id] = forms[i];
+            }
         }
         // Assigned verified forms.
         this.forms = forms;
+        this.formsById = formsById;
 
         // Save the order in which the choices will be added.
         this.order = J.seq(0, len-1);
@@ -43258,12 +43306,37 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.4.0';
+    ChoiceTable.version = '1.5.1';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
     ChoiceTable.title = 'Make your choice';
     ChoiceTable.className = 'choicetable';
+
+    ChoiceTable.texts.autoHint = function(w) {
+        var res;
+        if (!w.requiredChoice && !w.selectMultiple) return false;
+        if (!w.selectMultiple) return '*';
+        res = '(';
+        if (!w.requiredChoice) {
+            if ('number' === typeof w.selectMultiple) {
+                res += 'select up to ' + w.selectMultiple;
+            }
+            else {
+                res += 'multiple selection allowed';
+            }
+        }
+        else {
+            if ('number' === typeof w.selectMultiple) {
+                res += 'select between ' + w.requiredChoice + ' and ' +
+                    w.selectMultiple;
+            }
+            else {
+                res += 'select at least ' + w.requiredChoice;
+            }
+        }
+        return res + ')';
+    };
 
     ChoiceTable.separator = '::';
 
@@ -43319,7 +43392,7 @@ if (!Array.prototype.indexOf) {
          */
         this.listener = function(e) {
             var name, value, td;
-            var i, len;
+            var i, len, removed;
 
             e = e || window.event;
             td = e.target || e.srcElement;
@@ -43368,6 +43441,7 @@ if (!Array.prototype.indexOf) {
                 else {
                     that.selected = null;
                 }
+                removed = true;
             }
             // Click on a new choice.
             else {
@@ -43391,6 +43465,9 @@ if (!Array.prototype.indexOf) {
 
             // Remove any warning/errors on click.
             if (that.isHighlighted()) that.unhighlight();
+
+            // Call onclick, if any.
+            if (that.onclick) that.onclick.call(that, value, td, removed);
         };
 
         /**
@@ -43401,6 +43478,17 @@ if (!Array.prototype.indexOf) {
          * @see ChoiceTable.spanMainText
          */
         this.mainText = null;
+
+        /**
+         * ### ChoiceTable.hint
+         *
+         * An additional text with information about how to select items
+         *
+         * If not specified, it may be auto-filled, e.g. '(pick 2)'.
+         *
+         * @see Feedback.texts.autoHint
+         */
+        this.hint = null;
 
         /**
          * ### ChoiceTable.spanMainText
@@ -43515,6 +43603,9 @@ if (!Array.prototype.indexOf) {
          * ### ChoiceTable.originalOrder
          *
          * The initial order of display of choices
+         *
+         * TODO: Do we need this? originalOrder is always 0,1,2,3...
+         * ChoiceManager does not have it.
          *
          * @see ChoiceTable.order
          */
@@ -43675,9 +43766,12 @@ if (!Array.prototype.indexOf) {
      *   - orientation: orientation of the table: vertical (v) or horizontal (h)
      *   - group: the name of the group (number or string), if any
      *   - groupOrder: the order of the table in the group, if any
-     *   - onclick: a custom onclick listener function. Context is
+     *   - listener: a function executed at every click. Context is
+     *       `this` instance
+     *   - onclick: a function executed after the listener function. Context is
      *       `this` instance
      *   - mainText: a text to be displayed above the table
+     *   - hint: a text with extra info to be displayed after mainText
      *   - choices: the array of available choices. See
      *       `ChoiceTable.renderChoice` for info about the format
      *   - correctChoice: the array|number|string of correct choices. See
@@ -43798,11 +43892,21 @@ if (!Array.prototype.indexOf) {
                                 options.groupOrder);
         }
 
-        // Set the onclick listener, if any.
-        if ('function' === typeof options.onclick) {
+        // Set the main onclick listener, if any.
+        if ('function' === typeof options.listener) {
             this.listener = function(e) {
-                options.onclick.call(this, e);
+                options.listener.call(this, e);
             };
+        }
+        else if ('undefined' !== typeof options.listener) {
+            throw new TypeError('ChoiceTable.init: options.listener must ' +
+                                'be function or undefined. Found: ' +
+                                options.listener);
+        }
+
+        // Set an additional onclick onclick, if any.
+        if ('function' === typeof options.onclick) {
+            this.onclick = options.onclick;
         }
         else if ('undefined' !== typeof options.onclick) {
             throw new TypeError('ChoiceTable.init: options.onclick must ' +
@@ -43818,6 +43922,20 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('ChoiceTable.init: options.mainText must ' +
                                 'be string or undefined. Found: ' +
                                 options.mainText);
+        }
+
+        // Set the hint, if any.
+        if ('string' === typeof options.hint || false === options.hint) {
+            this.hint = options.hint;
+        }
+        else if ('undefined' !== typeof options.hint) {
+            throw new TypeError('ChoiceTable.init: options.hint must ' +
+                                'be a string, false, or undefined. Found: ' +
+                                options.hint);
+        }
+        else {
+            // Returns undefined if there are no constraints.
+            this.hint = this.getText('autoHint');
         }
 
         // Set the timeFrom, if any.
@@ -43985,8 +44103,10 @@ if (!Array.prototype.indexOf) {
 
         // Save the order in which the choices will be added.
         this.order = J.seq(0, len-1);
-        if (this.shuffleChoices) this.order = J.shuffle(this.order);
-        this.originalOrder = this.order;
+        if (this.shuffleChoices) {
+            this.originalOrder = this.order;
+            this.order = J.shuffle(this.order);
+        }
 
         // Build the table and choices at once (faster).
         if (this.table) this.buildTableAndChoices();
@@ -44310,12 +44430,17 @@ if (!Array.prototype.indexOf) {
 
         // MainText.
         if (this.mainText) {
-            this.spanMainText = document.createElement('span');
-            this.spanMainText.className = this.className ?
-                ChoiceTable.className + '-maintext' : 'maintext';
-            this.spanMainText.innerHTML = this.mainText;
-            // Append mainText.
-            this.bodyDiv.appendChild(this.spanMainText);
+            this.spanMainText = W.append('span', this.bodyDiv, {
+                className: 'choicetable-maintext',
+                innerHTML: this.mainText
+            });
+        }
+        // Hint.
+        if (this.hint) {
+            W.append('span', this.spanMainText || this.bodyDiv, {
+                className: 'choicetable-hint',
+                innerHTML: this.hint
+            });
         }
 
         // Create/set table.
@@ -44883,7 +45008,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.4.0';
+    ChoiceTableGroup.version = '1.5.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
@@ -44891,6 +45016,11 @@ if (!Array.prototype.indexOf) {
     ChoiceTableGroup.className = 'choicetable';
 
     ChoiceTableGroup.separator = '::';
+
+    ChoiceTableGroup.texts.autoHint = function(w) {
+        if (w.requiredChoice) return '*';
+        else return false;
+    };
 
     // ## Dependencies
 
@@ -45012,6 +45142,17 @@ if (!Array.prototype.indexOf) {
          * The span containing the main text
          */
         this.spanMainText = null;
+
+        /**
+         * ### ChoiceTableGroup.hint
+         *
+         * An additional text with information about how to select items
+         *
+         * If not specified, it may be auto-filled, e.g. '(pick 2)'.
+         *
+         * @see Feedback.texts.autoHint
+         */
+        this.hint = null;
 
         /**
          * ### ChoiceTableGroup.items
@@ -45332,6 +45473,20 @@ if (!Array.prototype.indexOf) {
                                 options.mainText);
         }
 
+        // Set the hint, if any.
+        if ('string' === typeof options.hint || false === options.hint) {
+            this.hint = options.hint;
+        }
+        else if ('undefined' !== typeof options.hint) {
+            throw new TypeError('ChoiceTableGroup.init: options.hint must ' +
+                                'be a string, false, or undefined. Found: ' +
+                                options.hint);
+        }
+        else {
+            // Returns undefined if there are no constraints.
+            this.hint = this.getText('autoHint');
+        }
+
         // Set the timeFrom, if any.
         if (options.timeFrom === false ||
             'string' === typeof options.timeFrom) {
@@ -45572,12 +45727,17 @@ if (!Array.prototype.indexOf) {
 
         // MainText.
         if (this.mainText) {
-            this.spanMainText = document.createElement('span');
-            this.spanMainText.className =
-                ChoiceTableGroup.className + '-maintext';
-            this.spanMainText.innerHTML = this.mainText;
-            // Append.
-            this.bodyDiv.appendChild(this.spanMainText);
+            this.spanMainText = W.append('span', this.bodyDiv, {
+                className: 'custominput-maintext',
+                innerHTML: this.mainText
+            });
+        }
+        // Hint.
+        if (this.hint) {
+            W.append('span', this.spanMainText || this.bodyDiv, {
+                className: 'choicetable-hint',
+                innerHTML: this.hint
+            });
         }
 
         // Create/set table, if requested.
@@ -46497,7 +46657,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    CustomInput.version = '0.4.0';
+    CustomInput.version = '0.7.0';
     CustomInput.description = 'Creates a configurable input form';
 
     CustomInput.title = false;
@@ -46509,10 +46669,118 @@ if (!Array.prototype.indexOf) {
         number: true,
         'float': true,
         'int': true,
-        date: true
+        date: true,
+        list: true,
+        us_city_state_zip: true
     };
 
+    var sepNames = {
+        ',': 'comma',
+        ' ': 'space',
+        '.': 'dot'
+    };
+
+    var usStates = {
+        Alabama: 'AL',
+        Alaska: 'AK',
+        Arizona: 'AZ',
+        Arkansas: 'AR',
+        California: 'CA',
+        Colorado: 'CO',
+        Connecticut: 'CT',
+        Delaware: 'DE',
+        Florida: 'FL',
+        Georgia: 'GA',
+        Hawaii: 'HI',
+        Idaho: 'ID',
+        Illinois: 'IL',
+        Indiana: 'IN',
+        Iowa: 'IA',
+        Kansas: 'KS',
+        Kentucky: 'KY',
+        Louisiana: 'LA',
+        Maine: 'ME',
+        Maryland: 'MD',
+        Massachusetts: 'MA',
+        Michigan: 'MI',
+        Minnesota: 'MN',
+        Mississippi: 'MS',
+        Missouri: 'MO',
+        Montana: 'MT',
+        Nebraska: 'NE',
+        Nevada: 'NV',
+        'New Hampshire': 'NH',
+        'New Jersey': 'NJ',
+        'New Mexico': 'NM',
+        'New York': 'NY',
+        'North Carolina': 'NC',
+        'North Dakota': 'ND',
+        Ohio: 'OH',
+        Oklahoma: 'OK',
+        Oregon: 'OR',
+        Pennsylvania: 'PA',
+        'Rhode Island': 'RI',
+        'South Carolina': 'SC',
+        'South Dakota': 'SD',
+        Tennessee: 'TN',
+        Texas: 'TX',
+        Utah: 'UT',
+        Vermont: 'VT',
+        Virginia: 'VA',
+        Washington: 'WA',
+        'West Virginia': 'WV',
+        Wisconsin: 'WI',
+        Wyoming: 'WY',
+    };
+
+    var usTerr = {
+        'American Samoa': 'AS',
+        'District of Columbia': 'DC',
+        'Federated States of Micronesia': 'FM',
+        Guam: 'GU',
+        'Marshall Islands': 'MH',
+        'Northern Mariana Islands': 'MP',
+        Palau: 'PW',
+        'Puerto Rico': 'PR',
+        'Virgin Islands': 'VI'
+    };
+
+    // To be filled if requested.
+    var usTerrByAbbr;
+    var usStatesByAbbr;
+    var usStatesTerr;
+    var usStatesTerrByAbbr;
+
     CustomInput.texts = {
+        listErr: 'Check that there are no empty items; do not end with ' +
+            'the separator',
+        listSizeErr: function(w, param) {
+            if (w.params.fixedSize) {
+                return w.params.minItems + ' items required';
+            }
+            if (param === 'min') {
+                return 'Too few items. Min: ' + w.params.minItems;
+            }
+            return 'Too many items. Max: ' + w.params.maxItems;
+
+        },
+        usStateErr: 'Not valid state abbreviation (must be 2 characters)',
+        usZipErr: 'Not valid ZIP code (must be 5-digits)',
+        autoHint: function(w) {
+            var res, sep;
+            if (w.type === 'list') {
+                sep = sepNames[w.params.listSep] || w.params.listSep;
+                res = '(if more than one, separate with ' + sep + ')';
+            }
+            else if (w.type === 'us_city_state_zip') {
+                sep = w.params.listSep;
+                res = '(Format: Town' + sep + ' State' + sep + ' ZIP code)';
+            }
+            else if (w.type === 'date') {
+                res = '(Format: ' + w.params.format + ')';
+            }
+            return w.requiredChoice ? (res + '*') : (res || false);
+        },
         numericErr: function(w) {
             var str, p, inc;
             p = w.params;
@@ -46582,12 +46850,8 @@ if (!Array.prototype.indexOf) {
      * ## CustomInput constructor
      *
      * Creates a new instance of CustomInput
-     *
-     * @param {object} options Optional. Configuration options.
-     *   If a `table` option is specified, it sets it as the clickable
-     *   table. All other options are passed to the init method.
      */
-    function CustomInput(options) {
+    function CustomInput() {
 
         /**
          * ### CustomInput.input
@@ -46635,9 +46899,25 @@ if (!Array.prototype.indexOf) {
          *
          * The validation function for the input
          *
-         * The function returns an error message in case of error.
+         * The function returns an object like:
+         *
+         * ```javascript
+         *  {
+         *    value: 'validvalue',
+         *    err:   'This error occurred' // If invalid.
+         *  }
+         * ```
          */
         this.validation = null;
+
+        /**
+         * ### CustomInput.validationSpeed
+         *
+         * How often (in milliseconds) the validation function is called
+         *
+         * Default: 500
+         */
+        this.validationSpeed = 500;
 
         /**
          * ### CustomInput.postprocess
@@ -46667,9 +46947,20 @@ if (!Array.prototype.indexOf) {
         /**
          * ### CustomInput.mainText
          *
-         * A text preceeding the date selector
+         * A text preceeding the custom input
          */
         this.mainText = null;
+
+        /**
+         * ### CustomInput.hint
+         *
+         * An additional text with information about the input
+         *
+         * If not specified, it may be auto-filled, e.g. '*'.
+         *
+         * @see CustomInput.texts.autoHint
+         */
+        this.hint = null;
 
         /**
          * ### CustomInput.requiredChoice
@@ -46679,6 +46970,20 @@ if (!Array.prototype.indexOf) {
          * Default: TRUE
          */
         this.requiredChoice = null;
+
+        /**
+         * ### CustomInput.timeBegin
+         *
+         * When the first character was inserted
+         */
+        this.timeBegin = null;
+
+        /**
+         * ### CustomInput.timeEnd
+         *
+         * When the last character was inserted
+         */
+        this.timeEnd = null;
     }
 
     // ## CustomInput methods
@@ -46714,7 +47019,7 @@ if (!Array.prototype.indexOf) {
                                     'or undefined. Found: ' +
                                     opts.validation);
             }
-            this.validation = opts.validation;
+            tmp = opts.validation;
         }
         else {
             // Add default validations based on type.
@@ -46883,6 +47188,7 @@ if (!Array.prototype.indexOf) {
                 this.params.yearDigits = tmp[2].length;
                 this.params.dayPos = tmp[0].charAt(0) === 'd' ? 0 : 1;
                 this.params.monthPos =  this.params.dayPos ? 0 : 1;
+                this.params.dateLen = tmp[2].length + 6;
 
 
                 // Preset inputWidth.
@@ -46953,20 +47259,153 @@ if (!Array.prototype.indexOf) {
                     return res;
                 };
             }
-            // TODO: add other types, e.g. date, int and email.
+            // Lists.
 
-            this.validation = function(value) {
-                var res;
-                if (value.trim() === '') {
-                    res = that.requiredChoice ?
-                        { err: that.getText('emptyErr') } : { value: '' };
+            else if (this.type === 'list' ||
+                     this.type === 'us_city_state_zip') {
+
+                if (opts.listSeparator) {
+                    if ('string' !== typeof opts.listSeparator) {
+                        throw new TypeError(e + 'listSeparator must be ' +
+                                            'string or undefined. Found: ' +
+                                            opts.listSeperator);
+                    }
+                    this.params.listSep = opts.listSeparator;
                 }
                 else {
-                    res = tmp(value);
+                    this.params.listSep = ',';
                 }
-                return res;
-            };
+
+                if (this.type === 'us_city_state_zip') {
+                    // Create validation abbr.
+                    if (!usStatesTerrByAbbr) {
+                        usStatesTerr = J.mixin(usStates, usTerr);
+                        usStatesTerrByAbbr = J.reverseObj(usStatesTerr);
+                    }
+                    this.params.minItems = this.params.maxItems = 3;
+                    this.params.fixedSize = true;
+                    this.params.itemValidation = function(item, idx) {
+                        if (idx === 2) {
+                            if (!usStatesTerrByAbbr[item.toUpperCase()]) {
+                                return { err: that.getText('usStateErr') };
+                            }
+                        }
+                        else if (idx === 3) {
+                            if (item.length !== 5 || !J.isInt(item, 0)) {
+                                return { err: that.getText('usZipErr') };
+                            }
+                        }
+                    };
+
+                    this.placeholder = 'Town' + this.params.listSep +
+                        ' State' + this.params.listSep + ' ZIP';
+                }
+                else {
+                    if ('undefined' !== typeof opts.minItems) {
+                        tmp = J.isInt(opts.minItems, 0);
+                        if (tmp === false) {
+                            throw new TypeError(e + 'minItems must be ' +
+                                                'a positive integer. Found: ' +
+                                                opts.minItems);
+                        }
+                        this.params.minItems = tmp;
+                    }
+                    if ('undefined' !== typeof opts.maxItems) {
+                        tmp = J.isInt(opts.maxItems, 0);
+                        if (tmp === false) {
+                            throw new TypeError(e + 'maxItems must be ' +
+                                                'a positive integer. Found: ' +
+                                                opts.maxItems);
+                        }
+                        if (this.params.minItems &&
+                            this.params.minItems > tmp) {
+
+                            throw new TypeError(e + 'maxItems must be larger ' +
+                                                'than minItems. Found: ' +
+                                                tmp + ' < ' +
+                                                this.params.minItems);
+                        }
+                        this.params.maxItems = tmp;
+                    }
+                }
+
+                tmp = function(value) {
+                    var i, len, v, iVal, err;
+                    value = value.split(that.params.listSep);
+                    len = value.length;
+                    if (!len) return value;
+                    iVal = that.params.itemValidation;
+                    i = 0;
+                    v = value[0].trim();
+                    if (!v) return { err: that.getText('listErr') };
+                    if (iVal) {
+                        err = iVal(v, 1);
+                        if (err) return err;
+                    }
+                    value[i++] = v;
+                    if (len > 1) {
+                        v = value[1].trim();
+                        if (!v) return { err: that.getText('listErr') };
+                        if (iVal) {
+                            err = iVal(v, (i+1));
+                            if (err) return err;
+                        }
+                        value[i++] = v;
+                    }
+                    if (len > 2) {
+                        v = value[2].trim();
+                        if (!v) return { err: that.getText('listErr') };
+                        if (iVal) {
+                            err = iVal(v, (i+1));
+                            if (err) return err;
+                        }
+                        value[i++] = v;
+                    }
+                    if (len > 3) {
+                        for ( ; i < len ; ) {
+                            v = value[i].trim();
+                            if (!v) return { err: that.getText('listErr') };
+                            if (iVal) {
+                                err = iVal(v, (i+1));
+                                if (err) return err;
+                            }
+                            value[i++] = v;
+                        }
+                    }
+                    // Need to do it here, because some elements might be empty.
+                    if (that.params.minItems && i < that.params.minItems) {
+                        return { err: that.getText('listSizeErr', 'min') };
+                    }
+                    if (that.params.maxItems && i > that.params.maxItems) {
+                        return { err: that.getText('listSizeErr', 'max') };
+                    }
+                    return { value: value };
+                }
+            }
+
+            // US_Town,State, Zip Code
+
+            // TODO: add other types, e.g.int and email.
         }
+
+        // Variable tmp contains a validation function, either from
+        // defaults, or from user option.
+
+        this.validation = function(value) {
+            var res;
+            res = { value: value };
+            if (value.trim() === '') {
+                if (that.requiredChoice) res.err = that.getText('emptyErr');
+            }
+            else if (tmp) {
+                res = tmp(value);
+            }
+            return res;
+        };
+
+
+
+        // Preprocess
 
         if (opts.preprocess) {
             if ('function' !== typeof opts.preprocess) {
@@ -46975,12 +47414,108 @@ if (!Array.prototype.indexOf) {
             }
             this.preprocess = opts.preprocess;
         }
+        else if (opts.preprocess !== false) {
+
+            if (this.type === 'date') {
+                this.preprocess = function(input) {
+                    var sep, len;
+                    len = input.value.length;
+                    sep = that.params.sep;
+                    if (len === 2) {
+                        if (input.selectionStart === 2) {
+                            if (input.value.charAt(1) !== sep) {
+                                input.value += sep;
+                            }
+                        }
+                    }
+                    else if (len === 5) {
+                        if (input.selectionStart === 5) {
+                            if (input.value.charAt(4) !== sep &&
+                                (input.value.split(sep).length - 1) === 1) {
+
+                                input.value += sep;
+                            }
+                        }
+                    }
+                    else if (len > this.params.dateLen) {
+                        input.value =
+                            input.value.substring(0, this.params.dateLen);
+                    }
+                };
+            }
+            else if (this.type === 'list' ||
+                     this.type === 'us_city_state_zip') {
+
+                // Add a space after separator, if separator is not space.
+                if (this.params.listSep.trim() !== '') {
+                    this.preprocess = function(input) {
+                        var sep, len;
+                        len = input.value.length;
+                        sep = that.params.listSep;
+                        if (len > 1 &&
+                            len === input.selectionStart &&
+                            input.value.charAt(len-1) === sep &&
+                            input.value.charAt(len-2) !== sep) {
+
+                            input.value += ' ';
+                        }
+                    };
+                }
+            }
+        }
+
+        // Postprocess.
+
+        if (opts.postprocess) {
+            if ('function' !== typeof opts.postprocess) {
+                throw new TypeError(e + 'postprocess must be function or ' +
+                                    'undefined. Found: ' + opts.postprocess);
+            }
+            this.postprocess = opts.postprocess;
+        }
+        else {
+            if (this.type === 'date') {
+                this.postprocess = function(value, valid) {
+                    if (!valid || !value) return value;
+                    return {
+                        value: value,
+                        day: value.substring(0,2),
+                        month: value.substring(3,5),
+                        year: value.subtring(6, value.length)
+                    };
+                };
+            }
+        }
+
+        // Validation Speed
+        if ('undefined' !== typeof opts.validationSpeed) {
+            tmp = J.isInt(opts.valiadtionSpeed, 0, undefined, true);
+            if (tmp === false) {
+                throw new TypeError(e + 'validationSpeed must a non-negative ' +
+                                    'number or undefined. Found: ' +
+                                    opts.validationSpeed);
+            }
+            this.validationSpeed = tmp;
+        }
+
+        // MainText, Hint, and other visuals.
+
         if (opts.mainText) {
             if ('string' !== typeof opts.mainText) {
                 throw new TypeError(e + 'mainText must be string or ' +
                                     'undefined. Found: ' + opts.mainText);
             }
             this.mainText = opts.mainText;
+        }
+        if ('undefined' !== typeof opts.hint) {
+            if (false !== opts.hint && 'string' !== typeof opts.hint) {
+                throw new TypeError(e + 'hint must be a string, false, or ' +
+                                    'undefined. Found: ' + opts.hint);
+            }
+            this.hint = opts.hint;
+        }
+        else {
+            this.hint = this.getText('autoHint');
         }
         if (opts.placeholder) {
             if ('string' !== typeof opts.placeholder) {
@@ -47017,6 +47552,13 @@ if (!Array.prototype.indexOf) {
                 innerHTML: this.mainText
             });
         }
+        // Hint.
+        if (this.hint) {
+            W.append('span', this.spanMainText || this.bodyDiv, {
+                className: 'choicetable-hint',
+                innerHTML: this.hint
+            });
+        }
 
         this.input = W.append('input', this.bodyDiv);
         if (this.placeholder) this.input.placeholder = this.placeholder;
@@ -47025,6 +47567,12 @@ if (!Array.prototype.indexOf) {
         this.errorBox = W.append('div', this.bodyDiv, { className: 'errbox' });
 
         this.input.oninput = function() {
+            if (!that.timeBegin) {
+                that.timeEnd = that.timeBegin = node.timer.getTimeSince('step');
+            }
+            else {
+                that.timeEnd = node.timer.getTimeSince('step');
+            }
             if (timeout) clearTimeout(timeout);
             if (that.isHighlighted()) that.unhighlight();
             if (that.preprocess) that.preprocess(that.input);
@@ -47034,11 +47582,10 @@ if (!Array.prototype.indexOf) {
                     res = that.validation(that.input.value);
                     if (res.err) that.setError(res.err);
                 }
-            }, 500);
+            }, that.validationSpeed);
         };
         this.input.onclick = function() {
             if (that.isHighlighted()) that.unhighlight();
-
         };
     };
 
@@ -47100,7 +47647,8 @@ if (!Array.prototype.indexOf) {
      */
     CustomInput.prototype.reset = function() {
         if (this.input) this.input.value = '';
-        if (this.isHighilighted()) this.unhighlight();
+        if (this.isHighlighted()) this.unhighlight();
+        this.timeBegin = this.timeEnd = null;
     };
 
     /**
@@ -47123,6 +47671,8 @@ if (!Array.prototype.indexOf) {
         res = this.input.value;
         res = this.validation ? this.validation(res) : { value: res };
         res.isCorrect = valid = !res.err;
+        res.timeBegin = this.timeBegin;
+        res.timeEnd = this.timeEnd;
         if (this.postprocess) res.value = this.postprocess(res.value, valid);
         if (!valid) {
             this.setError(res.err);
@@ -48957,6 +49507,10 @@ if (!Array.prototype.indexOf) {
  * Sends a feedback message to the server
  *
  * www.nodegame.org
+ *
+ * TODO: rename css class feedback-char-count
+ * TODO: words and chars count without contraints, just show.
+ * TODO: shows all constraints in gray before the textarea.
  */
 (function(node) {
 
@@ -48966,17 +49520,68 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Feedback.version = '1.3.0';
+    Feedback.version = '1.4.0';
     Feedback.description = 'Displays a configurable feedback form';
 
     Feedback.title = 'Feedback';
     Feedback.className = 'feedback';
 
     Feedback.texts = {
+        autoHint: function(w) {
+            var res, res2;
+            if (w.minChars && w.maxChars) {
+                res = 'between ' + w.minChars + ' and ' + w.maxChars +
+                    ' characters';
+            }
+            else if (w.minChars) {
+                res = 'at least ' + w.minChars + ' character';
+                if (w.minChars > 1) res += 's';
+            }
+            else if (w.maxChars) {
+                res = 'at most ' +  w.maxChars + ' character';
+                if (w.maxChars > 1) res += 's';
+            }
+            if (w.minWords && w.maxWords) {
+                res2 = 'between ' + w.minWords + ' and ' + w.maxWords +
+                    ' words';
+            }
+            else if (w.minWords) {
+                res2 = 'at least ' + w.minWords + ' word';
+                if (w.minWords > 1) res += 's';
+            }
+            else if (w.maxWords) {
+                res2 = 'at most ' +  w.maxWords + ' word';
+                if (w.maxWords > 1) res += 's';
+            }
+            if (res) {
+                res = '(' + res;;
+                if (res2) res +=  ', and ' + res2;
+                return res + ')';
+            }
+            else if (res2) {
+                return '(' + res2 + ')';
+            }
+            return false;
+        },
         submit: 'Submit feedback',
         label: 'Any feedback? Let us know here:',
-        sent: 'Sent!'
+        sent: 'Sent!',
+        counter: function(w, param) {
+            var res;
+            res = param.chars ? ' character' : ' word';
+            if (param.len !== 1) res += 's';
+            if (param.needed) res += ' needed';
+            else if (param.over) res += ' over';
+            else res += ' remaining';
+            return res;
+        }
     };
+
+    // Colors for missing, excess or ok.
+    var colNeeded, colOver, colRemain;
+    colNeeded = '#a32020'; // #f2dede';
+    colOver = '#a32020'; // #f2dede';
+    colRemain = '#78b360'; // '#dff0d8';
 
     // ## Dependencies
 
@@ -48989,53 +49594,153 @@ if (!Array.prototype.indexOf) {
      *
      * `Feedback` sends a feedback message to the server
      *
-     * @param {object} options Optional. Configuration option.
-     *   Available options:
-     *
-     *    - showCount: If TRUE, the character count is displayed
-     *    - minLength: The minimum number of characters in textarea
-     *    - maxLength: The max number of characters in textarea
-     *    - rows: The number of rows of the textarea
+     * @param {object} options Optional. Configuration options
      */
     function Feedback(options) {
+        var tmp;
+
+        if ('undefined' !== typeof options.maxLength) {
+            console.log('***Feedback constructor: maxLength is deprecated, ' +
+                        'use maxChars instead***');
+            options.maxChars = options.maxLength;
+        }
+        if ('undefined' !== typeof options.minLength) {
+            console.log('***Feedback constructor: minLength is deprecated, ' +
+                        'use minChars instead***');
+            options.minChars = options.minLength;
+        }
 
         /**
-         * ### Feedback.maxLength
+         * ### Feedback.mainText
+         *
+         * The main text introducing the choices
+         *
+         * @see Feedback.spanMainText
+         */
+        this.mainText = null;
+
+        /**
+         * ### Feedback.hint
+         *
+         * An additional text with information about how to select items
+         *
+         * If not specified, it may be auto-filled, e.g. '(pick 2)'.
+         *
+         * @see Feedback.texts.autoHint
+         */
+        this.hint = null;
+
+        /**
+         * ### Feedback.spanMainText
+         *
+         * The span containing the main text
+         */
+        this.spanMainText = null;
+
+        /**
+         * ### Feedback.maxChars
          *
          * The maximum character length for feedback to be submitted
          *
          * Default: 800
          */
-        if ('undefined' === typeof options.maxLength) {
-            this.maxLength = 800;
-        }
-        else if (J.isInt(options.maxLength, 0) !== false) {
-            this.maxLength = options.maxLength;
+        if ('undefined' === typeof options.maxChars) {
+            this.maxChars = 800;
         }
         else {
-            throw new TypeError('Feedback constructor: maxLength ' +
-                                'must be an integer >= 0 or undefined. ' +
-                                'Found: ' + options.maxLength);
+            tmp = J.isInt(options.maxChars, 0);
+            if (tmp !== false) {
+                this.maxChars = options.maxChars;
+            }
+            else {
+                throw new TypeError('Feedback constructor: maxChars ' +
+                                    'must be an integer >= 0 or undefined. ' +
+                                    'Found: ' + options.maxChars);
+            }
         }
 
         /**
-         * ### Feedback.minLength
+         * ### Feedback.minChars
          *
          * The minimum character length for feedback to be submitted
          *
-         * If minLength = 0, then there is no minimum length checked.
+         * If minChars = 0, then there is no minimum length checked.
+         *
          * Default: 1
          */
-        if ('undefined' === typeof options.minLength) {
-            this.minLength = 1;
-        }
-        else if (J.isInt(options.minLength, 0) !== false) {
-            this.minLength = options.minLength;
+        if ('undefined' === typeof options.minChars) {
+            this.minChars = 1;
         }
         else {
-            throw new TypeError('Feedback constructor: minLength ' +
-                                'must be an integer >= 0 or undefined. ' +
-                                'Found: ' + options.minLength);
+            tmp = J.isInt(options.minChars, 0, undefined, true);
+            if (tmp !== false) {
+                this.minChars = options.minChars;
+            }
+            else {
+                throw new TypeError('Feedback constructor: minChars ' +
+                                    'must be an integer >= 0 or undefined. ' +
+                                    'Found: ' + options.minChars);
+            }
+        }
+
+        /**
+         * ### Feedback.maxWords
+         *
+         * The maximum number of words for feedback to be submitted
+         *
+         * Set to 0 for no checks.
+         *
+         * Default: 0
+         */
+        if ('undefined' === typeof options.maxWords) {
+            this.maxWords = 0;
+        }
+        else {
+            tmp = J.isInt(options.maxWords, 0, undefined, true);
+            if (tmp !== false) {
+                this.maxWords = options.maxWords;
+            }
+            else {
+                throw new TypeError('Feedback constructor: maxWords ' +
+                                    'must be an integer >= 0 or undefined. ' +
+                                    'Found: ' + options.maxWords);
+            }
+        }
+
+        /**
+         * ### Feedback.minWords
+         *
+         * The minimum number of words for feedback to be submitted
+         *
+         * If minChars = 0, then there is no minimum checked.
+         *
+         * Default: 0
+         */
+        if ('undefined' === typeof options.minWords) {
+            this.minWords = 0;
+        }
+        else {
+            tmp = J.isInt(options.minWords, 0, undefined, true);
+            if (tmp  !== false) {
+                this.minWords = options.minWords;
+
+                // Checking if words and characters limit are compatible.
+                if (this.maxChars) {
+                    tmp = (this.maxChars+1)/2;
+                    if (this.minWords > tmp) {
+
+                        throw new TypeError('Feedback constructor: minWords ' +
+                                            'cannot be larger than ' +
+                                            '(maxChars+1)/2. Found: ' +
+                                            this.minWords + ' > ' + tmp);
+                    }
+                }
+            }
+            else {
+                throw new TypeError('Feedback constructor: minWords ' +
+                                    'must be an integer >= 0 or undefined. ' +
+                                    'Found: ' + options.minWords);
+            }
         }
 
         /**
@@ -49065,13 +49770,13 @@ if (!Array.prototype.indexOf) {
          * Attempts are stored in the attempts array. This allows to store
          * longer texts than accepts feedbacks
          *
-         * Default: Max(2000, maxLength)
+         * Default: Max(2000, maxChars)
          */
         if ('undefined' === typeof options.maxAttemptLength) {
             this.maxAttemptLength = 2000;
         }
         else if (J.isNumber(options.maxAttemptLength, 0) !== false) {
-            this.maxAttemptLength = Math.max(this.maxLength,
+            this.maxAttemptLength = Math.max(this.maxChars,
                                              options.maxAttemptLength);
         }
         else {
@@ -49079,22 +49784,6 @@ if (!Array.prototype.indexOf) {
                                 'options.maxAttemptLength must be a number ' +
                                 '>= 0 or undefined. Found: ' +
                                 options.maxAttemptLength);
-        }
-
-        /**
-         * ### Feedback.showCharCount
-         *
-         * If TRUE, the character count is shown
-         *
-         * Default: true
-         *
-         * @see Feedback.charCounter
-         */
-        if ('undefined' === typeof options.showCount) {
-            this.showCharCount = true;
-        }
-        else {
-            this.showCharCount = !!options.showCount;
         }
 
         /**
@@ -49173,6 +49862,13 @@ if (!Array.prototype.indexOf) {
         this.charCounter = null;
 
         /**
+         * ### Feedback.wordCounter
+         *
+         * The HTML span element containing the words count
+         */
+        this.wordCounter = null;
+
+        /**
          * ### Feedback.submitButton
          *
          * The HTML submit button
@@ -49182,6 +49878,36 @@ if (!Array.prototype.indexOf) {
     }
 
     // ## Feedback methods
+
+    // TODO: move all initialization here from constructor.
+    Feedback.prototype.init = function(options) {
+        // Set the mainText, if any.
+        if ('string' === typeof options.mainText) {
+            this.mainText = options.mainText;
+        }
+        else if ('undefined' === typeof options.mainText) {
+            this.mainText = this.getText('label');
+        }
+        else {
+            throw new TypeError('Feedback.init: options.mainText must ' +
+                                'be string or undefined. Found: ' +
+                                options.mainText);
+        }
+
+        // Set the hint, if any.
+        if ('string' === typeof options.hint || false === options.hint) {
+            this.hint = options.hint;
+        }
+        else if ('undefined' !== typeof options.hint) {
+            throw new TypeError('Feedback.init: options.hint must ' +
+                                'be a string, false, or undefined. Found: ' +
+                                options.hint);
+        }
+        else {
+            // Returns undefined if there are no constraints.
+            this.hint = this.getText('autoHint');
+        }
+    };
 
     /**
      * ### Feedback.verifyFeedback
@@ -49200,45 +49926,96 @@ if (!Array.prototype.indexOf) {
      * @see getFeedback
      */
     Feedback.prototype.verifyFeedback = function(markAttempt, updateUI) {
-        var feedback, length, updateCount, updateColor, res;
-        var submitButton, charCounter, tmp;
+        var feedback, length,  res;
+        var submitButton, charCounter, wordCounter, tmp;
+        var updateCharCount, updateCharColor, updateWordCount, updateWordColor;
 
         feedback = getFeedback.call(this);
         length = feedback ? feedback.length : 0;
 
         submitButton = this.submitButton;
         charCounter = this.charCounter;
+        wordCounter = this.wordCounter;
 
-        if (length < this.minLength) {
+        res = true;
+
+        if (length < this.minChars) {
             res = false;
-            tmp = this.minLength - length;
-            updateCount = tmp + ' character';
-            if (tmp > 1) updateCount += 's';
-            updateCount += ' needed.';
-            updateColor = '#a32020'; // #f2dede';
+            tmp = this.minChars - length;
+            updateCharCount = tmp + this.getText('counter', {
+                chars: true,
+                needed: true,
+                len: tmp
+            });
+            updateCharColor = colNeeded;
         }
-        else if (length > this.maxLength) {
+        else if (this.maxChars && length > this.maxChars) {
             res = false;
-            tmp = length - this.maxLength;
-            updateCount = tmp + ' character';
-            if (tmp > 1) updateCount += 's';
-            updateCount += ' over.';
-            updateColor = '#a32020'; // #f2dede';
+            tmp = length - this.maxChars;
+            updateCharCount = tmp + this.getText('counter', {
+                chars: true,
+                over: true,
+                len: tmp
+            });
+            updateCharColor = colOver;
         }
         else {
-            res = true;
-            tmp = this.maxLength - length;
-            updateCount = tmp + ' character';
-            if (tmp > 1) updateCount += 's';
-            updateCount += ' remaining.';
-            updateColor = '#78b360'; // '#dff0d8';
+            tmp = this.maxChars - length;
+            updateCharCount = tmp + this.getText('counter', {
+                chars: true,
+                len: tmp
+            });
+            updateCharColor = colRemain;
+        }
+
+        if (wordCounter) {
+            // kudos: https://css-tricks.com/build-word-counter-app/
+            // word count using \w metacharacter -
+            // replacing this with .* to match anything between word
+            // boundaries since it was not taking 'a' as a word.
+            // this is a masterstroke - to count words with any number
+            // of hyphens as one word
+            // [-?(\w+)?]+ looks for hyphen and a word (we make
+            // both optional with ?). + at the end makes it a repeated pattern
+            // \b is word boundary metacharacter
+            tmp = feedback ? feedback.match(/\b[-?(\w+)?]+\b/gi) : 0;
+            length = tmp ? tmp.length : 0;
+            if (length < this.minWords) {
+                res = false;
+                tmp = tmp = this.minWords - length;
+                updateWordCount = tmp + this.getText('counter', {
+                    needed: true,
+                    len: tmp
+                });
+                updateWordColor = colNeeded;
+            }
+            else if (this.maxWords && length > this.maxWords) {
+                res = false;
+                tmp = length - this.maxWords;
+                updateWordCount = tmp + this.getText('counter', {
+                    over: true,
+                    len: tmp
+                });
+                updateWordColor = colOver;
+            }
+            else {
+                  tmp = this.maxWords - length;
+                  updateWordCount = tmp + this.getText('counter', {
+                      len: tmp
+                  });
+                  updateWordColor = colRemain;
+            }
         }
 
         if (updateUI) {
             if (submitButton) submitButton.disabled = !res;
             if (charCounter) {
-                charCounter.style.backgroundColor = updateColor;
-                charCounter.innerHTML = updateCount;
+                charCounter.style.backgroundColor = updateCharColor;
+                charCounter.innerHTML = updateCharCount;
+            }
+            if (wordCounter) {
+                wordCounter.style.backgroundColor = updateWordColor;
+                wordCounter.innerHTML = updateWordCount;
             }
         }
 
@@ -49266,11 +50043,18 @@ if (!Array.prototype.indexOf) {
             className: 'feedback-form'
         });
 
-        label = this.getText('label');
-        if (label !== false) {
-            W.append('label', this.feedbackForm, {
-                'for': 'feedback-input',
-                innerHTML: label
+        // MainText.
+        if (this.mainText) {
+            this.spanMainText = W.append('span', this.feedbackForm, {
+                className: 'feedback-maintext',
+                innerHTML: this.mainText
+            });
+        }
+        // Hint.
+        if (this.hint) {
+            W.append('span', this.spanMainText || this.feedbackForm, {
+                className: 'feedback-hint',
+                innerHTML: this.hint
             });
         }
 
@@ -49294,7 +50078,7 @@ if (!Array.prototype.indexOf) {
             });
         }
 
-        if (this.showCharCount) this.showCount();
+        this.showCounters();
 
         J.addEvent(this.feedbackForm, 'input', function(event) {
             if (that.isHighlighted()) that.unhighlight();
@@ -49317,7 +50101,7 @@ if (!Array.prototype.indexOf) {
         var feedback;
         options = options || {};
         if (!options.feedback) {
-            feedback = J.randomString(J.randomInt(0, this.maxLength),
+            feedback = J.randomString(J.randomInt(0, this.maxChars),
                                       'aA_1');
         }
         else {
@@ -49506,7 +50290,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### Feedback.showCount
+     * ### Feedback.showCounters
      *
      * Shows the character counter
      *
@@ -49514,26 +50298,42 @@ if (!Array.prototype.indexOf) {
      *
      * @see Feedback.charCounter
      */
-    Feedback.prototype.showCount = function() {
+    Feedback.prototype.showCounters = function() {
         if (!this.charCounter) {
-            this.charCounter = W.append('span', this.feedbackForm, {
-                className: 'feedback-char-count badge',
-                innerHTML: this.maxLength
-            });
+            if (this.minChars || this.maxChars) {
+                this.charCounter = W.append('span', this.feedbackForm, {
+                    className: 'feedback-char-count badge',
+                    innerHTML: this.maxChars
+                });
+            }
         }
         else {
             this.charCounter.style.display = '';
         }
+        if (!this.wordCounter) {
+            if (this.minWords || this.maxWords) {
+                this.wordCounter = W.append('span', this.feedbackForm, {
+                    className: 'feedback-char-count badge',
+                    innerHTML: this.maxWords
+                });
+                if (this.charCounter) {
+                    this.wordCounter.style['margin-left'] = '10px';
+                }
+            }
+        }
+        else {
+            this.wordCounter.style.display = '';
+        }
     };
 
     /**
-     * ### Feedback.hideCount
+     * ### Feedback.hideCounters
      *
      * Hides the character counter
      */
-    Feedback.prototype.hideCount = function() {
-        if (!this.charCounter) return;
-        this.charCounter.style.display = 'none';
+    Feedback.prototype.hideCounters = function() {
+        if (this.charCounter) this.charCounter.style.display = 'none';
+        if (this.wordCounter) this.wordCounter.style.display = 'none';
     };
 
     // ## Helper functions.
