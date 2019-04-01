@@ -24289,7 +24289,6 @@ if (!Array.prototype.indexOf) {
                          values.choice === null ||
                          values.isCorrect === false)) {
 
-                        debugger
                         return false;
                     }
                 }
@@ -29469,7 +29468,7 @@ if (!Array.prototype.indexOf) {
  *
  * Implementation of node.[say|set|get|done].
  *
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, parent) {
@@ -29500,8 +29499,8 @@ if (!Array.prototype.indexOf) {
                                 label);
         }
         if (to && 'string' !== typeof to && (!J.isArray(to) || !to.length)) {
-            throw new TypeError('node.say: to must be array, string or ' +
-                                'undefined. Found: ' + to);
+            throw new TypeError('node.say: to must be a non-empty array, ' +
+                                'string or undefined. Found: ' + to);
         }
         msg = this.msg.create({
             target: this.constants.target.DATA,
@@ -29517,7 +29516,7 @@ if (!Array.prototype.indexOf) {
      *
      * Stores an object in the server's memory
      *
-     * @param {object|string} The value to set
+     * @param {object|string} o The value to set
      * @param {string} to Optional. The recipient. Default `SERVER`
      * @param {string} text Optional. The text property of the message.
      *   If set, it allows one to define on.data listeners on receiver.
@@ -29531,7 +29530,8 @@ if (!Array.prototype.indexOf) {
             tmp = o, o = {}, o[tmp] = true;
         }
         else if ('object' !== typeof o) {
-            throw new TypeError('node.set: o must be object or string.');
+            throw new TypeError('node.set: o must be object or string. ' +
+                                'Found: ' + o);
         }
         msg = this.msg.create({
             action: this.constants.action.SET,
@@ -29604,7 +29604,7 @@ if (!Array.prototype.indexOf) {
         var data, timeout, timeoutCb, executeOnce, target;
 
         if ('string' !== typeof key) {
-            throw new TypeError('node.get: key must be string.');
+            throw new TypeError('node.get: key must be string. Found: ' + key);
         }
 
         if (key === '') {
@@ -29613,11 +29613,11 @@ if (!Array.prototype.indexOf) {
 
         if (key.split('.') > 1) {
             throw new TypeError(
-                'node.get: key cannot contain the dot "." character.');
+                'node.get: key cannot contain the dot "." character: ' + key);
         }
 
         if ('function' !== typeof cb) {
-            throw new TypeError('node.get: cb must be function.');
+            throw new TypeError('node.get: cb must be function. Found: ' + cb);
         }
 
         if ('undefined' === typeof to) {
@@ -29625,13 +29625,14 @@ if (!Array.prototype.indexOf) {
         }
 
         if ('string' !== typeof to) {
-            throw new TypeError('node.get: to must be string or undefined.');
+            throw new TypeError('node.get: to must be string or ' +
+                                'undefined. Found: ' + to);
         }
 
         if (options) {
             if ('object' !== typeof options) {
                 throw new TypeError('node.get: options must be object ' +
-                                    'or undefined.');
+                                    'or undefined. Found: ' + options);
             }
 
             timeout = options.timeout;
@@ -29643,24 +29644,27 @@ if (!Array.prototype.indexOf) {
             if ('undefined' !== typeof timeout) {
                 if ('number' !== typeof timeout) {
                     throw new TypeError('node.get: options.timeout must be ' +
-                                        'number.');
+                                        'number. Found: ' + timeout);
                 }
                 if (timeout < 0 && timeout !== -1 ) {
                     throw new TypeError('node.get: options.timeout must be ' +
-                                        'positive, 0, or -1.');
+                                        'positive, 0, or -1. Found: ' +
+                                        timeout);
                 }
             }
 
             if (timeoutCb && 'function' !== typeof timeoutCb) {
                 throw new TypeError('node.get: options.timeoutCb must be ' +
-                                    'function or undefined.');
+                                    'function or undefined. Found: ' +
+                                    timeoutCb);
             }
 
             if (target &&
                 ('string' !== typeof target || target.trim() === '')) {
 
                 throw new TypeError('node.get: options.target must be ' +
-                                    'a non-empty string or undefined.');
+                                    'a non-empty string or undefined. Found: ' +
+                                    target);
             }
 
         }
@@ -29710,11 +29714,6 @@ if (!Array.prototype.indexOf) {
                 timer = this.timer.createTimer({
                     milliseconds: timeout,
                     timeup: function() {
-                        // 10.19.2016 Was:
-//                         // `ee.once` already removes it on execution.
-//                         if (!executeOnce) {
-//                             ee.remove('in.say.DATA', g);
-//                         }
                         ee.remove('in.say.DATA', g);
                         if ('undefined' !== typeof timer) {
                             that.timer.destroyTimer(timer);
