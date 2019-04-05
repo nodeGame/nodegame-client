@@ -10103,7 +10103,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.0.1';
+    node.version = '5.1.0';
 
 })(window);
 
@@ -24342,9 +24342,6 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        // TRUE means keep whatever it is. Useful to be specified in some cases.
-        if (frame === true) frame = undefined;
-
         w = this.node.window;
         // Handle frame loading natively, if required.
         if (frame) {
@@ -24381,16 +24378,16 @@ if (!Array.prototype.indexOf) {
 
             }
 
+            reloadFrame = uri !== w.unprocessedUri;
             // We reload the frame if (order matters):
-            // - regardless of uri, follows what frameOptions.reload says;
-            // - it is a different uri from previous step;
-            // - it is the same uri, but different stage or round.
-            if ('undefined' !== typeof frame.reload) {
-                reloadFrame = !!frame.reload;
-            }
-            else {
-                reloadFrame = uri !== w.unprocessedUri;
-                if (!reloadFrame) {
+            // - it is a different uri from previous step,
+            // - unless frameOptions.reload is false,
+            // - or it is a different stage or round.
+            if (!reloadFrame) {
+                if ('undefined' !== typeof frame.reload) {
+                    reloadFrame = !!frame.reload;
+                }
+                else {
                     // Get the previously played step
                     // (-2, because current step is already inserted).
                     reloadFrame =
@@ -24412,13 +24409,15 @@ if (!Array.prototype.indexOf) {
                 });
             }
             else {
+                // Duplicated as below.
                 this.execCallback(cb);
-                if (w) w.adjustFrameHeight(0, 120);
+                if (w) w.adjustFrameHeight(0, 120);                
             }
         }
         else {
+            // Duplicated as above.
             this.execCallback(cb);
-            if (w) w.adjustFrameHeight(0, 120);
+            if (w) w.adjustFrameHeight(0, 120);            
         }
     };
 
@@ -32352,6 +32351,15 @@ if (!Array.prototype.indexOf) {
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
+         * ### GameWindow.styleElement
+         *
+         * A style element for on-the-fly styling
+         *
+         * @see GameWindow.cssRule
+         */
+        this.styleElement = null;
+ 
+        /**
          * ### GameWindow.isIE
          *
          * Boolean flag saying whether we are in IE or not
@@ -33520,11 +33528,11 @@ if (!Array.prototype.indexOf) {
         iframeName = this.frameName;
 
         if (!iframe) {
-            throw new Error('GameWindow.loadFrame: no frame found.');
+            throw new Error('GameWindow.loadFrame: no frame found');
         }
 
         if (!iframeName) {
-            throw new Error('GameWindow.loadFrame: frame has no name.');
+            throw new Error('GameWindow.loadFrame: frame has no name');
         }
 
         this.setStateLevel('LOADING');
@@ -34079,6 +34087,9 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // Remove on-the-fly style element reference.
+        that.styleElement = null;
+        
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
         afterScripts = function() {
@@ -35933,6 +35944,39 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### GameWindow.getScreen
+     *
+     * Add a css rule to the page
+     *
+     * @param {string} rule The css rule
+     * @param {boolean} clear Optional. TRUE to clear all previous rules
+     *   added with this method to the page
+     * 
+     * @return {Element} The HTML style element where the rules were added
+     *
+     * @see handleFrameLoad
+     */
+    GameWindow.prototype.cssRule = function(rule, clear) {
+        var root;        
+        if ('string' !== typeof rule) {
+            throw new TypeError('Game.execStep: style property must be ' +
+                                'string. Found: ' + rule);
+        }       
+        if (!this.styleElement) {
+            root = W.getFrameDocument() || window.document;
+            this.styleElement = W.append('style', root.head, {
+                type: 'text/css',
+                id: 'ng_style'
+            });
+        }
+        else if (clear) {
+            this.styleElement.innerHTML = '';
+        }
+        this.styleElement.innerHTML += rule;
+        return this.styleElement;
+    };
+
+    /**
      * ### GameWindow.write
      *
      * Appends content inside a root element
@@ -36406,7 +36450,7 @@ if (!Array.prototype.indexOf) {
      *
      * Gets and toggles the visibility of an HTML element
      *
-     * Sets the style of the display to '' or 'none'  and adjust 
+     * Sets the style of the display to '' or 'none'  and adjust
      * the frame height as necessary.
      *
      * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
@@ -39545,9 +39589,9 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|object} w The name of the widget to load or a loaded
      *   widget object
-     * @param {object} root Optional. The HTML element under which the widget
-     *   will be appended. Default: the `document.body` element of the main
-     *   frame (if one is defined), or `document.body` elment of the page
+     * @param {object|string} root Optional. The HTML element (or its id) under
+     *   which the widget will be appended. Default: `document.body` of the
+     *   frame (if one is defined) or of the page
      * @param {options} options Optional. Configuration options to be passed
      *   to the widget
      *
@@ -39564,17 +39608,6 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Widgets.append: w must be string or object. ' +
                                'Found: ' + w);
         }
-        if (root && !J.isElement(root)) {
-            throw new TypeError('Widgets.append: root must be HTMLElement ' +
-                                'or undefined. Found: ' + root);
-        }
-        if (options && 'object' !== typeof options) {
-            throw new TypeError('Widgets.append: options must be object or ' +
-                                'undefined. Found: ' + options);
-        }
-
-        // Init default values.
-        options = options || {};
 
         // If no root is defined, use the body element of the main frame,
         // if none is found, use the document.body.
@@ -39583,7 +39616,26 @@ if (!Array.prototype.indexOf) {
             if (root) root = root.body;
             if (!root) root = document.body;
         }
+        else if ('string' === typeof root) {
+            tmp = W.gid(root);
+            if (!tmp) {
+                throw new Error('Widgets.append: element with id "' + root +
+                                '" not found');
+            }
+            root = tmp;
+        }
+        if (!J.isElement(root)) {
+            throw new TypeError('Widgets.append: root must be HTMLElement, ' +
+                                'string or undefined. Found: ' + root);
+        }
 
+        if (options && 'object' !== typeof options) {
+            throw new TypeError('Widgets.append: options must be object or ' +
+                                'undefined. Found: ' + options);
+        }
+
+        // Init default values.
+        options = options || {};
         if ('undefined' === typeof options.panel) {
             if (root === W.getHeader()) options.panel = false;
         }
@@ -43678,7 +43730,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceTable.selectMultiple
          *
-         * If TRUE, it allows to select multiple cells
+         * The number of maximum simulataneous selection (>1), or false
          */
         this.selectMultiple = null;
 
@@ -44822,7 +44874,7 @@ if (!Array.prototype.indexOf) {
      * @experimental
      */
     ChoiceTable.prototype.setValues = function(options) {
-        var choice, correctChoice, cell;
+        var choice, correctChoice, cell, tmp;
         var i, len, j, lenJ;
 
         if (!this.choices || !this.choices.length) {
@@ -44834,6 +44886,7 @@ if (!Array.prototype.indexOf) {
         // Use options.visual.
 
         // TODO: allow it to set random or fixed values, or correct values
+        // TODO: set freetext or not.
 
         if (!this.choicesCells || !this.choicesCells.length) {
             throw new Error('Choicetable.setValues: table was not ' +
@@ -44868,16 +44921,48 @@ if (!Array.prototype.indexOf) {
             return;
         }
 
-        // How many random choices?
-        if (!this.selectMultiple) len = 1;
-        else len = J.randomInt(0, this.choicesCells.length);
-
+        // Set values, random or pre-set.
         i = -1;
-        for ( ; ++i < len ; ) {
-            choice = J.randomInt(0, this.choicesCells.length)-1;
-            // Do not click it again if it is already selected.
-            if (!this.isChoiceCurrent(choice)) {
+        if ('undefined' !== typeof options.values) {
+            if (this.selectMultiple) {
+                if (!J.isArray(options.values)) {
+                    throw new Error('ChoiceTable.setValues: values must be ' +
+                                    'array or undefined if selectMultiple is ' +
+                                    'truthy. Found: ' + options.values);
+                }                            
+                len = options.values.length;
+                if (len > this.selectMultiple) {
+                    throw new Error('ChoiceTable.setValues: values array ' +
+                                    'cannot be larger than selectMultiple: ' +
+                                    len +  ' > ' +  this.selectMultiple);
+                }
+                tmp = options.values;
+            }
+            else {                
+                tmp = [options.values];                
+            }
+            // Validate value.
+            for ( ; ++i < len ; ) {
+                choice = J.isInt(tmp[i], 0, this.choices.length, 1, 1);
+                if (false === choice) {
+                    throw new Error('ChoiceTable.setValues: invalid ' +
+                                    'choice value. Found: ' +
+                                    tmp[i]);
+                }
                 this.choicesCells[choice].click();
+            }
+        }
+        else {
+            // How many random choices?
+            if (!this.selectMultiple) len = 1;
+            else len = J.randomInt(0, this.choicesCells.length);
+
+            for ( ; ++i < len ; ) {
+                choice = J.randomInt(0, this.choicesCells.length)-1;
+                // Do not click it again if it is already selected.
+                if (!this.isChoiceCurrent(choice)) {
+                    this.choicesCells[choice].click();
+                }
             }
         }
 
@@ -47065,7 +47150,6 @@ if (!Array.prototype.indexOf) {
         that = this;
         e = 'CustomInput.init: ';
 
-        // TODO: this becomes false later on. Why???
         this.requiredChoice = !!opts.requiredChoice;
 
         if (opts.type) {
@@ -47645,7 +47729,7 @@ if (!Array.prototype.indexOf) {
         // Hint.
         if (this.hint) {
             W.append('span', this.spanMainText || this.bodyDiv, {
-                className: 'choicetable-hint',
+                className: 'custominput-hint',
                 innerHTML: this.hint
             });
         }
@@ -47784,7 +47868,7 @@ if (!Array.prototype.indexOf) {
      *
      * @experimental
      */
-    CustomInput.prototype.setValues = function(value) {        
+    CustomInput.prototype.setValues = function(value) {
         this.input.value = value;
     };
 
@@ -48823,7 +48907,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    EmailForm.version = '0.10.0';
+    EmailForm.version = '0.11.0';
     EmailForm.description = 'Displays a configurable email form.';
 
     EmailForm.title = 'Email';
@@ -48831,7 +48915,7 @@ if (!Array.prototype.indexOf) {
 
     EmailForm.texts.label = 'Enter your email:';
     EmailForm.texts.errString = 'Not a valid email address, ' +
-                                'please correct it and submit it again.';
+        'please correct it and submit it again.';
 
     // ## Dependencies
 
@@ -48854,7 +48938,11 @@ if (!Array.prototype.indexOf) {
          * @see Feedback.getValues
          */
         if (!options.onsubmit) {
-            this.onsubmit = { emailOnly: true, say: true, updateUI: true };
+            this.onsubmit = {
+                emailOnly: true,
+                send: true,
+                updateUI: true
+            };
         }
         else if ('object' === typeof options.onsubmit) {
             this.onsubmit = options.onsubmit;
@@ -48910,6 +48998,15 @@ if (!Array.prototype.indexOf) {
          * The email's HTML submit button
          */
         this.buttonElement = null;
+
+        /**
+         * ### EmailForm.setMsg
+         *
+         * If TRUE, a set message is sent instead of a data msg
+         *
+         * Default: FALSE
+         */
+        this.setMsg = !!options.setMsg || false;
     }
 
     // ## EmailForm methods
@@ -49046,10 +49143,12 @@ if (!Array.prototype.indexOf) {
      *                  Default: FALSE.
      *   - highlight:   If TRUE, if email is not the valid, widget is
      *                  is highlighted. Default: (updateUI || FALSE).
-     *   - say:         If TRUE, and the email is valid, then it sends
-     *                  a data msg. Default: FALSE.
-     *   - sayAnyway:   If TRUE, it sends a data msg regardless of the
-     *                  validity of the email. Default: FALSE.
+     *   - send:        If TRUE, and the email is valid, then it sends
+     *                  a data or set msg. Default: FALSE.
+     *   - sendAnyway:  If TRUE, it sends a data or set msg regardless of
+     *                  the validity of the email. Default: FALSE.
+     *   - say:         same as send, but deprecated.
+     *   - sayAnyway:   same as sendAnyway, but deprecated
      *
      * @return {string|object} The email, and optional paradata
      *
@@ -49060,6 +49159,17 @@ if (!Array.prototype.indexOf) {
     EmailForm.prototype.getValues = function(opts) {
         var email, res;
         opts = opts || {};
+
+        if ('undefined' !== typeof opts.say) {
+            console.log('***EmailForm.getValues: option say is deprecated, ' +
+                        ' use send.***');
+            opts.send = opts.say;
+        }
+        if ('undefined' !== typeof opts.sayAnyway) {
+            console.log('***EmailForm.getValues: option sayAnyway is ' +
+                        'deprecated, use sendAnyway.***');
+            opts.sendAnyway = opts.sayAnyway;
+        }
 
         email = getEmail.call(this);
 
@@ -49083,7 +49193,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Send the message.
-        if ((opts.say && res) || opts.sayAnyway) {
+        if ((opts.send && res) || opts.sendAnyway) {
             this.sendValues({ values: email });
         }
 
@@ -49112,7 +49222,13 @@ if (!Array.prototype.indexOf) {
         var values;
         opts = opts || { emailOnly: true };
         values = opts.values || this.getValues(opts);
-        node.say('email', opts.to || 'SERVER', values);
+        if (this.setMsg) {
+            if ('string' === typeof values) values = { email: values };
+            node.set(values, opts.to || 'SERVER');
+        }
+        else {
+            node.say('email', opts.to || 'SERVER', values);
+        }
         return values;
     };
 
@@ -49404,6 +49520,15 @@ if (!Array.prototype.indexOf) {
          * null initially, element added on append()
          */
         this.endScreenHTML = null;
+
+        /**
+         * ### EndScreen.askServer
+         *
+         * If TRUE, after being appended it sends a 'WIN' message to server
+         *
+         * Default: FALSE
+         */
+        this.askServer = options.askServer || false;
     }
 
     EndScreen.prototype.init = function(options) {
@@ -49426,6 +49551,7 @@ if (!Array.prototype.indexOf) {
     EndScreen.prototype.append = function() {
         this.endScreenHTML = this.makeEndScreen();
         this.bodyDiv.appendChild(this.endScreenHTML);
+        if (this.askServer) setTimeout(function() { node.say('WIN'); });
     };
 
     /**
@@ -50015,6 +50141,15 @@ if (!Array.prototype.indexOf) {
          */
         this.submitButton = null;
 
+        /**
+         * ### Feedback.setMsg
+         *
+         * If TRUE, a set message is sent instead of a data msg
+         *
+         * Default: FALSE
+         */
+        this.setMsg = !!options.setMsg || false;
+
     }
 
     // ## Feedback methods
@@ -50199,7 +50334,7 @@ if (!Array.prototype.indexOf) {
         }
 
         this.textareaElement = W.append('textarea', this.feedbackForm, {
-            className: 'feedback-textarea form-control',
+            className: 'form-control feedback-textarea',
             type: 'text',
             rows: this.rows
         });
@@ -50274,10 +50409,12 @@ if (!Array.prototype.indexOf) {
      *                  Default: FALSE.
      *   - highlight:   If TRUE, if feedback is not the valid, widget is
      *                  is highlighted. Default: (updateUI || FALSE).
-     *   - say:         If TRUE, and the feedback is valid, then it sends
-     *                  a data msg. Default: FALSE.
-     *   - sayAnyway:   If TRUE, it sends a data msg regardless of the
-     *                  validity of the feedback. Default: FALSE.
+     *   - send:        If TRUE, and the email is valid, then it sends
+     *                  a data or set msg. Default: FALSE.
+     *   - sendAnyway:  If TRUE, it sends a data or set msg regardless of
+     *                  the validity of the email. Default: FALSE.
+     *   - say:         same as send, but deprecated.
+     *   - sayAnyway:   same as sendAnyway, but deprecated
      *
      * @return {string|object} The feedback, and optional paradata
      *
@@ -50289,6 +50426,17 @@ if (!Array.prototype.indexOf) {
         var feedback, feedbackBr, res;
 
         opts = opts || {};
+
+        if ('undefined' !== typeof opts.say) {
+            console.log('***EmailForm.getValues: option say is deprecated, ' +
+                        ' use send.***');
+            opts.send = opts.say;
+        }
+        if ('undefined' !== typeof opts.sayAnyway) {
+            console.log('***EmailForm.getValues: option sayAnyway is ' +
+                        'deprecated, use sendAnyway.***');
+            opts.sendAnyway = opts.sayAnyway;
+        }
 
         feedback = getFeedback.call(this);
 
@@ -50312,7 +50460,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Send the message.
-        if ((opts.say && res) || opts.sayAnyway) {
+        if ((opts.send && res) || opts.sendAnyway) {
             this.sendValues({ values: feedback });
             if (opts.updateUI) {
                 this.submitButton.setAttribute('value', this.getText('sent'));
@@ -50346,7 +50494,13 @@ if (!Array.prototype.indexOf) {
         var values;
         opts = opts || { feedbackOnly: true };
         values = opts.values || this.getValues(opts);
-        node.say('feedback', opts.to || 'SERVER', values);
+        if (this.setMsg) {
+            if ('string' === typeof values) values = { feedback: values };
+            node.set(values, opts.to || 'SERVER');
+        }
+        else {
+            node.say('feedback', opts.to || 'SERVER', values);
+        }
         return values;
     };
 
