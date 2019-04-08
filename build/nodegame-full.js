@@ -24411,13 +24411,13 @@ if (!Array.prototype.indexOf) {
             else {
                 // Duplicated as below.
                 this.execCallback(cb);
-                if (w) w.adjustFrameHeight(0, 120);                
+                if (w) w.adjustFrameHeight(0, 120);
             }
         }
         else {
             // Duplicated as above.
             this.execCallback(cb);
-            if (w) w.adjustFrameHeight(0, 120);            
+            if (w) w.adjustFrameHeight(0, 120);
         }
     };
 
@@ -32358,7 +32358,7 @@ if (!Array.prototype.indexOf) {
          * @see GameWindow.cssRule
          */
         this.styleElement = null;
- 
+
         /**
          * ### GameWindow.isIE
          *
@@ -34089,7 +34089,7 @@ if (!Array.prototype.indexOf) {
 
         // Remove on-the-fly style element reference.
         that.styleElement = null;
-        
+
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
         afterScripts = function() {
@@ -35944,24 +35944,24 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### GameWindow.getScreen
+     * ### GameWindow.cssRule
      *
      * Add a css rule to the page
      *
      * @param {string} rule The css rule
      * @param {boolean} clear Optional. TRUE to clear all previous rules
      *   added with this method to the page
-     * 
+     *
      * @return {Element} The HTML style element where the rules were added
      *
      * @see handleFrameLoad
      */
     GameWindow.prototype.cssRule = function(rule, clear) {
-        var root;        
+        var root;
         if ('string' !== typeof rule) {
             throw new TypeError('Game.execStep: style property must be ' +
                                 'string. Found: ' + rule);
-        }       
+        }
         if (!this.styleElement) {
             root = W.getFrameDocument() || window.document;
             this.styleElement = W.append('style', root.head, {
@@ -43286,6 +43286,22 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### ChoiceManager.reset
+     *
+     * Resets all forms
+     *
+     * @param {object} opts Optional. Reset options to pass each form
+     */
+    ChoiceManager.prototype.reset = function(opts) {
+        var i, len;
+        i = -1;
+        len = this.forms.length;
+        for ( ; ++i < len ; ) {
+            this.forms[i].reset(opts);
+        }
+    };
+
+    /**
      * ### ChoiceManager.getValues
      *
      * Returns the values for current selection and other paradata
@@ -43319,7 +43335,7 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             form = this.forms[i];
             obj.forms[form.id] = form.getValues(opts);
-            if (obj.forms[form.id].requiredChoice &&
+            if (form.requiredChoice &&
                 (obj.forms[form.id].choice === null ||
                  (form.selectMultiple && !obj.forms[form.id].choice.length))) {
 
@@ -43329,6 +43345,7 @@ if (!Array.prototype.indexOf) {
                 obj.isCorrect = false;
             }
         }
+        if (obj.missValues.length) obj.isCorrect = false;
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
     };
@@ -44929,7 +44946,7 @@ if (!Array.prototype.indexOf) {
                     throw new Error('ChoiceTable.setValues: values must be ' +
                                     'array or undefined if selectMultiple is ' +
                                     'truthy. Found: ' + options.values);
-                }                            
+                }
                 len = options.values.length;
                 if (len > this.selectMultiple) {
                     throw new Error('ChoiceTable.setValues: values array ' +
@@ -44938,8 +44955,8 @@ if (!Array.prototype.indexOf) {
                 }
                 tmp = options.values;
             }
-            else {                
-                tmp = [options.values];                
+            else {
+                tmp = [options.values];
             }
             // Validate value.
             for ( ; ++i < len ; ) {
