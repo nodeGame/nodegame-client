@@ -1,5 +1,10 @@
 # nodegame-client change log
 
+## 5.2.0
+- Game.execStep order of options to reload the frame has been updated. First,
+it checks if frame uri is different, and then looks if there is an option to
+force reload.
+
 ## 5.1.0
 - Step property frame===true keeps the same frame (useful in widget steps).
 - Game.execStep calls W.adjustFrameHeight even when no new frame is loaded. This fixes the problem of incorrect frame height in some cases.
