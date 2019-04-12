@@ -10103,7 +10103,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.1.0';
+    node.version = '5.2.0';
 
 })(window);
 
@@ -24969,20 +24969,35 @@ if (!Array.prototype.indexOf) {
      * Returns the game-stage played delta steps ago
      *
      * @param {number} delta Optional. The number of past steps. Default 1
+     * @param {bolean} execLoops Optional. This paIf true, loop and doLoop
+     *   conditional function will be executed to determine the previous stage.
+     *   If false, null will be returned when a loop or doLoop is found
+     *   and more evaluations are still required. Default: true.
      *
      * @return {GameStage|null} The game-stage played delta steps ago,
      *   or null if none is found
      */
-    Game.prototype.getPreviousStep = function(delta) {
+    Game.prototype.getPreviousStep = function(delta, execLoops) {
         var len;
         delta = delta || 1;
         if ('number' !== typeof delta || delta < 1) {
             throw new TypeError('Game.getPreviousStep: delta must be a ' +
-                                'positive number or undefined: ', delta);
+                                'positive number or undefined. Found: ' +
+                                delta);
         }
         len = this._steppedSteps.length - delta - 1;
-        if (len < 0) return null;
-        return this._steppedSteps[len];
+        // In position 0 there is 0.0.0, which is added also in case
+        // of a reconnection. All the scenarios that this complicated:
+        // - Server could store all stepped steps and send them back
+        //     upon reconnection, but it would miss steps stepped while client
+        //     was disconnected.
+        // - Server could send all steps stepped by logic, but it would not
+        //     work if syncStepping is disabled. 
+        if (len > 0) return this._steppedSteps[len];
+
+        // It is possible that it is a reconnection, so we are missing
+        // stepped steps. Let's do a deeper lookup.
+        return this.plot.jump(this.getCurrentGameStage(), -delta);
     };
 
     /**
