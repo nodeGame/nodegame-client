@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## current
+- Game.getPreviousStep falls back on GamePlot.jump in case of necessity, such
+as a reconnection.
+
 ## 5.2.0
 - Game.execStep order of options to reload the frame has been updated. First,
 it checks if frame uri is different, and then looks if there is an option to
