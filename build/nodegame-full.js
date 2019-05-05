@@ -4269,6 +4269,25 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ## OBJ.randomKey
+     *
+     * Returns a random key from an existing object
+     *
+     * @param {object} obj The object from which the key will be extracted
+     *
+     * @return {string} The random key 
+     */
+    OBJ.randomKey = function(obj) {
+        var keys;
+        if ('object' !== typeof obj) {
+            throw new TypeError('OBJ.randomKey: obj must be object. ' +
+                                'Found: ' + obj);
+        }
+        keys = Object.keys(obj);
+        return keys[ keys.length * Math.random() << 0];
+    };
+    
+    /**
      * ## OBJ.augment
      *
      * Pushes the values of the properties of an object into another one
@@ -4391,7 +4410,8 @@ if (!Array.prototype.indexOf) {
     OBJ.getKeyByValue = function(obj, value, allKeys) {
         var key, out;
         if ('object' !== typeof obj) {
-            throw new TypeError('OBJ.getKeyByValue: obj must be object.');
+            throw new TypeError('OBJ.getKeyByValue: obj must be object. ' +
+                                'Found: ' + obj);
         }
         if (allKeys) out = [];
         for (key in obj) {
@@ -4411,16 +4431,29 @@ if (!Array.prototype.indexOf) {
      * Returns a new object where they keys and values are switched
      *
      * @param {object} obj The object to reverse
+     * @param {function} cb Optional. A callback processing a key-value pair.
+     *   Takes as inputs current key and value and must return an array with
+     *   updated key and value: [ newKey, newValue ].
      *
      * @return {object} The reversed object
      */
-    OBJ.reverseObj = function(o) {
+    OBJ.reverseObj = function(o, cb) {
         var k, res;
+        if (cb && 'function' !== typeof cb) {
+            throw new TypeError('OBJ.reverseObj: cb must be function or ' +
+                                'undefined. Found: ' + cb);
+        }
         res = {};
         if (!o) return res;
         for (k in o) {
             if (o.hasOwnProperty(k)) {
-                res[o[k]] = k;
+                if (cb) {
+                    k = cb(k, o[k]);
+                    res[k[1]] = res[k[0]];
+                }
+                else {
+                    res[o[k]] = k;
+                }
             }
         }
         return res;
@@ -4499,6 +4532,43 @@ if (!Array.prototype.indexOf) {
         if (a === b) return a;
         return Math.floor(RANDOM.random(a, b) + 1);
     };
+
+    /**
+     * ## RANDOM.randomDate
+     *
+     * Generates a pseudo-random date between 
+     *
+     * @param {Date} startDate The lower date
+     * @param {Date} endDate Optional. The upper date. Default: today.
+     *
+     * @return {number} A random date in the chosen interval
+     *
+     * @see RANDOM.randomDate
+     */
+    RANDOM.randomDate = (function() {
+        function isValidDate(date) {
+            return date &&
+                Object.prototype.toString.call(date) === "[object Date]" &&
+                !isNaN(date);
+        }
+        return function(startDate, endDate) {
+            if (!isValidDate(startDate)) {
+                throw new TypeError('randomDate: startDate must be a valid ' +
+                                    'date. Found: ' + startDate);
+            }
+            if (endDate) {
+                if (!isValidDate(endDate)) {
+                    throw new TypeError('randomDate: endDate must be a valid ' +
+                                        'date or undefined. Found: ' + endDate);
+                }
+            }
+            else {
+                endDate = new Date();
+            }
+            return new Date(startDate.getTime() + Math.random() *
+                            (endDate.getTime() - startDate.getTime()));
+        };
+    })();
 
     /**
      * ## RANDOM.sample
@@ -24273,7 +24343,8 @@ if (!Array.prototype.indexOf) {
                 else {
                     opts = { highlight: false, markAttempt: false };
                 }
-
+                // Under some special conditions (e.g., very fast DONE
+                // clicking this can be null. TODO: check why.
                 values = this[widget.ref].getValues(opts);
 
                 // If it is not timeup, and user did not
@@ -24969,13 +25040,19 @@ if (!Array.prototype.indexOf) {
      * Returns the game-stage played delta steps ago
      *
      * @param {number} delta Optional. The number of past steps. Default 1
-     * @param {bolean} execLoops Optional. This paIf true, loop and doLoop
+     * @param {bolean} execLoops Optional. If true, loop and doLoop
      *   conditional function will be executed to determine the previous stage.
      *   If false, null will be returned when a loop or doLoop is found
-     *   and more evaluations are still required. Default: true.
+     *   and more evaluations are still required. Note! This parameter is
+     *   evaluated only if no stage is found in the cache of stepped steps.
+     *   Default: true.
      *
      * @return {GameStage|null} The game-stage played delta steps ago,
-     *   or null if none is found
+     *   null if an error occurred (e.g., a loop stage), or stage 0.0.0 for
+     *   all deltas > steppable steps (i.e., previous of 0.0.0 is 0.0.0).
+     *
+     * @see Game._steppedSteps
+     * @see GamePlot.jump
      */
     Game.prototype.getPreviousStep = function(delta, execLoops) {
         var len;
@@ -24987,17 +25064,18 @@ if (!Array.prototype.indexOf) {
         }
         len = this._steppedSteps.length - delta - 1;
         // In position 0 there is 0.0.0, which is added also in case
-        // of a reconnection. All the scenarios that this complicated:
-        // - Server could store all stepped steps and send them back
-        //     upon reconnection, but it would miss steps stepped while client
-        //     was disconnected.
-        // - Server could send all steps stepped by logic, but it would not
-        //     work if syncStepping is disabled. 
+        // of a reconnection.
         if (len > 0) return this._steppedSteps[len];
 
         // It is possible that it is a reconnection, so we are missing
         // stepped steps. Let's do a deeper lookup.
         return this.plot.jump(this.getCurrentGameStage(), -delta);
+        // For future reference, why is this complicated:
+        // - Server could store all stepped steps and send them back
+        //     upon reconnection, but it would miss steps stepped while client
+        //     was disconnected.
+        // - Server could send all steps stepped by logic, but it would not
+        //     work if syncStepping is disabled.
     };
 
     /**
@@ -33899,7 +33977,7 @@ if (!Array.prototype.indexOf) {
      */
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
-
+        
         adjustIt = function(userMinHeight) {
             var iframe, minHeight, contentHeight;
 
@@ -33908,7 +33986,11 @@ if (!Array.prototype.indexOf) {
             iframe = W.getFrame();
             // Iframe might have been destroyed already, e.g. in a test.
             if (!iframe || !iframe.contentWindow) return;
-
+            // Frame might be loading slowly, let's try again later.
+            if (!iframe.contentWindow.document.body) {
+                W.adjustFrameHeight(userMinHeight, 120);
+                return;
+            }
             // Try to find out how tall the frame should be.
             minHeight = window.innerHeight || window.clientHeight;
 
@@ -40043,7 +40125,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### BackButton.acrossStages
          *
-         * If TRUE, the Back button allows to go back within the same stage only
+         * If TRUE, it allows to go back to previous stages
          *
          * Default: FALSE
          */
@@ -40052,7 +40134,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### BackButton.acrossRounds
          *
-         * If TRUE, the Back button allows to go back within the same stage only
+         * If TRUE, it allows to go back previous rounds in the same stage
          *
          * Default: TRUE
          */
@@ -43329,7 +43411,7 @@ if (!Array.prototype.indexOf) {
      *   - markAttempt: If TRUE, getting the value counts as an attempt
      *      to find the correct answer. Default: TRUE.
      *   - highlight:   If TRUE, forms that do not have a correct value
-     *      will be highlighted. Default: FALSE.
+     *      will be highlighted. Default: TRUE.
      *
      * @return {object} Object containing the choice and paradata
      *
@@ -43344,20 +43426,33 @@ if (!Array.prototype.indexOf) {
             missValues: []
         };
         opts = opts || {};
+        if ('undefined' === typeof opts.markAttempt) opts.markAttempt = true;
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
         if (opts.markAttempt) obj.isCorrect = true;
-        opts = opts || {};
         i = -1, len = this.forms.length;
         for ( ; ++i < len ; ) {
             form = this.forms[i];
-            obj.forms[form.id] = form.getValues(opts);
-            if (form.requiredChoice &&
-                (obj.forms[form.id].choice === null ||
-                 (form.selectMultiple && !obj.forms[form.id].choice.length))) {
-
-                obj.missValues.push(form.id);
+            // If it is hidden or disabled we do not do validation.
+            if (form.isHidden() || form.isDisabled()) {
+                obj.forms[form.id] = form.getValues({
+                    markAttempt: false,
+                    highlight: false
+                });
             }
-            if (opts.markAttempt && obj.forms[form.id].isCorrect === false) {
-                obj.isCorrect = false;
+            else {
+                obj.forms[form.id] = form.getValues(opts);
+                if (form.requiredChoice &&
+                    (obj.forms[form.id].choice === null ||
+                     (form.selectMultiple &&
+                      !obj.forms[form.id].choice.length))) {
+
+                    obj.missValues.push(form.id);
+                }
+                if (opts.markAttempt &&
+                    obj.forms[form.id].isCorrect === false) {
+
+                    obj.isCorrect = false;
+                }
             }
         }
         if (obj.missValues.length) obj.isCorrect = false;
@@ -43412,7 +43507,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.5.1';
+    ChoiceTable.version = '1.6.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -43441,7 +43536,9 @@ if (!Array.prototype.indexOf) {
                 res += 'select at least ' + w.requiredChoice;
             }
         }
-        return res + ')';
+        res += ')';
+        if (w.requiredChoice) res += ' *';
+        return res;
     };
 
     ChoiceTable.separator = '::';
@@ -43505,7 +43602,6 @@ if (!Array.prototype.indexOf) {
 
             // Not a clickable choice.
             if ('undefined' === typeof that.choicesIds[td.id]) return;
-
 
             // Relative time.
             if ('string' === typeof that.timeFrom) {
@@ -43573,7 +43669,12 @@ if (!Array.prototype.indexOf) {
             if (that.isHighlighted()) that.unhighlight();
 
             // Call onclick, if any.
-            if (that.onclick) that.onclick.call(that, value, td, removed);
+            if (that.onclick) {
+                // TODO: Should we parseInt it anyway when we store
+                // the current choice?
+                value = parseInt(value, 10);
+                that.onclick.call(that, value, removed, td);
+            }
         };
 
         /**
@@ -44019,6 +44120,7 @@ if (!Array.prototype.indexOf) {
         // Set the hint, if any.
         if ('string' === typeof options.hint || false === options.hint) {
             this.hint = options.hint;
+            if (this.requiredChoice) this.hint += ' *';
         }
         else if ('undefined' !== typeof options.hint) {
             throw new TypeError('ChoiceTable.init: options.hint must ' +
@@ -44831,7 +44933,7 @@ if (!Array.prototype.indexOf) {
      *   - markAttempt: If TRUE, getting the value counts as an attempt
      *       to find the correct answer. Default: TRUE.
      *   - highlight:   If TRUE, if current value is not the correct
-     *       value, widget will be highlighted. Default: FALSE.
+     *       value, widget will be highlighted. Default: TRUE.
      *   - reset:       If TRUTHY and a correct choice is selected (or not
      *       specified), then it resets the state of the widgets before
      *       returning it. Default: FALSE.
@@ -44851,6 +44953,7 @@ if (!Array.prototype.indexOf) {
             time: this.timeCurrentChoice,
             nClicks: this.numberOfClicks
         };
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
         if (opts.processChoice) {
             obj.choice = opts.processChoice.call(this, obj.choice);
         }
@@ -45165,7 +45268,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.5.0';
+    ChoiceTableGroup.version = '1.6.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
@@ -46091,7 +46194,7 @@ if (!Array.prototype.indexOf) {
      *   - markAttempt: If TRUE, getting the value counts as an attempt
      *      to find the correct answer. Default: TRUE.
      *   - highlight:   If TRUE, if current value is not the correct
-     *      value, widget will be highlighted. Default: FALSE.
+     *      value, widget will be highlighted. Default: TRUE.
      *   - reset:    If TRUTHY and no item raises an error,
      *       then it resets the state of all items before
      *       returning it. Default: FALSE.
@@ -46110,6 +46213,7 @@ if (!Array.prototype.indexOf) {
             isCorrect: true
         };
         opts = opts || {};
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
         // Make sure reset is done only at the end.
         toReset = opts.reset;
         opts.reset = false;
@@ -46128,9 +46232,9 @@ if (!Array.prototype.indexOf) {
                 toHighlight = true;
             }
         }
-
-        if (toHighlight) this.highlight();
+        if (opts.highlight && toHighlight) this.highlight();
         else if (toReset) this.reset(toReset);
+        opts.reset = toReset;
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
     };
@@ -46814,7 +46918,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    CustomInput.version = '0.8.0';
+    CustomInput.version = '0.9.0';
     CustomInput.description = 'Creates a configurable input form';
 
     CustomInput.title = false;
@@ -46828,7 +46932,9 @@ if (!Array.prototype.indexOf) {
         'int': true,
         date: true,
         list: true,
-        us_city_state_zip: true
+        us_city_state_zip: true,
+        us_state: true,
+        us_zip: true
     };
 
     var sepNames = {
@@ -46907,6 +47013,13 @@ if (!Array.prototype.indexOf) {
     var usStatesByAbbr;
     var usStatesTerr;
     var usStatesTerrByAbbr;
+    // Lower case keys.
+    var usStatesLow;
+    var usTerrLow;
+    var usTerrByAbbrLow;
+    var usStatesByAbbrLow;
+    var usStatesTerrLow;
+    var usStatesTerrByAbbrLow;
 
     CustomInput.texts = {
         listErr: 'Check that there are no empty items; do not end with ' +
@@ -46921,13 +47034,21 @@ if (!Array.prototype.indexOf) {
             return 'Too many items. Max: ' + w.params.maxItems;
 
         },
-        usStateErr: 'Not valid state abbreviation (must be 2 characters)',
-        usZipErr: 'Not valid ZIP code (must be 5-digits)',
+        usStateAbbrErr: 'Not a valid state abbreviation (must be 2 characters)',
+        usStateErr: 'Not a valid state (full name required)',
+        usZipErr: 'Not a valid ZIP code (must be 5 digits)',
         autoHint: function(w) {
             var res, sep;
             if (w.type === 'list') {
                 sep = sepNames[w.params.listSep] || w.params.listSep;
                 res = '(if more than one, separate with ' + sep + ')';
+            }
+            else if (w.type === 'us_state') {
+                res = w.params.abbr ? '(Use 2-letter abbreviation)' :
+                    '(Type the full name of the state)';
+            }
+            else if (w.type === 'us_zip') {
+                res = '(Use 5-digit ZIP code)';
             }
             else if (w.type === 'us_city_state_zip') {
                 sep = w.params.listSep;
@@ -46962,7 +47083,7 @@ if (!Array.prototype.indexOf) {
                     res = '(Must be before ' + w.params.max + ')';
                 }
             }
-            return w.requiredChoice ? ((res || '') + '*') : (res || false);
+            return w.requiredChoice ? ((res || '') + ' *') : (res || false);
         },
         numericErr: function(w) {
             var str, p;
@@ -47018,7 +47139,7 @@ if (!Array.prototype.indexOf) {
             return 'Must follow format ' + w.params.format;
         },
         emptyErr: function(w) {
-            return 'Cannot be empty'
+            return 'Cannot be empty';
         }
     };
 
@@ -47166,6 +47287,27 @@ if (!Array.prototype.indexOf) {
          * When the last character was inserted
          */
         this.timeEnd = null;
+
+        /**
+         * ### CustomInput.checkbox
+         *
+         * A checkbox element for an additional action
+         */
+        this.checkbox = null;
+
+        /**
+         * ### CustomInput.checkboxText
+         *
+         * The text next to the checkbox
+         */
+        this.checkboxText = null;
+
+        /**
+         * ### CustomInput.checkboxCb
+         *
+         * The callback executed when the checkbox is clicked
+         */
+        this.checkboxCb = null;
     }
 
     // ## CustomInput methods
@@ -47178,7 +47320,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} opts Configuration options
      */
     CustomInput.prototype.init = function(opts) {
-        var tmp, that, e, isText;
+        var tmp, that, e, isText, setValues;
         that = this;
         e = 'CustomInput.init: ';
 
@@ -47312,6 +47454,15 @@ if (!Array.prototype.indexOf) {
                         if (err) out.err = that.getText('textErr', len);
                         return out;
                     };
+
+                    setValues = function(opts) {
+                        var a, b;
+                        a = 'undefined' !== typeof that.params.lower ?
+                            (that.params.lower + 1) : 5;
+                        b = 'undefined' !== typeof that.params.upper ?
+                            that.params.upper : (a + 5);
+                        return J.randomString(J.randomInt(a, b));
+                    };
                 }
                 else {
                     tmp = (function() {
@@ -47330,6 +47481,21 @@ if (!Array.prototype.indexOf) {
                             };
                         };
                     })();
+
+                    setValues = function(opts) {
+                        var p, a, b;
+                        p = that.params;
+                        if (that.type === 'float') return J.random();
+                        a = 0;
+                        b = 10;
+                        if ('undefined' !== typeof p.lower) {
+                            a = p.leq ? (p.lower - 1) : p.lower;
+                        }
+                        if ('undefined' !== typeof p.upper) {
+                            b = p.ueq ? p.upper : (p.upper - 1);
+                        }
+                        return J.randomInt(a, b);
+                    };
                 }
 
                 // Preset inputWidth.
@@ -47474,7 +47640,79 @@ if (!Array.prototype.indexOf) {
                     }
                     return res;
                 };
+
+                setValues = function(opts) {
+                    var p, minD, maxD, d, day, month, year;
+                    p = that.params;
+                    minD = p.minDate ? p.minDate.obj : new Date('01/01/1900');
+                    maxD = p.maxDate ? p.maxDate.obj : undefined;
+                    d = J.randomDate(minD, maxD);
+                    day = d.getDate();
+                    month = (d.getMonth() + 1);
+                    year = d.getFullYear();
+                    if (p.yearDigits === 2) year = ('' + year).substr(2);
+                    if (p.monthPos === 0) d = month + p.sep + day;
+                    else d = day + p.sep + month;
+                    d += p.sep + year;
+                    return d;
+                };
             }
+            else if (this.type === 'us_state') {
+                if (opts.abbreviation) {
+                    this.params.abbr = true;
+                    this.inputWidth = '100px';
+                }
+                else {
+                    this.inputWidth = '200px';
+                }
+                if (opts.territories !== false) {
+                    this.terr = true;
+                    if (this.params.abbr) {
+                        tmp = getUsStatesList('usStatesTerrByAbbrLow');
+                    }
+                    else {
+                        tmp = getUsStatesList('usStatesTerrLow');
+                    }
+                }
+                else {
+                    if (this.params.abbr) {
+                        tmp = getUsStatesList('usStatesByAbbrLow');
+                    }
+                    else {
+                        tmp = getUsStatesList('usStatesLow');
+                    }
+                }
+                this.params.usStateVal = tmp;
+
+                tmp = function(value) {
+                    var res;
+                    res = { value: value };
+                    if (!that.params.usStateVal[value.toLowerCase()]) {
+                        res.err = that.getText('usStateErr');
+                    }
+                    return res;
+                };
+
+                setValues = function(opts) {
+                    return J.randomKey(that.params.usStateVal);
+                };
+
+            }
+            else if (this.type === 'us_zip') {
+                tmp = function(value) {
+                    var res;
+                    res = { value: value };
+                    if (!isValidUSZip(value)) {
+                        res.err = that.getText('usZipErr');
+                    }
+                    return res;
+                };
+
+                setValues = function(opts) {
+                    return Math.floor(Math.random()*90000) + 10000;
+                };
+            }
+
             // Lists.
 
             else if (this.type === 'list' ||
@@ -47493,21 +47731,18 @@ if (!Array.prototype.indexOf) {
                 }
 
                 if (this.type === 'us_city_state_zip') {
-                    // Create validation abbr.
-                    if (!usStatesTerrByAbbr) {
-                        usStatesTerr = J.mixin(usStates, usTerr);
-                        usStatesTerrByAbbr = J.reverseObj(usStatesTerr);
-                    }
+
+                    getUsStatesList('usStatesTerrByAbbr');
                     this.params.minItems = this.params.maxItems = 3;
                     this.params.fixedSize = true;
                     this.params.itemValidation = function(item, idx) {
                         if (idx === 2) {
                             if (!usStatesTerrByAbbr[item.toUpperCase()]) {
-                                return { err: that.getText('usStateErr') };
+                                return { err: that.getText('usStateAbbrErr') };
                             }
                         }
                         else if (idx === 3) {
-                            if (item.length !== 5 || !J.isInt(item, 0)) {
+                            if (!isValidUSZip(item)) {
                                 return { err: that.getText('usZipErr') };
                             }
                         }
@@ -47596,7 +47831,43 @@ if (!Array.prototype.indexOf) {
                         return { err: that.getText('listSizeErr', 'max') };
                     }
                     return { value: value };
+                };
+
+                if (this.type === 'us_city_state_zip') {
+                    setValues = function(opts) {
+                        var sep;
+                        sep = that.params.listSep + ' ';
+                        return J.randomString(8) + sep +
+                            J.randomKey(usStatesTerrByAbbr) + sep +
+                            (Math.floor(Math.random()*90000) + 10000);
+                    };
                 }
+                else {
+                    setValues = function(opts) {
+                        var p, minItems, nItems, i, str, sample;
+                        p = that.params;
+                        minItems = p.minItems || 0;
+                        if (opts.availableValues) {
+                            nItems = J.randomInt(minItems,
+                                                 opts.availableValues.length); 
+                            nItems--;
+                            sample = J.sample(0, (nItems-1));
+                        }
+                        else {
+                            nItems = J.randomInt(minItems,
+                                                 p.maxItems || (minItems + 5));
+                            nItems--;
+                        }
+                        str = '';
+                        for (i = 0; i < nItems; i++) {
+                            if (i !== 0) str += p.listSep + ' ';
+                            if (sample) str += opts.availableValues[sample[i]];
+                            else str += J.randomString(J.randomInt(3,10));
+                        }
+                        return str;
+                    };
+                }
+
             }
 
             // US_Town,State, Zip Code
@@ -47619,7 +47890,7 @@ if (!Array.prototype.indexOf) {
             return res;
         };
 
-
+        this._setValues = setValues;
 
         // Preprocess
 
@@ -47719,6 +47990,7 @@ if (!Array.prototype.indexOf) {
                                     'undefined. Found: ' + opts.hint);
             }
             this.hint = opts.hint;
+            if (this.requiredChoice) this.hint += ' *';
         }
         else {
             this.hint = this.getText('autoHint');
@@ -47736,6 +48008,26 @@ if (!Array.prototype.indexOf) {
                                     'undefined. Found: ' + opts.width);
             }
             this.inputWidth = opts.width;
+        }
+
+        if (opts.checkboxText) {
+            if ('string' !== typeof opts.checkboxText) {
+                throw new TypeError(e + 'checkboxText must be string or ' +
+                                    'undefined. Found: ' + opts.checkboxText);
+            }
+            this.checkboxText = opts.checkboxText;
+        }
+
+        if (opts.checkboxCb) {
+            if (!this.checkboxText) {
+                throw new TypeError(e + 'checkboxCb cannot be defined ' +
+                                    'if checkboxText is not defined');
+            }
+            if ('function' !== typeof opts.checkboxCb) {
+                throw new TypeError(e + 'checkboxCb must be function or ' +
+                                    'undefined. Found: ' + opts.checkboxCb);
+            }
+            this.checkboxCb = opts.checkboxCb;
         }
     };
 
@@ -47793,6 +48085,25 @@ if (!Array.prototype.indexOf) {
         this.input.onclick = function() {
             if (that.isHighlighted()) that.unhighlight();
         };
+
+
+        // Checkbox.
+        if (this.checkboxText) {
+            this.checkbox = W.append('input', this.bodyDiv, {
+                type: 'checkbox',
+                className: 'custominput-checkbox'
+            });
+            W.append('span', this.bodyDiv, {
+                className: 'custominput-checkbox-text',
+                innerHTML: this.checkboxText
+            });
+
+            if (this.checkboxCb) {
+                J.addEvent(this.checkbox, 'change', function() {
+                    that.checkboxCb(that.checkbox.checked, that);
+                });
+            }
+        }
     };
 
     /**
@@ -47813,7 +48124,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### CustomInput.highlight
      *
-     * Highlights the choice table
+     * Highlights the input
      *
      * @param {string} The style for the table's border.
      *   Default '3px solid red'
@@ -47834,7 +48145,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### CustomInput.unhighlight
      *
-     * Removes highlight from the choice table
+     * Removes highlight from the input
      *
      * @see CustomInput.highlighted
      */
@@ -47844,6 +48155,42 @@ if (!Array.prototype.indexOf) {
         this.highlighted = false;
         this.errorBox.innerHTML = '';
         this.emit('unhighlighted');
+    };
+
+    /**
+     * ### CustomInput.disable
+     *
+     * Disables the widget
+     *
+     * @see CustomInput.disabled
+     */
+    CustomInput.prototype.disable = function(opts) {
+        if (this.disabled) return;
+        if (!this.isAppended()) return;
+        this.disabled = true;
+        this.input.disabled = true;
+        if (this.checkbox && (!opts || opts.checkbox !== false)) {
+            this.checkbox.disable = true;
+        }
+        this.emit('disabled');
+    };
+
+    /**
+     * ### CustomInput.enable
+     *
+     * Enables the widget
+     *
+     * @see CustomInput.disabled
+     */
+    CustomInput.prototype.enable = function(opts) {
+        if (this.disabled !== true) return;
+        if (!this.isAppended()) return;
+        this.disabled = false;
+        this.input.disabled = false;
+        if (this.checkbox && (!opts || opts.checkbox !== false)) {
+            this.checkbox.disable = false;
+        }
+        this.emit('enabled');
     };
 
     /**
@@ -47865,6 +48212,15 @@ if (!Array.prototype.indexOf) {
      * The postprocess function is called if specified
      *
      * @param {object} opts Optional. Configures the return value.
+     *   Available options:
+     *
+     *   - markAttempt: If TRUE, getting the value counts as an attempt
+     *       to find the correct answer. Default: TRUE.
+     *   - highlight:   If TRUE, if current value is not the correct
+     *       value, widget will be highlighted. Default: TRUE.
+     *   - reset:       If TRUTHY and a correct choice is selected (or not
+     *       specified), then it resets the state of the widgets before
+     *       returning it. Default: FALSE.
      *
      * @return {mixed} The value in the input
      *
@@ -47874,19 +48230,23 @@ if (!Array.prototype.indexOf) {
     CustomInput.prototype.getValues = function(opts) {
         var res, valid;
         opts = opts || {};
+        if ('undefined' === typeof opts.markAttempt) opts.markAttempt = true;
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
         res = this.input.value;
         res = this.validation ? this.validation(res) : { value: res };
-        res.isCorrect = valid = !res.err;
+        valid = !res.err;
         res.timeBegin = this.timeBegin;
         res.timeEnd = this.timeEnd;
         if (this.postprocess) res.value = this.postprocess(res.value, valid);
         if (!valid) {
-            this.setError(res.err);
-            res.isCorrect = false;
+            if (opts.highlight) this.setError(res.err);
+            if (opts.markAttempt) res.isCorrect = false;
         }
-        else if (opts.reset) {
-            this.reset();
+        else {
+            if (opts.markAttempt) res.isCorrect = true;
+            if (opts.reset) this.reset();
         }
+        if (this.checkbox) res.checked = this.checkbox.checked;
         res.id = this.id;
         return res;
     };
@@ -47896,12 +48256,40 @@ if (!Array.prototype.indexOf) {
      *
      * Set the value of the input form
      *
-     * @param {string} The error msg (can contain HTML)
+     * @param {object} opts An object containing values or info about how
+     *   how to set values.
      *
      * @experimental
      */
-    CustomInput.prototype.setValues = function(value) {
+    CustomInput.prototype.setValues = function(opts) {
+        var value, tmp;
+        if (opts && 'undefined' !== typeof opts.value) {
+            value = opts.value;
+        }
+        else if (opts.availableValues) {
+            tmp = opts.availableValues;
+            if (!J.isArray(tmp) || !tmp.length) {
+                throw new TypeError('CustomInput.setValues: availableValues ' +
+                                    'must be a non-empty array or undefined. ' +
+                                    'Found: ' + tmp);
+            }
+            if (this.type === 'list') {
+                if (tmp.length < this.params.minItems) {
+                    throw new Error('CustomInput.setValues: availableValues ' +
+                                    'must be a non-empty array or undefined. ' +
+                                    'Found: ' + tmp);
+                }
+                value = this._setValues(opts);
+            }
+            else {
+                value = tmp[J.randomInt(0, tmp.length) -1];
+            }
+        }
+        else {
+            value = this._setValues(opts);
+        }
         this.input.value = value;
+        if (this.preprocess) this.preprocess(this.input);
     };
 
     // ## Helper functions.
@@ -47939,6 +48327,105 @@ if (!Array.prototype.indexOf) {
                    res.month + p.sep + res.day) + p.sep;
         res.str += p.yearDigits === 2 ? res.year.substring(3,4) : res.year;
         return res;
+    }
+
+
+
+    // ### getUsStatesList
+    //
+    // Sets the value of a global variable and returns it.
+    //
+    // @param {string} s A string specifying the type of list
+    //
+    // @return {object} The requested list
+    //
+    function getUsStatesList(s) {
+        switch(s) {
+
+        case 'usStatesTerrByAbbrLow':
+            if (!usStatesTerrByAbbrLow) {
+                getUsStatesList('usStatesTerrLow');
+                usStatesTerrByAbbrLow = J.reverseObj(usStatesTerr, toLK);
+            }
+            return usStatesTerrByAbbrLow;
+        case 'usStatesTerrByAbbr':
+            if (!usStatesTerrByAbbr) {
+                getUsStatesList('usStatesTerr');
+                usStatesTerrByAbbr = J.reverseObj(usStatesTerr);
+            }
+            return usStatesTerrByAbbr;
+
+        case 'usTerrByAbbrLow':
+            if (!usTerrByAbbrLow) usTerrByAbbrLow = J.reverseObj(usTerr, toLK);
+            return usTerrByAbbrLow;
+        case 'usTerrByAbbr':
+            if (!usTerrByAbbr) usTerrByAbbr = J.reverseObj(usTerr);
+            return usTerrByAbbr;
+
+        case 'usStatesByAbbrLow':
+            if (!usStatesByAbbrLow) {
+                usStatesByAbbrLow = J.reverseObj(usStates, toLK);
+            }
+            return usStatesByAbbrLow;
+        case 'usStatesByAbbr':
+            if (!usStatesByAbbr) usStatesByAbbr = J.reverseObj(usStates);
+            return usStatesByAbbr;
+
+        case 'usStatesTerrLow':
+            if (!usStatesTerrLow) {
+                if (!usStatesLow) usStatesLow = objToLK(usStates);
+                if (!usTerrLow) usTerrLow = objToLK(usTerr);
+                usStatesTerrLow = J.merge(usStatesLow, usTerrLow);
+            }
+            return usStatesTerrLow;
+        case 'usStatesTerr':
+            if (!usStatesTerr) usStatesTerr = J.merge(usStates, usTerr);
+            return usStatesTerr;
+
+        case 'usStatesLow':
+            if (!usStatesLow) usStatesLow = objToLow(usStates, toLK);
+            return usStatesLow;
+        case 'usStates':
+            return usStates;
+
+        case 'usTerrLow':
+            if (!usTerrLow) usTerrLow = objToLow(usTerr, toLK);
+            return usTerrLow;
+        case 'usTerr':
+            return usTerr;
+
+        default:
+            throw new Error('getUsStatesList: unknown request: ' + s);
+        }
+    }
+
+    // Helper function for getUsStatesList
+    // @see OBJ.reverseObj
+    function toLK(key, value) {
+        return [ key.toLowerCase(), value ];
+    }
+    // Helper function for getUsStatesList
+    function objToLK(obj) {
+        var p, objLow;
+        objLow = {};
+        for (p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                objLow[p.toLowerCase()] = obj[p];
+            }
+        }
+        return objLow;
+    }
+
+    // ### isValidUSZip
+    //
+    // Trivial validation of a US ZIP code
+    //
+    // @param {string} z
+    //
+    // @return {boolean} TRUE if valid
+    //
+    function isValidUSZip(z) {
+        return z.length === 5 && J.isInt(z, 0);
     }
 
 })(node);
@@ -48939,7 +49426,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    EmailForm.version = '0.11.0';
+    EmailForm.version = '0.12.0';
     EmailForm.description = 'Displays a configurable email form.';
 
     EmailForm.title = 'Email';
@@ -49203,6 +49690,9 @@ if (!Array.prototype.indexOf) {
             opts.sendAnyway = opts.sayAnyway;
         }
 
+        if ('undefined' === typeof opts.markAttempt) opts.markAttempt = true;
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
+
         email = getEmail.call(this);
 
         if (opts.verify !== false) {
@@ -49215,8 +49705,8 @@ if (!Array.prototype.indexOf) {
                 time: this.timeInput,
                 email: email,
                 attempts: this.attempts,
-                valid: res
             };
+            if (opts.markAttempt) email.isCorrect = res;
         }
 
         if (res === false) {
@@ -49818,7 +50308,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Feedback.version = '1.4.0';
+    Feedback.version = '1.6.0';
     Feedback.description = 'Displays a configurable feedback form';
 
     Feedback.title = 'Feedback';
@@ -49828,7 +50318,7 @@ if (!Array.prototype.indexOf) {
         autoHint: function(w) {
             var res, res2;
             if (w.minChars && w.maxChars) {
-                res = 'beetween ' + w.minChars + ' and ' + w.maxChars +
+                res = 'between ' + w.minChars + ' and ' + w.maxChars +
                     ' characters';
             }
             else if (w.minChars) {
@@ -49870,7 +50360,7 @@ if (!Array.prototype.indexOf) {
             if (param.len !== 1) res += 's';
             if (param.needed) res += ' needed';
             else if (param.over) res += ' over';
-            else res += ' remaining';
+            else if (!param.justcount) res += ' remaining';
             return res;
         }
     };
@@ -49940,15 +50430,15 @@ if (!Array.prototype.indexOf) {
          *
          * The maximum character length for feedback to be submitted
          *
-         * Default: 800
+         * Default: 0
          */
         if ('undefined' === typeof options.maxChars) {
-            this.maxChars = 800;
+            this.maxChars = 0;
         }
         else {
             tmp = J.isInt(options.maxChars, 0);
             if (tmp !== false) {
-                this.maxChars = options.maxChars;
+                this.maxChars = tmp;
             }
             else {
                 throw new TypeError('Feedback constructor: maxChars ' +
@@ -49964,15 +50454,21 @@ if (!Array.prototype.indexOf) {
          *
          * If minChars = 0, then there is no minimum length checked.
          *
-         * Default: 1
+         * Default: 0
          */
         if ('undefined' === typeof options.minChars) {
-            this.minChars = 1;
+            this.minChars = 0;
         }
         else {
             tmp = J.isInt(options.minChars, 0, undefined, true);
             if (tmp !== false) {
-                this.minChars = options.minChars;
+                if (this.maxChars && tmp > this.maxChars) {
+                    throw new TypeError('Feedback constructor: minChars ' +
+                                        'cannot be greater than maxChars. ' +
+                                        'Found: ' + tmp + ' > ' +
+                                        this.maxChars);
+                }
+                this.minChars = tmp;
             }
             else {
                 throw new TypeError('Feedback constructor: minChars ' +
@@ -50010,7 +50506,7 @@ if (!Array.prototype.indexOf) {
          *
          * The minimum number of words for feedback to be submitted
          *
-         * If minChars = 0, then there is no minimum checked.
+         * If minWords = 0, then there is no minimum checked.
          *
          * Default: 0
          */
@@ -50041,6 +50537,22 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // Extra checks.
+        if (this.maxWords) {
+            if (this.maxChars && this.maxChars < this.maxWords) {
+                throw new TypeError('Feedback constructor: maxChars ' +
+                                    'cannot be smaller than maxWords. ' +
+                                    'Found: ' + this.maxChars + ' > ' +
+                                    this.maxWords);
+            }
+            if (this.minChars > this.maxWords) {
+                throw new TypeError('Feedback constructor: minChars ' +
+                                    'cannot be greater than maxWords. ' +
+                                    'Found: ' + this.minChars + ' > ' +
+                                    this.maxWords);
+            }
+        }
+
         /**
          * ### Feedback.rows
          *
@@ -50065,23 +50577,27 @@ if (!Array.prototype.indexOf) {
          *
          * The maximum character length for an attempt to submit feedback
          *
-         * Attempts are stored in the attempts array. This allows to store
-         * longer texts than accepts feedbacks
+         * Attempts are stored in the attempts array. You can store attempts
+         * longer than valid feedbacks.
          *
-         * Default: Max(2000, maxChars)
+         * Set to 0 for no limit.
+         *
+         * Default: 0
          */
         if ('undefined' === typeof options.maxAttemptLength) {
-            this.maxAttemptLength = 2000;
-        }
-        else if (J.isNumber(options.maxAttemptLength, 0) !== false) {
-            this.maxAttemptLength = Math.max(this.maxChars,
-                                             options.maxAttemptLength);
+            this.maxAttemptLength = 0;
         }
         else {
-            throw new TypeError('Feedback constructor: ' +
+            tmp = J.isNumber(options.maxAttemptLength, 0);
+            if (tmp !== false) {
+                this.maxAttemptLength = tmp;
+            }
+            else {
+                throw new TypeError('Feedback constructor: ' +
                                 'options.maxAttemptLength must be a number ' +
-                                '>= 0 or undefined. Found: ' +
+                                '> 0 or undefined. Found: ' +
                                 options.maxAttemptLength);
+            }
         }
 
         /**
@@ -50230,6 +50746,7 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE, if the feedback is valid
      *
      * @see Feedback.getValues
+     * @see Feedback.maxAttemptLength
      * @see getFeedback
      */
     Feedback.prototype.verifyFeedback = function(markAttempt, updateUI) {
@@ -50267,10 +50784,11 @@ if (!Array.prototype.indexOf) {
             updateCharColor = colOver;
         }
         else {
-            tmp = this.maxChars - length;
+            tmp = this.maxChars ? this.maxChars - length : length;
             updateCharCount = tmp + this.getText('counter', {
                 chars: true,
-                len: tmp
+                len: tmp,
+                justcount: !this.maxChars
             });
             updateCharColor = colRemain;
         }
@@ -50306,11 +50824,12 @@ if (!Array.prototype.indexOf) {
                 updateWordColor = colOver;
             }
             else {
-                  tmp = this.maxWords - length;
-                  updateWordCount = tmp + this.getText('counter', {
-                      len: tmp
-                  });
-                  updateWordColor = colRemain;
+                tmp = this.maxWords ? this.maxWords - length : length;
+                updateWordCount = tmp + this.getText('counter', {
+                    len: tmp,
+                    justcount: !this.maxWords
+                });
+                updateWordColor = colRemain;
             }
         }
 
@@ -50327,7 +50846,7 @@ if (!Array.prototype.indexOf) {
         }
 
         if (!res && ('undefined' === typeof markAttempt || markAttempt)) {
-            if (length > this.maxAttemptLength) {
+            if (this.maxAttemptLength && length > this.maxAttemptLength) {
                 feedback = feedback.substr(0, this.maxAttemptLength);
             }
             this.attempts.push(feedback);
@@ -50372,7 +50891,7 @@ if (!Array.prototype.indexOf) {
         });
 
         if (this.showSubmit) {
-            this.submit = W.append('input', this.feedbackForm, {
+            this.submitButton = W.append('input', this.feedbackForm, {
                 className: 'btn btn-lg btn-primary',
                 type: 'submit',
                 value: this.getText('submit')
@@ -50405,11 +50924,16 @@ if (!Array.prototype.indexOf) {
      * Set the value of the feedback
      */
     Feedback.prototype.setValues = function(options) {
-        var feedback;
+        var feedback, maxChars;
         options = options || {};
         if (!options.feedback) {
-            feedback = J.randomString(J.randomInt(0, this.maxChars),
-                                      'aA_1');
+            if (this.maxChars) {
+                maxChars = this.maxChars;
+            }
+            else if (this.maxWords) {
+                maxChars = this.maxWords * 4;
+            }
+            feedback = J.randomString(J.randomInt(0, maxChars), 'aA_1');
         }
         else {
             feedback = options.feedback;
@@ -50470,6 +50994,9 @@ if (!Array.prototype.indexOf) {
             opts.sendAnyway = opts.sayAnyway;
         }
 
+        if ('undefined' === typeof opts.markAttempt) opts.markAttempt = true;
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
+
         feedback = getFeedback.call(this);
 
         if (opts.keepBreaks) feedback = feedback.replace(/\n\r?/g, '<br />');
@@ -50486,13 +51013,13 @@ if (!Array.prototype.indexOf) {
                 timeBegin: this.timeInputBegin,
                 feedback: feedback,
                 attempts: this.attempts,
-                valid: res,
-                isCorrect: res
+                valid: res
             };
+            if (opts.markAttempt) feedback.isCorrect = res;
         }
 
         // Send the message.
-        if ((opts.send && res) || opts.sendAnyway) {
+        if (feedback !== '' && ((opts.send && res) || opts.sendAnyway)) {
             this.sendValues({ values: feedback });
             if (opts.updateUI) {
                 this.submitButton.setAttribute('value', this.getText('sent'));
