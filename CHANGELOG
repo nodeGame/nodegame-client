@@ -1,6 +1,6 @@
 # nodegame-client change log
 
-## current
+## 5.3.0
 - Game.getPreviousStep falls back on GamePlot.jump in case of necessity, such
 as a reconnection.
 
