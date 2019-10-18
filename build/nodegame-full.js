@@ -799,13 +799,15 @@ if (!Array.prototype.indexOf) {
         if (start === Infinity) return false;
         if ('number' !== typeof end) return false;
         if (end === Infinity) return false;
-        if (start === end) return [start];
-
+        // TODO: increment zero might be fine if start=end. Check.
         if (increment === 0) return false;
         if (!JSUS.inArray(typeof increment, ['undefined', 'number'])) {
             return false;
         }
-
+        if (start === end) {
+            if (!func) return [ start ];
+            return [ func(start) ];
+        }
         increment = increment || 1;
         func = func || function(e) {return e;};
 
@@ -1465,7 +1467,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DOM
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Helper library to perform generic operation with DOM elements.
@@ -2256,17 +2258,20 @@ if (!Array.prototype.indexOf) {
     /**
      * ### DOM.removeClass
      *
-     * Removes a specific class from the classNamex attribute of a given element
+     * Removes a specific class from the className attribute of a given element
      *
-     * @param {HTMLElement} el An HTML element
+     * @param {HTMLElement|object} elem An HTML element, or an object with
+     *   a className property if force is TRUE
      * @param {string} className The name of a CSS class already in the element
+     * @param {boolean} force Optional. If TRUE, the method is applied also
+     *   to non HTMLElements
      *
      * @return {HTMLElement|undefined} The HTML element with the removed
      *   class, or undefined if the inputs are misspecified
      */
-    DOM.removeClass = function(elem, className) {
+    DOM.removeClass = function(elem, className, force) {
         var regexpr, o;
-        if (!DOM.isElement(elem)) {
+        if (!force && !DOM.isElement(elem)) {
             throw new TypeError('DOM.removeClass: elem must be HTMLElement. ' +
                                 'Found: ' + elem);
         }
@@ -2288,14 +2293,17 @@ if (!Array.prototype.indexOf) {
      *
      * Takes care not to overwrite already existing classes.
      *
-     * @param {HTMLElement} elem An HTML element
+     * @param {HTMLElement|object} elem An HTML element, or an object with
+     *   a className property if force is TRUE
      * @param {string|array} className The name/s of CSS class/es
+     * @param {boolean} force Optional. If TRUE, the method is applied also
+     *   to non HTMLElements
      *
      * @return {HTMLElement} The HTML element with the additional
      *   class, or undefined if the inputs are misspecified
      */
-    DOM.addClass = function(elem, className) {
-        if (!DOM.isElement(elem)) {
+    DOM.addClass = function(elem, className, force) {
+        if (!force && !DOM.isElement(elem)) {
             throw new TypeError('DOM.addClass: elem must be HTMLElement. ' +
                                 'Found: ' + elem);
         }
@@ -2819,6 +2827,56 @@ if (!Array.prototype.indexOf) {
         y = w.innerHeight|| e.clientHeight|| g.clientHeight;
         return !dim ? { x: x, y: y } : dim === 'x' ? x : y;
     };
+
+    /**
+     * ### DOM.makeTabbable
+     *
+     * Adds the tabindex property to an HTML element
+     *
+     * @param {HTMLElement} elem The element to make tabbable
+     * @param {object} opts Optional. Configuration options, avalable:
+     *    - index: the tabindex, default 0
+     *    - clickable: if TRUE, calls DOM.makeClickable on the element.
+     *      Default: FALSE
+     *
+     * @return {HTMLElement} The tabbable element
+     */
+    DOM.makeTabbable =  function(elem, opts) {
+        opts = opts || {};
+        elem.setAttribute('tabindex', opts.index || 0);
+        if (opts.clicklable) DOM.makeClickable(elem);
+        return elem;
+    };
+
+    /**
+     * ### DOM.makeClickable
+     *
+     * Adds a listener that clicks on the element if SPACE or ENTER are hit
+     *
+     * The kewydown event listener callback is available under `cb`.
+     *
+     * @param {HTMLElement} elem The element to make clickable
+     * @param {boolean} add If FALSE, the listener is removed. Default: TRUE
+     *
+     * @return {HTMLElement} The clickable element
+     */
+    DOM.makeClickable = (function() {
+        function clickCb(event) {
+            if (event.keyCode === 32 || event.keyCode === 13) {
+                event.preventDefault();
+                event.target.click();
+            }
+        }
+        var cb;
+        cb = function(elem, add) {
+            if ('undefined' === typeof add) add = true;
+            if (add) elem.addEventListener('keydown', clickCb);
+            else elem.removeEventListener('keydown', clickCb);
+            return elem;
+        };
+        cb.cb = clickCb;
+        return cb;
+    })();
 
     // ## Helper methods
 
@@ -4275,7 +4333,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} obj The object from which the key will be extracted
      *
-     * @return {string} The random key 
+     * @return {string} The random key
      */
     OBJ.randomKey = function(obj) {
         var keys;
@@ -4286,7 +4344,7 @@ if (!Array.prototype.indexOf) {
         keys = Object.keys(obj);
         return keys[ keys.length * Math.random() << 0];
     };
-    
+
     /**
      * ## OBJ.augment
      *
@@ -4501,7 +4559,7 @@ if (!Array.prototype.indexOf) {
             }
             else {
                 b = a;
-                a = 0;                
+                a = 0;
             }
         }
         if (a === b) return a;
@@ -4536,7 +4594,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ## RANDOM.randomDate
      *
-     * Generates a pseudo-random date between 
+     * Generates a pseudo-random date between
      *
      * @param {Date} startDate The lower date
      * @param {Date} endDate Optional. The upper date. Default: today.
@@ -10173,7 +10231,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.2.0';
+    node.version = '5.3.0';
 
 })(window);
 
@@ -25496,7 +25554,7 @@ if (!Array.prototype.indexOf) {
      * event once the time expires.
      *
      * @param {mixed} options The configuration object passed to the GameTimer
-     *   constructor. Alternatively, it is possble to pass directly the number
+     *   constructor. Alternatively, it is possible to pass directly the number
      *   of milliseconds and the remaining settings will be added, or to leave
      *   it undefined.
      *
@@ -33977,7 +34035,7 @@ if (!Array.prototype.indexOf) {
      */
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
-        
+
         adjustIt = function(userMinHeight) {
             var iframe, minHeight, contentHeight;
 
@@ -37519,6 +37577,7 @@ if (!Array.prototype.indexOf) {
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
         if (cell.id) TD.id = cell.id;
+        if (cell.colspan) TD.setAttribute('colSpan', cell.colspan);
         cell.HTMLElement = TD;
         return TD;
     };
@@ -37983,7 +38042,7 @@ if (!Array.prototype.indexOf) {
         }
 
         db.each(function(el) {
-            W.addClass(el, className);
+            W.addClass(el, className, true);
             if (el.HTMLElement) el.HTMLElement.className = el.className;
         });
 
@@ -38182,6 +38241,13 @@ if (!Array.prototype.indexOf) {
          * Reference to the TD/TH element, if built already
          */
         this.HTMLElement = cell.HTMLElement || null;
+
+        /**
+         * ### Cell.colspan
+         *
+         * The colspan property, only if truthy
+         */
+        if (cell.colspan) this.colspan = cell.colspan;
     }
 
 })(
@@ -39498,8 +39564,15 @@ if (!Array.prototype.indexOf) {
         }
 
         // Set prototype values or options values.
-        widget.title = 'undefined' === typeof options.title ?
-            WidgetPrototype.title : options.title;
+        if ('undefined' !== typeof options.title) {
+            widget.title = options.title;
+        }
+        else if ('undefined' !== typeof WidgetPrototype.title) {
+            widget.title = WidgetPrototype.title;
+        }
+        else {
+            widget.title = '&nbsp;';
+        }
         widget.panel = 'undefined' === typeof options.panel ?
             WidgetPrototype.panel : options.panel;
         widget.footer = 'undefined' === typeof options.footer ?
@@ -39780,16 +39853,19 @@ if (!Array.prototype.indexOf) {
         // Optionally set context.
         if (w.context) w.setContext(w.context);
 
-        // Adapt UI, if requested.
+        // Adapt UI 1: visibility.
         if (options.hidden || w._hidden) w.hide();
         if (options.collapsed || w._collapsed) w.collapse();
-        if (options.disabled || w._disabled) w.disable();
-        if (options.highlighted || w._highlighted) w.highlight();
 
         // Append.
         root.appendChild(w.panelDiv);
         w.originalRoot = root;
         w.append();
+
+        // Adapt UI 2: changes to elements. Needs to be after append, because
+        // some elements needs to be created by append and then disabled.
+        if (options.highlighted || w._highlighted) w.highlight();
+        if (options.disabled || w._disabled) w.disable();
 
         // Make sure the distance from the right side is correct.
         if (w.docked) setRightStyle(w);
@@ -40573,7 +40649,6 @@ if (!Array.prototype.indexOf) {
  *
  * Creates a simple configurable chat
  *
- * // TODO: add is...typing
  * // TODO: add bootstrap badge to count msg when collapsed
  * // TODO: check on data if message comes back
  * // TODO: highlight better incoming msg. Play sound?
@@ -40618,15 +40693,16 @@ if (!Array.prototype.indexOf) {
                 (data.collapsed ? 'mini' : 'maxi') + 'mized the chat';
         },
         textareaPlaceholder: function(w) {
-            return w.useSubmitButton ? 'Type something' :
-                'Type something and press enter to send';
+            return w.useSubmitEnter ?
+                'Type something and press enter to send' : 'Type something';
         },
-        submitButton: 'Send'
+        submitButton: 'Send',
+        isTyping: 'is typing...'
     };
 
     // ## Meta-data
 
-    Chat.version = '1.0.0';
+    Chat.version = '1.2.0';
     Chat.description = 'Offers a uni-/bi-directional communication interface ' +
         'between players, or between players and the server.';
 
@@ -40682,7 +40758,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### Chat.useSubmitButton
          *
-         * If TRUE, a button is added to send messages else ENTER sends msgs
+         * If TRUE, a button is added to send messages
          *
          * By default, this is TRUE on mobile devices.
          *
@@ -40690,6 +40766,18 @@ if (!Array.prototype.indexOf) {
          * @see Chat.receiverOnly
          */
         this.useSubmitButton = null;
+
+        /**
+         * ### Chat.useSubmitButton
+         *
+         * If TRUE, pressing ENTER sends the msg
+         *
+         * By default, TRUE
+         *
+         * @see Chat.submitButton
+         * @see Chat.receiverOnly
+         */
+        this.useSubmitEnter = null;
 
         /**
          * ### Chat.receiverOnly
@@ -40791,6 +40879,42 @@ if (!Array.prototype.indexOf) {
          * Map recipient id (msg.to) to sender id (msg.from)
          */
         this.recipientToSenderMap = null;
+
+        /**
+         * ### Chat.showIsTyping
+         *
+         * TRUE, if "is typing" notice is shown
+         */
+        this.showIsTyping = null;
+
+        /**
+         * ### Chat.amTypingTimeout
+         *
+         * Timeout to send an own "isTyping" notification
+         *
+         * Timeout is added as soon as the user start typing, cleared when
+         * a message is sent.
+         */
+        this.amTypingTimeout = null;
+
+        /**
+         * ### Chat.isTypingTimeouts
+         *
+         * Object containing timeouts for all participants currently typing
+         *
+         * A new timeout is added when an IS_TYPING msg is received and
+         * cleared when a msg arrives or at expiration.
+         */
+        this.isTypingTimeouts = {};
+
+        /**
+         * ### Chat.isTypingDivs
+         *
+         * Object containing divs where "is typing" is diplayed
+         *
+         * Once created
+         */
+        this.isTypingDivs = {};
     }
 
     // ## Chat methods
@@ -40800,13 +40924,17 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the widget
      *
-     * @param {object} options Optional. Configuration options.
+     * @param {object} opts Optional. Configuration options.
      *
-     * The  options object can have the following attributes:
+     * The options object can have the following attributes:
      *   - `receiverOnly`: If TRUE, no message can be sent
      *   - `chatEvent`: The event to fire when sending/receiving a message
-     *   - `useSubmitButton`: If TRUE, a submit button is added, otherwise
-     *        messages are sent by pressing ENTER. Default: TRUE on mobile
+     *   - `useSubmitButton`: If TRUE, a submit button is added.
+     *        Default: TRUE on mobile
+     *   - `useSubmitEnter`: If TRUE, pressing ENTER sends a msg.
+     *        Default: TRUE
+     *   - `showIsTyping: If TRUE, a notice is displayed when users are
+     *        typing. Default: TRUE
      *   - `storeMsgs`: If TRUE, a copy of every message is stored in
      *        a local db
      *   - `participants`: An array containing the ids of participants,
@@ -40820,36 +40948,40 @@ if (!Array.prototype.indexOf) {
      *   - `printNames`: If TRUE, the names of the participants of the chat
      *        is printed at the beginning of the chat. Default: FALSE.
      */
-    Chat.prototype.init = function(options) {
+    Chat.prototype.init = function(opts) {
         var tmp, i, rec, sender, that;
 
         that = this;
 
         // Chat id.
-        tmp = options.chatEvent;
+        tmp = opts.chatEvent;
         if (tmp) {
             if ('string' !== typeof tmp) {
                 throw new TypeError('Chat.init: chatEvent must be a non-' +
                                     'empty string or undefined. Found: ' + tmp);
             }
-            this.chatEvent = options.chatEvent;
+            this.chatEvent = opts.chatEvent;
         }
         else {
             this.chatEvent = 'CHAT';
         }
 
         // Store.
-        this.storeMsgs = !!options.storeMsgs;
+        this.storeMsgs = !!opts.storeMsgs;
         if (this.storeMsgs) {
             if (!this.db) this.db = new NDDB();
         }
 
-        // Button or send on Enter?.
-        this.useSubmitButton = 'undefined' === typeof options.useSubmitButton ?
-            J.isMobileAgent() : !!options.useSubmitButton;
+        // Button to send msg.
+        this.useSubmitButton = 'undefined' === typeof opts.useSubmitButton ?
+            J.isMobileAgent() : !!opts.useSubmitButton;
+
+        // Enter to send msg (does not exclude button).
+        this.useSubmitEnter = 'undefined' === typeof opts.useSubmitEnter ?
+            true : !!opts.useSubmitEnter;
 
         // Participants.
-        tmp = options.participants;
+        tmp = opts.participants;
         if (!J.isArray(tmp) || !tmp.length) {
             throw new TypeError('Chat.init: participants must be ' +
                                 'a non-empty array. Found: ' + tmp);
@@ -40890,18 +41022,18 @@ if (!Array.prototype.indexOf) {
         }
 
         // Other.
-        this.uncollapseOnMsg = options.uncollapseOnMsg || false;
+        this.uncollapseOnMsg = opts.uncollapseOnMsg || false;
 
-        this.printStartTime = options.printStartTime || false;
-        this.printNames = options.printNames || false;
+        this.printStartTime = opts.printStartTime || false;
+        this.printNames = opts.printNames || false;
 
-        if (options.initialMsg) {
-            if ('object' !== typeof options.initialMsg) {
+        if (opts.initialMsg) {
+            if ('object' !== typeof opts.initialMsg) {
                 throw new TypeError('Chat.init: initialMsg must be ' +
                                     'object or undefined. Found: ' +
-                                    options.initialMsg);
+                                    opts.initialMsg);
             }
-            this.initialMsg = options.initialMsg;
+            this.initialMsg = opts.initialMsg;
         }
 
         this.on('uncollapsed', function() {
@@ -40925,16 +41057,19 @@ if (!Array.prototype.indexOf) {
                 node.say(that.chatEvent + '_QUIT', that.recipientsIds);
             }
         });
+
+        this.showIsTyping = 'undefined' === typeof opts.showIsTyping ?
+            true : !!opts.showIsTyping;
     };
 
     Chat.prototype.append = function() {
         var that, inputGroup, initialText;
+        that = this;
 
         this.chatDiv = W.get('div', { className: 'chat_chat' });
         this.bodyDiv.appendChild(this.chatDiv);
 
         if (!this.receiverOnly) {
-            that = this;
 
             // Input group.
             inputGroup = document.createElement('div');
@@ -40953,13 +41088,22 @@ if (!Array.prototype.indexOf) {
                 });
                 this.submitButton.onclick = function() {
                     sendMsg(that);
+                    if ('function' === typeof that.textarea.focus) {
+                        that.textarea.focus();
+                    }
                 };
                 inputGroup.appendChild(this.submitButton);
             }
-            else {
+            if (this.useSubmitEnter || this.showIsTyping) {
                 this.textarea.onkeydown = function(e) {
-                    e = e || window.event;
-                    if ((e.keyCode || e.which) === 13) sendMsg(that);
+                    if (that.useSubmitEnter) {
+                        e = e || window.event;
+                        if ((e.keyCode || e.which) === 13) sendMsg(that);
+                        else sendAmTyping(that);
+                    }
+                    else if (that.showIsTyping) {
+                        sendAmTyping(that);
+                    }
                 };
             }
 
@@ -41019,19 +41163,29 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} code A value indicating the the type of msg. Available:
      *   'incoming', 'outgoing', and anything else.
-     * @param {string} data The content of the message
+     * @param {object} data The content of the message and the id of the sender
      *
-     * @return {string} The current value in the textarea
+     * @return {HTMLElement} c The div just inserted with the msg
      *
      * @see Chat.chatDiv
      */
     Chat.prototype.writeMsg = function(code, data) {
         var c;
         c = (code === 'incoming' || code === 'outgoing') ? code : 'event';
-        W.add('div', this.chatDiv, {
+        c = W.add('div', this.chatDiv, {
             innerHTML: this.getText(code, data),
             className: 'chat_msg chat_msg_' + c
         });
+        this.scrollToBottom();
+        return c;
+    };
+
+    /**
+     * ### Chat.scrollToBottom
+     *
+     * Scrolls the chat to the last message
+     */
+    Chat.prototype.scrollToBottom = function() {
         this.chatDiv.scrollTop = this.chatDiv.scrollHeight;
     };
 
@@ -41040,6 +41194,7 @@ if (!Array.prototype.indexOf) {
 
         node.on.data(this.chatEvent, function(msg) {
             if (!that.handleMsg(msg)) return;
+
             that.stats.received++;
             // Store message if so requested.
             if (that.storeMsgs) {
@@ -41050,6 +41205,8 @@ if (!Array.prototype.indexOf) {
                     timestamp: J.now()
                 });
             }
+            // Remove is typing sign, if any.
+            that.clearIsTyping(msg.from);
             that.writeMsg('incoming', { msg: msg.data, id: msg.from });
         });
 
@@ -41079,6 +41236,48 @@ if (!Array.prototype.indexOf) {
             if (!that.handleMsg(msg)) return;
             that.writeMsg('collapse', { id: msg.from, collapsed: msg.data});
         });
+
+        node.on.data(this.chatEvent + '_TYPING', function(msg) {
+            if (!that.handleMsg(msg)) return;
+            that.addIsTyping(msg.from);
+        });
+    };
+
+    Chat.prototype.addIsTyping = function(id) {
+        var t, div, that;
+        // Stop existing timeouts.
+        t = this.isTypingTimeouts[id];
+        if (t) clearTimeout(t);
+        // Make or show the div.
+        div = this.isTypingDivs[id];
+        if (div) {
+            // Move last and show..
+            this.chatDiv.appendChild(div);
+            div.style.display = '';
+        }
+        else {
+            this.isTypingDivs[id] = this.writeMsg('incoming', {
+                msg: this.getText('isTyping', {id: id })
+            });
+        }
+        this.scrollToBottom();
+        // Add new timeout (msg are sent every 4000).
+        that = this;
+        this.isTypingTimeouts[id] = setTimeout(function() {
+            that.clearIsTyping(id);
+            that.isTypingTimeouts[id] = null;
+        }, 5000);
+    };
+
+    Chat.prototype.clearIsTyping = function(id) {
+        if (this.isTypingTimeouts[id]) {
+            clearTimeout(this.isTypingTimeouts[id]);
+            this.isTypingTimeouts[id] = null;
+        }
+        // Keep the div element, just hide it, it will be recycled.
+        if (this.isTypingDivs[id]) {
+            this.isTypingDivs[id].style.display = 'none';
+        }
     };
 
     /**
@@ -41168,6 +41367,28 @@ if (!Array.prototype.indexOf) {
         node.say(that.chatEvent, to, msg);
         // Make sure the cursor goes back to top.
         setTimeout(function() { that.textarea.value = ''; });
+        // Clear any typing timeout.
+        if (that.amTypingTimeout) {
+            clearTimeout(that.amTypingTimeout);
+            that.amTypingTimeout = null;
+        }
+    }
+    // ### sendMsg
+    // Reads the textarea and delivers the msg to the server.
+    function sendAmTyping(that) {
+        var to;
+        if (that.isDisabled()) return;
+        // Do not send too many notifications.
+        if (that.amTypingTimeout) return;
+        // Simplify things, if there is only one recipient.
+        to = that.recipientsIds;
+        if (!to.length) return;
+        else if (to.length === 1) to = to[0];
+        // No new notifications for 4s.
+        that.amTypingTimeout = setTimeout(function() {
+            that.amTypingTimeout = null;
+        }, 4000);
+        node.say(that.chatEvent + '_TYPING', to);
     }
 
 })(node);
@@ -42954,6 +43175,7 @@ if (!Array.prototype.indexOf) {
          */
         this.groupOrder = null;
 
+        // TODO: rename in sharedOptions.
         /**
          * ### ChoiceManager.formsOptions
          *
@@ -43191,7 +43413,6 @@ if (!Array.prototype.indexOf) {
     };
 
     ChoiceManager.prototype.append = function() {
-        var tmp;
         // Id must be unique.
         if (W.getElementById(this.id)) {
             throw new Error('ChoiceManager.append: id is not ' +
@@ -43216,12 +43437,11 @@ if (!Array.prototype.indexOf) {
         // Creates a free-text textarea, possibly with placeholder text.
         if (this.freeText) {
             this.textarea = document.createElement('textarea');
-            this.textarea.id = this.id + '_text';
+            if (this.id) this.textarea.id = this.id + '_text';
             if ('string' === typeof this.freeText) {
                 this.textarea.placeholder = this.freeText;
             }
-            tmp = this.className ? this.className + '-freetext' : 'freetext';
-            this.textarea.className = tmp;
+            this.textarea.className = ChoiceManager.className + '-freetext';
             // Append textarea.
             this.bodyDiv.appendChild(this.textarea);
         }
@@ -43507,7 +43727,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.6.0';
+    ChoiceTable.version = '1.6.1';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -43591,7 +43811,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceTable.listener
          *
-         * The listener function
+         * The function listening on clicks
          */
         this.listener = function(e) {
             var name, value, td;
@@ -43600,8 +43820,14 @@ if (!Array.prototype.indexOf) {
             e = e || window.event;
             td = e.target || e.srcElement;
 
-            // Not a clickable choice.
-            if ('undefined' === typeof that.choicesIds[td.id]) return;
+            // See if it is a clickable choice.
+            if ('undefined' === typeof that.choicesIds[td.id]) {
+                // It might be a nested element, try the parent.
+                td = td.parentNode;
+                if (!td || 'undefined' === typeof that.choicesIds[td.id]) {
+                    return;
+                }
+            }
 
             // Relative time.
             if ('string' === typeof that.timeFrom) {
@@ -43863,7 +44089,7 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceTable.selectMultiple
          *
-         * The number of maximum simulataneous selection (>1), or false
+         * The number of maximum simulataneous selections (>1), or false
          */
         this.selectMultiple = null;
 
@@ -43941,6 +44167,19 @@ if (!Array.prototype.indexOf) {
          * @see ChoiceTable.renderChoice
          */
         this.separator = ChoiceTable.separator;
+
+        /**
+         * ### ChoiceTable.tabbable
+         *
+         * If TRUE, the elements of the table can be accessed with TAB
+         *
+         * Clicking is simulated upon pressing space or enter.
+         *
+         * Default TRUE
+         *
+         * @see ChoiceTable.renderChoice
+         */
+        this.tabbable = null;
     }
 
     // ## ChoiceTable methods
@@ -43978,6 +44217,8 @@ if (!Array.prototype.indexOf) {
      *       if 'string', the text will be added inside the textarea
      *   - timeFrom: The timestamp as recorded by `node.timer.setTimestamp`
      *       or FALSE, to measure absolute time for current choice
+     *   - tabbable: if TRUE, each cell can be reached with TAB and clicked
+     *       with SPACE or ENTER. Default: TRUE.
      *
      * @param {object} options Configuration options
      */
@@ -44097,7 +44338,7 @@ if (!Array.prototype.indexOf) {
                                 options.listener);
         }
 
-        // Set an additional onclick onclick, if any.
+        // Set an additional onclick, if any.
         if ('function' === typeof options.onclick) {
             this.onclick = options.onclick;
         }
@@ -44211,6 +44452,8 @@ if (!Array.prototype.indexOf) {
                                 'className must be string, array, ' +
                                 'or undefined. Found: ' + options.className);
         }
+
+        if (options.tabbable !== false) this.tabbable = true;
 
         // Set the renderer, if any.
         if ('function' === typeof options.renderer) {
@@ -44512,6 +44755,7 @@ if (!Array.prototype.indexOf) {
     ChoiceTable.prototype.renderChoice = function(choice, idx) {
         var td, value;
         td = document.createElement('td');
+        if (this.tabbable) J.makeTabbable(td);
 
         // Use custom renderer.
         if (this.renderer) {
@@ -44652,7 +44896,7 @@ if (!Array.prototype.indexOf) {
         // Creates a free-text textarea, possibly with placeholder text.
         if (this.freeText) {
             this.textarea = document.createElement('textarea');
-            this.textarea.id = this.id + '_text';
+            if (this.id) this.textarea.id = this.id + '_text';
             if ('string' === typeof this.freeText) {
                 this.textarea.placeholder = this.freeText;
             }
@@ -44694,6 +44938,8 @@ if (!Array.prototype.indexOf) {
         if (this.table) {
             J.removeClass(this.table, 'clickable');
             this.table.removeEventListener('click', this.listener);
+            // Remove listener to make cells clickable with the keyboard.
+            if (this.tabbable) J.makeClickable(this.table, false);
         }
         this.emit('disabled');
     };
@@ -44713,6 +44959,8 @@ if (!Array.prototype.indexOf) {
         this.disabled = false;
         J.addClass(this.table, 'clickable');
         this.table.addEventListener('click', this.listener);
+        // Add listener to make cells clickable with the keyboard.
+        if (this.tabbable) J.makeClickable(this.table);
         this.emit('enabled');
     };
 
@@ -44840,9 +45088,13 @@ if (!Array.prototype.indexOf) {
      *
      * Returns TRUE if a choice is currently selected
      *
-     * @param {number|string} The choice to check
+     * @param {number|string} The choice to check. If choices are shuffled
+     *   it should be called `getChoiceAtPosition` first to know if the
+     *   choice at a given position is current.
      *
      * @return {boolean} TRUE, if the choice is currently selected
+     *
+     * @see ChoiceTable.getChoiceAtPosition
      */
     ChoiceTable.prototype.isChoiceCurrent = function(choice) {
         var i, len;
@@ -45059,6 +45311,7 @@ if (!Array.prototype.indexOf) {
         // Set values, random or pre-set.
         i = -1;
         if ('undefined' !== typeof options.values) {
+            // Can be true/false or a number > 1.
             if (this.selectMultiple) {
                 if (!J.isArray(options.values)) {
                     throw new Error('ChoiceTable.setValues: values must be ' +
@@ -45066,10 +45319,12 @@ if (!Array.prototype.indexOf) {
                                     'truthy. Found: ' + options.values);
                 }
                 len = options.values.length;
-                if (len > this.selectMultiple) {
+                tmp = 'number' === typeof this.selectMultiple ?
+                    this.selectMultiple : this.choices.length;
+                if (len > tmp) {
                     throw new Error('ChoiceTable.setValues: values array ' +
-                                    'cannot be larger than selectMultiple: ' +
-                                    len +  ' > ' +  this.selectMultiple);
+                                    'cannot be larger than max allowed set: ' +
+                                    len +  ' > ' +  tmp);
                 }
                 tmp = options.values;
             }
@@ -45078,11 +45333,10 @@ if (!Array.prototype.indexOf) {
             }
             // Validate value.
             for ( ; ++i < len ; ) {
-                choice = J.isInt(tmp[i], 0, this.choices.length, 1, 1);
+                choice = J.isInt(tmp[i], -1, (this.choices.length-1), 1, 1);
                 if (false === choice) {
                     throw new Error('ChoiceTable.setValues: invalid ' +
-                                    'choice value. Found: ' +
-                                    tmp[i]);
+                                    'choice value. Found: ' +tmp[i]);
                 }
                 this.choicesCells[choice].click();
             }
@@ -45093,11 +45347,12 @@ if (!Array.prototype.indexOf) {
             else len = J.randomInt(0, this.choicesCells.length);
 
             for ( ; ++i < len ; ) {
-                choice = J.randomInt(0, this.choicesCells.length)-1;
+                // This is the positional index.
+                j = J.randomInt(-1, (this.choicesCells.length-1));
+                // If shuffled, we need to resolve it.
+                choice = this.shuffleChoices ? this.getChoiceAtPosition(j) : j;
                 // Do not click it again if it is already selected.
-                if (!this.isChoiceCurrent(choice)) {
-                    this.choicesCells[choice].click();
-                }
+                if (!this.isChoiceCurrent(choice)) this.choicesCells[j].click();
             }
         }
 
@@ -45273,7 +45528,7 @@ if (!Array.prototype.indexOf) {
         'ChoiceTable widgets.';
 
     ChoiceTableGroup.title = 'Make your choice';
-    ChoiceTableGroup.className = 'choicetable';
+    ChoiceTableGroup.className = 'choicetable'; // TODO: choicetablegroup?
 
     ChoiceTableGroup.separator = '::';
 
@@ -45344,10 +45599,14 @@ if (!Array.prototype.indexOf) {
             td = e.target || e.srcElement;
 
             // Not a clickable choice.
-            if (!td.id || td.id === '') return;
-
-            // Not a clickable choice.
-            if (!that.choicesById[td.id]) return;
+            if ('undefined' === typeof that.choicesById[td.id]) {
+                // It might be a nested element, try the parent.
+                td = td.parentNode;
+                if (!td || 'undefined' === typeof that.choicesById[td.id]) {
+                    return;
+                }
+            }
+            // if (!that.choicesById[td.id]) return;
 
             // Id of elements are in the form of name_value or name_item_value.
             value = td.id.split(that.separator);
@@ -45605,6 +45864,19 @@ if (!Array.prototype.indexOf) {
          * @see mixinSettings
          */
         this.shuffleChoices = null;
+
+        /**
+         * ### ChoiceTableGroup.tabbable
+         *
+         * If TRUE, the elements of each choicetable can be accessed with TAB
+         *
+         * Clicking is simulated upon pressing space or enter.
+         *
+         * Default TRUE
+         *
+         * @see ChoiceTable.tabbable
+         */
+        this.tabbable = null;
     }
 
     // ## ChoiceTableGroup methods
@@ -45630,6 +45902,8 @@ if (!Array.prototype.indexOf) {
      *       if 'string', the text will be added inside the the textarea
      *   - timeFrom: The timestamp as recorded by `node.timer.setTimestamp`
      *       or FALSE, to measure absolute time for current choice
+     *   - tabbable: if TRUE, each cell can be reached with TAB and clicked
+     *       with SPACE or ENTER. Default: TRUE.
      *
      * @param {object} options Configuration options
      */
@@ -45794,6 +46068,8 @@ if (!Array.prototype.indexOf) {
                                 'className must be string, array, ' +
                                 'or undefined. Found: ' + options.className);
         }
+
+        if (options.tabbable !== false) this.tabbable = true;
 
         // After all configuration options are evaluated, add items.
 
@@ -45988,7 +46264,7 @@ if (!Array.prototype.indexOf) {
         // MainText.
         if (this.mainText) {
             this.spanMainText = W.append('span', this.bodyDiv, {
-                className: 'custominput-maintext',
+                className: 'choicetable-maintext',
                 innerHTML: this.mainText
             });
         }
@@ -46017,7 +46293,7 @@ if (!Array.prototype.indexOf) {
         // Creates a free-text textarea, possibly with placeholder text.
         if (this.freeText) {
             this.textarea = document.createElement('textarea');
-            this.textarea.id = this.id + '_text';
+            if (this.id) this.textarea.id = this.id + '_text';
             this.textarea.className = ChoiceTableGroup.className + '-freetext';
             if ('string' === typeof this.freeText) {
                 this.textarea.placeholder = this.freeText;
@@ -46060,6 +46336,8 @@ if (!Array.prototype.indexOf) {
         this.disabled = true;
         J.removeClass(this.table, 'clickable');
         this.table.removeEventListener('click', this.listener);
+        // Remove listener to make cells clickable with the keyboard.
+        if (this.tabbable) J.makeClickable(this.table, false);
         this.emit('disabled');
     };
 
@@ -46075,6 +46353,8 @@ if (!Array.prototype.indexOf) {
         this.disabled = false;
         J.addClass(this.table, 'clickable');
         this.table.addEventListener('click', this.listener);
+        // Add listener to make cells clickable with the keyboard.
+        if (this.tabbable) J.makeClickable(this.table);
         this.emit('enabled');
     };
 
@@ -46918,7 +47198,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    CustomInput.version = '0.9.0';
+    CustomInput.version = '0.10.0';
     CustomInput.description = 'Creates a configurable input form';
 
     CustomInput.title = false;
@@ -47092,18 +47372,19 @@ if (!Array.prototype.indexOf) {
             if (p.exactly) return 'Must enter ' + p.lower;
             // Others.
             str = 'Must be ';
-            if (w.type === 'float') str += 'a floating point number ';
-            else if (w.type === 'int') str += 'an integer ';
+            if (w.type === 'float') str += 'a floating point number';
+            else if (w.type === 'int') str += 'an integer';
             if (p.between) {
-                str += (p.leq ? '&ge; ' : '<' ) + p.lower;
+                str += ' ' + (p.leq ? '&ge; ' : '<' ) + p.lower;
                 str += ' and ';
                 str += (p.ueq ? '&le; ' : '> ') + p.upper;
             }
             else if ('undefined' !== typeof p.lower) {
-                str += (p.leq ? '&ge; ' : '< ') + p.lower;
+                str += ' ' + (p.leq ? '&ge; ' : '< ') + p.lower;
             }
-            else {
-                str += (p.ueq ? '&le; ' : '> ') + p.upper;
+            // It can be also a non-numeric error, e.g. a string here.
+            else if ('undefined' !== typeof p.upper) {
+                str += ' ' + (p.ueq ? '&le; ' : '> ') + p.upper;
             }
             return str;
         },
@@ -47232,6 +47513,16 @@ if (!Array.prototype.indexOf) {
         this.postprocess = null;
 
         /**
+         * ### CustomInput.oninput
+         *
+         * A function that is executed after any input
+         *
+         * It is executed after validation and receives a result object
+         * and a reference to this widget.
+         */
+        this.oninput = null;
+
+        /**
          * ### CustomInput.params
          *
          * Object containing extra validation params
@@ -47308,6 +47599,19 @@ if (!Array.prototype.indexOf) {
          * The callback executed when the checkbox is clicked
          */
         this.checkboxCb = null;
+
+        /**
+         * ### CustomInput.orientation
+         *
+         * The orientation of main text relative to the input box
+         *
+         * Options:
+         *   - 'V': main text above input box
+         *   - 'H': main text next to input box
+         *
+         * Default: 'V'
+         */
+        this.orientation = null;
     }
 
     // ## CustomInput methods
@@ -47323,6 +47627,27 @@ if (!Array.prototype.indexOf) {
         var tmp, that, e, isText, setValues;
         that = this;
         e = 'CustomInput.init: ';
+
+
+        // Option orientation, default 'H'.
+        if ('undefined' === typeof opts.orientation) {
+            tmp = 'V';
+        }
+        else if ('string' !== typeof opts.orientation) {
+            throw new TypeError('CustomInput.init: orientation must ' +
+                                'be string, or undefined. Found: ' +
+                                opts.orientation);
+        }
+        else {
+            tmp = opts.orientation.toLowerCase().trim();
+            if (tmp === 'h') tmp = 'H';
+            else if (tmp === 'v') tmp = 'V';
+            else {
+                throw new Error('CustomInput.init: unknown orientation: ' +
+                                tmp);
+            }
+        }
+        this.orientation = tmp;
 
         this.requiredChoice = !!opts.requiredChoice;
 
@@ -47761,6 +48086,9 @@ if (!Array.prototype.indexOf) {
                         }
                         this.params.minItems = tmp;
                     }
+                    else if (this.requiredChoice) {
+                        this.params.minItems = 1;
+                    }
                     if ('undefined' !== typeof opts.maxItems) {
                         tmp = J.isInt(opts.maxItems, 0);
                         if (tmp === false) {
@@ -47849,7 +48177,7 @@ if (!Array.prototype.indexOf) {
                         minItems = p.minItems || 0;
                         if (opts.availableValues) {
                             nItems = J.randomInt(minItems,
-                                                 opts.availableValues.length); 
+                                                 opts.availableValues.length);
                             nItems--;
                             sample = J.sample(0, (nItems-1));
                         }
@@ -47962,6 +48290,16 @@ if (!Array.prototype.indexOf) {
         }
         else {
             // Add postprocess as needed.
+        }
+
+        // Oninput.
+
+        if (opts.oninput) {
+            if ('function' !== typeof opts.oninput) {
+                throw new TypeError(e + 'oninput must be function or ' +
+                                    'undefined. Found: ' + opts.oninput);
+            }
+            this.oninput = opts.oninput;
         }
 
         // Validation Speed
@@ -48080,6 +48418,8 @@ if (!Array.prototype.indexOf) {
                     res = that.validation(that.input.value);
                     if (res.err) that.setError(res.err);
                 }
+                // In case something else needs to be updated.
+                if (that.oninput) that.oninput(res, that);
             }, that.validationSpeed);
         };
         this.input.onclick = function() {
@@ -48230,9 +48570,10 @@ if (!Array.prototype.indexOf) {
     CustomInput.prototype.getValues = function(opts) {
         var res, valid;
         opts = opts || {};
+        res = this.input.value;
+        if (opts.valuesOnly) return res;
         if ('undefined' === typeof opts.markAttempt) opts.markAttempt = true;
         if ('undefined' === typeof opts.highlight) opts.highlight = true;
-        res = this.input.value;
         res = this.validation ? this.validation(res) : { value: res };
         valid = !res.err;
         res.timeBegin = this.timeBegin;
@@ -48263,8 +48604,13 @@ if (!Array.prototype.indexOf) {
      */
     CustomInput.prototype.setValues = function(opts) {
         var value, tmp;
-        if (opts && 'undefined' !== typeof opts.value) {
+        opts = opts || {};
+        if ('undefined' !== typeof opts.value) {
             value = opts.value;
+        }
+        // Alias.
+        else if ('undefined' !== typeof opts.values) {
+            value = opts.values;
         }
         else if (opts.availableValues) {
             tmp = opts.availableValues;
@@ -48426,6 +48772,1147 @@ if (!Array.prototype.indexOf) {
     //
     function isValidUSZip(z) {
         return z.length === 5 && J.isInt(z, 0);
+    }
+
+})(node);
+
+/**
+ * # CustomInputGroup
+ * Copyright(c) 2019 Stefano Balietti
+ * MIT Licensed
+ *
+ * Creates a table that groups together several custom input widgets
+ *
+ * @see CustomInput
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('CustomInputGroup', CustomInputGroup);
+
+    // ## Meta-data
+
+    CustomInputGroup.version = '0.1.0';
+    CustomInputGroup.description = 'Groups together and manages sets of ' +
+        'CustomInput widgets.';
+
+    CustomInputGroup.title = false;
+    CustomInputGroup.className = 'custominputgroup';
+
+    CustomInputGroup.separator = '::';
+
+    CustomInputGroup.texts.autoHint = function(w) {
+        if (w.requiredChoice) return '*';
+        else return false;
+    };
+    CustomInputGroup.texts.inputErr = 'One or more errors detected.';
+
+    // ## Dependencies
+
+    CustomInputGroup.dependencies = {
+        JSUS: {}
+    };
+
+    /**
+     * ## CustomInputGroup constructor
+     *
+     * Creates a new instance of CustomInputGroup
+     *
+     * @param {object} options Optional. Configuration options.
+     *   If a `table` option is specified, it sets it as main
+     *   table. All other options are passed to the init method.
+     */
+    function CustomInputGroup(options) {
+        var that;
+        that = this;
+
+        /**
+         * ### CustomInputGroup.dl
+         *
+         * The table containing all the custom inputs
+         */
+        this.table = null;
+
+        /**
+         * ### CustomInputGroup.trs
+         *
+         * Collection of all trs created
+         *
+         * Useful when shuffling items/choices
+         *
+         * @see CustomInputGroup.shuffle
+         */
+        this.trs = [];
+
+        /**
+         * ### CustomInputGroup.mainText
+         *
+         * The main text introducing the choices
+         *
+         * @see CustomInputGroup.spanMainText
+         */
+        this.mainText = null;
+
+        /**
+         * ### CustomInputGroup.spanMainText
+         *
+         * The span containing the main text
+         */
+        this.spanMainText = null;
+
+        /**
+         * ### CustomInputGroup.hint
+         *
+         * An additional text with information about how to select items
+         *
+         * If not specified, it may be auto-filled, e.g. '(pick 2)'.
+         *
+         * @see Feedback.texts.autoHint
+         */
+        this.hint = null;
+
+        /**
+         * ### CustomInputGroup.items
+         *
+         * The array of available items
+         */
+        this.items = null;
+
+        /**
+         * ### CustomInputGroup.itemsById
+         *
+         * Map of items ids to items
+         */
+        this.itemsById = {};
+
+        /**
+         * ### CustomInputGroup.itemsMap
+         *
+         * Maps items ids to the position in the items array
+         */
+        this.itemsMap = {};
+
+        /**
+         * ### CustomInputGroup.choices
+         *
+         * Array of default choices (if passed as global parameter)
+         */
+        this.choices = null;
+
+        /**
+         * ### CustomInputGroup.choicesById
+         *
+         * Map of items choices ids to corresponding cell
+         *
+         * Useful to detect clickable cells.
+         */
+        this.choicesById = {};
+
+        /**
+         * ### CustomInputGroup.itemsSettings
+         *
+         * The array of settings for each item
+         */
+        this.itemsSettings = null;
+
+        /**
+         * ### CustomInputGroup.order
+         *
+         * The current order of display of choices
+         *
+         * May differ from `originalOrder` if shuffled.
+         *
+         * @see CustomInputGroup.originalOrder
+         */
+        this.order = null;
+
+        /**
+         * ### CustomInputGroup.originalOrder
+         *
+         * The initial order of display of choices
+         *
+         * @see CustomInput.order
+         */
+        this.originalOrder = null;
+
+        /**
+         * ### CustomInputGroup.shuffleItems
+         *
+         * If TRUE, items are inserted in random order
+         *
+         * @see CustomInputGroup.order
+         */
+        this.shuffleItems = null;
+
+        /**
+         * ### CustomInputGroup.requiredChoice
+         *
+         * The number of required choices.
+         */
+        this.requiredChoice = null;
+
+        /**
+         * ### CustomInputGroup.orientation
+         *
+         * Orientation of display of items: vertical ('V') or horizontal ('H')
+         *
+         * Default orientation is vertical.
+         */
+        this.orientation = 'V';
+
+        /**
+         * ### CustomInputGroup.group
+         *
+         * The name of the group where the table belongs, if any
+         */
+        this.group = null;
+
+        /**
+         * ### CustomInputGroup.groupOrder
+         *
+         * The order of the choice table within the group
+         */
+        this.groupOrder = null;
+
+        /**
+         * ### CustomInputGroup.freeText
+         *
+         * If truthy, a textarea for free-text comment will be added
+         *
+         * If 'string', the text will be added inside the the textarea
+         */
+        this.freeText = null;
+
+        /**
+         * ### CustomInputGroup.textarea
+         *
+         * Textarea for free-text comment
+         */
+        this.textarea = null;
+
+        // Options passed to each individual item.
+
+        /**
+         * ### CustomInputGroup.timeFrom
+         *
+         * Time is measured from timestamp as saved by node.timer
+         *
+         * Default event is a new step is loaded (user can interact with
+         * the screen). Set it to FALSE, to have absolute time.
+         *
+         * This option is passed to each individual item.
+         *
+         * @see mixinSettings
+         *
+         * @see node.timer.getTimeSince
+         */
+        this.timeFrom = 'step';
+
+        /**
+         * ### CustomInputGroup.separator
+         *
+         * Symbol used to separate tokens in the id attribute of every cell
+         *
+         * Default CustomInputGroup.separator
+         *
+         * This option is passed to each individual item.
+         *
+         * @see mixinSettings
+         */
+        this.separator = CustomInputGroup.separator;
+
+        /**
+         * ### CustomInputGroup.shuffleChoices
+         *
+         * If TRUE, choices in items are shuffled
+         *
+         * This option is passed to each individual item.
+         *
+         * @see mixinSettings
+         */
+        this.shuffleChoices = null;
+
+        /**
+         * ### CustomInputGroup.sharedOptions
+         *
+         * An object containing options to be added to every custom input
+         *
+         * Options are added only if forms are specified as object literals,
+         * and can be overriden by each individual form.
+         */
+        this.sharedOptions = {};
+
+        /**
+         * ### CustomInputGroup.summaryInput
+         *
+         * A summary custom input added last which can be updated in real time
+         *
+         * @see CustomInputGroup.summaryInputCb
+         */
+        this.summaryInput = null;
+
+        /**
+         * ### CustomInputGroup.errorBox
+         *
+         * An HTML element displayed when a validation error occurs
+         */
+        this.errorBox = null;
+
+        /**
+         * ### CustomInputGroup.validation
+         *
+         * The callback validating all the inputs at once
+         *
+         * The callback is executed by getValues.
+         *
+         * Input paramers:
+         *
+         * - res: the validation result of all inputs
+         * - values: object literal containing the current value of each input
+         * - widget: a reference to this widget
+         *
+         * Return value:
+         *
+         * - res: the result object as it is on success, or with with an err
+         *        property containing the error message on failure. Any change
+         *        to the result object is carried over.
+         *
+         * @see CustomInputGroup.oninput
+         */
+        this.validation = null;
+
+        /**
+         * ### CustomInputGroup._validation
+         *
+         * Reference to the user defined validation function
+         *
+         * @api private
+         */
+        this._validation = null;
+
+        /**
+         * ### CustomInputGroup.oninput
+         *
+         * Callback called when any input has changed
+         *
+         * Input paramers:
+         *
+         * - res: the validation result of the single input
+         * - input: the custom input that fired oninput
+         * - widget: a reference to this widget
+         */
+        this.oninput = null;
+
+        /**
+         * ### CustomInputGroup._oninput
+         *
+         * Reference to the user defined oninput function
+         *
+         * @api private
+         */
+        this._oninput = null;
+    }
+
+    // ## CustomInputGroup methods
+
+    /**
+     * ### CustomInputGroup.init
+     *
+     * Initializes the instance
+     *
+     * Available options are:
+     *
+     *   - className: the className of the table (string, array), or false
+     *       to have none.
+     *   - orientation: orientation of the table: vertical (v) or horizontal (h)
+     *   - group: the name of the group (number or string), if any
+     *   - groupOrder: the order of the table in the group, if any
+     *   - onclick: a custom onclick listener function. Context is
+     *       `this` instance
+     *   - mainText: a text to be displayed above the table
+     *   - shuffleItems: if TRUE, items are shuffled before being added
+     *       to the table
+     *   - freeText: if TRUE, a textarea will be added under the table,
+     *       if 'string', the text will be added inside the the textarea
+     *   - timeFrom: The timestamp as recorded by `node.timer.setTimestamp`
+     *       or FALSE, to measure absolute time for current choice
+     *   - sharedOptions: Options shared across all inputs
+     *   - summary: An object containing the options to instantiate a custom
+     *       input summary field.
+     *   - validation: A validation callback for all inputs.
+     *   - oninput: A callback called when any input is changed
+     *
+     * @param {object} opts Configuration options
+     */
+    CustomInputGroup.prototype.init = function(opts) {
+        var tmp, that;
+        that = this;
+
+        // TODO: many options checking are replicated. Skip them all?
+        // Have a method in CustomInput?
+
+        if (!this.id) {
+            throw new TypeError('CustomInputGroup.init: id ' +
+                                'is missing.');
+        }
+
+        // Option orientation, default 'H'.
+        if ('undefined' === typeof opts.orientation) {
+            tmp = 'V';
+        }
+        else if ('string' !== typeof opts.orientation) {
+            throw new TypeError('CustomInputGroup.init: orientation ' +
+                                'must be string, or undefined. Found: ' +
+                                opts.orientation);
+        }
+        else {
+            tmp = opts.orientation.toLowerCase().trim();
+            if (tmp === 'horizontal' || tmp === 'h') {
+                tmp = 'H';
+            }
+            else if (tmp === 'vertical' || tmp === 'v') {
+                tmp = 'V';
+            }
+            else {
+                throw new Error('CustomInputGroup.init: orientation ' +
+                                'is invalid: ' + tmp);
+            }
+        }
+        this.orientation = tmp;
+
+        // Option shuffleItems, default false.
+        if ('undefined' === typeof opts.shuffleItems) tmp = false;
+        else tmp = !!opts.shuffleItems;
+        this.shuffleItems = tmp;
+
+        // Option requiredChoice, if any.
+        if ('number' === typeof opts.requiredChoice) {
+            this.requiredChoice = opts.requiredChoice;
+        }
+        else if ('boolean' === typeof opts.requiredChoice) {
+            this.requiredChoice = opts.requiredChoice ? 1 : 0;
+        }
+        else if ('undefined' !== typeof opts.requiredChoice) {
+            throw new TypeError('CustomInputGroup.init: ' +
+                                'requiredChoice ' +
+                                'be number or boolean or undefined. Found: ' +
+                                opts.requiredChoice);
+        }
+
+        // Set the group, if any.
+        if ('string' === typeof opts.group ||
+            'number' === typeof opts.group) {
+
+            this.group = opts.group;
+        }
+        else if ('undefined' !== typeof opts.group) {
+            throw new TypeError('CustomInputGroup.init: group must ' +
+                                'be string, number or undefined. Found: ' +
+                                opts.group);
+        }
+
+        // Set the groupOrder, if any.
+        if ('number' === typeof opts.groupOrder) {
+
+            this.groupOrder = opts.groupOrder;
+        }
+        else if ('undefined' !== typeof opts.group) {
+            throw new TypeError('CustomInputGroup.init: groupOrder ' +
+                                'must be number or undefined. Found: ' +
+                                opts.groupOrder);
+        }
+
+        // Set the validation function.
+        if ('function' === typeof opts.validation) {
+            this._validation = opts.validation;
+
+            this.validation = function(res, values) {
+                if (!values) values = that.getValues({ valuesOnly: true });
+                return that._validation(res || {}, values, that)
+            };
+        }
+        else if ('undefined' !== typeof opts.validation) {
+            throw new TypeError('CustomInputGroup.init: validation must ' +
+                                'be function or undefined. Found: ' +
+                                opts.validation);
+        }
+
+        // Set the validation function.
+        if ('function' === typeof opts.oninput) {
+            this._oninput = opts.oninput;
+
+            this.oninput = function(res, input) {
+                that._oninput(res, input, that);
+            };
+        }
+        else if ('undefined' !== typeof opts.oninput) {
+            throw new TypeError('CustomInputGroup.init: oninput must ' +
+                                'be function or undefined. Found: ' +
+                                opts.oninput);
+        }
+
+        // Set the mainText, if any.
+        if ('string' === typeof opts.mainText) {
+            this.mainText = opts.mainText;
+        }
+        else if ('undefined' !== typeof opts.mainText) {
+            throw new TypeError('CustomInputGroup.init: mainText ' +
+                                'must be string or undefined. Found: ' +
+                                opts.mainText);
+        }
+
+        // Set the hint, if any.
+        if ('string' === typeof opts.hint) {
+            this.hint = opts.hint;
+            if (this.requiredChoice) this.hint += ' *';
+        }
+        else if ('undefined' !== typeof opts.hint) {
+            throw new TypeError('CustomInputGroup.init: hint must ' +
+                                'be a string, or undefined. Found: ' +
+                                opts.hint);
+        }
+        else {
+            // Returns undefined if there are no constraints.
+            this.hint = this.getText('autoHint');
+        }
+
+        // Set the timeFrom, if any.
+        if (opts.timeFrom === false ||
+            'string' === typeof opts.timeFrom) {
+
+            this.timeFrom = opts.timeFrom;
+        }
+        else if ('undefined' !== typeof opts.timeFrom) {
+            throw new TypeError('CustomInputGroup.init: timeFrom ' +
+                                'must be string, false, or undefined. Found: ' +
+                                opts.timeFrom);
+        }
+
+        // Option shuffleChoices, default false.
+        if ('undefined' !== typeof opts.shuffleChoices) {
+            this.shuffleChoices = !!opts.shuffleChoices;
+        }
+
+        // Set the className, if not use default.
+        if ('undefined' === typeof opts.className) {
+            this.className = CustomInputGroup.className;
+        }
+        else if (opts.className === false ||
+                 'string' === typeof opts.className ||
+                 J.isArray(opts.className)) {
+
+            this.className = opts.className;
+        }
+        else {
+            throw new TypeError('CustomInputGroup.init: ' +
+                                'className must be string, array, ' +
+                                'or undefined. Found: ' + opts.className);
+        }
+
+        // sharedOptions.
+        if ('undefined' !== typeof opts.sharedOptions) {
+            if ('object' !== typeof opts.sharedOptions) {
+                throw new TypeError('CustomInputGroup.init: sharedOptions' +
+                                    ' must be object or undefined. Found: ' +
+                                    opts.sharedOptions);
+            }
+            if (opts.sharedOptions.hasOwnProperty('name')) {
+                throw new Error('CustomInputGroup.init: sharedOptions ' +
+                                'cannot contain property name. Found: ' +
+                                opts.sharedOptions);
+            }
+            this.sharedOptions = J.mixin(this.sharedOptions,
+                                        opts.sharedOptions);
+        }
+
+        if ('undefined' !== typeof opts.summary) {
+            if ('string' === typeof opts.summary) {
+                opts.summary = { mainText: opts.summary }
+            }
+            else if ('object' !== typeof opts.summary) {
+                throw new TypeError('CustomInputGroup.init: summary' +
+                                    ' must be object or undefined. Found: ' +
+                                    opts.summary);
+            }
+
+            this.summaryInput = opts.summary;
+        }
+
+        // After all configuration options are evaluated, add items.
+
+        if ('object' === typeof opts.table) {
+            this.table = opts.table;
+        }
+        else if ('undefined' !== typeof opts.table &&
+                 false !== opts.table) {
+
+            throw new TypeError('CustomInputGroup.init: table ' +
+                                'must be object, false or undefined. ' +
+                                'Found: ' + opts.table);
+        }
+
+        // TODO: check this.
+        this.table = opts.table;
+
+        this.freeText = 'string' === typeof opts.freeText ?
+            opts.freeText : !!opts.freeText;
+
+        // Add the items.
+        if ('undefined' !== typeof opts.items) this.setItems(opts.items);
+
+    };
+
+    /**
+     * ### CustomInputGroup.setItems
+     *
+     * Sets the available items and optionally builds the table
+     *
+     * @param {array} items The array of items
+     *
+     * @see CustomInputGroup.table
+     * @see CustomInputGroup.order
+     * @see CustomInputGroup.shuffleItems
+     * @see CustomInputGroup.buildTable
+     */
+    CustomInputGroup.prototype.setItems = function(items) {
+        var len;
+        if (!J.isArray(items)) {
+            throw new TypeError('CustomInputGroup.setItems: ' +
+                                'items must be array. Found: ' + items);
+        }
+        if (!items.length) {
+            throw new Error('CustomInputGroup.setItems: ' +
+                            'items is an empty array.');
+        }
+
+        len = items.length;
+        this.itemsSettings = items;
+        this.items = new Array(len);
+
+        // Save the order in which the items will be added.
+        this.order = J.seq(0, len-1);
+        if (this.shuffleItems) this.order = J.shuffle(this.order);
+        this.originalOrder = this.order;
+
+        // Build the table and items at once (faster).
+        if (this.table) this.buildTable();
+    };
+
+    /**
+     * ### CustomInputGroup.buildTable
+     *
+     * Builds the table of clickable items and enables it
+     *
+     * Must be called after items have been set already.
+     *
+     * @see CustomInputGroup.setCustomInputs
+     */
+    CustomInputGroup.prototype.buildTable = function() {
+        var i, len, tr, H;
+
+        H = this.orientation === 'H';
+        i = -1, len = this.itemsSettings.length;
+
+        if (H) tr = createTR(this, 'row1');
+        for ( ; ++i < len ; ) {
+            // Add new TR.
+            if (!H) tr = createTR(this, 'row' + (i+1));
+            addCustomInput(this, tr, i);
+        }
+        if (this.summaryInput) {
+            if (!H) tr = createTR(this, 'row' + (i+1));
+            addSummaryInput(this, tr, i);
+        }
+
+
+        var that = this;
+        this.table.onclick = function() {
+            // Remove any warning/error from form on click.
+            if (that.isHighlighted()) that.unhighlight();
+        };
+
+        this.enable(true);
+    };
+
+    /**
+     * ### CustomInputGroup.append
+     *
+     * Implements Widget.append
+     *
+     * Checks that id is unique.
+     *
+     * Appends (all optional):
+     *
+     *   - mainText: a question or statement introducing the choices
+     *   - table: the table containing the choices
+     *   - freeText: a textarea for comments
+     *
+     * @see Widget.append
+     */
+    CustomInputGroup.prototype.append = function() {
+        // Id must be unique.
+        if (W.getElementById(this.id)) {
+            throw new Error('CustomInputGroup.append: id ' +
+                            'is not unique: ' + this.id);
+        }
+
+        // MainText.
+        if (this.mainText) {
+            this.spanMainText = W.append('span', this.bodyDiv, {
+                className: 'custominputgroup-maintext',
+                innerHTML: this.mainText
+            });
+        }
+        // Hint.
+        if (this.hint) {
+            W.append('span', this.spanMainText || this.bodyDiv, {
+                className: 'custominputgroup-hint',
+                innerHTML: this.hint
+            });
+        }
+
+        // Create/set table, if requested.
+        if (this.table !== false) {
+            if ('undefined' === typeof this.table) {
+                this.table = document.createElement('table');
+                if (this.items) this.buildTable();
+            }
+            // Set table id.
+            this.table.id = this.id;
+            if (this.className) J.addClass(this.table, this.className);
+            else this.table.className = '';
+            // Append table.
+            this.bodyDiv.appendChild(this.table);
+        }
+
+        this.errorBox = W.append('div', this.bodyDiv, { className: 'errbox' });
+
+        // Creates a free-text textarea, possibly with placeholder text.
+        if (this.freeText) {
+            this.textarea = document.createElement('textarea');
+            this.textarea.id = this.id + '_text';
+            this.textarea.className = CustomInputGroup.className + '-freetext';
+            if ('string' === typeof this.freeText) {
+                this.textarea.placeholder = this.freeText;
+            }
+            // Append textarea.
+            this.bodyDiv.appendChild(this.textarea);
+        }
+    };
+
+    /**
+     * ### CustomInputGroup.listeners
+     *
+     * Implements Widget.listeners
+     *
+     * Adds two listeners two disable/enable the widget on events:
+     * INPUT_DISABLE, INPUT_ENABLE
+     *
+     * Notice! Nested choice tables listeners are not executed.
+     *
+     * @see Widget.listeners
+     * @see mixinSettings
+     */
+    CustomInputGroup.prototype.listeners = function() {
+        var that = this;
+        node.on('INPUT_DISABLE', function() {
+            that.disable();
+        });
+        node.on('INPUT_ENABLE', function() {
+            that.enable();
+        });
+    };
+
+    /**
+     * ### CustomInputGroup.disable
+     *
+     * Disables clicking on the table and removes CSS 'clicklable' class
+     */
+    CustomInputGroup.prototype.disable = function() {
+        if (this.disabled === true || !this.table) return;
+        this.disabled = true;
+        this.emit('disabled');
+    };
+
+    /**
+     * ### CustomInputGroup.enable
+     *
+     * Enables clicking on the table and adds CSS 'clicklable' class
+     *
+     * @return {function} cb The event listener function
+     */
+    CustomInputGroup.prototype.enable = function(force) {
+        if (!this.table || (!force && !this.disabled)) return;
+        this.disabled = false;
+        this.emit('enabled');
+    };
+
+    /**
+     * ### CustomInputGroup.highlight
+     *
+     * Highlights the choice table
+     *
+     * @param {string} The style for the table's border.
+     *   Default '1px solid red'
+     *
+     * @see CustomInputGroup.highlighted
+     */
+    CustomInputGroup.prototype.highlight = function(border) {
+        if (border && 'string' !== typeof border) {
+            throw new TypeError('CustomInputGroup.highlight: border must be ' +
+                                'string or undefined. Found: ' + border);
+        }
+        if (!this.table || this.highlighted === true) return;
+        this.table.style.border = border || '3px solid red';
+        this.highlighted = true;
+        this.emit('highlighted', border);
+    };
+
+    /**
+     * ### CustomInputGroup.unhighlight
+     *
+     * Removes highlight from the choice table
+     *
+     * @see CustomInputGroup.highlighted
+     */
+    CustomInputGroup.prototype.unhighlight = function() {
+        if (!this.table || this.highlighted !== true) return;
+        this.table.style.border = '';
+        this.highlighted = false;
+        this.errorBox.innerHTML = '';
+        this.emit('unhighlighted');
+    };
+
+    /**
+     * ### CustomInputGroup.getValues
+     *
+     * Returns the values for current selection and other paradata
+     *
+     * Paradata that is not set or recorded will be omitted
+     *
+     * @param {object} opts Optional. Configures the return value.
+     *   Available optionts:
+     *
+     *   - valuesOnly: just returns the current values, no other checkings.
+     *   - markAttempt: If TRUE, getting the value counts as an attempt
+     *      to find the correct answer. Default: TRUE.
+     *   - highlight:   If TRUE, if current value is not the correct
+     *      value, widget will be highlighted. Default: TRUE.
+     *   - reset:    If TRUTHY and no item raises an error,
+     *       then it resets the state of all items before
+     *       returning it. Default: FALSE.
+     *
+     * @return {object} Object containing the choice and paradata
+     *
+     * @see CustomInputGroup.verifyChoice
+     * @see CustomInputGroup.reset
+     */
+    CustomInputGroup.prototype.getValues = function(opts) {
+        var res, i, len, input, toReset, values;
+
+        opts = opts || {};
+        i = -1, len = this.items.length;
+        if (opts.valuesOnly) {
+            res = {};
+            for ( ; ++i < len ; ) {
+                res[this.items[i].id] =
+                    this.items[i].getValues({ valuesOnly: true });
+            }
+            return res;
+        }
+        res = {
+            id: this.id,
+            order: this.order,
+            items: {},
+            isCorrect: true
+        };
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
+        // Make sure reset is done only at the end.
+        toReset = opts.reset;
+        opts.reset = false;
+
+        if (this.validation) values = {};
+        for ( ; ++i < len ; ) {
+            input = this.items[i];
+            res.items[input.id] = input.getValues(opts);
+            // TODO is null or empty?
+            if (res.items[input.id].value === "") {
+                res.missValues = true;
+                if (input.requiredChoice) {
+                    res.err = true;
+                    res.isCorrect = false;
+                }
+            }
+            if (res.items[input.id].isCorrect === false && opts.highlight) {
+                res.err = true;
+            }
+            if (values) values[input.id] = res.items[input.id].value;
+        }
+        if (!res.err && values) {
+            // res.err = this.getText('inputErr');
+            this.validation(res, values);
+            if (opts.highlight && res.err) this.setError(res.err);
+
+        }
+        else if (toReset) this.reset(toReset);
+        opts.reset = toReset;
+        if (this.textarea) res.freetext = this.textarea.value;
+        return res;
+    };
+
+    /**
+     * ### CustomInputGroup.setValues
+     *
+     * Sets values in the choice table group as specified by the options
+     *
+     * @param {object} options Optional. Options specifying how to set
+     *   the values. If no parameter is specified, random values will
+     *   be set.
+     *
+     * @see CustomInput.setValues
+     *
+     * @experimental
+     */
+    CustomInputGroup.prototype.setValues = function(opts) {
+        var i, len;
+        if (!this.items || !this.items.length) {
+            throw new Error('CustomInputGroup.setValues: no items found.');
+        }
+        opts = opts || {};
+        i = -1, len = this.items.length;
+        for ( ; ++i < len ; ) {
+            this.items[i].setValues(opts);
+        }
+
+        // Make a random comment.
+        if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
+    };
+
+    /**
+     * ### CustomInputGroup.reset
+     *
+     * Resets all the CustomInput items and textarea
+     *
+     * @param {object} options Optional. Options specifying how to set
+     *   to reset each item
+     *
+     * @see CustomInput.reset
+     * @see CustomInputGroup.shuffle
+     */
+    CustomInputGroup.prototype.reset = function(opts) {
+        var i, len;
+        opts = opts || {};
+        i = -1, len = this.items.length;
+        for ( ; ++i < len ; ) {
+            this.items[i].reset(opts);
+        }
+        // Delete textarea, if found.
+        if (this.textarea) this.textarea.value = '';
+        if (opts.shuffleItems) this.shuffle();
+        if (this.isHighlighted()) this.unhighlight();
+    };
+
+    /**
+     * ### CustomInputGroup.shuffle
+     *
+     * Shuffles the order of the displayed items
+     *
+     * Assigns the new order of items to `this.order`.
+     *
+     * @param {object} options Optional. Not used for now.
+     *
+     * TODO: shuffle choices in each item. (Note: can't use
+     * item.shuffle, because the cells are taken out, so
+     * there is no table and no tr in there)
+     *
+     * JSUS.shuffleElements
+     */
+    CustomInputGroup.prototype.shuffle = function(opts) {
+        var order, i, len, that, cb, newOrder;
+        if (!this.items) return;
+        len = this.items.length;
+        if (!len) return;
+        that = this;
+        newOrder = new Array(len);
+        // Updates the groupOrder property of each item,
+        // and saves the order of items correctly.
+        cb = function(el, newPos, oldPos) {
+            var i;
+            i = el.id.split(that.separator);
+            i = that.orientation === 'H' ? i[2] : i[0];
+            i = that.itemsMap[i];
+            that.items[i].groupOrder = (newPos+1);
+            newOrder[newPos] = i;
+        };
+        order = J.shuffle(this.order);
+        if (this.orientation === 'H') {
+            J.shuffleElements(this.table, order, cb);
+        }
+        else {
+            // Here we maintain the columns manually. Each TR contains TD
+            // belonging to different items, we make sure the order is the
+            // same for all TR.
+            len = this.trs.length;
+            for ( i = -1 ; ++i < len ; ) {
+                J.shuffleElements(this.trs[i], order, cb);
+                // Call cb only on first iteration.
+                cb = undefined;
+            }
+        }
+        this.order = newOrder;
+    };
+
+    /**
+     * ### CustomInputGroup.setError
+     *
+     * Set the error msg inside the errorBox and call highlight
+     *
+     * @param {string} The error msg (can contain HTML)
+     *
+     * @see CustomInput.highlight
+     * @see CustomInput.errorBox
+     */
+    CustomInputGroup.prototype.setError = function(err) {
+        this.errorBox.innerHTML = err;
+        this.highlight();
+    };
+    // ## Helper methods.
+
+    /**
+     * ### mixinSettings
+     *
+     * Mix-ins global settings with local settings for specific choice tables
+     *
+     * @param {CustomInputGroup} that This instance
+     * @param {object|string} s The current settings for the item
+     *   (choice table), or just its id, to mixin all settings.
+     * @param {number} i The ordinal position of the table in the group
+     *
+     * @return {object} s The mixed-in settings
+     */
+    function mixinSettings(that, s, i) {
+        if ('string' === typeof s) {
+            s = { id: s };
+        }
+        else if ('object' !== typeof s) {
+            throw new TypeError('CustomInputGroup.buildTable: item must be ' +
+                                'string or object. Found: ' + s);
+        }
+        s.group = that.id;
+        s.groupOrder = i+1;
+        s.orientation = that.orientation;
+        s.title = false;
+
+        if (that.oninput) s.oninput = that.oninput;
+
+        if ('undefined' === typeof s.requiredChoice && that.requiredChoice) {
+            s.requiredChoice = that.requiredChoice;
+        }
+
+        if ('undefined' === typeof s.timeFrom) s.timeFrom = that.timeFrom;
+
+        s = J.mixout(s, that.sharedOptions);
+
+        // No reference is stored in node.widgets.
+        s.storeRef = false;
+
+        return s;
+    }
+
+    /**
+     * ### addCustomInput
+     *
+     * Creates a instance i-th of choice table with relative settings
+     *
+     * Stores a reference of each input in `itemsById`
+     *
+     * @param {CustomInputGroup} that This instance
+     * @param {HTMLElement} tr A TR element where the custom input is appended
+     * @param {number} i The ordinal position of the table in the group
+     *
+     * @return {object} ct The requested choice table
+     *
+     * @see CustomInputGroup.itemsSettings
+     * @see CustomInputGroup.itemsById
+     * @see mixinSettings
+     */
+    function addCustomInput(that, tr, i) {
+        var ci, s, td, idx;
+        idx = that.order[i];
+        s = mixinSettings(that, that.itemsSettings[idx], i);
+        td = document.createElement('td');
+        tr.appendChild(td);
+        ci = node.widgets.append('CustomInput', td, s);
+        if (that.itemsById[ci.id]) {
+            throw new Error('CustomInputGroup.buildTable: an input ' +
+                            'with the same id already exists: ' + ci.id);
+        }
+        that.itemsById[ci.id] = ci;
+        that.items[idx] = ci;
+        that.itemsMap[ci.id] = idx;
+        return ci;
+    }
+
+    /**
+     * ### addSummaryInput
+     *
+     * Creates the last summary input
+     *
+     * Stores a reference in `summaryInput`
+     *
+     * @param {CustomInputGroup} that This instance
+     * @param {HTMLElement} tr A TR element where the custom input is appended
+     * @param {number} i The ordinal position of the table in the group
+     *
+     * @return {object} ct The requested choice table
+     *
+     * @see CustomInputGroup.itemsSettings
+     * @see CustomInputGroup.itemsById
+     * @see mixinSettings
+     */
+    function addSummaryInput(that, tr, i) {
+        var ci, s, td;
+        s = J.mixout({
+            id: that.id + '_summary',
+            storeRef: false,
+            title: false,
+            panel: false,
+            className: 'custominputgroup-summary',
+            disabled: true
+        }, that.sharedOptions);
+        s = J.mixin(s, that.summaryInput);
+        td = document.createElement('td');
+        tr.appendChild(td);
+        ci = node.widgets.append('CustomInput', td, s);
+        that.summaryInput = ci;
+        return ci;
+    }
+
+    /**
+     * ### createTR
+     *
+     * Creates and append a new TR element
+     *
+     * If required by current configuration, the `id` attribute is
+     * added to the TR in the form of: 'tr' + separator + widget_id
+     *
+     * @param {CustomInput} that This instance
+     *
+     * @return {HTMLElement} Thew newly created TR element
+     */
+    function createTR(that, trid) {
+        var tr, sep;
+        tr = document.createElement('tr');
+        that.table.appendChild(tr);
+        // Set id.
+        sep = that.separator;
+        tr.id = that.id + sep + 'tr' + sep + trid;
+        // Store reference.
+        that.trs.push(tr);
+        return tr;
     }
 
 })(node);
@@ -49135,8 +50622,6 @@ if (!Array.prototype.indexOf) {
  *
  * Shows a disconnect button
  *
- * // TODO: add light on/off for connected/disconnected status
- *
  * www.nodegame.org
  */
 (function(node) {
@@ -49147,17 +50632,18 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    DisconnectBox.version = '0.2.3';
-    DisconnectBox.description =
-        'Visually display current, previous and next stage of the game.';
+    DisconnectBox.version = '0.4.0';
+    DisconnectBox.description = 'Monitors and handles disconnections';
 
     DisconnectBox.title = false;
     DisconnectBox.panel = false;
     DisconnectBox.className = 'disconnectbox';
 
     DisconnectBox.texts = {
-        leave: 'Leave Experiment',
-        left: 'You Left'
+        leave: 'Leave Task',
+        left: 'You Left',
+        disconnected: 'Disconnected!',
+        connected: 'Connected'
     };
 
     // ## Dependencies
@@ -49167,59 +50653,122 @@ if (!Array.prototype.indexOf) {
     /**
      * ## DisconnectBox constructor
      *
-     * `DisconnectBox` displays current, previous and next stage of the game
      */
     function DisconnectBox() {
-        // ### DisconnectBox.disconnectButton
+
+        // ### DisconnectBox.showStatus
+        // If TRUE, it shows current connection status. Default: TRUE
+        this.showStatus = null;
+
+        // ### DisconnectBox.showDiscBtn
+        // If TRUE, it shows the disconnect button. Default: FALSE
+        this.showDiscBtn = null;
+
+        // ### DisconnectBox.statusSpan
+        // The SPAN containing the status
+        this.statusSpan = null;
+
+        // ### DisconnectBox.disconnectBtn
         // The button for disconnection
-        this.disconnectButton = null;
+        this.disconnectBtn = null;
+
+        // ### DisconnectBox.disconnectBtn
+        // TRUE, user pressed the disconnect button
+        this.userDiscFlag = null;
+
         // ### DisconnectBox.ee
         // The event emitter with whom the events are registered
         this.ee = null;
+
+        // ### DisconnectBox.disconnectCb
+        // Callback executed when a disconnection is detected
+        this.disconnectCb = null;
+
+        // ### DisconnectBox.disconnectCb
+        // Callback executed when a connection is detected
+        this.connectCb = null;
     }
 
     // ## DisconnectBox methods
+    DisconnectBox.prototype.init = function(opts) {
+        var that;
+        that = this;
 
-    /**
-     * ### DisconnectBox.append
-     *
-     * Appends widget to `this.bodyDiv` and writes the stage
-     *
-     * @see DisconnectBox.writeStage
-     */
+        if (opts.connectCb) {
+            if ('function' !== typeof opts.connectCb) {
+                throw new TypeError('DisconnectBox.init: connectCb must be ' +
+                                    'function or undefined. Found: ' +
+                                    opts.connectCb);
+            }
+            this.connectCb = opts.connectCb;
+        }
+        if (opts.disconnectCb) {
+            if ('function' !== typeof opts.disconnectCb) {
+                throw new TypeError('DisconnectBox.init: disconnectCb must ' +
+                                    'be function or undefined. Found: ' +
+                                    opts.disconnectCb);
+            }
+            this.disconnectCb = opts.disconnectCb;
+        }
+
+        this.showDiscBtn = !!opts.showDiscBtn;
+        this.showStatus = !!opts.showStatus;
+    };
+
     DisconnectBox.prototype.append = function() {
-        var that = this;
-        this.disconnectButton = W.add('button', this.bodyDiv, {
-            innerHTML: this.getText('leave'),
-            className: 'btn btn-lg'
-        });
+        var that, con;
+        that = this;
+        con = node.socket.isConnected();
+        if (this.showStatus) {
+            this.statusSpan = W.add('span', this.bodyDiv);
+            this.updateStatus(con ? 'connected' : 'disconnected');
+        }
+        if (this.showDiscBtn) {
+            this.disconnectBtn = W.add('button', this.bodyDiv, {
+                innerHTML: this.getText(con ? 'leave' : 'left'),
+                className: 'btn',
+                style: { 'margin-left': '10px' }
+            });
+            if (!con) this.disconnectBtn.disabled = true;
+            this.disconnectBtn.onclick = function() {
+                that.disconnectBtn.disabled = true;
+                that.userDiscFlag = true;
+                node.socket.disconnect();
+            };
+        }
 
-        this.disconnectButton.onclick = function() {
-            that.disconnectButton.disabled = true;
-            node.socket.disconnect();
-            that.disconnectButton.innerHTML = that.getText('left');
-        };
+    };
+
+    DisconnectBox.prototype.updateStatus = function(status) {
+        this.statusSpan.innerHTML = this.getText(status);
+        this.statusSpan.className = status === 'disconnected' ?
+            'text-danger' : '';
     };
 
     DisconnectBox.prototype.listeners = function() {
-        var that = this;
+        var that;
+        that = this;
 
         this.ee = node.getCurrentEventEmitter();
-        this.ee.on('SOCKET_DISCONNECT', function DBdiscon() {
-            // console.log('DB got socket_diconnect');
-        });
-
-        this.ee.on('SOCKET_CONNECT', function DBcon() {
-            // console.log('DB got socket_connect');
-            if (that.disconnectButton.disabled) {
-                that.disconnectButton.disabled = false;
-                that.disconnectButton.innerHTML = that.getText('leave');
+        this.ee.on('SOCKET_DISCONNECT', function() {
+            // TODO: disconnect color text-danger.
+            that.updateStatus('disconnected');
+            if (that.disconnectBtn) {
+                that.disconnectBtn.disabled = true;
+                that.disconnectBtn.innerHTML = that.getText('left');
             }
+            if (that.disconnectCb) that.disconnectCb(that.userDiscFlag);
         });
 
-        this.on('destroyed', function() {
-            that.ee.off('SOCKET_DISCONNECT', 'DBdiscon');
-            that.ee.off('SOCKET_CONNECT', 'DBcon');
+        this.ee.on('SOCKET_CONNECT', function() {
+            that.updateStatus('connected');
+            if (that.disconnectBtn) {
+                that.disconnectBtn.disabled = false;
+                that.disconnectBtn.innerHTML = that.getText('leave');
+            }
+            if (that.connectCb) that.disconnectCb();
+            // Reset pressedDisc.
+            that.userDiscFlag = false;
         });
     };
 
@@ -49295,6 +50844,8 @@ if (!Array.prototype.indexOf) {
             res = node.done();
             if (res) that.disable();
         };
+
+        this.disableOnDisconnect = null;
     }
 
     // ## DoneButton methods
@@ -49312,52 +50863,56 @@ if (!Array.prototype.indexOf) {
      *     to have none. Default bootstrap classes: 'btn btn-lg btn-primary'
      * - text: the text on the button. Default: DoneButton.text
      *
-     * @param {object} options Optional. Configuration options
+     * @param {object} opts Optional. Configuration options
      */
-    DoneButton.prototype.init = function(options) {
+    DoneButton.prototype.init = function(opts) {
         var tmp;
-        options = options || {};
+        opts = opts || {};
 
         //Button
-        if ('undefined' === typeof options.id) {
+        if ('undefined' === typeof opts.id) {
             tmp = DoneButton.className;
         }
-        else if ('string' === typeof options.id) {
-            tmp = options.id;
+        else if ('string' === typeof opts.id) {
+            tmp = opts.id;
         }
-        else if (false === options.id) {
-            tmp = '';
+        else if (false === opts.id) {
+            tmp = false;
         }
         else {
-            throw new TypeError('DoneButton.init: options.id must ' +
+            throw new TypeError('DoneButton.init: id must ' +
                                 'be string, false, or undefined. Found: ' +
-                                options.id);
+                                opts.id);
         }
-        this.button.id = tmp;
+        if (tmp) this.button.id = tmp;
 
         // Button className.
-        if ('undefined' === typeof options.className) {
+        if ('undefined' === typeof opts.className) {
             tmp  = 'btn btn-lg btn-primary';
         }
-        else if (options.className === false) {
+        else if (opts.className === false) {
             tmp = '';
         }
-        else if ('string' === typeof options.className) {
-            tmp = options.className;
+        else if ('string' === typeof opts.className) {
+            tmp = opts.className;
         }
-        else if (J.isArray(options.className)) {
-            tmp = options.className.join(' ');
+        else if (J.isArray(opts.className)) {
+            tmp = opts.className.join(' ');
         }
         else  {
-            throw new TypeError('DoneButton.init: options.className must ' +
+            throw new TypeError('DoneButton.init: className must ' +
                                 'be string, array, or undefined. Found: ' +
-                                options.className);
+                                opts.className);
         }
         this.button.className = tmp;
 
         // Button text.
-        this.button.value = 'string' === typeof options.text ?
-            options.text : this.getText('done');
+        this.button.value = 'string' === typeof opts.text ?
+            opts.text : this.getText('done');
+
+        this.disableOnDisconnect =
+            'undefined' === typeof opts.disableOnDisconnect ?
+            true : !! opts.disableOnDisconnect;
     };
 
     DoneButton.prototype.append = function() {
@@ -49365,7 +50920,8 @@ if (!Array.prototype.indexOf) {
     };
 
     DoneButton.prototype.listeners = function() {
-        var that = this;
+        var that, disabled;
+        that = this;
 
         // This is normally executed after the PLAYING listener of
         // GameWindow where lockUnlockedInputs takes place.
@@ -49387,6 +50943,22 @@ if (!Array.prototype.indexOf) {
             if ('string' === typeof prop) that.button.value = prop;
             else if (prop && prop.text) that.button.value = prop.text;
         });
+
+        if (this.disableOnDisconnect) {
+            node.on('SOCKET_DISCONNECT', function() {
+                if (!that.isDisabled()) {
+                    that.disable();
+                    disabled = true;
+                }
+            });
+
+            node.on('SOCKET_CONNECT', function() {
+                if (disabled) {
+                    if (that.isDisabled()) that.enable();
+                    disabled = false;
+                }
+            });
+        }
     };
 
     /**
@@ -50922,18 +52494,34 @@ if (!Array.prototype.indexOf) {
      * ### Feedback.setValues
      *
      * Set the value of the feedback
+     *
+     * @param {object} options Conf options. Values:
+     *
+     *   - feedback: a string containing the desired feedback.
+     *               If not set, a random string will be set.
+     *   - verify: if TRUE, the method verifyFeedback is called
+     *             afterwards, updating the UI. Default: TRUE
+     *   - markAttempt: if TRUE, the verify attempt is added. Default: TRUE
      */
     Feedback.prototype.setValues = function(options) {
-        var feedback, maxChars;
+        var feedback, maxChars, minChars, nWords, i;
         options = options || {};
         if (!options.feedback) {
-            if (this.maxChars) {
-                maxChars = this.maxChars;
+            minChars = this.minChars || 0;
+            if (this.maxChars) maxChars = this.maxChars;
+            else if (this.maxWords) maxChars = this.maxWords * 4;
+            else if (minChars) maxChars = minChars + 80;
+            else maxChars = 80;
+
+            feedback = J.randomString(J.randomInt(minChars, maxChars), 'aA_1');
+            if (this.minWords) {
+                nWords = this.minWords - feedback.split(' ').length;
+                if (nWords > 0) {
+                    for (i = 0; i < nWords ; i++) {
+                        feedback += ' ' + i;
+                    }
+                }
             }
-            else if (this.maxWords) {
-                maxChars = this.maxWords * 4;
-            }
-            feedback = J.randomString(J.randomInt(0, maxChars), 'aA_1');
         }
         else {
             feedback = options.feedback;
@@ -50943,6 +52531,10 @@ if (!Array.prototype.indexOf) {
         else this.textareaElement.value = feedback;
 
         this.timeInputBegin = J.now();
+
+        if (options.verify !== false) {
+            this.verifyFeedback(options.markAttempt, true);
+        }
     };
 
     /**
@@ -51866,7 +53458,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    MoodGauge.version = '0.3.0';
+    MoodGauge.version = '0.4.0';
     MoodGauge.description = 'Displays an interface to measure mood ' +
         'and emotions.';
 
@@ -51927,6 +53519,13 @@ if (!Array.prototype.indexOf) {
         this.method = 'I-PANAS-SF';
 
         /**
+         * ### MoodGauge.mainText
+         *
+         * A text preceeding the SVO gauger
+         */
+        this.mainText = null;
+
+        /**
          * ## SVOGauge.gauge
          *
          * The object measuring mood
@@ -51945,23 +53544,30 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the widget
      *
-     * @param {object} options Optional. Configuration options.
+     * @param {object} opts Optional. Configuration options.
      */
-    MoodGauge.prototype.init = function(options) {
+    MoodGauge.prototype.init = function(opts) {
         var gauge;
-        if ('undefined' !== typeof options.method) {
-            if ('string' !== typeof options.method) {
-                throw new TypeError('MoodGauge.init: options.method must be ' +
-                                    'string or undefined: ' + options.method);
+        if ('undefined' !== typeof opts.method) {
+            if ('string' !== typeof opts.method) {
+                throw new TypeError('MoodGauge.init: method must be string ' +
+                                    'or undefined: ' + opts.method);
             }
-            if (!this.methods[options.method]) {
-                throw new Error('MoodGauge.init: options.method is not a ' +
-                                'valid method: ' + options.method);
+            if (!this.methods[opts.method]) {
+                throw new Error('MoodGauge.init: method is invalid: ' +
+                                opts.method);
             }
-            this.method = options.method;
+            this.method = opts.method;
+        }
+        if (opts.mainText) {
+            if ('string' !== typeof opts.mainText) {
+                throw new TypeError('MoodGauge.init: mainText must be string ' +
+                                    'or undefined. Found: ' + opts.mainText);
+            }
+            this.mainText = opts.mainText;
         }
         // Call method.
-        gauge = this.methods[this.method].call(this, options);
+        gauge = this.methods[this.method].call(this, opts);
         // Check properties.
         checkGauge(this.method, gauge);
         // Approved.
@@ -52099,7 +53705,7 @@ if (!Array.prototype.indexOf) {
         gauge = node.widgets.get('ChoiceTableGroup', {
             id: 'ipnassf',
             items: items,
-            mainText: this.getText('mainText'),
+            mainText: this.mainText || this.getText('mainText'),
             title: false,
             requiredChoice: true,
             storeRef: false
@@ -52791,6 +54397,281 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
+ * # RiskGauge
+ * Copyright(c) 2019 Stefano Balietti
+ * MIT Licensed
+ *
+ * Displays an interface to measure risk preferences.
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('RiskGauge', RiskGauge);
+
+    // ## Meta-data
+
+    RiskGauge.version = '0.2.0';
+    RiskGauge.description = 'Displays an interface to ' +
+        'measure risk preferences.';
+
+    RiskGauge.title = 'Risk Gauge';
+    RiskGauge.className = 'riskgauge';
+
+    RiskGauge.texts.mainText = 'Below you find a series of hypothetical ' +
+        'lotteries. Each row contains two lotteries with different ' +
+        'probabalities of winning. In each row, select the lottery you would ' +
+        'rather take part in.';
+
+    // ## Dependencies
+    RiskGauge.dependencies = {
+        JSUS: {}
+    };
+
+    /**
+     * ## RiskGauge constructor
+     *
+     * Creates a new instance of RiskGauge
+     *
+     * @param {object} options Optional. Configuration options
+     * which is forwarded to RiskGauge.init.
+     *
+     * @see RiskGauge.init
+     */
+    function RiskGauge(options) {
+
+        /**
+         * ### RiskGauge.methods
+         *
+         * List of available methods
+         *
+         * Maps names to functions.
+         *
+         * Each function is called with `this` instance as context,
+         * and accepts the `options` parameters passed to constructor.
+         * Each method must return widget-like gauge object
+         * implementing functions: append, enable, disable, getValues
+         *
+         * or an error will be thrown
+         */
+        this.methods = {};
+
+        /**
+         * ## RiskGauge.method
+         *
+         * The method used to measure mood
+         *
+         * Available methods: 'I-PANAS-SF'
+         *
+         * Default method is: 'I-PANAS-SF'
+         *
+         * References:
+         *
+         * 'I-PANAS-SF', Thompson E.R. (2007) "Development
+         * and Validation of an Internationally Reliable Short-Form of
+         * the Positive and Negative Affect Schedule (PANAS)"
+         */
+        this.method = 'Holt_Laury';
+
+        /**
+         * ### RiskGauge.mainText
+         *
+         * A text preceeding the SVO gauger
+         */
+        this.mainText = null;
+
+        /**
+         * ## SVOGauge.gauge
+         *
+         * The object measuring mood
+         *
+         * @see SVOGauge.method
+         */
+        this.gauge = null;
+
+        this.addMethod('Holt_Laury', holtLaury);
+    }
+
+    // ## RiskGauge methods.
+
+    /**
+     * ### RiskGauge.init
+     *
+     * Initializes the widget
+     *
+     * @param {object} opts Optional. Configuration options.
+     */
+    RiskGauge.prototype.init = function(opts) {
+        var gauge;
+        if ('undefined' !== typeof opts.method) {
+            if ('string' !== typeof opts.method) {
+                throw new TypeError('RiskGauge.init: method must be string ' +
+                                    'or undefined: ' + opts.method);
+            }
+            if (!this.methods[opts.method]) {
+                throw new Error('RiskGauge.init: method is invalid: ' +
+                                opts.method);
+            }
+            this.method = opts.method;
+        }
+        if (opts.mainText) {
+            if ('string' !== typeof opts.mainText) {
+                throw new TypeError('RiskGauge.init: mainText must be string ' +
+                                    'or undefined. Found: ' + opts.mainText);
+            }
+            this.mainText = opts.mainText;
+        }
+        // Call method.
+        gauge = this.methods[this.method].call(this, opts);
+        // Check properties.
+        checkGauge(this.method, gauge);
+        // Approved.
+        this.gauge = gauge;
+
+        this.on('enabled', function() {
+            gauge.enable();
+        });
+
+        this.on('disabled', function() {
+            gauge.disable();
+        });
+
+        this.on('highlighted', function() {
+            gauge.highlight();
+        });
+
+        this.on('unhighlighted', function() {
+            gauge.unhighlight();
+        });
+    };
+
+    RiskGauge.prototype.append = function() {
+        node.widgets.append(this.gauge, this.bodyDiv, { panel: false });
+    };
+
+    /**
+     * ## RiskGauge.addMethod
+     *
+     * Adds a new method to measure mood
+     *
+     * @param {string} name The name of the method
+     * @param {function} cb The callback implementing it
+     */
+    RiskGauge.prototype.addMethod = function(name, cb) {
+        if ('string' !== typeof name) {
+            throw new Error('RiskGauge.addMethod: name must be string: ' +
+                            name);
+        }
+        if ('function' !== typeof cb) {
+            throw new Error('RiskGauge.addMethod: cb must be function: ' +
+                            cb);
+        }
+        if (this.methods[name]) {
+            throw new Error('RiskGauge.addMethod: name already existing: ' +
+                            name);
+        }
+        this.methods[name] = cb;
+    };
+
+    RiskGauge.prototype.getValues = function(opts) {
+        return this.gauge.getValues(opts);
+    };
+
+    RiskGauge.prototype.setValues = function(opts) {
+        return this.gauge.setValues(opts);
+    };
+
+    // ## Helper functions.
+
+    /**
+     * ### checkGauge
+     *
+     * Checks if a gauge is properly constructed, throws an error otherwise
+     *
+     * @param {string} method The name of the method creating it
+     * @param {object} gauge The object to check
+     *
+     * @see ModdGauge.init
+     */
+    function checkGauge(method, gauge) {
+        if (!gauge) {
+            throw new Error('RiskGauge.init: method ' + method +
+                            'did not create element gauge.');
+        }
+        if ('function' !== typeof gauge.getValues) {
+            throw new Error('RiskGauge.init: method ' + method +
+                            ': gauge missing function getValues.');
+        }
+        if ('function' !== typeof gauge.enable) {
+            throw new Error('RiskGauge.init: method ' + method +
+                            ': gauge missing function enable.');
+        }
+        if ('function' !== typeof gauge.disable) {
+            throw new Error('RiskGauge.init: method ' + method +
+                            ': gauge missing function disable.');
+        }
+        if ('function' !== typeof gauge.append) {
+            throw new Error('RiskGauge.init: method ' + method +
+                            ': gauge missing function append.');
+        }
+    }
+
+    // ## Available methods.
+
+    // ### Holt and Laury
+
+    function makeProbString(p1, v1, p2, v2, opts) {
+        var of, cur, sep;
+        opts = opts || {};
+        of = (opts.of || ' chance to win ');
+        cur = opts.currency || '$';
+        sep = opts.sep || '<span class="sep">and</span>';
+        return p1 + of + cur + v1 + sep + p2 + of + cur + v2;
+    }
+
+    function holtLaury(options) {
+        var items, gauge, i, len, j;
+        var cur, v1, v2, v3, v4, p1, p2;
+
+        cur = options.currecy || '$';
+
+        v1 = '2.00';
+        v2 = '1.60';
+        v3 = '3.85';
+        v4 = '0.10';
+        len = 10;
+        items = new Array(len);
+        for (i = 0; i < len ; i++) {
+            j = i + 1;
+            p1 = j + '/' + len;
+            p2 = (len - j) + '/' + len;
+            items[i] = {
+                id: 'hl_' + j,
+                left: j + '. ',
+                choices: [
+                    makeProbString(p1, v1, p2, v2),
+                    makeProbString(p1, v3, p2, v4),
+                ]
+            };
+        }
+
+        gauge = node.widgets.get('ChoiceTableGroup', {
+            id: 'holt_laury',
+            items: items,
+            mainText: this.mainText || this.getText('mainText'),
+            title: false,
+            requiredChoice: true,
+            storeRef: false
+        });
+
+        return gauge;
+    }
+
+})(node);
+
+/**
  * # SVOGauge
  * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
@@ -52807,7 +54688,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    SVOGauge.version = '0.6.0';
+    SVOGauge.version = '0.7.0';
     SVOGauge.description = 'Displays an interface to measure social ' +
         'value orientation (S.V.O.).';
 
@@ -52869,6 +54750,13 @@ if (!Array.prototype.indexOf) {
         this.method = 'Slider';
 
         /**
+         * ### SVOGauge.mainText
+         *
+         * A text preceeding the SVO gauger
+         */
+        this.mainText = null;
+
+        /**
          * ## SVOGauge.gauge
          *
          * The object measuring svo
@@ -52887,23 +54775,31 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the widget
      *
-     * @param {object} options Optional. Configuration options.
+     * @param {object} opts Optional. Configuration options.
      */
-    SVOGauge.prototype.init = function(options) {
+    SVOGauge.prototype.init = function(opts) {
         var gauge;
-        if ('undefined' !== typeof options.method) {
-            if ('string' !== typeof options.method) {
-                throw new TypeError('SVOGauge.init: options.method must be ' +
-                                    'string or undefined: ' + options.method);
+        if ('undefined' !== typeof opts.method) {
+            if ('string' !== typeof opts.method) {
+                throw new TypeError('SVOGauge.init: method must be string ' +
+                                    'or undefined. Found: ' + opts.method);
             }
-            if (!this.methods[options.method]) {
-                throw new Error('SVOGauge.init: options.method is not a ' +
-                                'valid method: ' + options.method);
+            if (!this.methods[opts.method]) {
+                throw new Error('SVOGauge.init: method is invalid: ' +
+                                opts.method);
             }
-            this.method = options.method;
+            this.method = opts.method;
         }
+        if (opts.mainText) {
+            if ('string' !== typeof opts.mainText) {
+                throw new TypeError('SVOGauge.init: mainText must be string ' +
+                                    'or undefined. Found: ' + opts.mainText);
+            }
+            this.mainText = opts.mainText;
+        }
+
         // Call method.
-        gauge = this.methods[this.method].call(this, options);
+        gauge = this.methods[this.method].call(this, opts);
         // Check properties.
         checkGauge(this.method, gauge);
         // Approved.
@@ -53103,7 +54999,8 @@ if (!Array.prototype.indexOf) {
         gauge = node.widgets.get('ChoiceTableGroup', {
             id: 'svo_slider',
             items: items,
-            mainText: this.getText('mainText'),
+            // TODO: should it be on getText at all?
+            mainText: this.mainText || this.getText('mainText'),
             title: false,
             renderer: renderer,
             requiredChoice: true,
@@ -53112,6 +55009,92 @@ if (!Array.prototype.indexOf) {
 
         return gauge;
     }
+
+})(node);
+
+/**
+ * # ContentBox
+ * Copyright(c) 2019 Stefano Balietti
+ * MIT Licensed
+ *
+ * Displays some content.
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('ContentBox', ContentBox);
+
+    // ## Meta-data
+
+    ContentBox.version = '0.1.0';
+    ContentBox.description = 'Simply displays some content';
+
+    ContentBox.title = false;
+    ContentBox.panel = false;
+    ContentBox.className = 'contentbox';
+
+
+    // ## Dependencies
+
+    ContentBox.dependencies = {};
+
+    /**
+     * ## ContentBox constructor
+     *
+     */
+    function ContentBox() {
+        
+        // ### ContentBox.mainText
+        // The main text above the content.
+        this.mainText = null;
+
+        // ### ContentBox.content
+        // Some Content to be displayed.
+        this.content = null;
+    }
+
+    // ## ContentBox methods
+    ContentBox.prototype.init = function(opts) {
+        // Set the mainText, if any.
+        if ('string' === typeof opts.mainText) {
+            this.mainText = opts.mainText;
+        }
+        else if ('undefined' !== typeof opts.mainText) {
+            throw new TypeError('ContentBox.init: mainText must ' +
+                                'be string or undefined. Found: ' +
+                                opts.mainText);
+        }
+        // Set the content, if any.
+        if ('string' === typeof opts.content) {
+            this.content = opts.content;
+        }
+        else if ('undefined' !== typeof opts.content) {
+            throw new TypeError('ContentBox.init: content must ' +
+                                'be string or undefined. Found: ' +
+                                opts.content);
+        }
+
+    };
+
+    ContentBox.prototype.append = function() {
+        // MainText.
+        if (this.mainText) {
+            W.append('span', this.bodyDiv, {
+                className: 'contentbox-maintext',
+                innerHTML: this.mainText
+            });
+        }
+        // Content.
+        if (this.content) {
+            W.append('div', this.bodyDiv, {
+                className: 'contentbox-content',
+                innerHTML: this.content
+            });
+        }
+    };
 
 })(node);
 
@@ -54195,10 +56178,10 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualStage
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
- * Shows current, previous and next stage.
+ * Shows the name of the current, previous and next step.
  *
  * www.nodegame.org
  */
@@ -54212,12 +56195,19 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualStage.version = '0.2.3';
+    VisualStage.version = '0.8.0';
     VisualStage.description =
-        'Visually display current, previous and next stage of the game.';
+        'Displays the name of the current, previous and next step of the game.';
 
-    VisualStage.title = 'Stage';
+    VisualStage.title = false;
     VisualStage.className = 'visualstage';
+
+    VisualStage.texts = {
+        miss: '',
+        current: 'Stage: ',
+        previous: 'Prev: ',
+        next: 'Next: '
+    };
 
     // ## Dependencies
 
@@ -54228,81 +56218,341 @@ if (!Array.prototype.indexOf) {
 
     /**
      * ## VisualStage constructor
-     *
-     * `VisualStage` displays current, previous and next stage of the game
      */
     function VisualStage() {
-        this.table = new Table();
+
+        // ### VisualStage.displayMode
+        //
+        // The display mode: 'compact', 'table'.
+        this.displayMode = 'inline';
+
+        // ### VisualStage.table
+        //
+        // The HTML element containing the information in 'table' mode
+        this.table = null;
+
+        // ### VisualStage.preprocess
+        //
+        // A callback function preprocessing the information displayed
+        this.preprocess = null;
+
+        // ### VisualStage.order
+        //
+        // The order in which information is displayed, if available.
+        //
+        // In 'init' it gets reassigned based on displayMode.
+        this.order = [ 'current', 'next', 'previous' ];
+
+        // ### VisualStage.capitalize
+        //
+        // If TRUE, the name/id of a step is capitalized. Default: TRUE.
+        this.capitalize = true;
+
+        // Default display settings.
+
+        // ### VisualStage.showRounds
+        //
+        // If TRUE, round number is added to the name of steps in repeat stages
+        this.showRounds = true;
+
+        // ### VisualStage.showPrevious
+        //
+        // If TRUE, the name of the previuos step is displayed.
+        this.showPrevious = true;
+
+        // ### VisualStage.showCurrent
+        //
+        // If TRUE, the name of the current step is displayed.
+        this.showCurrent = true;
+
+        // ### VisualStage.showNext
+        //
+        // If TRUE, the name of the next step is displayed.
+        this.showNext = true;
     }
 
     // ## VisualStage methods
+
+    VisualStage.prototype.init = function(opts) {
+        var err;
+        if ('undefined' !== typeof opts.displayMode) {
+            if (opts.displayMode !== 'inline' &&
+                opts.displayMode !== 'table') {
+
+                throw new TypeError('VisualStage.init: displayMode must be ' +
+                                    '"inline", "table" or undefined. ' +
+                                    'Found: ' + opts.displayMode);
+            }
+            this.displayMode = opts.displayMode;
+        }
+        if ('undefined' !== typeof opts.rounds) {
+            this.showRounds = !!opts.rounds;
+        }
+        if ('undefined' !== typeof opts.previous) {
+            this.showPrevious = !!opts.previous;
+        }
+        if ('undefined' !== typeof opts.next) {
+            this.showNext = !!opts.next;
+        }
+        if ('undefined' !== typeof opts.current) {
+            this.showCurrent = !!opts.current;
+        }
+        if ('undefined' !== typeof opts.order) {
+            if (!J.isArray(opts.order) || opts.order.length !== 3) {
+                throw new TypeError('VisualStage.init: order must be ' +
+                                    'an array of length 3 or undefined. ' +
+                                    'Found: ' + opts.order);
+            }
+            err = checkOrderOption(opts.order, this.order.slice(0));
+            if (err) {
+                throw new TypeError('VisualStage.init: order contains ' +
+                                    'errors: ' + order);
+            }
+            this.order = opts.order;
+        }
+        else {
+            if (this.displayMode === 'inline') {
+                this.order = [ 'previous', 'current', 'next' ];
+            }
+        }
+        if ('undefined' !== typeof opts.preprocess) {
+            if ('function' !== typeof opts.preprocess) {
+                throw new TypeError('VisualStage.init: preprocess must be ' +
+                                    'function or undefined. Found: ' +
+                                    opts.preprocess);
+            }
+            this.preprocess = opts.preprocess;
+        }
+        if ('undefined' !== typeof opts.capitalize) {
+            this.capitalize = !!opts.capitalize;
+        }
+    };
 
     /**
      * ### VisualStage.append
      *
      * Appends widget to `this.bodyDiv` and writes the stage
      *
-     * @see VisualStage.writeStage
+     * @see VisualStage.updateDisplay
      */
     VisualStage.prototype.append = function() {
-        this.bodyDiv.appendChild(this.table.table);
-        this.writeStage();
+        if (this.displayMode === 'table') {
+            this.table = new Table();
+            this.bodyDiv.appendChild(this.table.table);
+        }
+        else {
+            this.div = W.append('div', this.bodyDiv);
+        }
+        this.updateDisplay();
     };
 
     VisualStage.prototype.listeners = function() {
         var that = this;
-
         node.on('STEP_CALLBACK_EXECUTED', function() {
-            that.writeStage();
+            that.updateDisplay();
         });
         // Game over and init?
     };
 
     /**
-     * ### VisualStage.writeStage
+     * ### VisualStage.updateDisplay
      *
-     * Writes the current, previous and next stage into `this.table`
+     * Writes the current, previous and next step names
+     *
+     * It uses the step property `name`, if existing, otherwise `id`.
+     * Depending on current settings, it capitalizes it, and preprocess it.
+     *
+     * @see VisualStage.getStepName
      */
-    VisualStage.prototype.writeStage = function() {
-        var miss, stage, pr, nx, tmp;
+    VisualStage.prototype.updateDisplay = function() {
+        var name, str;
         var curStep, nextStep, prevStep;
-        var t;
+        var curStepName, nextStepName, prevStepName;
+        var order, t, tmp;
 
-        miss = '-';
-        stage = 'Uninitialized';
-        pr = miss;
-        nx = miss;
-
+        order = {};
         curStep = node.game.getCurrentGameStage();
-
         if (curStep) {
-            tmp = node.game.plot.getStep(curStep);
-            stage = tmp ? tmp.id : miss;
-
-            prevStep = node.game.plot.previous(curStep);
-            if (prevStep) {
-                tmp = node.game.plot.getStep(prevStep);
-                pr = tmp ? tmp.id : miss;
+            if (this.showCurrent) {
+                curStepName = this.getStepName(curStep, curStep, 'current');
+                order.current = curStepName;
             }
-
-            nextStep = node.game.plot.next(curStep);
-            if (nextStep) {
-                tmp = node.game.plot.getStep(nextStep);
-                nx = tmp ? tmp.id : miss;
+            if (this.showNext) {
+                nextStep = node.game.plot.next(curStep);
+                if (nextStep) {
+                    nextStepName = this.getStepName(nextStep, curStep, 'next');
+                    order.next = nextStepName;
+                }
+            }
+            if (this.showPrevious) {
+                prevStep = node.game.plot.previous(curStep);
+                if (prevStep) {
+                    prevStepName = this.getStepName(prevStep, curStep,
+                                                    'previous');
+                    order.previous = prevStepName;
+                }
             }
         }
 
-        this.table.clear(true);
-
-        this.table.addRow(['Previous: ', pr]);
-        this.table.addRow(['Current: ', stage]);
-        this.table.addRow(['Next: ', nx]);
-
-        t = this.table.selexec('y', '=', 0);
-        t.addClass('strong');
-        t.selexec('x', '=', 2).addClass('underline');
-        this.table.parse();
+        if (this.displayMode === 'table') {
+            this.table.clear(true);
+            addRow(this, 0, order);
+            addRow(this, 1, order);
+            addRow(this, 2, order);
+            //
+            t = this.table.selexec('y', '=', 0);
+            t.addClass('strong');
+            // t.selexec('x', '=', 1).addClass('underline');
+            this.table.parse();
+        }
+        else {
+            this.div.innerHTML = '';
+            addSpan(this, 0, order);
+            addSpan(this, 1, order);
+            addSpan(this, 2, order);
+        }
     };
+
+    /**
+     * ### VisualStage.getStepName
+     *
+     * Returns the step name of a given step
+     *
+     * @param {GameStage} gameStage The game stage we want to to get the name
+     * @param {GameStage} gameStage The current game stage
+     * @param {string} A modifier: 'current', 'previous', 'next'.
+     *
+     * @return {string} name The name of the step
+     *
+     * @see getName
+     */
+    VisualStage.prototype.getStepName = function(gameStage, curStage, mod) {
+        var name, round;
+        name = getName(gameStage, this.getText('miss'));
+        if (this.capitalize) name = capitalize(name);
+        if (this.showRounds) {
+            round = getRound(gameStage, curStage, mod);
+            if (round) name += ' ' + round;
+        }
+        if (this.preprocess) name = this.preprocess(name, mod, round);
+        return name;
+    };
+
+    // ## Helper functions.
+
+
+    /**
+     * ### getRound
+     *
+     * Returns the round for a given step, if its stage is a repeat stage
+     *
+     * @param {GameStage} gameStage The game stage we want to to get the round
+     * @param {GameStage} gameStage The current game stage
+     * @param {string} A modifier: 'current', 'previous', 'next'.
+     *
+     * @return {number} round The round for the step
+     *
+     * @see getName
+     */
+    function getRound(gameStage, curStage, mod) {
+        var round, totRounds;
+        if (!gameStage.stage) return;
+        totRounds = node.game.plot.stager.sequence[(gameStage.stage - 1)].num;
+        if (!totRounds) return;
+        round = node.game.getRound();
+        // Same stage: can be current, next, or previous.
+        if (curStage.stage === gameStage.stage) {
+            if (mod === 'next') round++;
+            else if (mod === 'previous') round--;
+        }
+        // This is a previous stage.
+        else if (curStage.stage > gameStage.stage) {
+            round = totRounds;
+        }
+        // This is a next stage.
+        else {
+            round = 1;
+        }
+        return round;
+    }
+
+    // ### getName
+    //
+    // Returns the name or the id property or miss.
+    function getName(gameStage, miss) {
+        var tmp;
+        tmp = node.game.plot.getProperty(gameStage, 'name');
+        if (!tmp) {
+            tmp = node.game.plot.getStep(gameStage);
+            tmp = tmp ? tmp.id : miss;
+        }
+        return tmp;
+    }
+
+    function capitalize(str) {
+        var tks, i, len;
+        tks = str.split(' ');
+        str = capWord(tks[0]);
+        len = tks.length;
+        if (len > 1) str += ' ' + capWord(tks[1]);
+        if (len > 2) {
+            for (i = 2; i < len; i++) {
+                str += ' ' + capWord(tks[i]);
+            }
+        }
+        return str;
+    }
+
+    function capWord(word) {
+        return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
+    }
+
+    function addRow(that, idx, order) {
+        var row, str, type, name, className, obj;
+        type = that.order[idx];
+        str = that.getText(type);
+        name = order[type];
+        if (!name) return;
+        className = 'visualstage-' + type;
+        obj = {
+            className: className,
+            content: name
+        };
+        if (str === false) row = [ obj ];
+        else if (type === 'current') row = [ { content: name, colspan: 2 } ];
+        else row = [ { className: className, content: str }, obj ];
+        that.table.addRow(row);
+    }
+
+    function addSpan(that, idx, order) {
+        var str, tmp;
+        tmp = that.order[idx];
+        str = order[tmp];
+        if (!str) return;
+        if (tmp !== 'current') {
+            str = '<span class="strong">' +
+                that.getText(tmp) + '</span>' + str;
+        }
+        W.add('span', that.div, {
+            innerHTML: str,
+            className: 'visualstage-' + tmp
+        });
+    }
+
+    function checkOrderOption(order, arr) {
+        var i;
+        i = arr.indexOf(order[0]);
+        if (i === -1) return 'unknown item: ' + order[0];
+        arr.splice(i,1);
+        i = arr.indexOf(order[1]);
+        if (i === -1) return 'unknown item: ' + order[1];
+        arr.splice(i,1);
+        i = arr.indexOf(order[2]);
+        if (i === -1) return 'unknown item: ' + order[2];
+        arr.splice(i,1);
+        if (arr.length) return 'duplicated entry: ' + arr[0];
+        return;
+    }
 
 })(node);
 
@@ -54476,7 +56726,7 @@ if (!Array.prototype.indexOf) {
             if (!this.isInitialized) {
                 this.internalTimer = true;
                 this.gameTimer = node.timer.createTimer({
-                    name: options.name || 'VisualTimer'
+                    name: options.name || 'VisualTimer' // TODO auto naming
                 });
             }
         }
@@ -54525,6 +56775,13 @@ if (!Array.prototype.indexOf) {
             gameTimerOptions.timeup = options.timeup;
         }
 
+        if ('undefined' === typeof options.stopOnDone) {
+            options.stopOnDone = !!options.stopOnDone;
+        }
+        if ('undefined' === typeof options.startOnPlaying) {
+            options.startOnPlaying = !!options.startOnPlaying;
+        }
+
         // Init the gameTimer, regardless of the source (internal vs external).
         this.gameTimer.init(gameTimerOptions);
 
@@ -54550,12 +56807,6 @@ if (!Array.prototype.indexOf) {
 
         this.options = gameTimerOptions;
 
-        if ('undefined' === typeof this.options.stopOnDone) {
-            this.options.stopOnDone = true;
-        }
-        if ('undefined' === typeof this.options.startOnPlaying) {
-            this.options.startOnPlaying = true;
-        }
 
         if (!this.options.mainBoxOptions) {
             this.options.mainBoxOptions = {};

@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 5.4.0
+- Timer objects by default do not stopOnDone or startOnPlay.
+
 ## 5.3.0
 - Game.getPreviousStep falls back on GamePlot.jump in case of necessity, such
 as a reconnection.
