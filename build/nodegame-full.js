@@ -23582,10 +23582,10 @@ if (!Array.prototype.indexOf) {
          */
         this.timer = this.node.timer.createTimer({
             name: 'game_timer',
-            stagerSync: true
+            stagerSync: true,
+            stopOnDone: true,
+            startOnPlaying: true
         });
-
-
 
         // Setting to stage 0.0.0 and starting.
         this.setCurrentGameStage(new GameStage(), 'S');
