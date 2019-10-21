@@ -4596,7 +4596,7 @@ if (!Array.prototype.indexOf) {
      *
      * Generates a pseudo-random date between
      *
-     * @param {Date} startDate The lower date
+     * @param {Date} startDate Optional. The lower date. Default: 01-01-1900.
      * @param {Date} endDate Optional. The upper date. Default: today.
      *
      * @return {number} A random date in the chosen interval
@@ -4610,18 +4610,19 @@ if (!Array.prototype.indexOf) {
                 !isNaN(date);
         }
         return function(startDate, endDate) {
-            if (!isValidDate(startDate)) {
+            if ('undefined' === typeof startDate) {
+                startDate = new Date("1900");
+            }
+            else if (!isValidDate(startDate)) {
                 throw new TypeError('randomDate: startDate must be a valid ' +
                                     'date. Found: ' + startDate);
             }
-            if (endDate) {
-                if (!isValidDate(endDate)) {
-                    throw new TypeError('randomDate: endDate must be a valid ' +
-                                        'date or undefined. Found: ' + endDate);
-                }
-            }
-            else {
+            if ('undefined' === typeof endDate) {
                 endDate = new Date();
+            }
+            else if (!isValidDate(endDate)) {
+                throw new TypeError('randomDate: endDate must be a valid ' +
+                                    'date or undefined. Found: ' + endDate);
             }
             return new Date(startDate.getTime() + Math.random() *
                             (endDate.getTime() - startDate.getTime()));
@@ -10231,7 +10232,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.3.0';
+    node.version = '5.4.0';
 
 })(window);
 
@@ -46744,6 +46745,92 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
+ * # ContentBox
+ * Copyright(c) 2019 Stefano Balietti
+ * MIT Licensed
+ *
+ * Displays some content.
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('ContentBox', ContentBox);
+
+    // ## Meta-data
+
+    ContentBox.version = '0.1.0';
+    ContentBox.description = 'Simply displays some content';
+
+    ContentBox.title = false;
+    ContentBox.panel = false;
+    ContentBox.className = 'contentbox';
+
+
+    // ## Dependencies
+
+    ContentBox.dependencies = {};
+
+    /**
+     * ## ContentBox constructor
+     *
+     */
+    function ContentBox() {
+
+        // ### ContentBox.mainText
+        // The main text above the content.
+        this.mainText = null;
+
+        // ### ContentBox.content
+        // Some Content to be displayed.
+        this.content = null;
+    }
+
+    // ## ContentBox methods
+    ContentBox.prototype.init = function(opts) {
+        // Set the mainText, if any.
+        if ('string' === typeof opts.mainText) {
+            this.mainText = opts.mainText;
+        }
+        else if ('undefined' !== typeof opts.mainText) {
+            throw new TypeError('ContentBox.init: mainText must ' +
+                                'be string or undefined. Found: ' +
+                                opts.mainText);
+        }
+        // Set the content, if any.
+        if ('string' === typeof opts.content) {
+            this.content = opts.content;
+        }
+        else if ('undefined' !== typeof opts.content) {
+            throw new TypeError('ContentBox.init: content must ' +
+                                'be string or undefined. Found: ' +
+                                opts.content);
+        }
+
+    };
+
+    ContentBox.prototype.append = function() {
+        // MainText.
+        if (this.mainText) {
+            W.append('span', this.bodyDiv, {
+                className: 'contentbox-maintext',
+                innerHTML: this.mainText
+            });
+        }
+        // Content.
+        if (this.content) {
+            W.append('div', this.bodyDiv, {
+                className: 'contentbox-content',
+                innerHTML: this.content
+            });
+        }
+    };
+
+})(node);
+
+/**
  * # Controls
  * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
@@ -50740,6 +50827,10 @@ if (!Array.prototype.indexOf) {
     };
 
     DisconnectBox.prototype.updateStatus = function(status) {
+        if (!this.statusSpan) {
+            node.warn('DisconnectBox.updateStatus: display disabled.');
+            return;
+        }
         this.statusSpan.innerHTML = this.getText(status);
         this.statusSpan.className = status === 'disconnected' ?
             'text-danger' : '';
@@ -50751,8 +50842,7 @@ if (!Array.prototype.indexOf) {
 
         this.ee = node.getCurrentEventEmitter();
         this.ee.on('SOCKET_DISCONNECT', function() {
-            // TODO: disconnect color text-danger.
-            that.updateStatus('disconnected');
+            if (that.statusSpan) that.updateStatus('disconnected');
             if (that.disconnectBtn) {
                 that.disconnectBtn.disabled = true;
                 that.disconnectBtn.innerHTML = that.getText('left');
@@ -50761,7 +50851,7 @@ if (!Array.prototype.indexOf) {
         });
 
         this.ee.on('SOCKET_CONNECT', function() {
-            that.updateStatus('connected');
+            if (that.statusSpan) that.updateStatus('connected');
             if (that.disconnectBtn) {
                 that.disconnectBtn.disabled = false;
                 that.disconnectBtn.innerHTML = that.getText('leave');
@@ -50966,8 +51056,11 @@ if (!Array.prototype.indexOf) {
      *
      * Disables the done button
      */
-    DoneButton.prototype.disable = function() {
-        this.button.disabled = 'disabled';
+    DoneButton.prototype.disable = function(opts) {
+        if (this.disabled) return;
+        this.disabled = true;
+        this.button.disabled = true;
+        this.emit('disabled', opts);
     };
 
     /**
@@ -50975,8 +51068,11 @@ if (!Array.prototype.indexOf) {
      *
      * Enables the done button
      */
-    DoneButton.prototype.enable = function() {
+    DoneButton.prototype.enable = function(opts) {
+        if (!this.disabled) return;
+        this.disabled = false;
         this.button.disabled = false;
+        this.emit('enabled', opts);
     };
 
 })(node);
@@ -51629,7 +51725,7 @@ if (!Array.prototype.indexOf) {
         if (this.showEmailForm && !this.emailForm) {
             this.emailForm = node.widgets.get('EmailForm', J.mixin({
                 label: this.getText('contactQuestion'),
-                onsubmit: { say: true, emailOnly: true, updateUI: true },
+                onsubmit: { send: true, emailOnly: true, updateUI: true },
                 storeRef: false
             }, options.email));
         }
@@ -55013,92 +55109,6 @@ if (!Array.prototype.indexOf) {
 })(node);
 
 /**
- * # ContentBox
- * Copyright(c) 2019 Stefano Balietti
- * MIT Licensed
- *
- * Displays some content.
- *
- * www.nodegame.org
- */
-(function(node) {
-
-    "use strict";
-
-    node.widgets.register('ContentBox', ContentBox);
-
-    // ## Meta-data
-
-    ContentBox.version = '0.1.0';
-    ContentBox.description = 'Simply displays some content';
-
-    ContentBox.title = false;
-    ContentBox.panel = false;
-    ContentBox.className = 'contentbox';
-
-
-    // ## Dependencies
-
-    ContentBox.dependencies = {};
-
-    /**
-     * ## ContentBox constructor
-     *
-     */
-    function ContentBox() {
-        
-        // ### ContentBox.mainText
-        // The main text above the content.
-        this.mainText = null;
-
-        // ### ContentBox.content
-        // Some Content to be displayed.
-        this.content = null;
-    }
-
-    // ## ContentBox methods
-    ContentBox.prototype.init = function(opts) {
-        // Set the mainText, if any.
-        if ('string' === typeof opts.mainText) {
-            this.mainText = opts.mainText;
-        }
-        else if ('undefined' !== typeof opts.mainText) {
-            throw new TypeError('ContentBox.init: mainText must ' +
-                                'be string or undefined. Found: ' +
-                                opts.mainText);
-        }
-        // Set the content, if any.
-        if ('string' === typeof opts.content) {
-            this.content = opts.content;
-        }
-        else if ('undefined' !== typeof opts.content) {
-            throw new TypeError('ContentBox.init: content must ' +
-                                'be string or undefined. Found: ' +
-                                opts.content);
-        }
-
-    };
-
-    ContentBox.prototype.append = function() {
-        // MainText.
-        if (this.mainText) {
-            W.append('span', this.bodyDiv, {
-                className: 'contentbox-maintext',
-                innerHTML: this.mainText
-            });
-        }
-        // Content.
-        if (this.content) {
-            W.append('div', this.bodyDiv, {
-                className: 'contentbox-content',
-                innerHTML: this.content
-            });
-        }
-    };
-
-})(node);
-
-/**
  * # VisualRound
  * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
@@ -56776,10 +56786,10 @@ if (!Array.prototype.indexOf) {
         }
 
         if ('undefined' === typeof options.stopOnDone) {
-            options.stopOnDone = !!options.stopOnDone;
+            options.stopOnDone = true;
         }
         if ('undefined' === typeof options.startOnPlaying) {
-            options.startOnPlaying = !!options.startOnPlaying;
+            options.startOnPlaying = true;
         }
 
         // Init the gameTimer, regardless of the source (internal vs external).
