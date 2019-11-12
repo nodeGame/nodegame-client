@@ -1251,7 +1251,8 @@ if (!Array.prototype.indexOf) {
      *
      * The original array is not modified.
      *
-     * @param {array} array the array to repeat
+     * @param {array|mixed} array the array to repeat. If not an array, it
+     *   it will be made an array.
      * @param {number} times The number of times the array must be appended
      *   to itself
      *
@@ -1259,13 +1260,12 @@ if (!Array.prototype.indexOf) {
      */
     ARRAY.rep = function(array, times) {
         var i, result;
-        if (!array) return;
+        if (!ARRAY.isArray(array)) array = [ array ];
         if (!times) return array.slice(0);
         if (times < 1) {
             JSUS.log('times must be greater or equal 1', 'ERR');
             return;
         }
-
         i = 1;
         result = array.slice(0);
         for (; i < times; i++) {
@@ -23582,9 +23582,7 @@ if (!Array.prototype.indexOf) {
          */
         this.timer = this.node.timer.createTimer({
             name: 'game_timer',
-            stagerSync: true,
-            stopOnDone: true,
-            startOnPlaying: true
+            stagerSync: true
         });
 
         // Setting to stage 0.0.0 and starting.
@@ -24429,10 +24427,14 @@ if (!Array.prototype.indexOf) {
             if (doneCb) {
                 origDoneCb = doneCb;
                 doneCb = function() {
-                    var values;
+                    var values, valuesCb;
                     values = widgetDone.call(this);
                     if (values !== false) {
-                        values = origDoneCb.call(this, values);
+                        valuesCb = origDoneCb.call(this, values);
+                        // Standard DONE callback behavior (to modify objects).
+                        if ('undefined' !== typeof valuesCb) {
+                            return values = valuesCb;
+                        }
                     }
                     return values;
                 };
@@ -32573,7 +32575,7 @@ if (!Array.prototype.indexOf) {
     GameWindow.prototype.init = function(options) {
         var stageLevels;
         var stageLevel;
-
+       
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
@@ -34050,20 +34052,29 @@ if (!Array.prototype.indexOf) {
                 W.adjustFrameHeight(userMinHeight, 120);
                 return;
             }
-            // Try to find out how tall the frame should be.
-            minHeight = window.innerHeight || window.clientHeight;
 
-            contentHeight = iframe.contentWindow.document.body.offsetHeight;
-            // Rule of thumb.
-            contentHeight += 60;
+            
+            if (W.conf.adjustFrameHeight === false) {
+                minHeight = '100vh';
+            }
+            else {
+                
+                // Try to find out how tall the frame should be.
+                minHeight = window.innerHeight || window.clientHeight;
 
-            if (W.headerPosition === "top") contentHeight += W.headerOffset;
+                contentHeight = iframe.contentWindow.document.body.offsetHeight;
+                // Rule of thumb.
+                contentHeight += 60;
 
-            if (minHeight < contentHeight) minHeight = contentHeight;
-            if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+                if (W.headerPosition === "top") contentHeight += W.headerOffset;
+
+                if (minHeight < contentHeight) minHeight = contentHeight;
+                if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+                minHeight += 'px';
+            }
 
             // Adjust min-height based on content.
-            iframe.style['min-height'] = minHeight + 'px';
+            iframe.style['min-height'] = minHeight;
         };
 
         return function(userMinHeight, delay) {
@@ -41694,7 +41705,8 @@ if (!Array.prototype.indexOf) {
                     options.canvas.width = options.width;
                 }
             }
-            this.canvas = W.getCanvas('ChernoffFaces_canvas', options.canvas);
+            this.canvas = W.get('canvas', options.canvas);
+            this.canvas.id = 'ChernoffFaces_canvas';
 
             // Face Painter.
             this.fp = new FacePainter(this.canvas);
@@ -43750,8 +43762,13 @@ if (!Array.prototype.indexOf) {
         }
         else {
             if ('number' === typeof w.selectMultiple) {
-                res += 'select between ' + w.requiredChoice + ' and ' +
-                    w.selectMultiple;
+                if (w.selectMultiple === w.requiredChoice) {
+                    res += 'select ' + w.requiredChoice;
+                }
+                else {
+                    res += 'select between ' + w.requiredChoice +
+                        ' and ' + w.selectMultiple;
+                }
             }
             else {
                 res += 'select at least ' + w.requiredChoice;
@@ -52003,11 +52020,11 @@ if (!Array.prototype.indexOf) {
             }
             else if (w.minWords) {
                 res2 = 'at least ' + w.minWords + ' word';
-                if (w.minWords > 1) res += 's';
+                if (w.minWords > 1) res2 += 's';
             }
             else if (w.maxWords) {
                 res2 = 'at most ' +  w.maxWords + ' word';
-                if (w.maxWords > 1) res += 's';
+                if (w.maxWords > 1) res2 += 's';
             }
             if (res) {
                 res = '(' + res;;
@@ -53814,7 +53831,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Requirements
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Checks a list of requirements and displays the results
@@ -53832,7 +53849,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Requirements.version = '0.7.1';
+    Requirements.version = '0.7.2';
     Requirements.description = 'Checks a set of requirements and display the ' +
         'results';
 
@@ -54213,7 +54230,7 @@ if (!Array.prototype.indexOf) {
 
         this.timeoutId = setTimeout(function() {
             if (that.stillChecking > 0) {
-                that.displayResults([this.getText('errStr')]);
+                that.displayResults([that.getText('errStr')]);
             }
             that.timeoutId = null;
             that.hasFailed = true;
@@ -56736,7 +56753,7 @@ if (!Array.prototype.indexOf) {
             if (!this.isInitialized) {
                 this.internalTimer = true;
                 this.gameTimer = node.timer.createTimer({
-                    name: options.name || 'VisualTimer' // TODO auto naming
+                    name: options.name || 'VisualTimer_' + J.randomInt(10000000)
                 });
             }
         }
@@ -56785,13 +56802,6 @@ if (!Array.prototype.indexOf) {
             gameTimerOptions.timeup = options.timeup;
         }
 
-        if ('undefined' === typeof options.stopOnDone) {
-            options.stopOnDone = true;
-        }
-        if ('undefined' === typeof options.startOnPlaying) {
-            options.startOnPlaying = true;
-        }
-
         // Init the gameTimer, regardless of the source (internal vs external).
         this.gameTimer.init(gameTimerOptions);
 
@@ -56817,6 +56827,13 @@ if (!Array.prototype.indexOf) {
 
         this.options = gameTimerOptions;
 
+        // Must be after this.options is assigned.
+        if ('undefined' === typeof this.options.stopOnDone) {
+            this.options.stopOnDone = true;
+        }
+        if ('undefined' === typeof this.options.startOnPlaying) {
+            this.options.startOnPlaying = true;
+        }
 
         if (!this.options.mainBoxOptions) {
             this.options.mainBoxOptions = {};
