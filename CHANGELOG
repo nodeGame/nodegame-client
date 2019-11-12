@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 5.5.0 (current)
+- Done callback of a widget step does not overwrite done parameters, if the
+return value is undefined (same behavior as in done callback of normal steps).
+
 ## 5.4.0
 - Timer objects by default do not stopOnDone or startOnPlay.
 
