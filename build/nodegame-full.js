@@ -10232,7 +10232,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.4.0';
+    node.version = '5.5.0';
 
 })(window);
 
@@ -32575,7 +32575,7 @@ if (!Array.prototype.indexOf) {
     GameWindow.prototype.init = function(options) {
         var stageLevels;
         var stageLevel;
-       
+
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
@@ -34053,12 +34053,12 @@ if (!Array.prototype.indexOf) {
                 return;
             }
 
-            
+
             if (W.conf.adjustFrameHeight === false) {
                 minHeight = '100vh';
             }
             else {
-                
+
                 // Try to find out how tall the frame should be.
                 minHeight = window.innerHeight || window.clientHeight;
 
@@ -43740,7 +43740,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.6.1';
+    ChoiceTable.version = '1.6.2';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -45106,9 +45106,7 @@ if (!Array.prototype.indexOf) {
      *
      * Returns TRUE if a choice is currently selected
      *
-     * @param {number|string} The choice to check. If choices are shuffled
-     *   it should be called `getChoiceAtPosition` first to know if the
-     *   choice at a given position is current.
+     * @param {number|string} The choice to check.
      *
      * @return {boolean} TRUE, if the choice is currently selected
      *
@@ -45123,18 +45121,30 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('ChoiceTable.isChoiceCurrent: choice ' +
                                 'must be string or number. Found: ' + choice);
         }
-        if (!this.selectMultiple) {
-            return this.currentChoice === choice;
-        }
-        else {
-            i = -1, len = this.currentChoice.length;
-            for ( ; ++i < len ; ) {
-                if (this.currentChoice[i] === choice) {
-                    return true;
-                }
-            }
+        if (!this.selectMultiple) return this.currentChoice === choice;
+        i = -1, len = this.currentChoice.length;
+        for ( ; ++i < len ; ) {
+            if (this.currentChoice[i] === choice) return true;
         }
         return false;
+    };
+
+    /**
+     * ### ChoiceTable.getChoiceAtPosition
+     *
+     * Returns a choice displayed at a given position
+     *
+     * @param {string|number} i The numeric position of a choice in display
+     *
+     * @return {string|undefined} The value associated the numeric position.
+     *   If no value is found, returns undefined
+     *
+     * @see ChoiceTable.order
+     * @see ChoiceTable.choices
+     */
+    ChoiceTable.prototype.getChoiceAtPosition = function(i) {
+        if (!this.choices || !this.order) return;
+        return this.choices[this.order[parseInt(i, 10)]];
     };
 
     /**
@@ -45170,24 +45180,6 @@ if (!Array.prototype.indexOf) {
         this.table.style.border = '';
         this.highlighted = false;
         this.emit('unhighlighted');
-    };
-
-    /**
-     * ### ChoiceTable.getChoiceAtPosition
-     *
-     * Returns a choice displayed at a given position
-     *
-     * @param {string|number} i The numeric position of a choice in display
-     *
-     * @return {string|undefined} The value associated the numeric position.
-     *   If no value is found, returns undefined
-     *
-     * @see ChoiceTable.order
-     * @see ChoiceTable.choices
-     */
-    ChoiceTable.prototype.getChoiceAtPosition = function(i) {
-        if (!this.choices || !this.order) return;
-        return this.choices[this.order[parseInt(i, 10)]];
     };
 
     /**
@@ -45412,7 +45404,7 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        if (this.textArea) this.textArea.value = '';
+        if (this.textarea) this.textarea.value = '';
         if (this.isHighlighted()) this.unhighlight();
 
         if (options.shuffleChoices) this.shuffle();
@@ -47492,8 +47484,9 @@ if (!Array.prototype.indexOf) {
             }
             return str;
         },
-        textErr: function(w, len) {
+        textErr: function(w, param) {
             var str, p;
+            if (param === 'num') return 'Cannot contain numbers';
             p = w.params;
             str = 'Must be ';
             if (p.exactly) {
@@ -47510,7 +47503,7 @@ if (!Array.prototype.indexOf) {
             }
             str += ' characters long';
             if (p.between) str += ' (extremes included)';
-            str += '. Current length: ' + len;
+            str += '. Current length: ' + param;
             return str;
         },
         dateErr: function(w, param) {
@@ -47846,6 +47839,9 @@ if (!Array.prototype.indexOf) {
 
                 // Checks for text only.
                 if (isText) {
+
+                    this.params.noNumbers = opts.noNumbers;
+                    
                     if ('undefined' !== typeof this.params.lower) {
                         if (this.params.lower < 0) {
                             throw new TypeError(e + 'min cannot be negative ' +
@@ -47868,19 +47864,25 @@ if (!Array.prototype.indexOf) {
                         p = that.params;
                         len = value.length;
                         out = { value: value };
-                        if (p.exactly) {
-                            err = len !== p.lower;
+                        if (p.noNumbers && /\d/.test(value)) {
+                            err = that.getText('textErr', 'num');
                         }
                         else {
-                            if (('undefined' !== typeof p.lower &&
-                                 len < p.lower) ||
-                                ('undefined' !== typeof p.upper &&
-                                 len > p.upper)) {
-
-                                err = true;
+                            if (p.exactly) {
+                                err = len !== p.lower;
                             }
+                            else {
+                                if (('undefined' !== typeof p.lower &&
+                                     len < p.lower) ||
+                                    ('undefined' !== typeof p.upper &&
+                                     len > p.upper)) {
+                                    
+                                    err = true;
+                                }
+                            }
+                            if (err) err = that.getText('textErr', len);
                         }
-                        if (err) out.err = that.getText('textErr', len);
+                        if (err) out.err = err;
                         return out;
                     };
 

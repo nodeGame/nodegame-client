@@ -1,6 +1,6 @@
 # nodegame-client change log
 
-## 5.5.0 (current)
+## 5.5.0
 - Done callback of a widget step does not overwrite done parameters, if the
 return value is undefined (same behavior as in done callback of normal steps).
 
