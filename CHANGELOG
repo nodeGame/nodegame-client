@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 5.5.2
+- All widgets created in widget steps have the correct "ref" value.
+
 ## 5.5.1
 - Fixed PlayerList array2groups calls.
 
