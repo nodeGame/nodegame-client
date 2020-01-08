@@ -10232,7 +10232,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.5.0';
+    node.version = '5.5.1';
 
 })(window);
 
@@ -12721,10 +12721,10 @@ if (!Array.prototype.indexOf) {
         var groups;
         if ('number' !== typeof N || isNaN(N) || N < 1) {
             throw new TypeError('PlayerList.getNGroups: N must be a number ' +
-                                '> 0: ' + N + '.');
+                                '> 0: ' + N);
         }
         groups = J.getNGroups(this.db, N);
-        return array2Groups(groups);
+        return array2Groups.call(this, groups);
     };
 
     /**
@@ -12742,10 +12742,10 @@ if (!Array.prototype.indexOf) {
         var groups;
         if ('number' !== typeof N || isNaN(N) || N < 1) {
             throw new TypeError('PlayerList.getNGroups: N must be a number ' +
-                                '> 0: ' + N + '.');
+                                '> 0: ' + N);
         }
         groups = J.getGroupsSizeN(this.db, N);
-        return array2Groups(groups);
+        return array2Groups.call(this, groups);
     };
 
     /**
@@ -24340,14 +24340,17 @@ if (!Array.prototype.indexOf) {
 
         if (widget) {
             // Parse input params. // TODO: throws errors.
-            if ('string' === typeof widget) widget = {
-                name: widget,
-                ref: widget.toLowerCase()
-            };
+            if ('string' === typeof widget) widget = { name: widget };
             if ('string' !== typeof widget.id) {
                 widget.id = 'ng_step_widget_' + widget.name;
             }
-
+            if (!widget.ref) {
+                widget.ref = widget.name.toLowerCase();
+                // Make sure it is unique.
+                if (this[widget.ref]) {
+                    widget.ref = J.uniqueKey(this, widget.ref);
+                }
+            }
             // Make main callback to get/append the widget.
             widgetCb = function() {
 
