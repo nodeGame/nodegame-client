@@ -21,6 +21,6 @@
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.5.1';
+    node.version = '5.5.2';
 
 })(window);

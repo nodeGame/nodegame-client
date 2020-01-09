@@ -10232,7 +10232,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '5.5.1';
+    node.version = '5.5.2';
 
 })(window);
 
@@ -47844,7 +47844,7 @@ if (!Array.prototype.indexOf) {
                 if (isText) {
 
                     this.params.noNumbers = opts.noNumbers;
-                    
+
                     if ('undefined' !== typeof this.params.lower) {
                         if (this.params.lower < 0) {
                             throw new TypeError(e + 'min cannot be negative ' +
@@ -47879,7 +47879,7 @@ if (!Array.prototype.indexOf) {
                                      len < p.lower) ||
                                     ('undefined' !== typeof p.upper &&
                                      len > p.upper)) {
-                                    
+
                                     err = true;
                                 }
                             }
@@ -54581,15 +54581,15 @@ if (!Array.prototype.indexOf) {
          *
          * The method used to measure mood
          *
-         * Available methods: 'I-PANAS-SF'
+         * Available methods: 'Holt_Laury'
          *
-         * Default method is: 'I-PANAS-SF'
+         * Default method is: 'Holt_Laury'
          *
          * References:
          *
-         * 'I-PANAS-SF', Thompson E.R. (2007) "Development
-         * and Validation of an Internationally Reliable Short-Form of
-         * the Positive and Negative Affect Schedule (PANAS)"
+         * Holt, C. A., & Laury, S. K. (2002). 
+         * Risk aversion and incentive effects. 
+         * American economic review, 92(5), 1644-1655.
          */
         this.method = 'Holt_Laury';
 
@@ -54751,14 +54751,19 @@ if (!Array.prototype.indexOf) {
 
     function holtLaury(options) {
         var items, gauge, i, len, j;
-        var cur, v1, v2, v3, v4, p1, p2;
+        var tmp, v1, v2, v3, v4, p1, p2;
 
-        cur = options.currecy || '$';
-
-        v1 = '2.00';
-        v2 = '1.60';
-        v3 = '3.85';
-        v4 = '0.10';
+        tmp = options.values || [ 2, 1.6, 3.85, 0.1 ];
+        
+        if (options.scale) {
+            tmp = tmp.map(function(i) { return i * options.scale; });
+        }
+        // Make it two decimals.
+        v1 = tmp[0].toFixed(2);
+        v2 = tmp[1].toFixed(2);
+        v3 = tmp[2].toFixed(2);
+        v4 = tmp[3].toFixed(2);
+        
         len = 10;
         items = new Array(len);
         for (i = 0; i < len ; i++) {
