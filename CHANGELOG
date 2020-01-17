@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 5.5.3
+- Fixed execution of exit callback for widget steps.
+
 ## 5.5.2
 - All widgets created in widget steps have the correct "ref" value.
 
