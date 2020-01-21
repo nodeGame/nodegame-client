@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 5.6.0
+- Game.stepBack steps the game back.
+- Game.getPreviousStep updated to accept new options.
+
 ## 5.5.3
 - Fixed execution of exit callback for widget steps.
 
