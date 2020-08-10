@@ -1,18 +1,28 @@
 {
-    "name": "nodegame-client"
-    , "description": "nodeGame client for the browser and node.js"
-    , "version": "5.6.0"
-    , "homepage": "http://www.nodegame.org"
-    , "keywords": ["game", "multiplayer", "experiment", "behavioral", "real-time", "synchronous" ]
-    , "author": "Stefano Balietti <futur.dorko@gmail.com>"
-    , "contributors": [
-        { "name": "Stefano Balietti", "email": "futur.dorko@gmail.com" }
-    ]
-    , "repository": {
-        "type": "git"
-        , "url": "https://github.com/nodeGame/nodegame-client.git"
-    }
-    , "dependencies": {
+    "name": "nodegame-client",
+    "description": "nodeGame client for the browser and node.js",
+    "version": "5.6.0",
+    "homepage": "http://www.nodegame.org",
+    "keywords": [
+        "game",
+        "multiplayer",
+        "experiment",
+        "behavioral",
+        "real-time",
+        "synchronous"
+    ],
+    "author": "Stefano Balietti <futur.dorko@gmail.com>",
+    "contributors": [
+        {
+            "name": "Stefano Balietti",
+            "email": "futur.dorko@gmail.com"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nodeGame/nodegame-client.git"
+    },
+    "dependencies": {
         "socket.io-client": "2.2.0",
         "commander": ">=2.12.2",
         "JSUS": ">=0.17.0",
@@ -20,14 +30,16 @@
         "JSON": "1.0.0",
         "shelf.js": ">=0.5.2",
         "NDDB": ">=1.15.1"
-    }
-    , "devDependencies": {
+    },
+    "devDependencies": {
         "mocha": ">=4.0.1",
         "should": "8.4.0"
-    }
-    , "license": "MIT"
-    , "engines": { "node": ">= 0.10.0" }
-    , "scripts": {
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">= 0.10.0"
+    },
+    "scripts": {
         "test": "make test",
         "test-ci": "mocha test/"
     }
