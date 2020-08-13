@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 5.6.1 Current
+- Fixed 'init' step property set by setDefaultProperty.
+- Fixed assignerCb not correctly assigned to Matcher.
+
 ## 5.6.0
 - Game.stepBack steps the game back.
 - Game.getPreviousStep updated to accept new options.
