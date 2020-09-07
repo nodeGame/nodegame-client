@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## 5.8.0 current
+- GameTimer fires hooks with timeLeft and reference to the timer itself as
+input params.
+
 ## 5.7.0
 - GamePlot.getProperty accepts a fourth parameter specifying which locations
 to skip when searching for properties.
