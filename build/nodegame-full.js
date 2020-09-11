@@ -24233,6 +24233,9 @@ if (!Array.prototype.indexOf) {
             node.socket.clearBuffer();
         }
 
+        // Destroy timers created in current step.
+        node.timer.destroyStepTimers();
+
         // String STEP.
 
         if ('string' === typeof nextStep) {
@@ -24283,6 +24286,11 @@ if (!Array.prototype.indexOf) {
 
                 curStageObj.exit.call(this);
             }
+
+            // Destroy timers created in current stage.
+            node.timer.destroyStageTimers();
+
+            // Mark stage init.
             stageInit = true;
         }
 
@@ -24331,8 +24339,8 @@ if (!Array.prototype.indexOf) {
         this.setPartner(partner, true);
 
         if (stageInit) {
-            // Store time:
-            this.node.timer.setTimestamp('stage', (new Date()).getTime());
+            // Store time.
+            node.timer.setTimestamp('stage', (new Date()).getTime());
 
             // Clear the previous stage listeners.
             node.events.ee.stage.clear();
@@ -25570,6 +25578,32 @@ if (!Array.prototype.indexOf) {
         this.timers = {};
 
         /**
+         * ### Timer._stepTimers
+         *
+         * Collection of temporary timers created in current step
+         *
+         * All references are cleared after each step.
+         *
+         * Notice: might not be updated, if user manually destroys a timer.
+         *
+         * @private
+         */
+        this._stepTimers = [];
+
+        /**
+         * ### Timer._stageTimers
+         *
+         * Collection of temporary timers created in current stage
+         *
+         * All references are cleared after each stage.
+         *
+         * Notice: might not be updated, if user manually destroys a timer.
+         *
+         * @private
+         */
+        this._stageTimers = [];
+
+        /**
          * ### Timer.timestamps
          *
          * Named timestamp collection
@@ -25650,7 +25684,35 @@ if (!Array.prototype.indexOf) {
     // ## Timer methods
 
     /**
-     * ### Timer.createTimer
+     * ### Timer.setTimeout
+     *
+     * Wrapper for createTimer with same syntax as JS setTimeout
+     *
+     * @param {function|string} timeup A callback function or an event to emit
+     *   when the timeout is fired
+     * @param {number} milliseconds The delay for the timeout in milliseconds.
+     *   Default: 1 (because zero would fire immediately and we want to keep
+     *   the same behavior of JS setTimeout)
+     * @param {string} validity The validity of the timeout. Default: validity
+     *   changes depending on where the timeout is created (game, stage, step).
+     *
+     * @return {GameTimer} The game timer
+     *
+     * @see GameTimer
+     */
+    Timer.prototype.setTimeout = function(timeup, milliseconds, validity) {
+        var t;
+        t = this.createTimer({
+            milliseconds: milliseconds || 1,
+            timeup: timeup,
+            validity: validity
+        });
+        t.start();
+        return t;
+    };
+
+    /**
+     * ### Timer.createTimer | Timer.create
      *
      * Returns a new GameTimer
      *
@@ -25658,7 +25720,7 @@ if (!Array.prototype.indexOf) {
      * the respective events.
      *
      * Timer creation is flexible, and input parameter can be a full
-     * configuration object, the number of millieconds or nothing. In the
+     * configuration object, the number of milliseconds or nothing. In the
      * latter case, the new timer will need to be configured manually. If
      * only the number of milliseconds is passed the timer will fire a 'TIMEUP'
      * event once the time expires.
@@ -25672,9 +25734,9 @@ if (!Array.prototype.indexOf) {
      *
      * @see GameTimer
      */
-    Timer.prototype.createTimer = function(options) {
+    Timer.prototype.create = Timer.prototype.createTimer = function(options) {
         var gameTimer, pausedCb, resumedCb;
-        var ee;
+        var ee, val;
 
         if (options &&
             ('object' !== typeof options && 'number' !== typeof options)) {
@@ -25695,6 +25757,23 @@ if (!Array.prototype.indexOf) {
                             options.name);
         }
 
+        // Retrieve the event emitter where the listeners are registered
+        // based on options `validity` or the currently active event emitter.
+        // If validity is 'step' or 'stage', a reference will be added to
+        // the corresponding temporary array of timers (below).
+        val = options.validity;
+        if (!val) {
+            ee = this.node.getCurrentEventEmitter();
+        }
+        else {
+            ee = this.node.events.ee[val];
+            if (!ee) {
+                throw new Error('Timer.createTimer: validity must be "ng", ' +
+                                '"game", "stage", "step". Found: ' + val);
+            }
+        }
+        options.eventEmitterName = ee.name;
+
         // If game is paused add options startPaused, unless user
         // specified a value in the options object.
         if (this.node.game && this.node.game.paused) {
@@ -25702,10 +25781,6 @@ if (!Array.prototype.indexOf) {
                 options.startPaused = true;
             }
         }
-
-        ee = this.node.getCurrentEventEmitter();
-
-        options.eventEmitterName = ee.name;
 
         // Create the GameTimer:
         gameTimer = new GameTimer(this.node, options);
@@ -25733,6 +25808,10 @@ if (!Array.prototype.indexOf) {
 
         // Add a reference into this.timers.
         this.timers[gameTimer.name] = gameTimer;
+
+        // Add reference to stage and step temporary timers.
+        if (ee.name === 'step') this._stepTimers.push(gameTimer);
+        else if (ee.name === 'stage') this._stageTimers.push(gameTimer);
 
         return gameTimer;
     };
@@ -25795,6 +25874,24 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Timer.destroyStepTimers
+     *
+     * Stops and removes all timers registered in current step
+     */
+    Timer.prototype.destroyStepTimers = function() {
+        destroyTempTimers(this, '_stepTimers');
+    };
+
+    /**
+    * ### Timer.destroyStageTimers
+    *
+    * Stops and removes all timers registered in current stage
+    */
+    Timer.prototype.destroyStageTimers = function() {
+        destroyTempTimers(this, '_stageTimers');
+    };
+
+    /**
      * ### Timer.destroyAllTimers
      *
      * Stops and removes all registered GameTimers
@@ -25813,6 +25910,9 @@ if (!Array.prototype.indexOf) {
                 this.destroyTimer(this.timers[i]);
             }
         }
+        // Clear temporary timers.
+        this._stepTimers = [];
+        this._stageTimers = [];
     };
 
     /**
@@ -26194,6 +26294,24 @@ if (!Array.prototype.indexOf) {
      *
      * Common handler for randomEmit, randomExec, randomDone
      *
+     * @param {Timer} that A live Timer instance
+     * @param {string} timers The tname of the collection of temp timers
+     */
+    function destroyTempTimers(that, timers) {
+        var i, len, t;
+        len = that[timers].length;
+        for (i = 0; i < len; i++) {
+            t = that[timers][i];
+            if (t.status !== GameTimer.DESTROYED) that.destroyTimer(t);
+        }
+        that[timers] = [];
+    }
+
+    /**
+     * ### randomFire
+     *
+     * Common handler for randomEmit, randomExec, randomDone
+     *
      * @param {string} method The name of the method invoking randomFire
      * @param {string|function} hook The function to call or the event to emit
      * @param {number} maxWait Optional. The max number of milliseconds
@@ -26471,6 +26589,7 @@ if (!Array.prototype.indexOf) {
      *
      * The configuration object is of the type
      *
+     * ```js
      *  var options = {
      *      // The length of the interval.
      *      milliseconds: 4000,
@@ -26491,6 +26610,7 @@ if (!Array.prototype.indexOf) {
      *      stagerProperty: 'timer'
      *  }
      *  // Units are in milliseconds.
+     * ```
      *
      * Note: if `milliseconds` is a negative number the timer fires
      * immediately.
@@ -26645,7 +26765,7 @@ if (!Array.prototype.indexOf) {
         }
 
         if (this.isRunning()) {
-            throw new Error('GameTimer.start: timer is already running.');
+            throw new Error('GameTimer.start: timer is already running');
         }
 
         this.status = GameTimer.LOADING;
@@ -26661,7 +26781,8 @@ if (!Array.prototype.indexOf) {
         // Fires the event immediately if time is zero.
         // Double check necessary in strict mode.
         if ('undefined' !== typeof this.options.milliseconds &&
-                this.options.milliseconds === 0) {
+                this.options.milliseconds <= 0) {
+
             this.doTimeup();
             return;
         }
@@ -54873,7 +54994,8 @@ if (!Array.prototype.indexOf) {
         // probBomb is passed as input param because it may be hidden.
         bomb_mainText: function(widget, probBomb) {
             var str;
-            str =  'Below there are 100 black boxes. ';
+            str = '<p style="margin-bottom: 0.3em">';
+            str +=  'Below there are 100 black boxes. ';
             str += 'Every box contains a prize of ' +
                     widget.boxValue + ' ' + widget.currency + ', but ';
             if (probBomb === 1) {
@@ -54888,27 +55010,29 @@ if (!Array.prototype.indexOf) {
                     str += 'one of those boxes might contain a <em>bomb</em>.';
                 }
             }
-            str += '<br/><br/>You must decide how many boxes you want to open';
-            str += ', between 1 and ' + widget.maxBoxes + ' boxes.';
+            str += ' You must decide how many boxes you want to open.';
+            str += '</p>';
             if (widget.withPrize) {
-                str += 'You will receive a prize equal to the ' +
-                       'sum of all the prizes collected from every opened ' +
+                str += '<p style="margin-bottom: 0.3em">';
+                str += 'You will receive a reward equal to the ' +
+                       'sum of all the prizes in every opened ' +
                        'box. However, if you open the box ' +
-                       'with the bomb, you get nothing. '
+                       'with the bomb, you get nothing.</p>'
             }
-            str += '<strong>How many boxes do ' +
-                   'you want to open?</strong><br/><br/>';
+            str += '<p style="margin-bottom: 0.5em">';
+            str += '<strong>How many boxes do you want to open ';
+            str += 'between 1 and ' + widget.maxBoxes + '?</strong></p>';
             return str;
         },
 
         bomb_sliderHint:
             'Move the slider below to change the number of boxes to open.',
 
-        bomb_boxValue: 'Prize in each box: ',
+        bomb_boxValue: 'Prize per box: ',
 
-        bomb_numBoxes: ' Number of boxes to open: ',
+        bomb_numBoxes: 'Number of boxes: ',
 
-        bomb_totalWin: ' Total potential win: ',
+        bomb_totalWin: 'Total reward: ',
 
         bomb_openButton: 'Open Boxes',
 
@@ -55176,7 +55300,18 @@ if (!Array.prototype.indexOf) {
         // Holds the final number of boxes opened after clicking the button.
         var finalValue;
 
+
         // Init private variables.
+
+        // The height of every box in px (default: 30px in css).
+        if (opts.boxHeight) {
+            if ('string' !== typeof opts.boxHeight) {
+                throw new Error('Bomb.init: boxHeight must be string ' +
+                                'or undefined. Found: ' + opts.boxHeight);
+            }
+            W.cssRule('div.riskgauge .bomb-box { height: ' +
+                      opts.boxHeight + '}');
+        }
 
         if ('undefined' !== typeof opts.probBomb) {
             if (false === J.isNumber(opts.probBomb, 0, 1, true, true)) {
@@ -55321,10 +55456,12 @@ if (!Array.prototype.indexOf) {
                         that._unhighlight();
 
                         if (value > 0) {
+                            button.style.display = '';
                             button.disabled = false;
                             bombResult.innerHTML = '';
                         }
                         else {
+                            button.style.display = 'none';
                             bombResult.innerHTML = that.getText('bomb_warn');
                             button.disabled = true;
                         }
@@ -55352,20 +55489,24 @@ if (!Array.prototype.indexOf) {
                 });
 
                 // Info div.
-                infoDiv = W.add('div', that.bodyDiv);
+                infoDiv = W.add('div', that.bodyDiv, {
+                    className: 'risk-info',
+                });
+
                 W.add('p', infoDiv, {
                     innerHTML: that.getText('bomb_numBoxes') +
-                               ' <span id="bomb_numBoxes">0</span>'
+                               '&nbsp;<span id="bomb_numBoxes">0</span>'
                 });
 
                 if (that.withPrize) {
                     W.add('p', infoDiv, {
                         innerHTML: that.getText('bomb_boxValue') +
-                        ' <span id="bomb_boxValue">' + this.boxValue + '</span>'
+                        '&nbsp;<span id="bomb_boxValue">' +
+                        this.boxValue + '</span>'
                     });
                     W.add('p', infoDiv, {
                         innerHTML: that.getText('bomb_totalWin') +
-                        ' <span id="bomb_totalWin">0</span>'
+                        '&nbsp;<span id="bomb_totalWin">0</span>'
                     });
                 }
 
@@ -55373,8 +55514,10 @@ if (!Array.prototype.indexOf) {
 
                 button = W.add('button', that.bodyDiv, {
                     className: 'btn-danger',
-                    innerHTML: that.getText('bomb_openButton')
+                    innerHTML: that.getText('bomb_openButton'),
                 });
+                // Initially hidden.
+                button.style.display = 'none';
 
                 button.onclick = function() {
                     var cl;
@@ -55447,8 +55590,8 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Slider.version = '0.3.0';
-    Slider.description = 'Creates a configurable Slider ';
+    Slider.version = '0.4.0';
+    Slider.description = 'Creates a configurable slider';
 
     Slider.title = false;
     Slider.className = 'slider';
@@ -55600,6 +55743,12 @@ if (!Array.prototype.indexOf) {
          */
         this.type = 'volume';
 
+        /** Slider.hoverColor
+         *
+         * The color of the slider on mouse over
+         */
+        this.hoverColor = '#2076ea';
+
         /** Slider.listener
          *
          * The main function listening for slider movement
@@ -55638,8 +55787,8 @@ if (!Array.prototype.indexOf) {
                 }
 
                 if (that.displayValue) {
-                    that.valueSpan.innerHTML = that.getText('currentValue',
-                    that.slider.value);
+                    that.valueSpan.innerHTML =
+                        that.getText('currentValue', that.slider.value);
                 }
 
                 if (that.displayNoChange && noChange !== true) {
@@ -55798,6 +55947,14 @@ if (!Array.prototype.indexOf) {
             }
             this.sliderWidth = opts.width;
         }
+
+        if (opts.hoverColor) {
+            if ('string' !== typeof opts.hoverColor) {
+                throw new TypeError(e + 'hoverColor must be string or ' +
+                                    'undefined. Found: ' + opts.hoverColor);
+            }
+            this.hoverColor = opts.hoverColor;
+        }
     };
 
     /**
@@ -55808,6 +55965,12 @@ if (!Array.prototype.indexOf) {
      */
     Slider.prototype.append = function() {
         var container;
+
+        // The original color of the rangeFill container (default black)
+        // that is replaced upon highlighting.
+        // Need to do js onmouseover because ccs:hover does not work here.
+        var tmpColor;
+
         var that = this;
 
         // MainText.
@@ -55842,6 +56005,14 @@ if (!Array.prototype.indexOf) {
             min: this.min,
             max: this.max
         });
+
+        this.slider.onmouseover = function() {
+            tmpColor = that.rangeFill.style.background || 'black';
+            that.rangeFill.style.background = that.hoverColor;
+        };
+        this.slider.onmouseout = function() {
+            that.rangeFill.style.background = tmpColor;
+        };
 
         if (this.sliderWidth) this.slider.style.width = this.sliderWidth;
 
@@ -56254,7 +56425,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualRound
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  *
  * Display information about rounds and/or stage in the game
@@ -56272,17 +56443,20 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualRound.version = '0.8.0';
-    VisualRound.description = 'Display number of current round and/or stage.' +
-        'Can also display countdown and total number of rounds and/or stages.';
+    VisualRound.version = '0.9.0';
+    VisualRound.description = 'Displays current/total/left round/stage/step. ';
 
     VisualRound.title = false;
     VisualRound.className = 'visualround';
 
-    VisualRound.texts.round = 'Round';
-    VisualRound.texts.stage = 'Stage';
-    VisualRound.texts.roundLeft = 'Round Left';
-    VisualRound.texts.stageLeft = 'Stage left';
+    VisualRound.texts = {
+        round: 'Round',
+        step: 'Step',
+        stage: 'Stage',
+        roundLeft: 'Rounds Left',
+        stepLeft: 'Steps Left',
+        stageLeft: 'Stages Left'
+    };
 
     // ## Dependencies
 
@@ -56309,9 +56483,6 @@ if (!Array.prototype.indexOf) {
          * ### VisualRound.displayMode
          *
          * Object which determines what information is displayed
-         *
-         * Set through `VisualRound.setDisplayMode` using a string to describe
-         * the displayMode.
          *
          * @see VisualRound.setDisplayMode
          */
@@ -56460,9 +56631,11 @@ if (!Array.prototype.indexOf) {
         if (this.options.flexibleMode) {
             this.curStage = this.options.curStage || 1;
             this.curStage -= this.options.stageOffset || 0;
+            this.curStep = this.options.curStep || 1;
             this.curRound = this.options.curRound || 1;
             this.totStage = this.options.totStage;
             this.totRound = this.options.totRound;
+            this.totStep = this.options.totStep;
             this.oldStageId = this.options.oldStageId;
         }
 
@@ -56527,10 +56700,17 @@ if (!Array.prototype.indexOf) {
      * The following strings are valid display names:
      *
      * - `COUNT_UP_STAGES`: Display only current stage number.
+     * - `COUNT_UP_STEPS`: Display only current step number.
+     * - `COUNT_UP_STEPS_IFNOT1`: Skip stages with one step.
      * - `COUNT_UP_ROUNDS`: Display only current round number.
+     * - `COUNT_UP_ROUNDS_IFNOT1`: Skip stages with one round.
      * - `COUNT_UP_STAGES_TO_TOTAL`: Display current and total stage number.
      * - `COUNT_UP_ROUNDS_TO_TOTAL`: Display current and total round number.
+     * - `COUNT_UP_STEPS_TO_TOTAL`: Display current and total step number.
+     * - `COUNT_UP_STEPS_TO_TOTAL_IFNOT1`: Skip stages with one step.
+     * - `COUNT_UP_ROUNDS_TO_TOTAL_IFNOT1`: Skip stages with one round.
      * - `COUNT_DOWN_STAGES`: Display number of stages left to play.
+     * - `COUNT_DOWN_STEPS`: Display number of steps left to play.
      * - `COUNT_DOWN_ROUNDS`: Display number of rounds left in this stage.
      *
      * @param {array|string} displayMode Array of strings representing the names
@@ -56574,6 +56754,24 @@ if (!Array.prototype.indexOf) {
                 break;
             case 'COUNT_DOWN_STAGES':
                 displayModes.push(new CountDownStages(this));
+                break;
+            case 'COUNT_UP_STEPS_TO_TOTAL':
+                displayModes.push(new CountUpSteps(this, { toTotal: true }));
+                break;
+            case 'COUNT_UP_STEPS_TO_TOTAL_IFNOT1':
+                displayModes.push(new CountUpSteps(this, {
+                    toTotal: true,
+                    ifNotOne: true
+                }));
+                break;
+            case 'COUNT_UP_STEPS':
+                displayModes.push(new CountUpSteps(this));
+                break;
+            case 'COUNT_UP_STEPS_IFNOT1':
+                displayModes.push(new CountUpSteps(this, { ifNotOne: true }));
+                break;
+            case 'COUNT_DOWN_STEPS':
+                displayModes.push(new CountDownSteps(this));
                 break;
             case 'COUNT_UP_ROUNDS_TO_TOTAL':
                 displayModes.push(new CountUpRounds(this, { toTotal: true }));
@@ -56665,7 +56863,7 @@ if (!Array.prototype.indexOf) {
      * @see VisualRound.updateDisplay
      */
     VisualRound.prototype.updateInformation = function() {
-        var stage, len;
+        var stage, len, tmp;
 
         stage = node.player.stage;
 
@@ -56695,7 +56893,10 @@ if (!Array.prototype.indexOf) {
                     this.gamePlot.normalizeGameStage(stage).stage;
             }
             this.curRound = stage.round;
-            this.totRound = this.stager.sequence[this.curStage -1].num || 1;
+            tmp = this.stager.sequence[this.curStage -1];
+            this.totRound = tmp.num || 1;
+            this.totStep = tmp.steps.length;
+            this.curStep = stage.step;
             this.curStage -= this.stageOffset;
             len = this.stager.sequence.length;
             this.totStage = len - this.totStageOffset;
@@ -56712,7 +56913,7 @@ if (!Array.prototype.indexOf) {
      *
      * Arranges the relative position of the various elements of VisualRound
      *
-     * @param {string} layout. Admitted values:
+     * @param {string} layout. Valid options:
      *   - 'vertical' (alias: 'multimode_vertical')
      *   - 'horizontal'
      *   - 'multimode_horizontal'
@@ -56732,10 +56933,7 @@ if (!Array.prototype.indexOf) {
     /**
      * # CountUpStages
      *
-     * Copyright(c) 2017 Stefano Balietti
-     * MIT Licensed
-     *
-     * Display mode for `VisualRound` which with current/total number of stages
+     * Display current/total number of stages
      */
 
     /**
@@ -56750,64 +56948,13 @@ if (!Array.prototype.indexOf) {
      * @param {object} options Optional. Configuration options.
      *   If `options.toTotal == true`, then the total number of stages is
      *   displayed
-     *
-     * @see VisualRound
      */
     function CountUpStages(visualRound, options) {
-
         generalConstructor(this, visualRound, 'COUNT_UP_STAGES', options);
-
-        /**
-         * ### CountUpStages.curStageNumber
-         *
-         * The span in which the current stage number is displayed
-         */
-        this.curStageNumber = null;
-
-        /**
-         * ### CountUpStages.totStageNumber
-         *
-         * The span in which the total stage number is displayed
-         */
-        this.totStageNumber = null;
-
-        /**
-         * ### CountUpStages.displayDiv
-         *
-         * The span in which the text ` of ` is displayed
-         */
-        this.textDiv = null;
-
-        // Inits it!
-        this.init();
+        generalInit(this, 'stagediv', this.visualRound.getText('stage'));
     }
 
     // ## CountUpStages methods
-
-    /**
-     * ### CountUpStages.init
-     *
-     * Initializes the instance
-     *
-     * @see CountUpStages.updateDisplay
-     */
-    CountUpStages.prototype.init = function() {
-        generalInit(this, 'stagediv', this.visualRound.getText('stage'));
-
-        this.curStageNumber = W.append('span', this.contentDiv, {
-            className: 'number'
-        });
-        if (this.options.toTotal) {
-            this.textDiv = W.append('span', this.contentDiv, {
-                className: 'text',
-                innerHTML: this.visualRound.separator
-            });
-            this.totStageNumber = W.append('span', this.contentDiv, {
-                className: 'number'
-            });
-        }
-        this.updateDisplay();
-    };
 
     /**
      * ### CountUpStages.updateDisplay
@@ -56815,21 +56962,14 @@ if (!Array.prototype.indexOf) {
      * Updates the content of `curStageNumber` and `totStageNumber`
      *
      * Values are updated according to the state of `visualRound`.
-     *
-     * @see VisualRound.updateDisplay
      */
     CountUpStages.prototype.updateDisplay = function() {
-        this.curStageNumber.innerHTML = this.visualRound.curStage;
-        if (this.options.toTotal) {
-            this.totStageNumber.innerHTML = this.visualRound.totStage || '?';
-        }
+        this.current.innerHTML = this.visualRound.curStage;
+        if (this.total) this.total.innerHTML = this.visualRound.totStage || '?';
     };
 
    /**
      * # CountDownStages
-     *
-     * Copyright(c) 2017 Stefano Balietti
-     * MIT Licensed
      *
      * Defines a displayMode for the `VisualRound` which displays the remaining
      * number of stages
@@ -56843,66 +56983,112 @@ if (!Array.prototype.indexOf) {
      * @param {VisualRound} visualRound The `VisualRound` object to which the
      *   displayMode belongs.
      * @param {object} options Optional. Configuration options
-     *
-     * @see VisualRound
      */
     function CountDownStages(visualRound, options) {
-
         generalConstructor(this, visualRound, 'COUNT_DOWN_STAGES', options);
-
-        /**
-         * ### CountDownStages.stagesLeft
-         *
-         * The DIV in which the number stages left is displayed
-         */
-        this.stagesLeft = null;
-
-        this.init();
+        generalInit(this, 'stagediv', visualRound.getText('stageLeft'));
     }
 
     // ## CountDownStages methods
 
     /**
-     * ### CountDownStages.init
-     *
-     * Initializes the instance
-     *
-     * @see CountDownStages.updateDisplay
-     */
-    CountDownStages.prototype.init = function() {
-        generalInit(this, 'stagediv', this.visualRound.getText('stageLeft'));
-        this.stagesLeft = W.add('div', this.contentDiv, {
-            className: 'number'
-        });
-        this.updateDisplay();
-    };
-
-    /**
      * ### CountDownStages.updateDisplay
      *
      * Updates the content of `stagesLeft` according to `visualRound`
-     *
-     * @see VisualRound.updateDisplay
      */
     CountDownStages.prototype.updateDisplay = function() {
         var v;
         v = this.visualRound;
         if (v.totStage === v.curStage) {
-            this.stagesLeft.innerHTML = 0;
+            this.current.innerHTML = 0;
         }
         else {
-            this.stagesLeft.innerHTML = (v.totStage - v.curStage) || '?';
+            this.current.innerHTML = (v.totStage - v.curStage) || '?';
         }
+    };
+
+    /**
+      * # CountUpSteps
+      *
+      * Displays the current/total number of steps
+      */
+
+    /**
+     * ## CountUpSteps constructor
+     *
+     * DisplayMode which displays the current number of stages
+     *
+     * Can be constructed to furthermore display the total number of stages.
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *   displayMode belongs
+     * @param {object} options Optional. Configuration options.
+     *   If `options.toTotal == true`, then the total number of stages is
+     *   displayed
+     */
+    function CountUpSteps(visualRound, options) {
+        generalConstructor(this, visualRound, 'COUNT_UP_STEPS', options);
+        generalInit(this, 'stepdiv', this.visualRound.getText('step'));
+    }
+
+    /**
+     * ### CountUpSteps.updateDisplay
+     *
+     * Updates the content of `curStageNumber` and `totStageNumber`
+     *
+     * Values are updated according to the state of `visualRound`.
+     */
+    CountUpSteps.prototype.updateDisplay = function() {
+        if (this.options.ifNotOne && this.visualRound.totStep === 1) {
+            this.displayDiv.style.display = 'none';
+        }
+        else {
+            this.current.innerHTML = this.visualRound.curStep;
+            if (this.total) {
+                this.total.innerHTML = this.visualRound.totStep || '?';
+            }
+            this.displayDiv.style.display = '';
+        }
+    };
+
+   /**
+     * # CountDownSteps
+     *
+     * DisplayMode which displays the remaining number of steps
+     */
+
+    /**
+     * ## CountDownStages constructor
+     *
+     * Display mode which displays the remaining number of steps
+     *
+     * @param {VisualRound} visualRound The `VisualRound` object to which the
+     *   displayMode belongs.
+     * @param {object} options Optional. Configuration options
+     */
+    function CountDownSteps(visualRound, options) {
+        generalConstructor(this, visualRound, 'COUNT_DOWN_STEPS', options);
+        generalInit(this, 'stepdiv', this.visualRound.getText('stepLeft'));
+    }
+
+    // ## CountDownSteps methods
+
+    /**
+     * ### CountDownSteps.updateDisplay
+     *
+     * Updates the content of `stagesLeft` according to `visualRound`
+     */
+    CountDownSteps.prototype.updateDisplay = function() {
+        var v;
+        v = this.visualRound;
+        if (v.totStep === v.curStep) this.current.innerHTML = 0;
+        else this.current.innerHTML = (v.totStep - v.curStep) || '?';
     };
 
    /**
      * # CountUpRounds
      *
-     * Copyright(c) 2017 Stefano Balietti
-     * MIT Licensed
-     *
-     * Defines a displayMode for the `VisualRound` which displays the current
-     * and possibly the total number of rounds
+     * Displays the current and possibly the total number of rounds
      */
 
     /**
@@ -56916,61 +57102,13 @@ if (!Array.prototype.indexOf) {
      *   displayMode belongs
      * @param {object} options Optional. Configuration options. If
      *   `options.toTotal == true`, then the total number of rounds is displayed
-     *
-     * @see VisualRound
      */
     function CountUpRounds(visualRound, options) {
-
         generalConstructor(this, visualRound, 'COUNT_UP_ROUNDS', options);
-
-        /**
-         * ### CountUpRounds.curRoundNumber
-         *
-         * The span in which the current round number is displayed
-         */
-        this.curRoundNumber = null;
-
-        /**
-         * ### CountUpRounds.totRoundNumber
-         *
-         * The element in which the total round number is displayed
-         */
-        this.totRoundNumber = null;
-
-        this.init();
+        generalInit(this, 'rounddiv', visualRound.getText('round'));
     }
 
     // ## CountUpRounds methods
-
-    /**
-     * ### CountUpRounds.init
-     *
-     * Initializes the instance
-     *
-     * @param {object} options Optional. Configuration options. If
-     *   `options.toTotal == true`, then the total number of rounds is displayed
-     *
-     * @see CountUpRounds.updateDisplay
-     */
-    CountUpRounds.prototype.init = function() {
-
-        generalInit(this, 'rounddiv', this.visualRound.getText('round'));
-
-        this.curRoundNumber = W.add('span', this.contentDiv, {
-            className: 'number'
-        });
-        if (this.options.toTotal) {
-            this.textDiv = W.add('span', this.contentDiv, {
-                className: 'text',
-                innerHTML: this.visualRound.separator
-            });
-
-            this.totRoundNumber = W.add('span', this.contentDiv,  {
-                className: 'number'
-            });
-        }
-        this.updateDisplay();
-    };
 
     /**
      * ### CountUpRounds.updateDisplay
@@ -56978,18 +57116,15 @@ if (!Array.prototype.indexOf) {
      * Updates the content of `curRoundNumber` and `totRoundNumber`
      *
      * Values are updated according to the state of `visualRound`.
-     *
-     * @see VisualRound.updateDisplay
      */
     CountUpRounds.prototype.updateDisplay = function() {
         if (this.options.ifNotOne && this.visualRound.totRound === 1) {
             this.displayDiv.style.display = 'none';
         }
         else {
-            this.curRoundNumber.innerHTML = this.visualRound.curRound;
-            if (this.options.toTotal) {
-                this.totRoundNumber.innerHTML =
-                    this.visualRound.totRound || '?';
+            this.current.innerHTML = this.visualRound.curRound;
+            if (this.total) {
+                this.total.innerHTML = this.visualRound.totRound || '?';
             }
             this.displayDiv.style.display = '';
         }
@@ -56999,11 +57134,7 @@ if (!Array.prototype.indexOf) {
    /**
      * # CountDownRounds
      *
-     * Copyright(c) 2017 Stefano Balietti
-     * MIT Licensed
-     *
-     * Defines a displayMode for the `VisualRound` which displays the remaining
-     * number of rounds
+     * Displays the remaining number of rounds
      */
 
     /**
@@ -57014,67 +57145,30 @@ if (!Array.prototype.indexOf) {
      * @param {VisualRound} visualRound The `VisualRound` object to which the
      *   displayMode belongs
      * @param {object} options Optional. Configuration options
-     *
-     * @see VisualRound
      */
     function CountDownRounds(visualRound, options) {
-
         generalConstructor(this, visualRound, 'COUNT_DOWN_ROUNDS', options);
-
-        /**
-         * ### CountDownRounds.roundsLeft
-         *
-         * The DIV in which the number rounds left is displayed
-         */
-        this.roundsLeft = null;
-
-        this.init();
+        generalInit(this, 'rounddiv', visualRound.getText('roundLeft'));
     }
 
     // ## CountDownRounds methods
 
     /**
-     * ### CountDownRounds.init
-     *
-     * Initializes the instance
-     *
-     * @see CountDownRounds.updateDisplay
-     */
-    CountDownRounds.prototype.init = function() {
-        generalInit(this, 'rounddiv', this.visualRound.getText('roundLeft'));
-
-        this.roundsLeft = W.add('div', this.displayDiv);
-        this.roundsLeft.className = 'number';
-
-        this.updateDisplay();
-    };
-
-    /**
      * ### CountDownRounds.updateDisplay
      *
      * Updates the content of `roundsLeft` according to `visualRound`
-     *
-     * @see VisualRound.updateDisplay
      */
     CountDownRounds.prototype.updateDisplay = function() {
         var v;
         v = this.visualRound;
-        if (v.totRound === v.curRound) {
-            this.roundsLeft.innerHTML = 0;
-        }
-        else {
-            this.roundsLeft.innerHTML = (v.totRound - v.curRound) || '?';
-        }
+        if (v.totRound === v.curRound) this.current.innerHTML = 0;
+        else this.current.innerHTML = (v.totRound - v.curRound) || '?';
     };
 
     /**
      * # CompoundDisplayMode
      *
-     * Copyright(c) 2017 Stefano Balietti
-     * MIT Licensed
-     *
-     * Defines a displayMode for the `VisualRound` which displays the
-     * information according to multiple displayModes
+     * Creates a display mode which groups together other display modes
      */
 
     /**
@@ -57087,8 +57181,6 @@ if (!Array.prototype.indexOf) {
      * @param {array} displayModes Array of displayModes to be used in
      *   combination
      * @param {object} options Optional. Configuration options
-     *
-     * @see VisualRound
      */
     function CompoundDisplayMode(visualRound, displayModes, options) {
 
@@ -57096,8 +57188,6 @@ if (!Array.prototype.indexOf) {
          * ### CompoundDisplayMode.visualRound
          *
          * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
          */
         this.visualRound = visualRound;
 
@@ -57143,7 +57233,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see CompoundDisplayMode.updateDisplay
      */
-     CompoundDisplayMode.prototype.init = function(options) {
+     CompoundDisplayMode.prototype.init = function() {
          var i, len;
          this.displayDiv = W.get('div');
          i = -1, len = this.displayModes.length;
@@ -57157,8 +57247,6 @@ if (!Array.prototype.indexOf) {
      * ### CompoundDisplayMode.updateDisplay
      *
      * Calls `updateDisplay` for all displayModes in the combination
-     *
-     * @see VisualRound.updateDisplay
      */
     CompoundDisplayMode.prototype.updateDisplay = function() {
         var i, len;
@@ -57198,7 +57286,6 @@ if (!Array.prototype.indexOf) {
     };
 
     // ## Helper Methods.
-
 
     function setLayout(d, layout, lastDisplay) {
         if (layout === 'vertical' || layout === 'multimode_vertical' ||
@@ -57240,7 +57327,6 @@ if (!Array.prototype.indexOf) {
         return false;
     }
 
-
     /**
      * ### generalConstructor
      *
@@ -57258,8 +57344,6 @@ if (!Array.prototype.indexOf) {
          * #### visualRound
          *
          * The `VisualRound` object to which the displayMode belongs
-         *
-         * @see VisualRound
          */
         that.visualRound = visualRound;
 
@@ -57300,12 +57384,29 @@ if (!Array.prototype.indexOf) {
         that.contentDiv = null;
 
         /**
+         * #### current
+         *
+         * The span in which the number (of rounds, steps, stages) is displayed
+         */
+        that.current = null;
+
+        /**
          * #### textDiv
          *
          * The span in which the text ` of ` is displayed
+         *
+         * It is created only if the display mode requires it
          */
         that.textDiv = null;
 
+        /**
+         * #### total
+         *
+         * The span in which the total number (of rounds, etc.) is displayed
+         *
+         * It is created only if the display mode requires it
+         */
+        that.total = null;
     }
 
     /**
@@ -57327,6 +57428,19 @@ if (!Array.prototype.indexOf) {
         that.contentDiv = W.add('div', that.displayDiv, {
             className: 'content'
         });
+        that.current = W.append('span', that.contentDiv, {
+            className: 'number'
+        });
+        if (that.options.toTotal) {
+            that.textDiv = W.append('span', that.contentDiv, {
+                className: 'text',
+                innerHTML: that.visualRound.separator
+            });
+            that.total = W.append('span', that.contentDiv, {
+                className: 'number'
+            });
+        }
+        that.updateDisplay();
     }
 
 })(node);
@@ -57586,14 +57700,23 @@ if (!Array.prototype.indexOf) {
      * @param {string} mod A modifier: 'current', 'previous', 'next'.
      *
      * @return {string} name The name of the step
-     *
-     * @see getName
      */
     VisualStage.prototype.getStepName = function(gameStage, curStage, mod) {
         var name, round;
-        name = getName(gameStage, this.getText('miss'));
-        if (this.replaceUnderscore) name = name.replace(/_/g, " ");
-        if (this.capitalize) name = capitalize(name);
+        // Get the name. If no step property is defined, use the id and
+        // do some text replacing.
+        name = node.game.plot.getProperty(gameStage, 'name');
+        if (!name) {
+            name = node.game.plot.getStep(gameStage);
+            if (!name) {
+                name = this.getText('miss');
+            }
+            else {
+                name = name.id;
+                if (this.replaceUnderscore) name = name.replace(/_/g, " ");
+                if (this.capitalize) name = capitalize(name);
+            }
+        }
         if (this.showRounds) {
             round = getRound(gameStage, curStage, mod);
             if (round) name += ' ' + round;
@@ -57638,19 +57761,6 @@ if (!Array.prototype.indexOf) {
             round = 1;
         }
         return round;
-    }
-
-    // ### getName
-    //
-    // Returns the name or the id property or miss.
-    function getName(gameStage, miss) {
-        var tmp;
-        tmp = node.game.plot.getProperty(gameStage, 'name');
-        if (!tmp) {
-            tmp = node.game.plot.getStep(gameStage);
-            tmp = tmp ? tmp.id : miss;
-        }
-        return tmp;
     }
 
     function capitalize(str) {
