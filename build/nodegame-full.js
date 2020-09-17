@@ -5941,7 +5941,10 @@ if (!Array.prototype.indexOf) {
         this.hooks = {
             insert: [],
             remove: [],
-            update: []
+            update: [],
+            setwd: [],
+            save: [],
+            load: []
         };
 
         // ### nddb_pointer
@@ -6538,6 +6541,29 @@ if (!Array.prototype.indexOf) {
             this.initLog(options.log, options.logCtx);
         }
 
+        if (options.formats) {
+            if ('object' !== typeof options.formats) {
+                errMsg = 'options.formats must be object or undefined';
+                this.throwErr('TypeError', 'init', errMsg);
+            }
+            for (i in options.formats) {
+                if (options.formats.hasOwnProperty(i)) {
+                    this.addFormat(i, options.formats[i]);
+                }
+            }
+        }
+
+        if (options.defaultFormat) {
+            this.setDefaultFormat(options.defaultFormat);
+        }
+
+        if (options.wd && 'function' === typeof this.setWD) {
+            this.setWD(options.wd);
+        }
+
+        // Below there might modifications to the options
+        // object via the cloneSettings method.
+
         if (options.C) {
             if ('object' !== typeof options.C) {
                 errMsg = 'options.C must be object or undefined';
@@ -6585,27 +6611,6 @@ if (!Array.prototype.indexOf) {
                 }
             }
         }
-
-        if (options.formats) {
-            if ('object' !== typeof options.formats) {
-                errMsg = 'options.formats must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
-            for (i in options.formats) {
-                if (options.formats.hasOwnProperty(i)) {
-                    this.addFormat(i, options.formats[i]);
-                }
-            }
-        }
-
-        if (options.defaultFormat) {
-            this.setDefaultFormat(options.defaultFormat);
-        }
-
-        if (options.wd && 'function' === typeof this.setWD) {
-            this.setWD(options.wd);
-        }
-
     };
 
     /**
@@ -7125,7 +7130,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.rebuildIndexes
      */
     NDDB.prototype.view = function(idx, func) {
-        var settings;
+        var settings, that;
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
             this.throwErr('TypeError', 'view', 'idx must be string or number');
         }
@@ -7142,7 +7147,8 @@ if (!Array.prototype.indexOf) {
         // Create a copy of the current settings, without the views
         // functions, else we create an infinite loop in the constructor.
         settings = this.cloneSettings( {V: ''} );
-        this.__V[idx] = func, this[idx] = new NDDB(settings);
+        this.__V[idx] = func;
+        this[idx] = new NDDB(settings);
     };
 
     /**
@@ -7183,10 +7189,7 @@ if (!Array.prototype.indexOf) {
         }
         this[idx] = {};
         this.__H[idx] = func;
-    };
 
-    NDDB.prototype.flatten = function(idx, func) {
-        // TODO
     };
 
     /**
@@ -9684,15 +9687,21 @@ if (!Array.prototype.indexOf) {
      */
     function executeSaveLoad(that, method, file, cb, options) {
         var ff, format;
-        validateSaveLoadParameters(that, method, file, cb, options);
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
+        validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
         format = extractExtension(file);
         // If try to get the format function based on the extension,
         // otherwise try to use the default one. Throws errors.
         ff = findFormatFunction(that, method, format);
+        // Emit save or load. Options can be modified.
+        that.emit(method.charAt(0) === 's' ? 'save' : 'load', options, {
+            file: file,
+            format: format,
+            cb: cb
+        });
         ff(that, file, cb, options);
     }
 
@@ -23381,8 +23390,15 @@ if (!Array.prototype.indexOf) {
                 if (o.stage) return GameStage.toHash(o.stage, 'S.s.r');
             });
         }
+        if (!this.done) {
+            this.view('done');
+        }
 
-        // this.times = {};
+        this.on('save', function(options, info) {
+            if (info.format === 'csv') decorateSavingOptions(options);
+        });
+
+        this.times = {};
 
         this.node = this.__shared.node;
     }
@@ -23406,17 +23422,69 @@ if (!Array.prototype.indexOf) {
         if ('object' !== typeof o.stage) {
             throw new Error('GameDB.add: stage missing or invalid: ', o);
         }
+        // var flattenIdx, flattenedItem;
+        // flattenIdx = o.player;
+        // if (this.flatten[o.stage]) {
+        //     flattenedItem = this.flattened.get(o.player);
+        // }
+
         // if (node.nodename !== nodename) o.session = node.nodename;
         if (!o.timestamp) o.timestamp = Date.now ?
             Date.now() : new Date().getTime();
 
         // TODO: Work in progress: saving times.
-        // this.times[o.player];
+        // if (o.done) {
+        //     if (!this.times[o.player]) this.times[o.player] = [];
+        //     this.times[o.player] = { time: o.time, stage: o.stage };
+        // }
 
         // if (this.flatten[o.stage.stage])
 
         this.insert(o);
     };
+
+    // /**
+    //  * ### GameDB.save|saveySync
+    //  *
+    //  * Wrapper around NDDB.save and NDDB.saveSync
+    //  *
+    //  * Adds default options to improve data saving.
+    //  *
+    //  * @see @NDDB.save
+    //  * @see @NDDB.saveSync
+    //  * @see decorateSavingOptions
+    //  */
+    // GameDB.prototype.save = function(file, options, cb) {
+    //     debugger
+    //     decorateSavingOptions(options);
+    //     NDDB.prototype.save.apply(this, arguments);
+    // };
+    // GameDB.prototype.saveSync = function(file, options, cb) {
+    //     decorateSavingOptions(options);
+    //     NDDB.prototoype.saveSync.apply(this, arguments);
+    // };
+
+    /**
+     * ### decorateSavingOptions
+     *
+     * Adds default options to improve data saving.
+     *
+     * @param {object} options Optional. The option object to decorate
+     */
+    function decorateSavingOptions(options) {
+        if (!options) return;
+        if (options.flatten) {
+            options.preprocess = function(item, current) {
+                var s;
+                s = item.stage.stage + '.' + item.stage.step +
+                '.' + item.stage.round;
+                item['time_' + s] = item.time;
+                item['timestamp_' + s] = item.timestamp;
+                delete item.time;
+                delete item.timestamp;
+            };
+        }
+    }
 
 })(
     'undefined' != typeof node ? node : module.exports,
@@ -43855,7 +43923,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.verifyChoice
      */
     ChoiceManager.prototype.getValues = function(opts) {
-        var obj, i, len, form;
+        var obj, i, len, form, lastErrored;
         obj = {
             order: this.order,
             forms: {},
@@ -43884,15 +43952,25 @@ if (!Array.prototype.indexOf) {
                       !obj.forms[form.id].choice.length))) {
 
                     obj.missValues.push(form.id);
+                    lastErrored = form;
                 }
                 if (opts.markAttempt &&
                     obj.forms[form.id].isCorrect === false) {
 
-                    obj.isCorrect = false;
+                    // obj.isCorrect = false;
+                    lastErrored = form;
                 }
             }
         }
-        if (obj.missValues.length) obj.isCorrect = false;
+        if (lastErrored) {
+            if (opts.highlight &&
+                'function' === typeof lastErrored.bodyDiv.scrollIntoView) {
+
+                lastErrored.bodyDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+            obj.isCorrect = false;
+        }
+        // if (obj.missValues.length) obj.isCorrect = false;
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
     };
@@ -47916,9 +47994,7 @@ if (!Array.prototype.indexOf) {
             }
             return 'Must follow format ' + w.params.format;
         },
-        emptyErr: function(w) {
-            return 'Cannot be empty';
-        }
+        emptyErr: 'Cannot be empty'
     };
 
     // ## Dependencies
@@ -48286,7 +48362,7 @@ if (!Array.prototype.indexOf) {
                         return out;
                     };
 
-                    setValues = function(opts) {
+                    setValues = function() {
                         var a, b;
                         a = 'undefined' !== typeof that.params.lower ?
                             (that.params.lower + 1) : 5;
@@ -48313,17 +48389,19 @@ if (!Array.prototype.indexOf) {
                         };
                     })();
 
-                    setValues = function(opts) {
+                    setValues = function() {
                         var p, a, b;
                         p = that.params;
                         if (that.type === 'float') return J.random();
                         a = 0;
-                        b = 10;
                         if ('undefined' !== typeof p.lower) {
                             a = p.leq ? (p.lower - 1) : p.lower;
                         }
                         if ('undefined' !== typeof p.upper) {
                             b = p.ueq ? p.upper : (p.upper - 1);
+                        }
+                        else {
+                            b = 100 + a;
                         }
                         return J.randomInt(a, b);
                     };
@@ -48472,7 +48550,7 @@ if (!Array.prototype.indexOf) {
                     return res;
                 };
 
-                setValues = function(opts) {
+                setValues = function() {
                     var p, minD, maxD, d, day, month, year;
                     p = that.params;
                     minD = p.minDate ? p.minDate.obj : new Date('01/01/1900');
@@ -48524,7 +48602,7 @@ if (!Array.prototype.indexOf) {
                     return res;
                 };
 
-                setValues = function(opts) {
+                setValues = function() {
                     return J.randomKey(that.params.usStateVal);
                 };
 
@@ -48539,7 +48617,7 @@ if (!Array.prototype.indexOf) {
                     return res;
                 };
 
-                setValues = function(opts) {
+                setValues = function() {
                     return Math.floor(Math.random()*90000) + 10000;
                 };
             }
@@ -48668,7 +48746,7 @@ if (!Array.prototype.indexOf) {
                 };
 
                 if (this.type === 'us_city_state_zip') {
-                    setValues = function(opts) {
+                    setValues = function() {
                         var sep;
                         sep = that.params.listSep + ' ';
                         return J.randomString(8) + sep +
@@ -49235,13 +49313,13 @@ if (!Array.prototype.indexOf) {
             return usStatesTerr;
 
         case 'usStatesLow':
-            if (!usStatesLow) usStatesLow = objToLow(usStates, toLK);
+            if (!usStatesLow) usStatesLow = objToLK(usStates);
             return usStatesLow;
         case 'usStates':
             return usStates;
 
         case 'usTerrLow':
-            if (!usTerrLow) usTerrLow = objToLow(usTerr, toLK);
+            if (!usTerrLow) usTerrLow = objToLK(usTerr);
             return usTerrLow;
         case 'usTerr':
             return usTerr;
@@ -51349,10 +51427,18 @@ if (!Array.prototype.indexOf) {
         }
 
         this.button.onclick = function() {
-            var res;
-            res = node.done();
-            if (res) that.disable();
+            if (that.onclick && false === that.onclick()) return;
+            if (node.done()) that.disable();
         };
+
+        /**
+         * ### DoneButton.onclick
+         *
+         * A callback executed after the button is clicked
+         *
+         * If it return FALSE, node.done() is not called.
+         */
+        this.onclick = null;
 
         /**
          * ### DoneButton.disableOnDisconnect
@@ -51385,6 +51471,7 @@ if (!Array.prototype.indexOf) {
      * - className: the className of the button (string, array), or false
      *     to have none. Default bootstrap classes: 'btn btn-lg btn-primary'
      * - text: the text on the button. Default: DoneButton.text
+     * - onclick: a callback executed when the button is clicked. Default: null
      * - disableOnDisconnect: TRUE to disable upon disconnection. Default: TRUE
      * - delayOnPlaying: number of milliseconds to wait to enable after
      *     the `PLAYING` event is fired (e.g., a new step begins). Default: 800
@@ -51447,6 +51534,15 @@ if (!Array.prototype.indexOf) {
         else if ('undefined' !== typeof tmp) {
             throw new TypeError('DoneButton.init: delayOnPlaying must ' +
                                 'be number or undefined. Found: ' + tmp);
+        }
+
+        tmp = opts.onclick;
+        if (tmp) {
+            if ('function' !== typeof tmp) {
+                throw new TypeError('DoneButton.init: onclick must function ' +
+                                    'or undefined. Found: ' + tmp);
+            }
+            this.onclick = tmp;
         }
     };
 
@@ -51511,6 +51607,27 @@ if (!Array.prototype.indexOf) {
                 }
             });
         }
+    };
+
+    /**
+     * ### DoneButton.updateText
+     *
+     * Updates the text on the button, possibly for a given duration only
+     *
+     * @param {string} text The new text
+     * @param {number} duration Optional. The number of milliseconds the new
+     *   text is displayed. If undefined, the new text stays indefinitely.
+     */
+    DoneButton.prototype.updateText = function(text, duration) {
+        var oldText, that;
+        if (duration) {
+            that = this;
+            oldText = this.button.value;
+            node.timer.setTimeout(function() {
+                that.button.value = oldText;
+            }, duration);
+        }
+        this.button.value = text;
     };
 
     /**
@@ -54973,7 +55090,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    RiskGauge.version = '0.7.0';
+    RiskGauge.version = '0.8.0';
     RiskGauge.description = 'Displays an interface to ' +
         'measure risk preferences with different methods.';
 
@@ -54995,7 +55112,7 @@ if (!Array.prototype.indexOf) {
         bomb_mainText: function(widget, probBomb) {
             var str;
             str = '<p style="margin-bottom: 0.3em">';
-            str +=  'Below there are 100 black boxes. ';
+            str +=  'Below there are ' + widget.totBoxes + ' black boxes. ';
             str += 'Every box contains a prize of ' +
                     widget.boxValue + ' ' + widget.currency + ', but ';
             if (probBomb === 1) {
@@ -55279,7 +55396,7 @@ if (!Array.prototype.indexOf) {
         // Probability that there is a bomb. Default 1.
         var probBomb;
 
-        // The index of the box with the bomb (0-100), or 101 if no bomb.
+        // The index of the box with the bomb (0 to totBoxes), or -1 if no bomb.
         var bombBox;
 
         // Div containing info about how many boxes to open, etc.
@@ -55299,7 +55416,6 @@ if (!Array.prototype.indexOf) {
 
         // Holds the final number of boxes opened after clicking the button.
         var finalValue;
-
 
         // Init private variables.
 
@@ -55325,9 +55441,7 @@ if (!Array.prototype.indexOf) {
             probBomb = 1;
         }
 
-        // Pick bomb box id, if probability permits it, else set to 101.
-        bombBox = Math.random() >= probBomb ?
-            101 : Math.ceil(Math.random() * 100);
+        // Variable bombBox is init after totBoxes is validated.
 
         // Public variables.
 
@@ -55356,22 +55470,56 @@ if (!Array.prototype.indexOf) {
                               true : !!opts.revealProbBomb;
 
         // Max number of boxes to open (default 99 if probBomb = 1, else 100).
-        if ('undefined' !== typeof opts.maxBoxes) {
-            if (!J.isInt(opts.maxBoxes, 0, 100)) {
+        if ('undefined' !== typeof opts.totBoxes) {
+            if (!J.isInt(opts.totBoxes, 0, 10000, false, true)) {
                 throw new TypeError('Bomb.init: maxBoxes must be an ' +
-                                    'integer <= 100 or undefined. Found: ' +
-                                    opts.maxBoxes);
+                'integer > 0 and <= 10000 or undefined. Found: ' +
+                opts.totBoxes);
+            }
+            this.totBoxes = opts.totBoxes;
+        }
+        else {
+            this.totBoxes = 100;
+        }
+
+        // Max num of boxes to open.
+        // Default totBoxes -1 if probBomb = 1, else this.totBoxes.
+        if ('undefined' !== typeof opts.maxBoxes) {
+            if (!J.isInt(opts.maxBoxes, 0, this.totBoxes)) {
+                throw new TypeError('Bomb.init: maxBoxes must be a positive' +
+                                    ' integer <= ' + this.totBoxes +
+                                    ' or undefined. Found: ' + opts.maxBoxes);
             }
             this.maxBoxes = opts.maxBoxes;
         }
         else {
-            this.maxBoxes = probBomb === 1 ? 99 : 100;
+            this.maxBoxes = probBomb === 1 ? this.totBoxes - 1 : this.totBoxes;
+        }
+
+        // Number of boxes in each row.
+        if ('undefined' !== typeof opts.boxesInRow) {
+            if (!J.isInt(opts.boxesInRow, 0)) {
+                throw new TypeError('Bomb.init: boxesInRow must be a positive' +
+                                    ' integer or undefined. Found: ' +
+                                    opts.boxesInRow);
+            }
+            this.boxesInRow = opts.boxesInRow > this.totBoxes ?
+                                  this.totBoxes : opts.boxesInRow;
+        }
+        else {
+            this.boxesInRow = this.totBoxes < 10 ? this.totBoxes : 10;
         }
 
         // If TRUE, there is an actual prize for the participant. Default: TRUE.
         this.withPrize = 'undefined' === typeof opts.withPrize ?
                          true : !!opts.withPrize;
 
+
+        // Bomb box.
+
+        // Pick bomb box id, if probability permits it, else set to -1.
+        bombBox = Math.random() >= probBomb ?
+                  -1 : Math.ceil(Math.random() * this.totBoxes);
 
         // Return widget-like object.
         return {
@@ -55395,19 +55543,19 @@ if (!Array.prototype.indexOf) {
                     ic = false;
                 }
                 out = {
+                    value: nb,
                     isCorrect: ic,
-                    nBoxes: nb,
                     totalMove: values.totalMove,
                     isWinner: isWinner,
                     time: values.time,
-                    payment: 0
+                    reward: 0
                 };
                 if (!out.isCorrect &&
                     ('undefined' === typeof opts.highlight || opts.highlight)) {
 
                         slider.highlight();
                 }
-                if (isWinner === true) out.payment = finalValue * that.boxValue;
+                if (isWinner === true) out.reward = finalValue * that.boxValue;
                 return out;
             },
 
@@ -55422,6 +55570,7 @@ if (!Array.prototype.indexOf) {
             // slider: slider,
 
             append: function() {
+                var nRows;
 
                 // Main text.
                 W.add('div', that.bodyDiv, {
@@ -55430,8 +55579,9 @@ if (!Array.prototype.indexOf) {
                 });
 
                 // Table.
+                nRows = Math.ceil(that.totBoxes / that.boxesInRow);
                 W.add('div', that.bodyDiv, {
-                    innerHTML: makeTable()
+                    innerHTML: makeTable(nRows, that.boxesInRow, that.totBoxes)
                 });
 
                 // Slider.
@@ -55526,7 +55676,7 @@ if (!Array.prototype.indexOf) {
                     finalValue = parseInt(slider.slider.value, 10),
                     isWinner = finalValue < bombBox;
                     // Update table.
-                    if (bombBox < 101) {
+                    if (bombBox > -1) {
                         W.gid(getBoxId(bombBox)).style.background = '#fa0404';
                     }
                     // Hide slider and button
@@ -55548,22 +55698,34 @@ if (!Array.prototype.indexOf) {
         return 'bc_' + i;
     }
 
-    function makeBoxRow(j) {
+    //
+    function makeBoxRow(rowId, boxesInRow, colSpan) {
         var i, out;
         out = '<tr>';
-        for (i = 0; i < 10; i++) {
+        for (i = 0; i < boxesInRow; i++) {
+            // If there are not enough boxes in this row, do a long colspan.
+            if (colSpan && i > colSpan) {
+                out = out + '<td colspan="' + (boxesInRow - colSpan) +
+                      '"></td>';
+                break;
+            }
             out = out + '<td><div class="bomb-box square" id="' +
-            getBoxId(i + (10*j)) + '"></td>';
+            getBoxId(i + (boxesInRow * rowId)) + '"></td>';
         }
         out += '</tr>';
         return out;
     }
 
-    function makeTable() {
-        var j, out;
+    function makeTable(nRows, boxesInRow, totBoxes) {
+        var rowId, out, boxCount, colSpan;
         out = '<table class="bomb-table">';
-        for (j = 0; j < 10; j++) {
-            out = out + makeBoxRow(j);
+        for (rowId = 0; rowId < nRows; rowId++) {
+            // Check if the last row has less cells to complete the row.
+            boxCount = (rowId+1) * boxesInRow;
+            if (boxCount > totBoxes) {
+                colSpan = totBoxes - (rowId * boxesInRow) - 1;
+            }
+            out = out + makeBoxRow(rowId, boxesInRow, colSpan);
         }
         out += '</table><br>';
         return out;
