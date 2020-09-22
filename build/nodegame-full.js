@@ -5834,7 +5834,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -6014,6 +6014,12 @@ if (!Array.prototype.indexOf) {
         // Default working directory for saving and loading files.
         this.__wd = null;
 
+        // ### __parentDb
+        // The parent NDDB instance from which this db was created.
+        // Set in views and hashes.
+        // @experimental
+        this.__parentDb = null;
+
         // ### log
         // Std out for log messages
         //
@@ -6066,6 +6072,12 @@ if (!Array.prototype.indexOf) {
         if ('function' === typeof this.addDefaultFormats) {
             this.addDefaultFormats();
         }
+
+        // Stores information about files saved (e.g., headers).
+        // Keys are filenames. There is one centeral cache for
+        // all hashes and views.
+        // @experimental.
+        this.__cache = {};
 
         // Mixing in user options and defaults.
         this.init(options);
@@ -6772,6 +6784,32 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### NDDB.slice
+     *
+     * Creates a clone of the current NDDB object
+     *
+     * Takes care of calling the actual constructor of the class,
+     * so that inheriting objects will preserve their prototype.
+     *
+     * @param {array} db Optional. Array of items to import in the new database.
+     *   Default, items currently in the database
+     *
+     * @return {NDDB|object} The new database
+     */
+    NDDB.prototype.slice = function(start, end) {
+        if ('number' !== typeof start) {
+            this.throwErr('TypeError', 'slice', 'start must be number. ' +
+                          'Found: ' + start);
+        }
+        if ('undefined' !== typeof end && 'number' !== typeof end) {
+            this.throwErr('TypeError', 'slice', 'end must be number or ' +
+                          'undefined. Found: ' + end);
+        }
+        // In case the class was inherited.
+        return this.breed(this.fetch().slice(start, end));
+    };
+
+    /**
      * ### NDDB.breed
      *
      * Creates a clone of the current NDDB object
@@ -6786,8 +6824,8 @@ if (!Array.prototype.indexOf) {
      */
     NDDB.prototype.breed = function(db) {
         if (db && !J.isArray(db)) {
-            this.throwErr('TypeError', 'importDB', 'db must be array ' +
-                          'or undefined');
+            this.throwErr('TypeError', 'breed', 'db must be array ' +
+                          'or undefined. Found: ' + db);
         }
         // In case the class was inherited.
         return new this.constructor(this.cloneSettings(), db || this.fetch());
@@ -6876,6 +6914,7 @@ if (!Array.prototype.indexOf) {
             options.logCtx = logCtxCopy;
             this.__options.logCtx = logCtxCopy;
         }
+
         return options;
     };
 
@@ -7130,7 +7169,7 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.rebuildIndexes
      */
     NDDB.prototype.view = function(idx, func) {
-        var settings, that;
+        var settings;
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
             this.throwErr('TypeError', 'view', 'idx must be string or number');
         }
@@ -7149,6 +7188,10 @@ if (!Array.prototype.indexOf) {
         settings = this.cloneSettings( {V: ''} );
         this.__V[idx] = func;
         this[idx] = new NDDB(settings);
+        // Reference to this instance.
+        this[idx].__parentDb = this;
+
+        return this[idx];
     };
 
     /**
@@ -7369,6 +7412,7 @@ if (!Array.prototype.indexOf) {
                     continue;
                 }
                 //this.__V[idx] = func, this[idx] = new this.constructor();
+                // TODO: When is the view not already created? Check!
                 if (!this[key]) {
                     // Create a copy of the current settings,
                     // without the views functions, otherwise
@@ -7376,6 +7420,8 @@ if (!Array.prototype.indexOf) {
                     // constructor, and the hooks.
                     settings = this.cloneSettings({ V: true, hooks: true });
                     this[key] = new NDDB(settings);
+                    // Reference to this instance.
+                    this[key].__parentDb = this;
                 }
                 this[key].insert(o);
             }
@@ -7419,6 +7465,8 @@ if (!Array.prototype.indexOf) {
                     this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
+                // Reference to this instance.
+                this[key][hash].__parentDb = this;
                 this.hashtray.set(key, o._nddbid, hash);
             }
         }
@@ -7526,7 +7574,7 @@ if (!Array.prototype.indexOf) {
      *   one callback function returned FALSE.
      */
     NDDB.prototype.emit = function() {
-        var event;
+        var event, hooks;
         var h, h2;
         var i, len, argLen, args;
         var res;
@@ -7534,17 +7582,21 @@ if (!Array.prototype.indexOf) {
         if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
-        if (!this.hooks[event]) {
+
+        // If this is a child db (e.g. a hash or a view)
+        hooks = this.__parentDb ? this.__parentDb.hooks : this.hooks;
+
+        if (!hooks[event]) {
             this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        len = this.hooks[event].length;
+        len = hooks[event].length;
         if (!len) return true;
         argLen = arguments.length;
 
         switch(len) {
 
         case 1:
-            h = this.hooks[event][0];
+            h = hooks[event][0];
             if (argLen === 1) res = h.call(this);
             else if (argLen === 2) res = h.call(this, arguments[1]);
             else if (argLen === 3) {
@@ -7559,7 +7611,7 @@ if (!Array.prototype.indexOf) {
             }
             break;
         case 2:
-            h = this.hooks[event][0], h2 = this.hooks[event][1];
+            h = hooks[event][0], h2 = hooks[event][1];
             if (argLen === 1) {
                 res = h.call(this) !== false;
                 res = res && h2.call(this) !== false;
@@ -7584,14 +7636,14 @@ if (!Array.prototype.indexOf) {
         default:
              if (argLen === 1) {
                  for (i = 0; i < len; i++) {
-                     res = this.hooks[event][i].call(this) !== false;
+                     res = hooks[event][i].call(this) !== false;
                      if (res === false) break;
                  }
             }
             else if (argLen === 2) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = this.hooks[event][i].call(this,
+                    res = hooks[event][i].call(this,
                                                     arguments[1]) !== false;
                     if (res === false) break;
 
@@ -7600,7 +7652,7 @@ if (!Array.prototype.indexOf) {
             else if (argLen === 3) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = this.hooks[event][i].call(this,
+                    res = hooks[event][i].call(this,
                                                     arguments[1],
                                                     arguments[2]) !== false;
                     if (res === false) break;
@@ -7613,7 +7665,7 @@ if (!Array.prototype.indexOf) {
                 }
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = this.hooks[event][i].apply(this, args) !== false;
+                    res = hooks[event][i].apply(this, args) !== false;
                     if (res === false) break;
                 }
 
@@ -7909,10 +7961,8 @@ if (!Array.prototype.indexOf) {
         }
         db = this.fetch();
         len = db.length;
-        for (i = 0 ; i < db.length ; i++) {
-            if (J.equals(db[i], o)) {
-                return true;
-            }
+        for (i = 0 ; i < len ; i++) {
+            if (J.equals(db[i], o)) return true;
         }
         return false;
     };
@@ -8421,7 +8471,7 @@ if (!Array.prototype.indexOf) {
      * @api private
      */
     NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
-        var out, idxs, foreign_key, key;
+        var out, foreign_key, key;
         var i, j, o, o2;
         if (!key1 || !key2) return this.breed([]);
 
@@ -8431,7 +8481,7 @@ if (!Array.prototype.indexOf) {
             select = (select instanceof Array) ? select : [select];
         }
 
-        out = [], idxs = [];
+        out = [];
         for (i = 0; i < this.db.length; i++) {
 
             foreign_key = J.getNestedValue(key1, this.db[i]);
@@ -8661,11 +8711,11 @@ if (!Array.prototype.indexOf) {
         return out;
     };
 
-    function getValuesArray(o, key) {
+    function getValuesArray(o) {
         return J.obj2Array(o, 1);
     }
 
-    function getKeyValuesArray(o, key) {
+    function getKeyValuesArray(o) {
         return J.obj2KeyedArray(o, 1);
     }
 
@@ -8673,14 +8723,14 @@ if (!Array.prototype.indexOf) {
     function getValuesArray_KeyString(o, key) {
         var el = J.getNestedValue(key, o);
         if ('undefined' !== typeof el) {
-            return J.obj2Array(el,1);
+            return J.obj2Array(el, 1);
         }
     }
 
     function getValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
-            return J.obj2Array(el,1);
+            return J.obj2Array(el, 1);
         }
     }
 
@@ -23395,10 +23445,12 @@ if (!Array.prototype.indexOf) {
         }
 
         this.on('save', function(options, info) {
+            // console.log(options)
+            // console.log(info)
             if (info.format === 'csv') decorateSavingOptions(options);
         });
 
-        this.times = {};
+        // this.times = {};
 
         this.node = this.__shared.node;
     }
@@ -23422,64 +23474,32 @@ if (!Array.prototype.indexOf) {
         if ('object' !== typeof o.stage) {
             throw new Error('GameDB.add: stage missing or invalid: ', o);
         }
-        // var flattenIdx, flattenedItem;
-        // flattenIdx = o.player;
-        // if (this.flatten[o.stage]) {
-        //     flattenedItem = this.flattened.get(o.player);
-        // }
-
         // if (node.nodename !== nodename) o.session = node.nodename;
         if (!o.timestamp) o.timestamp = Date.now ?
             Date.now() : new Date().getTime();
 
-        // TODO: Work in progress: saving times.
-        // if (o.done) {
-        //     if (!this.times[o.player]) this.times[o.player] = [];
-        //     this.times[o.player] = { time: o.time, stage: o.stage };
-        // }
-
-        // if (this.flatten[o.stage.stage])
-
         this.insert(o);
     };
-
-    // /**
-    //  * ### GameDB.save|saveySync
-    //  *
-    //  * Wrapper around NDDB.save and NDDB.saveSync
-    //  *
-    //  * Adds default options to improve data saving.
-    //  *
-    //  * @see @NDDB.save
-    //  * @see @NDDB.saveSync
-    //  * @see decorateSavingOptions
-    //  */
-    // GameDB.prototype.save = function(file, options, cb) {
-    //     debugger
-    //     decorateSavingOptions(options);
-    //     NDDB.prototype.save.apply(this, arguments);
-    // };
-    // GameDB.prototype.saveSync = function(file, options, cb) {
-    //     decorateSavingOptions(options);
-    //     NDDB.prototoype.saveSync.apply(this, arguments);
-    // };
 
     /**
      * ### decorateSavingOptions
      *
      * Adds default options to improve data saving.
      *
-     * @param {object} options Optional. The option object to decorate
+     * @param {object} opts Optional. The option object to decorate
      */
-    function decorateSavingOptions(options) {
-        if (!options) return;
-        if (options.flatten) {
-            options.preprocess = function(item, current) {
+    function decorateSavingOptions(opts) {
+        if (!opts) return;
+        if ('undefined' === typeof opts.bool2num) opts.bool2num = true;
+        if (opts.flatten) {
+            if ('undefined' === typeof opts.headers) opts.headers = 'all';
+            opts.preprocess = function(item, current) {
                 var s;
                 s = item.stage.stage + '.' + item.stage.step +
                 '.' + item.stage.round;
-                item['time_' + s] = item.time;
-                item['timestamp_' + s] = item.timestamp;
+                if (item.time) item['time_' + s] = item.time;
+                if (item.timeup) item['timeup_' + s] = item.timeup;
+                if (item.timestamp) item['timestamp_' + s] = item.timestamp;
                 delete item.time;
                 delete item.timestamp;
             };
@@ -51809,7 +51829,7 @@ if (!Array.prototype.indexOf) {
             event.preventDefault();
             that.getValues(that.onsubmit);
         }, true);
-        J.addEvent(formElement, 'input', function(event) {
+        J.addEvent(formElement, 'input', function() {
             if (!that.timeInput) that.timeInput = J.now();
             if (that.isHighlighted()) that.unhighlight();
         }, true);
@@ -52499,7 +52519,7 @@ if (!Array.prototype.indexOf) {
                 // Need to compute total manually.
                 if ('undefined' === typeof totalWin) {
                     totalRaw = J.isNumber(data.totalRaw, 0);
-                    totalWin = parseFloat(ex*data.totalRaw).toFixed(2);
+                    totalWin = parseFloat(ex*totalRaw).toFixed(2);
                     totalWin = J.isNumber(totalWin, 0);
                     if (totalWin === false) {
                         node.err('EndScreen.updateDisplay: invalid : ' +
@@ -52589,7 +52609,7 @@ if (!Array.prototype.indexOf) {
                 if (w.maxWords > 1) res2 += 's';
             }
             if (res) {
-                res = '(' + res;;
+                res = '(' + res;
                 if (res2) res +=  ', and ' + res2;
                 return res + ')';
             }
@@ -53107,7 +53127,7 @@ if (!Array.prototype.indexOf) {
      * Appends widget to this.bodyDiv
      */
     Feedback.prototype.append = function() {
-        var that, label;
+        var that;
         that = this;
 
         // this.feedbackForm = W.get('div', { className: 'feedback' });
@@ -53153,11 +53173,11 @@ if (!Array.prototype.indexOf) {
 
         this.showCounters();
 
-        J.addEvent(this.feedbackForm, 'input', function(event) {
+        J.addEvent(this.feedbackForm, 'input', function() {
             if (that.isHighlighted()) that.unhighlight();
             that.verifyFeedback(false, true);
         });
-        J.addEvent(this.feedbackForm, 'click', function(event) {
+        J.addEvent(this.feedbackForm, 'click', function() {
             if (that.isHighlighted()) that.unhighlight();
         });
 
@@ -53246,7 +53266,7 @@ if (!Array.prototype.indexOf) {
      * @see getFeedback
      */
     Feedback.prototype.getValues = function(opts) {
-        var feedback, feedbackBr, res;
+        var feedback, res;
 
         opts = opts || {};
 
@@ -53918,7 +53938,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MoneyTalks
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  *
  * Displays a box for formatting earnings ("money") in currency
@@ -53933,7 +53953,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    MoneyTalks.version = '0.4.0';
+    MoneyTalks.version = '0.5.0';
     MoneyTalks.description = 'Displays the earnings of a player.';
 
     MoneyTalks.title = 'Earnings';
@@ -53948,14 +53968,11 @@ if (!Array.prototype.indexOf) {
     /**
      * ## MoneyTalks constructor
      *
-     * `MoneyTalks` displays the earnings ("money") of the player so far
-     *
-     * @param {object} options Optional. Configuration options
-     * which is forwarded to MoneyTalks.init.
+     * `MoneyTalks` displays the earnings ("money") of players
      *
      * @see MoneyTalks.init
      */
-    function MoneyTalks(options) {
+    function MoneyTalks() {
 
         /**
          * ### MoneyTalks.spanCurrency
@@ -54033,6 +54050,7 @@ if (!Array.prototype.indexOf) {
      *   - `showCurrency`: Flag whether the name of currency is to be displayed.
      */
     MoneyTalks.prototype.init = function(options) {
+        options = options || {};
         if ('string' === typeof options.currency) {
             this.currency = options.currency;
         }
@@ -54088,6 +54106,8 @@ if (!Array.prototype.indexOf) {
      * @param {boolean} clear Optional. If TRUE, money will be set to 0
      *    before adding the new amount
      *
+     * @return {number} The current value after the update
+     *
      * @see MoneyTalks.money
      * @see MonetyTalks.spanMoney
      */
@@ -54101,6 +54121,7 @@ if (!Array.prototype.indexOf) {
         if (clear) this.money = 0;
         this.money += parsedAmount;
         this.spanMoney.innerHTML = this.money.toFixed(this.precision);
+        return this.money;
     };
 
     /**
