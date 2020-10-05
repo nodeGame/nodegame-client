@@ -1,6 +1,7 @@
 # nodegame-client change log
 
-## 5.8.0 current
+
+## 6.0.0. current
 - GameTimer fires hooks with timeLeft and reference to the timer itself as
 input params.
 - GameTimer timers are cleared in stage or step in which they are created
@@ -8,6 +9,9 @@ input params.
 - GameTimer.create alias GameTimer.createTimer
 - GameTimer.createTimer accepts validity parameter to know when to destroy.
 - GameDb add defaults options for saving.
+- Random timer events accept minWait parameters
+- Backward-incompatible: node.timer.randomExec third parameter is minWait,
+fourth is context for the function.
 
 ## 5.7.0
 - GamePlot.getProperty accepts a fourth parameter specifying which locations
