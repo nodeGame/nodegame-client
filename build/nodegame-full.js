@@ -5840,12 +5840,22 @@ if (!Array.prototype.indexOf) {
  * NDDB is a powerful and versatile object database for node.js and the browser.
  * ---
  */
-(function(exports, J) {
+(function(J) {
 
     "use strict";
 
-    // Expose constructors
-    exports.NDDB = NDDB;
+    if ('undefined' !== typeof module &&
+        'undefined' !== typeof module.exports) {
+
+        J = module.parent.exports.JSUS || require('JSUS').JSUS;
+        module.exports = NDDB;
+        // Backward compatibility.
+        module.exports.NDDB = NDDB;
+    }
+    else {
+        J = JSUS;
+        window.NDDB = NDDB;
+    }
 
     if (!J) throw new Error('NDDB: missing dependency: JSUS.');
 
@@ -7643,18 +7653,15 @@ if (!Array.prototype.indexOf) {
             else if (argLen === 2) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this,
-                                                    arguments[1]) !== false;
+                    res = hooks[event][i].call(this, arguments[1]) !== false;
                     if (res === false) break;
-
                 }
             }
             else if (argLen === 3) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this,
-                                                    arguments[1],
-                                                    arguments[2]) !== false;
+                    res = hooks[event][i].call(this, arguments[1],
+                                                     arguments[2]) !== false;
                     if (res === false) break;
                 }
             }
@@ -10267,12 +10274,7 @@ if (!Array.prototype.indexOf) {
         return out;
     };
 
-})(
-    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.exports : window ,
-    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.parent.exports.JSUS || require('JSUS').JSUS : JSUS
-);
+})();
 
 /**
  * # nodeGame: Social Experiments in the Browser
@@ -13489,6 +13491,15 @@ if (!Array.prototype.indexOf) {
             return handler;
         })();
 
+        /**
+        * ### GamePlot._normalizedCache
+        *
+        * Caches the value of previously normalized Game Stages objects.
+        *
+        * @api private
+        */
+        this._normalizedCache = {};
+
         this.init(stager);
     }
 
@@ -14547,6 +14558,18 @@ if (!Array.prototype.indexOf) {
         var stageNo, stageObj, stepNo, seqIdx, seqObj;
         var gs;
 
+        if (this.isFlexibleMode()) {
+            throw new Error('GamePlot.normalizeGameStage: invalid call in ' +
+                            'flexible sequence.')
+        }
+
+        // If already normalized and in cache, return it.
+        if ('string' === typeof gameStage) {
+            if (this._normalizedCache[gameStage]) {
+                return this._normalizedCache[gameStage];
+            }
+        }
+
         gs = new GameStage(gameStage);
 
         // Find stage number.
@@ -14619,11 +14642,17 @@ if (!Array.prototype.indexOf) {
         // Check round property.
         if ('number' !== typeof gs.round) return null;
 
-        return new GameStage({
+        gs = new GameStage({
             stage: stageNo,
             step:  stepNo,
             round: gs.round
         });
+
+        if ('string' === typeof gameStage) {
+            this._normalizedCache[gameStage] = gs;
+        }
+
+        return gs;
     };
 
     /**
@@ -23445,8 +23474,6 @@ if (!Array.prototype.indexOf) {
         }
 
         this.on('save', function(options, info) {
-            // console.log(options)
-            // console.log(info)
             if (info.format === 'csv') decorateSavingOptions(options);
         });
 
@@ -24202,7 +24229,7 @@ if (!Array.prototype.indexOf) {
      * @emit STEPPING
      */
     Game.prototype.gotoStep = function(nextStep, options) {
-        var node;
+        var node, tmp;
 
         // Steps references.
         var curStep, curStageObj, nextStepObj, nextStageObj;
@@ -24229,7 +24256,7 @@ if (!Array.prototype.indexOf) {
 
         if ('string' !== typeof nextStep && 'object' !== typeof nextStep) {
             throw new TypeError('Game.gotoStep: nextStep must be ' +
-                                'an object or a string. Found: ' + nextStep);
+                                'a object or a string. Found: ' + nextStep);
         }
 
         if (options && 'object' !== typeof options) {
@@ -24348,8 +24375,19 @@ if (!Array.prototype.indexOf) {
                 }
                 return null;
             }
-            // else do nothing
-            return null;
+            else {
+                tmp = this.plot.normalizeGameStage(nextStep);
+                if (!nextStep) {
+                    throw new Error('Game.gotoStep: could not resolve step: ' +
+                                    nextStep);
+                }
+                nextStep = tmp;
+                tmp = null;
+            }
+            // else if (
+            // }
+            // // else do nothing
+            // return null;
         }
 
         // Here we start processing the new STEP.
@@ -25440,6 +25478,28 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.getRound = function(mod) {
         return this.plot.getRound(this.getCurrentGameStage(), mod);
+    };
+
+
+    /**
+    * ### Game.isStage
+    *
+    * Returns TRUE if current stage is as input parameter
+    *
+    * Steps and rounds aer not considered.
+    *
+    * @param {string|GameStage} stage The name of the stage or its object
+    *    representation. If string, the object is resolved
+    *    with GamePlot.normalizeGameStage
+    *
+    * @return {boolean} TRUE if current stage
+    *
+    * @see GamePlot.normalizeGameStage
+    */
+    Game.prototype.isStage = function(stage) {
+        var stage;
+        stage = this.plot.normalizeGameStage(stage);
+        return !!(stage && stage.stage === this.getCurrentGameStage().stage);
     };
 
     /**
@@ -58813,7 +58873,6 @@ if (!Array.prototype.indexOf) {
 
         // #### executionMode
         executionMode: function(w) {
-            var startDate;
             if (w.executionMode === 'WAIT_FOR_N_PLAYERS') {
                 return 'Waiting for All Players to Connect: ';
             }
@@ -58926,7 +58985,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} options
      */
-    function WaitingRoom(options) {
+    function WaitingRoom() {
 
         /**
          * ### WaitingRoom.connected
@@ -59573,8 +59632,7 @@ if (!Array.prototype.indexOf) {
             }
         });
 
-        node.on.data('TIME', function(msg) {
-            msg = msg || {};
+        node.on.data('TIME', function() {
             node.info('waiting room: TIME IS UP!');
             that.stopTimer();
         });
