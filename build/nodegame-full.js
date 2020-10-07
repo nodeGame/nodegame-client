@@ -24611,7 +24611,8 @@ if (!Array.prototype.indexOf) {
                 }
                 // Under some special conditions (e.g., very fast DONE
                 // clicking this can be null. TODO: check why.
-                values = this[widget.ref].getValues(opts);
+                // Changed from this[widget.ref] to widgetObj.
+                values = widgetObj.getValues(opts);
 
                 // If it is not timeup, and user did not
                 // disabled it, check answers.
@@ -24625,6 +24626,14 @@ if (!Array.prototype.indexOf) {
                          (values.missValues && values.missValues.length) ||
                          values.choice === null ||
                          values.isCorrect === false)) {
+
+                         if ('function' === typeof
+                             widgetObj.bodyDiv.scrollIntoView) {
+
+                             widgetObj.bodyDiv.scrollIntoView({
+                                 behavior: 'smooth'
+                             });
+                         }
 
                         return false;
                     }
@@ -38877,7 +38886,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Widget
- * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Prototype of a widget class
@@ -40621,24 +40630,39 @@ if (!Array.prototype.indexOf) {
      *
      * @return {array} res List of destroyed widgets
      */
-    Widgets.prototype.garbageCollection = function() {
-        var w, i, fd, res;
-        res = [];
-        fd = W.getFrameDocument();
-        w = node.widgets.instances;
-        for (i = 0; i < w.length; i++) {
-            // Check if widget is not on page any more.
-            if (w[i].isAppended() &&
-                (fd && !fd.contains(w[i].panelDiv)) &&
-                !document.body.contains(w[i].panelDiv)) {
+    Widgets.prototype.garbageCollection = (function() {
 
-                res.push(w[i]);
-                w[i].destroy();
-                i--;
+        // Some IE were missing .contains, so we fallback gracefully.
+        function contains(target, widget) {
+            var parentNode;
+            if (target.contains) return target.contains(widget.panelDiv);
+            parentNode = widget.panelDiv.parentNode;
+            while (parentNode != null) {
+                if (parentNode == target) return true;
+                parentNode = parentNode.parentNode;
             }
+            return false;
         }
-        return res;
-    };
+
+        return function() {
+            var w, i, fd, res;
+            res = [];
+            fd = W.getFrameDocument();
+            w = node.widgets.instances;
+            for (i = 0; i < w.length; i++) {
+                // Check if widget is not on page any more.
+                if (w[i].isAppended() &&
+                (fd && !contains(fd, w[i])) &&
+                !contains(document.body, w[i])) {
+
+                    res.push(w[i]);
+                    w[i].destroy();
+                    i--;
+                }
+            }
+            return res;
+        };
+    })();
 
     /**
      * ### Widgets.isActionRequired
@@ -40655,11 +40679,22 @@ if (!Array.prototype.indexOf) {
      * @see Widget.isActionRequired
      */
     Widgets.prototype.isActionRequired = function(opts) {
-        var w, i, res;
+        var w, i, lastErrored, res;
         w = node.widgets.instances;
         res = false;
         for (i = 0; i < w.length; i++) {
-            if (w[i].required) res = res || w[i].isActionRequired(opts);
+            if (w[i].required) {
+                if (w[i].isActionRequired(opts)) {
+                    res = true;
+                    lastErrored = w[i];
+                }
+            }
+        }
+        // Scroll to error.
+        if (lastErrored && opts.highlight &&
+            'function' === typeof lastErrored.bodyDiv.scrollIntoView) {
+
+            lastErrored.bodyDiv.scrollIntoView({ behavior: 'smooth' });
         }
         return res;
     };
