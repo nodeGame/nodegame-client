@@ -24557,6 +24557,10 @@ if (!Array.prototype.indexOf) {
                     widget.ref = J.uniqueKey(this, widget.ref);
                 }
             }
+
+            // Add options, if missing.
+            if (!widget.options) widget.options = {};
+
             // Make main callback to get/append the widget.
             widgetCb = function() {
 
@@ -24565,6 +24569,11 @@ if (!Array.prototype.indexOf) {
                                                       widget.options);
                 }
                 else {
+                    // Default class.
+                    if (!widget.options.className) {
+                        widget.options.className = 'centered';
+                    }
+
                     // Default id 'container' (as in default.html).
                     if ('string' === typeof widget.root) {
                         widgetRoot = widget.root;
@@ -24575,7 +24584,7 @@ if (!Array.prototype.indexOf) {
                                             widget.root);
                     }
                     else {
-                        widgetRoot = 'widget-container';
+                        widgetRoot = 'container';
                     }
                     // If widgetRoot is not existing, it follows the
                     // default procedure for appending a widget.
