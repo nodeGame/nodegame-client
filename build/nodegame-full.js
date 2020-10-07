@@ -25885,9 +25885,8 @@ if (!Array.prototype.indexOf) {
             that._pausedTimestamps = {};
         });
 
-
         /**
-        * ### Timer.random
+        * ### Timer.random | Timer.wait
         *
         * Setups an object exposing multiple random handlers.
         *
@@ -25897,7 +25896,7 @@ if (!Array.prototype.indexOf) {
         * Additional parameters are passed to each handler accordingly.
         *
         * @param {number} maxWait Optional. The maximum time (in milliseconds)
-        *   to wait before emitting the event. Default: 6000
+        *   to wait before emitting the event. Default: 5000
         * @param {number} minWait Optional. The minimum time (in milliseconds)
         *   to wait before executing the callback. Default: 1000
         *
@@ -25923,26 +25922,30 @@ if (!Array.prototype.indexOf) {
         *
         * @see randomFire
         */
-        this.random = (function() {
-            var _minWait, _maxWait;
+        (function(that) {
+            var _minWait, _maxWait, _abort, _lastCall;
             var args, i, len;
 
             function done() {
+
+                // Probability to not executed = 1.
+                if (_abort) return;
+
                 len = arguments.length;
-                if (len == 3) {
-                    args = [arguments[2]];
+                if (len == 1) {
+                    args = [arguments[0]];
                 }
-                else if (len === 4) {
-                    args = [arguments[2], arguments[3]];
+                else if (len === 2) {
+                    args = [arguments[1], arguments[0]];
                 }
-                else if (len > 4) {
-                    i = -1, len--;
-                    args = new Array(len-2);
+                else if (len > 2) {
+                    i = -1;
+                    args = new Array(len);
                     for ( ; ++i < len ; ) {
-                        args[i] = arguments[i+2];
+                        args[i] = arguments[i];
                     }
                 }
-                randomFire.call(that, 'randomDone', node.done, _maxWait,
+                randomFire.call(that, 'random.done', node.done, _maxWait,
                                 _minWait, false, node, args);
             }
 
@@ -25952,8 +25955,12 @@ if (!Array.prototype.indexOf) {
                     throw new TypeError('Timer.random.emit: event must be ' +
                     'string. Found: ' + event);
                 }
+
+                // Probability to not executed = 1.
+                if (_abort) return;
+
                 len = arguments.length;
-                if (len == 2) {
+                if (len === 2) {
                     args = [arguments[1]];
                 }
                 else if (len === 3) {
@@ -25966,12 +25973,11 @@ if (!Array.prototype.indexOf) {
                         args[i] = arguments[i+1];
                     }
                 }
-                randomFire.call(that, 'randomEmit', event, _maxWait,
+                randomFire.call(that, 'random.emit', event, _maxWait,
                                 _minWait, true, null, args);
             }
 
             function exec(func, ctx) {
-
                 if ('function' !== typeof func) {
                     throw new TypeError('Timer.random.exec: func must ' +
                     'be function. Found: ' + func);
@@ -25984,8 +25990,12 @@ if (!Array.prototype.indexOf) {
                     'object, function or undefined. ' +
                     'Found: ' + ctx);
                 }
+
+                // Probability to not executed = 1.
+                if (_abort) return;
+
                 len = arguments.length;
-                if (len == 3) {
+                if (len === 3) {
                     args = [arguments[2]];
                 }
                 else if (len === 4) {
@@ -25998,25 +26008,81 @@ if (!Array.prototype.indexOf) {
                         args[i] = arguments[i+2];
                     }
                 }
-                randomFire.call(that, 'randomExec', func, _maxWait,
+                randomFire.call(that, 'random.exec', func, _maxWait,
                                 _minWait, false, ctx, args);
             };
 
-            return function(maxWait, minWait) {
-                _maxWait = maxWait;
-                _minWait = minWait;
-
-                this.done = done;
-                this.emit = emit;
-                this.exec = exec;
+            function prob(prob) {
+                var tmp;
+                if ('function' === typeof prob) {
+                    _abort = !!prob.call(node.game);
+                }
+                else {
+                    if ('undefined' === typeof prob) {
+                        prob = 0.5;
+                    }
+                    else {
+                        tmp = J.isNumber(prob, 0, 1, true, true);
+                        if (tmp === false) {
+                            throw new Error('Timer.' + _lastCall + '.prob: ' +
+                                        'prob must be a number between 0 and ' +
+                                        '1 or function. Found: ' + prob);
+                        }
+                    }
+                    _abort = Math.random() > prob;
+                }
 
                 return {
                     done: done,
                     emit: emit,
                     exec: exec
                 };
+            }
+
+            function random(maxWait, minWait) {
+                _maxWait = maxWait;
+                _minWait = minWait;
+                _abort = null;
+                _lastCall = 'random';
+
+
+                return {
+                    done: done,
+                    emit: emit,
+                    exec: exec,
+                    prob: prob
+                };
             };
-        })();
+
+            function wait(wait) {
+                _maxWait = wait;
+                _minWait = wait;
+                _abort = null;
+                _lastCall = 'wait';
+
+
+                return {
+                    done: done,
+                    emit: emit,
+                    exec: exec,
+                    prob: prob
+                };
+            }
+
+            random.done = done;
+            random.emit = emit;
+            random.exec = exec;
+            random.prob = prob;
+
+            wait.done = done;
+            wait.emit = emit;
+            wait.exec = exec;
+            wait.prob = prob;
+
+            that.random = random;
+
+            that.wait = wait;
+        })(this);
 
     }
 
@@ -26451,143 +26517,6 @@ if (!Array.prototype.indexOf) {
         return timeTo - timeFrom;
     };
 
-    //
-    // /**
-    //  * ### Timer.randomEmit
-    //  *
-    //  * Emits an event after a random time interval between 0 and maxWait
-    //  *
-    //  * Respects pausing / resuming.
-    //  *
-    //  * Additional parameters are passed to the node.emit
-    //  *
-    //  * @param {string} event The name of the event
-    //  * @param {number} maxWait Optional. The maximum time (in milliseconds)
-    //  *   to wait before emitting the event. Default: 6000
-    //  * @param {number} minWait Optional. The minimum time (in milliseconds)
-    //  *   to wait before executing the callback. Default: 1000
-    //  *
-    //  * @see randomFire
-    //  */
-    // Timer.prototype.randomEmit = function(event, maxWait, minWait) {
-    //     var args, i, len;
-    //
-    //     console.log('***Deprecated warning: use timer.random().emit***');
-    //
-    //     if ('string' !== typeof event) {
-    //         throw new TypeError('Timer.randomEmit: event must be string. ' +
-    //                             'Found: ' + event);
-    //     }
-    //     len = arguments.length;
-    //     if (len == 4) {
-    //         args = [arguments[3]];
-    //     }
-    //     else if (len === 5) {
-    //         args = [arguments[3], arguments[4]];
-    //     }
-    //     else if (len > 5) {
-    //         i = -1, len = (len-3);
-    //         args = new Array(len);
-    //         for ( ; ++i < len ; ) {
-    //             args[i] = arguments[i+3];
-    //         }
-    //     }
-    //     randomFire.call(this, 'randomEmit', event, maxWait,
-    //                     minWait, true, null, args);
-    // };
-    //
-    // /**
-    //  * ### Timer.randomExec
-    //  *
-    //  * Executes a callback function after a random time interval
-    //  *
-    //  * Respects pausing / resuming.
-    //  *
-    //  * Additional parameters are passed to the the callback function.
-    //  *
-    //  * @param {function} func The callback function to execute
-    //  * @param {number} maxWait Optional. The maximum time (in milliseconds)
-    //  *   to wait before executing the callback. Default: 6000
-    //  * @param {number} minWait Optional. The minimum time (in milliseconds)
-    //  *   to wait before executing the callback. Default: 1000
-    //  * @param {object|function} ctx Optional. The context of execution of
-    //  *   of the callback function. Default node.game
-    //  *
-    //  * @see randomFire
-    //  */
-    // Timer.prototype.randomExec = function(func, maxWait, minWait, ctx) {
-    //     var args, i, len;
-    //
-    //     console.log('***Deprecated warning: use timer.random().exec***');
-    //
-    //     if ('function' !== typeof func) {
-    //         throw new TypeError('Timer.randomExec: func must be function. ' +
-    //                            'Found: ' + func);
-    //     }
-    //     if ('undefined' === typeof ctx) {
-    //         ctx = this.node.game;
-    //     }
-    //     else if ('object' !== typeof ctx && 'function' !== typeof ctx) {
-    //         throw new TypeError('Timer.randomExec: ctx must be object, ' +
-    //                             'function or undefined. Found: ' + ctx);
-    //     }
-    //     len = arguments.length;
-    //     if (len == 5) {
-    //         args = [arguments[4]];
-    //     }
-    //     else if (len === 6) {
-    //         args = [arguments[4], arguments[5]];
-    //     }
-    //     else if (len > 6) {
-    //         i = -1, len = (len-4);
-    //         args = new Array(len);
-    //         for ( ; ++i < len ; ) {
-    //             args[i] = arguments[i+4];
-    //         }
-    //     }
-    //     randomFire.call(this, 'randomExec', func, maxWait,
-    //                     minWait, false, ctx, args);
-    // };
-    //
-    // /**
-    //  * ### Timer.randomDone
-    //  *
-    //  * Executes node.done after a random time interval
-    //  *
-    //  * Respects pausing / resuming.
-    //  *
-    //  * Additional parameters are passed to the the done event listener.
-    //  *
-    //  * @param {number} maxWait Optional. The maximum time (in milliseconds)
-    //  *   to wait before executing the callback. Default: 6000
-    //  * @param {number} minWait Optional. The minimum time (in milliseconds)
-    //  *   to wait before executing the callback. Default: 1000
-    //  *
-    //  * @see randomFire
-    //  */
-    // Timer.prototype.randomDone = function(maxWait, minWait) {
-    //     var args, i, len;
-    //
-    //     console.log('***Deprecated warning: use timer.random().done***');
-    //
-    //     len = arguments.length;
-    //     if (len == 3) {
-    //         args = [arguments[2]];
-    //     }
-    //     else if (len === 4) {
-    //         args = [arguments[2], arguments[3]];
-    //     }
-    //     else if (len > 4) {
-    //         i = -1, len--;
-    //         args = new Array(len-2);
-    //         for ( ; ++i < len ; ) {
-    //             args[i] = arguments[i+2];
-    //         }
-    //     }
-    //     randomFire.call(this, 'randomDone', this.node.done, maxWait,
-    //                     minWait, false, this.node, args);
-    // };
-
     /**
      * ## Timer.parseInput
      *
@@ -26672,7 +26601,7 @@ if (!Array.prototype.indexOf) {
      * @param {string} method The name of the method invoking randomFire
      * @param {string|function} hook The function to call or the event to emit
      * @param {number} maxWait Optional. The max number of milliseconds
-     *   to wait before firing
+     *   to wait before firing. Default: 5000.
      * @param {number} minWait Optional. The min number of milliseconds
      *   to wait before firing. Default: 1000 or 0 if maxWait is smaller.
      * @param {boolean} emit TRUE, if it is an event to emit
@@ -26689,7 +26618,7 @@ if (!Array.prototype.indexOf) {
         that = this;
 
         if ('undefined' === typeof maxWait) {
-            maxWait = 6000;
+            maxWait = 5000;
         }
         else if ('number' !== typeof maxWait) {
             throw new TypeError('Timer.' + method + ': maxWait must ' +
