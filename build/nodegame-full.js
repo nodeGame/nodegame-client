@@ -7334,7 +7334,7 @@ if (!Array.prototype.indexOf) {
             };
         }
         else if (h && !i && v) {
-            cb = function(o, idx) {
+            cb = function(o) {
                 this._hashIt(o);
                 this._viewIt(o);
             };
@@ -7593,20 +7593,28 @@ if (!Array.prototype.indexOf) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
 
-        // If this is a child db (e.g. a hash or a view)
-        hooks = this.__parentDb ? this.__parentDb.hooks : this.hooks;
-
-        if (!hooks[event]) {
+        hooks = this.hooks[event];
+        if (!hooks) {
             this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        len = hooks[event].length;
+
+        // If this is a child db (e.g. a hash or a view) must fire also the
+        // parent hooks. Local hooks fire first.
+        // Check: all events should be fired on the parent? E.g., setWD?
+        if (this.__parentDb) {
+            hooks = hooks.length ?
+                    hooks.concat(this.__parentDb.hooks[event]) :
+                    this.__parentDb.hooks[event];
+        }
+
+        len = hooks.length;
         if (!len) return true;
         argLen = arguments.length;
 
         switch(len) {
 
         case 1:
-            h = hooks[event][0];
+            h = hooks[0];
             if (argLen === 1) res = h.call(this);
             else if (argLen === 2) res = h.call(this, arguments[1]);
             else if (argLen === 3) {
@@ -7621,7 +7629,7 @@ if (!Array.prototype.indexOf) {
             }
             break;
         case 2:
-            h = hooks[event][0], h2 = hooks[event][1];
+            h = hooks[0], h2 = hooks[1];
             if (argLen === 1) {
                 res = h.call(this) !== false;
                 res = res && h2.call(this) !== false;
@@ -7646,22 +7654,22 @@ if (!Array.prototype.indexOf) {
         default:
              if (argLen === 1) {
                  for (i = 0; i < len; i++) {
-                     res = hooks[event][i].call(this) !== false;
+                     res = hooks[i].call(this) !== false;
                      if (res === false) break;
                  }
             }
             else if (argLen === 2) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this, arguments[1]) !== false;
+                    res = hooks[i].call(this, arguments[1]) !== false;
                     if (res === false) break;
                 }
             }
             else if (argLen === 3) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this, arguments[1],
-                                                     arguments[2]) !== false;
+                    res = hooks[i].call(this, arguments[1],
+                                        arguments[2]) !== false;
                     if (res === false) break;
                 }
             }
@@ -7672,7 +7680,7 @@ if (!Array.prototype.indexOf) {
                 }
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].apply(this, args) !== false;
+                    res = hooks[i].apply(this, args) !== false;
                     if (res === false) break;
                 }
 
@@ -9704,15 +9712,15 @@ if (!Array.prototype.indexOf) {
     function validateSaveLoadParameters(that, method, file, cb, options) {
         if ('string' !== typeof file || file.trim() === '') {
             that.throwErr('TypeError', method, 'file must be ' +
-                          'a non-empty string');
+                          'a non-empty string. Found: ' + file);
         }
         if (cb && 'function' !== typeof cb) {
             that.throwErr('TypeError', method, 'cb must be function ' +
-                          'or undefined');
+                          'or undefined. Found: ' + cb);
         }
         if (options && 'object' !== typeof options) {
             that.throwErr('TypeError', method, 'options must be object ' +
-                          'or undefined');
+                          'or undefined. Found: ' + options);
         }
     }
 
@@ -24742,7 +24750,7 @@ if (!Array.prototype.indexOf) {
 
             }
 
-            reloadFrame = uri !== w.unprocessedUri;
+            if (w) reloadFrame = uri !== w.unprocessedUri;
             // We reload the frame if (order matters):
             // - it is a different uri from previous step,
             // - unless frameOptions.reload is false,
@@ -51683,8 +51691,6 @@ if (!Array.prototype.indexOf) {
 
     // ## DisconnectBox methods
     DisconnectBox.prototype.init = function(opts) {
-        var that;
-        that = this;
 
         if (opts.connectCb) {
             if ('function' !== typeof opts.connectCb) {
@@ -52476,7 +52482,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EndScreen
- * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates an interface to display final earnings, exit code, etc.
@@ -52492,29 +52498,26 @@ if (!Array.prototype.indexOf) {
 
     // ## Add Meta-data
 
-    EndScreen.version = '0.6.0';
+    EndScreen.version = '0.7.0';
     EndScreen.description = 'Game end screen. With end game message, ' +
                             'email form, and exit code.';
 
-    EndScreen.title = 'End Screen';
+    EndScreen.title = false;
     EndScreen.className = 'endscreen';
 
-    EndScreen.texts.headerMessage = 'Thank you for participating!';
-    EndScreen.texts.message = 'You have now completed this task ' +
-                               'and your data has been saved. ' +
-                               'Please go back to the Amazon Mechanical Turk ' +
-                               'web site and submit the HIT.';
-    EndScreen.texts.contactQuestion = 'Would you like to be contacted again' +
-                                       'for future experiments? If so, leave' +
-                                       'your email here and press submit: ';
-    EndScreen.texts.totalWin = 'Your total win:';
-    EndScreen.texts.exitCode = 'Your exit code:';
-    EndScreen.texts.errTotalWin = 'Error: invalid total win.';
-    EndScreen.texts.errExitCode = 'Error: invalid exit code.';
-    EndScreen.texts.copyButton = 'Copy';
-    EndScreen.texts.exitCopyMsg = 'Exit code copied to clipboard.';
-    EndScreen.texts.exitCopyError = 'Failed to copy exit code. Please copy it' +
-                                    ' manually.';
+    EndScreen.texts = {
+        headerMessage: 'Thank you for participating!',
+        message: 'You have now completed this task and your data has ' +
+                 'been saved. Please go back to the Amazon Mechanical Turk ' +
+                 'web site and submit the HIT.',
+        totalWin: 'Your total win:',
+        exitCode: 'Your exit code:',
+        errTotalWin: 'Error: invalid total win.',
+        errExitCode: 'Error: invalid exit code.',
+        copyButton: 'Copy',
+        exitCopyMsg: 'Exit code copied to clipboard.',
+        exitCopyError: 'Failed to copy exit code. Please copy it manually.'
+    };
 
     // ## Dependencies
 
@@ -52709,17 +52712,30 @@ if (!Array.prototype.indexOf) {
     }
 
     EndScreen.prototype.init = function(options) {
+
+
+
         if (this.showEmailForm && !this.emailForm) {
+            // TODO: nested properties are overwitten fully. Update.
             this.emailForm = node.widgets.get('EmailForm', J.mixin({
-                label: this.getText('contactQuestion'),
-                onsubmit: { send: true, emailOnly: true, updateUI: true },
-                storeRef: false
+                onsubmit: {
+                    send: true,
+                    emailOnly: true,
+                    updateUI: true
+                },
+                storeRef: false,
+                texts: {
+                    label: 'If you would like to be contacted for future ' +
+                        'studies, please enter your email (optional):',
+                    errString: 'Please enter a valid email and retry'
+                },
+                setMsg: true // Sends a set message for logic's db.
             }, options.email));
         }
 
         if (this.showFeedbackForm) {
             this.feedback = node.widgets.get('Feedback', J.mixin(
-                { storeRef: false },
+                { storeRef: false, minChars: 50, setMsg: true },
                 options.feedback));
         }
     };
