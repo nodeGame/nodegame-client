@@ -14864,7 +14864,7 @@ if (!Array.prototype.indexOf) {
  *
  * Push players to advance to next step, otherwise disconnects them.
  *
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, parent) {
@@ -14978,7 +14978,7 @@ if (!Array.prototype.indexOf) {
      * @see GameTimer.parseMilliseconds
      */
     PushManager.prototype.startTimer = function(conf) {
-        var stage, pushCb, that, offset;
+        var stage, that, offset;
         var node;
 
         // Adjust user input.
@@ -14992,11 +14992,11 @@ if (!Array.prototype.indexOf) {
 
         node = this.node;
 
-        console.log('PUSH.TIMER ************************* ',
-                    node.player.stage, conf);
-
         if (!this.timer) {
-            this.timer = node.timer.createTimer({ name: 'push_clients' });
+            this.timer = node.timer.createTimer({
+                name: 'push_clients',
+                validity: 'game'
+            });
         }
         else {
             this.clearTimer();
@@ -15016,18 +15016,15 @@ if (!Array.prototype.indexOf) {
             round: node.player.stage.round
         };
 
-        node.silly('push-manager: starting timer: ' + offset + ', ' + stage);
-        // console.log('push-manager: starting timer: ', offset, stage);
-
+        node.info('push-manager: starting timer with offset ' + offset);
 
         that = this;
-        pushCb = function() { that.pushGame.call(that, stage, conf); };
 
         // Make sure milliseconds and update are the same.
         this.timer.init({
             milliseconds: offset,
             update: offset,
-            timeup: pushCb,
+            timeup: function() { that.pushGame.call(that, stage, conf); },
         });
         this.timer.start();
     };
@@ -15057,7 +15054,7 @@ if (!Array.prototype.indexOf) {
      */
     PushManager.prototype.isActive = function() {
         return !this.timer.isStopped();
-    }
+    };
 
     /**
      * ### PushManager.pushGame
@@ -15078,8 +15075,7 @@ if (!Array.prototype.indexOf) {
         var m, node, replyWaitTime, checkPushWaitTime;
         node = this.node;
 
-        // console.log('push-manager: checking clients');
-        node.silly('push-manager: checking clients.');
+        node.info('push-manager: checking clients');
 
         if ('object' === typeof conf) {
             m = 'pushGame';
@@ -15100,7 +15096,7 @@ if (!Array.prototype.indexOf) {
                 GameStage.compare(p.stage, stage) === 0) {
 
                 // console.log('push needed: ', p.id);
-                node.warn('push needed: ' + p.id);
+                node.warn('push-manager: push needed: ' + p.id);
                 // Send push.
                 node.get(PUSH_STEP,
                          function(value) {
@@ -15164,16 +15160,10 @@ if (!Array.prototype.indexOf) {
      * @param {NodeGameClient} node The node instance used to send msg
      * @param {object} p The player object containing info about id and sid
      */
-//     function forceDisconnect(node, p) {
-//         // No reply to GET, disconnect client.
-//         node.warn('push-manager: disconnecting: ' + p.id);
-//         node.disconnectClient(p);
-//     }
-
     function forceDisconnect(node, p) {
         var msg;
         // No reply to GET, disconnect client.
-        node.warn('push-manager: disconnecting: ' + p.id);
+        node.warn('push-manager: disconnecting ' + p.id);
         // console.log('push-manager: disconnecting: ' + p.id);
         msg = node.msg.create({
             target: 'SERVERCOMMAND',
@@ -21334,7 +21324,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Matcher
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  *
  * Class handling the creation of tournament schedules.
@@ -21776,6 +21766,19 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Matcher.getMatches
+     *
+     * Returns the matches for current instance
+     *
+     * @return {array|null} The array of matches (NULL if not yet set)
+     *
+     * @see this.matches
+     */
+    Matcher.prototype.getMatches = function() {
+        return this.matches;
+    };
+
+    /**
      * ### Matcher.setIds
      *
      * Sets the ids to be used for the matches
@@ -21903,7 +21906,7 @@ if (!Array.prototype.indexOf) {
         var roles, rolesObj, idRolesObj, r1, r2;
 
         if (!J.isArray(this.matches) || !this.matches.length) {
-            throw new Error('Matcher.match: no matches found.');
+            throw new Error('Matcher.match: no matches found');
         }
 
         // Assign/generate ids if not done before.
@@ -22807,7 +22810,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MatcherManager
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Handles matching roles to players and players to players.
@@ -22998,7 +23001,7 @@ if (!Array.prototype.indexOf) {
      *   (default: current game round).
      *
      * @return {array|object|null} The requested matches in the requested
-     *   format, or null if none is found
+     *   format, or null matches are not yet set
      *
      * @see round2Index
      * @see Matcher.getMatch
@@ -23020,6 +23023,9 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('MatcherManager.getMatches: round ' +
                                 'must be undefined or number. Found: ' + round);
         }
+
+        if (!this.matcher.getMatches()) return null;
+
         round = round2Index.call(this, 'getMatches', round);
 
         if (mod === 'ARRAY') return this.matcher.getMatch(round);
@@ -23045,12 +23051,13 @@ if (!Array.prototype.indexOf) {
      *   rounds than matches)
      *
      * @return {string|null} The current match for the id, or null
-     *    if the id is not found
+     *    if the id is not found or matches are not set
      *
      * @see Matcher.getMatchFor
      * @see round2Index
      */
     MatcherManager.prototype.getMatchFor = function(id, round) {
+        if (!this.matcher.getMatches()) return null;
         round = round2Index.call(this, 'getMatchFor', round);
         return this.matcher.getMatchFor(id, round);
     };
@@ -23066,12 +23073,13 @@ if (!Array.prototype.indexOf) {
      *   rounds than matches)
      *
      * @return {string|null} The role hold by id at the
-     *    specified round or null if not found
+     *    specified round or null if matches are not yet set
      *
      * @see Roler.getRolerFor
      * @see round2Index
      */
     MatcherManager.prototype.getRoleFor = function(id, round) {
+        if (!this.matcher.getMatches()) return null;
         round = round2Index.call(this, 'getRoleFor', round);
         return this.roler.getRoleFor(id, round);
     };
@@ -23086,12 +23094,14 @@ if (!Array.prototype.indexOf) {
      *   than current (will be normalized if there are more
      *   rounds than matches)
      *
-     * @return {array} Array of id/s holding the role at round x
+     * @return {array|null} Array of id/s holding the role at round x, or
+     *   null if matches are not yet set
      *
      * @see Roler.getIdForRole
      * @see round2Index
      */
     MatcherManager.prototype.getIdForRole = function(role, round) {
+        if (!this.matcher.getMatches()) return null;
         round = round2Index.call(this, 'getIdForRole', round);
         return this.roler.getIdForRole(role, round);
     };
@@ -23149,7 +23159,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} id The id to get the setup object for
      *
-     * @return {object} The requested setup object
+     * @return {object|null} The requested setup object or null if not found
      *
      * @see Matcher.match
      * @see round2index
@@ -23185,10 +23195,10 @@ if (!Array.prototype.indexOf) {
      */
     function round2Index(method, round) {
         if ('undefined' === typeof round) {
-            round = this.node.game.getCurrentGameStage().round;
+            round = this.node.game.getRound();
             if (round === 0) {
                 throw new Error('MatcherManager.' + method + ': game stage ' +
-                                'is 0.0.0, please specify a valid round.');
+                                'is 0.0.0, please specify a valid round');
             }
         }
         if ('number' === typeof round) {
@@ -23485,8 +23495,6 @@ if (!Array.prototype.indexOf) {
             if (info.format === 'csv') decorateSavingOptions(options);
         });
 
-        // this.times = {};
-
         this.node = this.__shared.node;
     }
 
@@ -23509,9 +23517,11 @@ if (!Array.prototype.indexOf) {
         if ('object' !== typeof o.stage) {
             throw new Error('GameDB.add: stage missing or invalid: ', o);
         }
-        // if (node.nodename !== nodename) o.session = node.nodename;
+
         if (!o.timestamp) o.timestamp = Date.now ?
             Date.now() : new Date().getTime();
+
+        o.session = this.node.nodename;
 
         this.insert(o);
     };
@@ -27741,7 +27751,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Matcher
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  *
  * Class handling the creation of tournament schedules.
@@ -28183,6 +28193,19 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### Matcher.getMatches
+     *
+     * Returns the matches for current instance
+     *
+     * @return {array|null} The array of matches (NULL if not yet set)
+     *
+     * @see this.matches
+     */
+    Matcher.prototype.getMatches = function() {
+        return this.matches;
+    };
+
+    /**
      * ### Matcher.setIds
      *
      * Sets the ids to be used for the matches
@@ -28310,7 +28333,7 @@ if (!Array.prototype.indexOf) {
         var roles, rolesObj, idRolesObj, r1, r2;
 
         if (!J.isArray(this.matches) || !this.matches.length) {
-            throw new Error('Matcher.match: no matches found.');
+            throw new Error('Matcher.match: no matches found');
         }
 
         // Assign/generate ids if not done before.
@@ -30240,7 +30263,7 @@ if (!Array.prototype.indexOf) {
  *
  * Implementation of node.[say|set|get|done].
  *
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, parent) {
@@ -30526,18 +30549,20 @@ if (!Array.prototype.indexOf) {
      *
      * All input parameters are passed along to `node.emit`.
      *
+     * @param {mixed} param Optional. A value or object to send to the server
+     *   in a set message.
+     *
      * @return {boolean} TRUE, if the method is authorized, FALSE otherwise
      *
      * @see NodeGameClient.emit
      * @emits DONE
      */
-    NGC.prototype.done = function() {
-        var that, game, doneCb, len, i;
-        var arg1, arg2, args, args2;
-        var stepTime, timeup;
-        var autoSet;
+    NGC.prototype.done = function(param) {
+        var that, game, doneCb;
+        var stepTime;
+        var args, o;
 
-        // Get step execution time.
+        // First, get step execution time.
         stepTime = this.timer.getTimeSince('step');
 
         game = this.game;
@@ -30546,8 +30571,6 @@ if (!Array.prototype.indexOf) {
                      game.getCurrentGameStage());
             return false;
         }
-
-        len = arguments.length;
 
         // Check if there are required widgets that are not ready.
         // Widget steps update the done callback, so no need to check them.
@@ -30569,59 +30592,14 @@ if (!Array.prototype.indexOf) {
         // A done callback can manipulate arguments, add new values to
         // send to server, or even halt the procedure if returning false.
         if (doneCb) {
-            switch(len) {
-            case 0:
-                args = doneCb.call(game);
-                break;
-            case 1:
-                args = doneCb.call(game, arguments[0]);
-                break;
-            case 2:
-                args = doneCb.call(game, arguments[0], arguments[1]);
-                break;
-            default:
-                args = new Array(len);
-                for (i = -1 ; ++i < len ; ) {
-                    args[i] = arguments[i];
-                }
-                args = doneCb.apply(game, args);
-            };
+            args = doneCb.call(game, param);
 
             // If a `done` callback returns false, exit.
-            if ('boolean' === typeof args) {
-                if (args === false) {
-                    this.silly('node.done: done callback returned false');
-                    return false;
-                }
-                else {
-                    console.log('***');
-                    console.log('node.done: done callback returned true. ' +
-                                'For retro-compatibility the value is not ' +
-                                'processed and sent to server. If you wanted ' +
-                                'to return "true" return an array: [true]. ' +
-                                'In future releases any value ' +
-                                'different from false and undefined will be ' +
-                                'treated as a done argument and processed.');
-                    console.log('***');
-
-                    args = null;
-                }
-            }
-            // If a value is provided make it an array, if not already one.
-            else if ('undefined' !== typeof args &&
-                Object.prototype.toString.call(args) !== '[object Array]') {
-
-                args = [args];
+            if (args === false) {
+                this.silly('node.done: done callback returned false');
+                return false;
             }
         }
-
-        // Build set object (will be sent to server).
-        // Back-compatible checks.
-        if (game.timer && game.timer.isTimeup) {
-            timeup = game.timer.isTimeup();
-        }
-
-        autoSet = game.plot.getProperty(game.getCurrentGameStage(), 'autoSet');
 
         // Keep track that the game will be done (done is asynchronous)
         // to avoid calling `node.done` multiple times in the same stage.
@@ -30630,69 +30608,41 @@ if (!Array.prototype.indexOf) {
         // TODO: it is possible that DONE messages (in.set.DATA) are sent
         // to server before PLAYING is set. Is this OK?
 
-        // Args can be the original arguments array, or
-        // the one returned by the done callback.
-        // TODO: check if it safe to copy arguments by reference.
-        if (!args) args = arguments;
-        else len = args.length;
-        that = this;
-        // The arguments object must not be passed or leaked anywhere.
-        // Therefore, we recreate an args array here. We have a different
-        // timeout in a different branch for optimization.
-        switch(len) {
+        if (!args) args = param;
 
-        case 0:
-            if (autoSet) {
-                this.set(getSetObj(stepTime, timeup), 'SERVER', 'done');
+        if (game.plot.getProperty(game.getCurrentGameStage(), 'autoSet')) {
+
+            // Create object.
+            if ('object' === typeof args) {
+                o = args;
             }
-            setTimeout(function() { that.events.emit('DONE'); }, 0);
-            break;
-        case 1:
-            arg1 = args[0];
-            if (autoSet) {
-                this.set(getSetObj(stepTime, timeup, arg1), 'SERVER', 'done');
-            }
-            setTimeout(function() { that.events.emit('DONE', arg1); }, 0);
-            break;
-        case 2:
-            arg1 = args[0], arg2 = args[1];
-            // Send two setObjs.
-            if (autoSet) {
-                this.set(getSetObj(stepTime, timeup, arg1), 'SERVER', 'done');
-                this.set(getSetObj(stepTime, timeup, arg2), 'SERVER', 'done');
-            }
-            setTimeout(function() { that.events.emit('DONE', arg1, arg2); }, 0);
-            break;
-        default:
-            args2 = new Array(len+1);
-            args2[0] = 'DONE';
-            for (i = 0; i < len; i++) {
-                args2[i+1] = args[i];
-                if (autoSet) {
-                    this.set(getSetObj(stepTime, timeup, args2[i+1]),
-                             'SERVER', 'done');
+            else {
+                o = {};
+                if ('string' === typeof args || 'number' === typeof args) {
+                    o[args] = true;
                 }
             }
-            setTimeout(function() {
-                that.events.emit.apply(that.events, args2);
-            }, 0);
+
+            // Time and timeup.
+            if (!o.time) o.time = stepTime;
+            if (!o.timeup) o.timeup = game.timer.isTimeup();
+
+            // Add role and partner info.
+            if (game.role && !o.role) o.role = game.role;
+            if (game.partner && !o.partner) o.partner = game.partner;
+
+            // Mark done msg.
+            o.done = true;
+
+            // Send to server.
+            this.set(o, 'SERVER', 'done');
         }
+
+        that = this;
+        setTimeout(function() { that.events.emit('DONE', param); }, 0);
 
         return true;
     };
-
-    // ## Helper methods.
-
-    function getSetObj(time, timeup, arg) {
-        var o;
-        o = { time: time , timeup: timeup };
-        if ('object' === typeof arg) J.mixin(o, arg);
-        else if ('string' === typeof arg || 'number' === typeof arg) {
-            o[arg] = true;
-        }
-        o.done = true;
-        return o;
-    }
 
 })(
     'undefined' != typeof node ? node : module.exports,
