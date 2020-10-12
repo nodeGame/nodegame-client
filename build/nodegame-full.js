@@ -14846,7 +14846,7 @@ if (!Array.prototype.indexOf) {
             from: node.player ? node.player.id : constants.UNDEFINED_PLAYER,
             to: 'undefined' !== typeof msg.to ? msg.to : 'SERVER',
             text: 'undefined' !== typeof msg.text ? "" + msg.text : null,
-            data: 'undefined' !== typeof msg.data ? msg.data : null,
+            data: 'undefined' !== typeof msg.data ? msg.data : {},
             priority: priority,
             reliable: msg.reliable || 1
         });
@@ -25828,7 +25828,6 @@ if (!Array.prototype.indexOf) {
 
         if (options.msgs) {
             options.msgs.foreach(function(msg) {
-                debugger
                 game.node.socket.onMessage(new GameMsg(msg).toInEvent(), msg);
             });
         }
