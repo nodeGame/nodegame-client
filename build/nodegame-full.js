@@ -9415,7 +9415,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|number} tag An alphanumeric id
      * @param {mixed} idx Optional. The reference to the object.
-     *   Defaults, `nddb_pointer`
+     *   Defaults, last element in db
      * @return {object} ref A reference to the tagged object
      *
      * @see NDDB.resolveTag
@@ -9429,7 +9429,7 @@ if (!Array.prototype.indexOf) {
         ref = null, typeofIdx = typeof idx;
 
         if (typeofIdx === 'undefined') {
-            ref = this.db[this.nddb_pointer];
+            ref = this.db[this.db.length-1];
         }
         else if (typeofIdx === 'number') {
 
@@ -17838,7 +17838,6 @@ if (!Array.prototype.indexOf) {
      * @param {string} id The id to check
      */
     function checkStageStepId(method, s, id) {
-        var char0;
         if ('string' !== typeof id) {
             throw new TypeError('Stager.' + method + ': ' + s + '.id must ' +
                                 'be string. Found: ' + id);
@@ -17847,20 +17846,13 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('Stager.' + method + ': ' + s + '.id cannot ' +
                                 'be an empty string.');
         }
-        char0 = id.charAt(0);
-        if (char0 === '.') {
-            throw new Error('Stager.' + method + ': ' + s + '.id cannot ' +
-                            'begin with a dot. Found: ' + id);
-        }
         if (id.lastIndexOf('.') !== -1) {
-            console.log('*** deprecated naming! Stager.' + method + ': ' +
-                        s + '.id contains dots. Game will run, but will fail ' +
-                        'to normalize ' + s + 's. Found: ' + id + ' ***');
+            throw new Error('Stager.' + method + ': ' + s + '.id cannot ' +
+                            'contains dots. Found: ' + id);
         }
-        if (/^\d+$/.test(char0)) {
-            console.log('*** deprecated naming! Stager.' + method + ': ' + s +
-                        '.id begins with a number. Game will run, but will ' +
-                        'fail to normalize ' + s + 's. Found: ' + id + ' ***');
+        if (/^\d+$/.test(id.charAt(0))) {
+            throw new Error('Stager.' + method + ': ' + s + '.id cannot ' +
+                            'begin with a number. Found: ' + id);
         }
     }
 
@@ -19374,7 +19366,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Socket
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2020 Stefano Balietti
  * MIT Licensed
  *
  * Wrapper class for the actual socket to send messages
@@ -19578,22 +19570,22 @@ if (!Array.prototype.indexOf) {
                 indexes: true
             }
         });
-        this.journal.comparator('stage', function(o1, o2) {
-            return parent.GameStage.compare(o1.stage, o2.stage);
-        });
-
         if (!this.journal.player) {
-            this.journal.hash('to', function(gb) {
-                return gb.to;
-            });
+            this.journal.hash('to');
         }
-        if (!this.journal.stage) {
-            this.journal.hash('stage', function(gb) {
-                if (gb.stage) {
-                    return parent.GameStage.toHash(gb.stage, 'S.s.r');
-                }
-            });
-        }
+
+        // this.journal.comparator('stage', function(o1, o2) {
+        //     return parent.GameStage.compare(o1.stage, o2.stage);
+        // });
+
+
+        // if (!this.journal.stage) {
+        //     this.journal.hash('stage', function(gb) {
+        //         if (gb.stage) {
+        //             return parent.GameStage.toHash(gb.stage, 'S.s.r');
+        //         }
+        //     });
+        // }
         // End Experimental Code.
 
         /**
@@ -20154,7 +20146,8 @@ if (!Array.prototype.indexOf) {
         // TODO: check this.
         // Experimental code.
         if (this.journalOn) {
-            this.journal.insert(msg);
+            // Only Game messages are stored.
+            if (this.node.game.isReady()) this.journal.insert(msg);
         }
         // End experimental code.
 
@@ -22890,6 +22883,11 @@ if (!Array.prototype.indexOf) {
      *    Values: 'roles', 'matches', 'all'. Default: 'all'
      */
     MatcherManager.prototype.clear = function(mod) {
+
+        this.lastMatches = null;
+        this.lastSettings = null;
+        this.lastMatchesById = {};
+
         switch(mod) {
         case 'roles':
             this.roler.clear();
@@ -23573,6 +23571,7 @@ if (!Array.prototype.indexOf) {
     exports.Game = Game;
 
     var GameStage = parent.GameStage,
+        GameMsg = parent.GameMsg,
         GameDB = parent.GameDB,
         GamePlot = parent.GamePlot,
         PlayerList = parent.PlayerList,
@@ -24303,6 +24302,13 @@ if (!Array.prototype.indexOf) {
         // Clear the cache of temporary changes to steps.
         this.plot.tmpCache.clear();
 
+        // By default socket journal is off and cleared.
+        // Need to do it before setup messages are send to clients.
+        if (node.socket.journalOn) {
+            node.socket.journalOn = false;
+            node.socket.journal.clear();
+        }
+
         // Sends start / step command to connected clients if option is on.
         if (this.plot.getProperty(nextStep, 'syncStepping')) {
 
@@ -24341,12 +24347,15 @@ if (!Array.prototype.indexOf) {
                 }
             }
             else {
+
                 if (curStep.stage === 0) {
                     node.remoteCommand('start', 'ROOM');
                 }
                 else {
                     node.remoteCommand('goto_step', 'ROOM', nextStep);
                 }
+
+                // this.matcher.clear();
             }
         }
 
@@ -24527,6 +24536,13 @@ if (!Array.prototype.indexOf) {
 
         // Update list of stepped steps.
         this._steppedSteps.push(nextStep);
+
+        // TODO: check if here is right place, or better in execStep.
+        // If reconnect is TRUE we save a copy of  all messages sent to clients.
+        // Note: the journal is active only if Game.isReady is true.
+        if (this.plot.getProperty(nextStep, 'reconnect') === true) {
+            node.socket.journalOn = true;
+        }
 
         // If we should be done now, we emit PLAYING without executing the step.
         // node.game.willBeDone is already set, and will trigger node.done().
@@ -25596,6 +25612,10 @@ if (!Array.prototype.indexOf) {
         var s;
         s = this.getCurrentGameStage().step;
         if ('number' === typeof step) return step === s;
+        // Add the current stage id for normalization if no stage is provided.
+        if (step.lastIndexOf('.') === -1) {
+            step = this.getStageId() + '.' + step;
+        }
         step = this.plot.normalizeGameStage(step);
         return !!(step && step.step === s);
     };
@@ -25768,6 +25788,7 @@ if (!Array.prototype.indexOf) {
      *   - beDone: game is done without loading the frame or
      *       executing the step callback function,
      *   - plot: add entries to the tmpCache of the plot,
+     *   - msgs: incoming messages to emit.
      *   - cb: a callback executed with the game context, and with options
      *       object itself as parameter
      *
@@ -25803,6 +25824,13 @@ if (!Array.prototype.indexOf) {
                     game.plot.tmpCache(prop, options.plot[prop]);
                 }
             }
+        }
+
+        if (options.msgs) {
+            options.msgs.foreach(function(msg) {
+                debugger
+                game.node.socket.onMessage(new GameMsg(msg).toInEvent(), msg);
+            });
         }
 
         // TODO: rename cb.
@@ -26107,26 +26135,12 @@ if (!Array.prototype.indexOf) {
                 _minWait = 1000;
             }
 
-            function done() {
+            function done(param) {
 
                 // Probalistic abort.
                 if (!evaluateProb()) return;
 
-                len = arguments.length;
-                if (len == 1) {
-                    args = [arguments[0]];
-                }
-                else if (len === 2) {
-                    args = [arguments[1], arguments[0]];
-                }
-                else if (len > 2) {
-                    i = -1;
-                    args = new Array(len);
-                    for ( ; ++i < len ; ) {
-                        args[i] = arguments[i];
-                    }
-                }
-                randomFire.call(that, 'done', node.done, false, node, args);
+                randomFire.call(that, 'done', node.done, false, node, [param]);
             }
 
             function emit(event) {
@@ -26190,13 +26204,13 @@ if (!Array.prototype.indexOf) {
                 randomFire.call(that, 'exec', func, false, ctx, args);
             }
 
-            function timeup() {
+            function timeup(param) {
                 // Probalistic abort.
                 if (!evaluateProb()) return;
 
                 randomFire.call(that, 'timeup',
-                               function() { node.timer.doTimeUp(); },
-                               false, ctx, args);
+                               function() { node.game.timer.doTimeUp(); },
+                               false, node.game, [param]);
             }
 
             function evaluateProb() {
@@ -26260,11 +26274,13 @@ if (!Array.prototype.indexOf) {
             random.emit = emit;
             random.exec = exec;
             random.prob = prob;
+            random.timeup = timeup;
 
             wait.done = done;
             wait.emit = emit;
             wait.exec = exec;
             wait.prob = prob;
+            wait.timeup = timeup;
 
             // Assign random and wait functions to Timer.
             that.random = random;
@@ -46059,7 +46075,7 @@ if (!Array.prototype.indexOf) {
 
         // Value this.correctChoice can undefined, string or array.
         // If no correct choice is set, we simply ignore the correct param.
-        if (options.correct && 'undefined' !== typeof this.correctChoice) {
+        if (options.correct && this.correctChoice !== null) {
 
             // Make it an array (can be a string).
             correctChoice = J.isArray(this.correctChoice) ?
