@@ -198,7 +198,7 @@
             var step;
             if (!node.game.isSteppable()) {
                 node.warn('"' + CMD + gcommands.goto_step + '": game cannot ' +
-                          'be stepped now.');
+                          'be stepped now');
                 return;
             }
 
