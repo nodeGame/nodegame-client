@@ -23,7 +23,7 @@
         "url": "https://github.com/nodeGame/nodegame-client.git"
     },
     "dependencies": {
-        "socket.io-client": "2.2.0",
+        "socket.io-client": "2.3.1",
         "commander": ">=2.12.2",
         "JSUS": ">=0.17.0",
         "smoosh": "0.4.1",
