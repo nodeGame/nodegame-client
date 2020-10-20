@@ -2,16 +2,38 @@
 
 
 ## 6.0.0. current
-- GameTimer fires hooks with timeLeft and reference to the timer itself as
-input params.
-- GameTimer timers are cleared in stage or step in which they are created
-- Timer.setTimeout method mimicks JS setTimeout.
-- GameTimer.create alias GameTimer.createTimer
-- GameTimer.createTimer accepts validity parameter to know when to destroy.
-- GameDb add defaults options for saving.
-- Random timer events accept minWait parameters
-- Backward-incompatible: node.timer.randomExec third parameter is minWait,
-fourth is context for the function.
+- Timer API reworked:
+    - Timer.random|wait[done|emit|fire|exec|timeup].
+    - GameTimer fires hooks with params: timeLeft and reference to itself.
+    - GameTimer timers are cleared in stage or step in which they are created
+    - Timer.setTimeout method mimicks JS setTimeout.
+    - GameTimer.create alias GameTimer.createTimer
+    - GameTimer.createTimer accepts validity parameter to know when to destroy.
+    - GameDB add defaults options for saving CSV.
+- Game new methods:
+    - isStep, isStage, isRound, isWidgetStep
+    - getStepId, getStageId
+- Matcher:
+    - role=true executes the roles, like in the function return (before
+was just keeping the role set).
+    - no errors thrown on get methods if no matches are set.
+- Reconnect
+    - Step property true on logic resends messages sent in current step.
+    - Reconnecting client receives role and partner.
+- Database:
+    - Logic's session name is added to every item in db.
+- Done procedure:
+    - Simplified node.done (accepts only one param, removed backword-compatible checks)
+    - Widgets with required/requiredChoice flag can block node.done
+- Widgets:
+    - Widget step: classname centered and root container (before widget-container)
+    - Auto scroll into view for widget steps requiring action
+- Miscelleaneous:
+    - From warning to error: stages/steps names cannot contain numbers or dots.
+    - GameMsgGenerator: default data is empty object (before null).
+    - LOG messages of errors from clients are printed to console by logic by
+    default.
+
 
 ## 5.7.0
 - GamePlot.getProperty accepts a fourth parameter specifying which locations
