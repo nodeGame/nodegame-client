@@ -1,7 +1,6 @@
 # nodegame-client change log
 
-
-## 6.0.0. current
+## 6.0.0
 - Timer API reworked:
     - Timer.random|wait[done|emit|fire|exec|timeup].
     - GameTimer fires hooks with params: timeLeft and reference to itself.
@@ -9,7 +8,6 @@
     - Timer.setTimeout method mimicks JS setTimeout.
     - GameTimer.create alias GameTimer.createTimer
     - GameTimer.createTimer accepts validity parameter to know when to destroy.
-    - GameDB add defaults options for saving CSV.
 - Game new methods:
     - isStep, isStage, isRound, isWidgetStep
     - getStepId, getStageId
@@ -21,10 +19,12 @@ was just keeping the role set).
     - Step property true on logic resends messages sent in current step.
     - Reconnecting client receives role and partner.
 - Database:
+    - GameDB add defaults options for saving CSV.
     - Logic's session name is added to every item in db.
 - Done procedure:
     - Simplified node.done (accepts only one param, removed backword-compatible checks)
     - Widgets with required/requiredChoice flag can block node.done
+    - Role and partner added to set messages
 - Widgets:
     - Widget step: classname centered and root container (before widget-container)
     - Auto scroll into view for widget steps requiring action
