@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 6.0.1
+- From warning to silly messages if GamePlot receives invalid game stages.
+
 ## 6.0.0
 - Timer API reworked:
     - Timer.random|wait[done|emit|fire|exec|timeup].

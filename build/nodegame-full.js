@@ -13616,7 +13616,7 @@ if (!Array.prototype.indexOf) {
             // makes sures stage is with numbers and not strings.
             normStage = this.normalizeGameStage(curStage);
             if (normStage === null) {
-                this.node.warn('GamePlot.nextStage: invalid stage: ' +
+                this.node.silly('GamePlot.nextStage: invalid stage: ' +
                                curStage);
                 return null;
             }
@@ -13787,7 +13787,7 @@ if (!Array.prototype.indexOf) {
             // makes sures stage is with numbers and not strings.
             normStage = this.normalizeGameStage(curStage);
             if (normStage === null) {
-                this.node.warn('GamePlot.next: invalid stage: ' + curStage);
+                this.node.silly('GamePlot.next: invalid stage: ' + curStage);
                 return null;
             }
 
@@ -14673,7 +14673,7 @@ if (!Array.prototype.indexOf) {
         }
 
         if (stepNo < 1 || stepNo > stageObj.steps.length) {
-            this.node.warn('normalizeGameStage received non-existent step: ' +
+            this.node.silly('normalizeGameStage non-existent step: ' +
                            stageObj.id + '.' + gs.step);
             return null;
         }
