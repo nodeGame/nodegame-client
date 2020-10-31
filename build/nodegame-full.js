@@ -10340,7 +10340,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '6.0.0';
+    node.version = '6.0.1';
 
 })(window);
 
