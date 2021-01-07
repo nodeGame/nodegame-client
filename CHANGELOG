@@ -1,5 +1,9 @@
 # nodegame-client change log
 
+## current
+- Fix exit callback of stages leaked into steps.
+- Fix non-required widgets to halt widget steps.
+
 ## 6.0.1
 - From warning to silly messages if GamePlot receives invalid game stages.
 
