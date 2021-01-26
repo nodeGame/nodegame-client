@@ -3,6 +3,9 @@
 ## current
 - Fix exit callback of stages leaked into steps.
 - Fix non-required widgets to halt widget steps.
+- Widgets can prevent scrollIntoView behavior by passing _scrolledIntoView =
+true in the return object of getValues. E.g., ChoiceManger is already
+scrolling down to the right nested widget.
 
 ## 6.0.1
 - From warning to silly messages if GamePlot receives invalid game stages.
