@@ -1,8 +1,8 @@
 # nodegame-client change log
 
-## current
-- Fix exit callback of stages leaked into steps.
-- Fix non-required widgets to halt widget steps.
+## 6.1.0
+- Fixed exit callback of stages leaked into steps.
+- Fixed non-required widgets to halt widget steps.
 - Widgets can prevent scrollIntoView behavior by passing _scrolledIntoView =
 true in the return object of getValues. E.g., ChoiceManger is already
 scrolling down to the right nested widget.
