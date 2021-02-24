@@ -54,7 +54,7 @@
             res = node.game.shouldStep(stageLevels.DONE);
             node.game.setStageLevel(stageLevels.DONE);
             // Step forward, if allowed.
-            if (res) node.game.step();
+            if (res) setTimeout(function() { node.game.step(); }, 0);
         }
 
         /**

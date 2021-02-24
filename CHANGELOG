@@ -1,5 +1,10 @@
 # nodegame-client change log
 
+## Current
+- DONE is async to respect to node.game.step to let other listeners on DONE
+finish first.
+- missValues from widgets does not block next step execution.
+
 ## 6.1.0
 - Fixed exit callback of stages leaked into steps.
 - Fixed non-required widgets to halt widget steps.
