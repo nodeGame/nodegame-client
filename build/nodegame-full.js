@@ -15793,22 +15793,22 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager stages and steps
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
 
-    var J = node.JSUS;
+    const J = node.JSUS;
 
     // Export Stager.
-    var Stager = exports.Stager = {};
+    const Stager = exports.Stager = {};
 
     /**
      * ## Block.blockTypes
      *
      * List of available block types
      */
-    var blockTypes = {
+    const blockTypes = {
 
         // #### BLOCK_DEFAULT
         //
@@ -15818,13 +15818,13 @@ if (!Array.prototype.indexOf) {
 
         // #### BLOCK_STAGEBLOCK
         //
-        // A block that is a collection of stages.
+        // A block that is a collection of stages
         //
         BLOCK_STAGEBLOCK:        '__stageBlock_',
 
         // #### BLOCK_STAGE
         //
-        //
+        // A block that contains a stage (possibly contains a step block)
         //
         BLOCK_STAGE:             '__stage',
 
@@ -15836,13 +15836,13 @@ if (!Array.prototype.indexOf) {
 
         // #### BLOCK_STEP
         //
-        // ?
+        // A block that contains a step.
         //
         BLOCK_STEP:              '__step',
 
         // BLOCK_ENCLOSING
         //
-        //
+        // TODO: check . It is suffix using for search and to compose names
         //
         BLOCK_ENCLOSING:         '__enclosing_',
 
@@ -15873,15 +15873,9 @@ if (!Array.prototype.indexOf) {
     Stager.unmakeDefaultStep = unmakeDefaultStep;
     Stager.addStepToBlock = addStepToBlock;
 
-    var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
-    var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
-    var BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
-    var BLOCK_STEP        = blockTypes.BLOCK_STEP;
-
-    var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
-    var BLOCK_ENCLOSING_STAGES   = blockTypes.BLOCK_ENCLOSING_STAGES;
+    const BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
+    const BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
+    const BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
 
     /**
      * #### handleStepsArray
@@ -15933,15 +15927,23 @@ if (!Array.prototype.indexOf) {
      *
      * @param {Stager} that The stager instance
      * @param {string} id Optional. The id of the stage block
-     * @param {string} type The type of the stage block
+     * @param {string} type The type of the stage block:
+     *    -  BLOCK_ENCLOSING_STAGES
+     *    -  BLOCK_STAGEBLOCK
      * @param {string|number} The allowed positions for the block
      *
      * @see addBlock
      */
     function addStageBlock(that, id, type, positions) {
-        // Begin stage block (closes two: steps and stage).
-        if (that.currentType !== BLOCK_DEFAULT) that.endBlocks(2);
-        that.currentType = BLOCK_DEFAULT;
+        var toClose;
+        if (that.currentStage !== BLOCK_DEFAULT) {
+            // console.log(that.unfinishedBlocks)
+            toClose = type === BLOCK_STAGEBLOCK ? 1 : 2;
+            // console.log(that.currentStage, type)
+            that.endBlocks(toClose + that.openStepBlocks);
+            that.openStepBlocks = 0;
+        }
+        // that.currentStage = BLOCK_DEFAULT; // TODO: do we need this line?
         addBlock(that, id, type, positions, BLOCK_STAGE);
     }
 
@@ -15954,26 +15956,27 @@ if (!Array.prototype.indexOf) {
      * @param {string} id Optional. The id of the stage block
      * @param {string} type The block type
      * @param {string|number} positions The allowed positions for the block
-     * @param {string} type2 The value that the currentBlock variable
-     *    will be set to (BLOCK_STAGE or BLOCK_STEP)
+     * @param {string} currentBlockType The value for `Stager.currentBlockType`
+     *    (BLOCK_STAGE or BLOCK_STEP)
      */
-    function addBlock(that, id, type, positions, type2) {
-        var block, options;
-        options = {};
+    function addBlock(that, id, type, positions, currentBlockType) {
+        var block;
 
-        options.id = id || J.uniqueKey(that.blocksIds, type);
-        options.type = type;
-        options.positions = positions;
-
-        that.currentBlockType = type2;
+        // Set current block type.
+        that.currentBlockType = currentBlockType;
 
         // Create the new block, and add it block arrays.
-        block = new node.Block(options);
+
+        block = new node.Block({
+            id: id || J.uniqueKey(that.blocksIds, type),
+            type: type,
+            positions: positions
+        });
         that.unfinishedBlocks.push(block);
         that.blocks.push(block);
 
         // Save block id into the blocks map.
-        that.blocksIds[options.id] = (that.blocks.length - 1);
+        that.blocksIds[block.id] = (that.blocks.length - 1);
     }
 
     /**
@@ -16045,6 +16048,7 @@ if (!Array.prototype.indexOf) {
      */
     function addStepToBlock(that, block, stepId, stageId, positions) {
         var stepInBlock;
+
         // Add step, if not already added.
         if (block.hasItem(stepId)) return false;
 
@@ -16187,26 +16191,16 @@ if (!Array.prototype.indexOf) {
     // ## Global scope
     exports.Block = Block;
 
-    var J = parent.JSUS;
+    const J = parent.JSUS;
 
     // Mock stager object. Contains only shared variables at this point.
     // The stager class will be added later.
-    var Stager = parent.Stager;
+    const Stager = parent.Stager;
 
     // Referencing shared entities.
-    var isDefaultStep = Stager.isDefaultStep;
-
-    var blockTypes = Stager.blockTypes;
-
-    var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
-    var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
-    var BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
-    var BLOCK_STEP        = blockTypes.BLOCK_STEP;
-
-    var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
-    var BLOCK_ENCLOSING_STAGES   = blockTypes.BLOCK_ENCLOSING_STAGES;
+    const isDefaultStep = Stager.isDefaultStep;
+    const blockTypes = Stager.blockTypes;
+    const BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
 
 
     /**
@@ -16316,8 +16310,8 @@ if (!Array.prototype.indexOf) {
      *
      * Adds an item to a block
      *
-     * @param {object} item. The item to be added
-     * @param {string} positions. The positions where item can be added
+     * @param {object} item The item to be added
+     * @param {string} positions The positions where item can be added
      *   Setting this parameter to "linear" or undefined adds the
      *   item to the next free n-th position where this is the n-th
      *   call to add.
@@ -16326,23 +16320,23 @@ if (!Array.prototype.indexOf) {
 
         if (this.finalized) {
             throw new Error('Block.add: block already finalized, ' +
-                            'cannot add further items.');
+                            'cannot add further items');
         }
 
         if ('string' !== typeof item.id) {
             throw new TypeError('Block.add: block ' + this.id + ': item id ' +
-                                'must be string: ' + item.id || 'undefined.');
+                                'must be string: ' + item.id || 'undefined');
         }
         if ('string' !== typeof item.type) {
             throw new TypeError('Block.add: block ' + this.id +
                                 ': item type must be string: ' +
-                                item.type || 'undefined.');
+                                item.type || 'undefined');
         }
 
         if (this.itemsIds[item.id]) {
             throw new TypeError('Block.add: block ' + this.id +
                                 ': item was already added to block: ' +
-                                item.id + '.');
+                                item.id);
         }
 
 
@@ -16481,12 +16475,9 @@ if (!Array.prototype.indexOf) {
         // multiple calls to J.range.
         // Parsing all of the position strings into arrays.
         i = -1, len = this.unfinishedItems.length;
-        console.log('***********')
         for ( ; ++i < len ; ) {
             positions = this.unfinishedItems[i].positions;
-            console.log(positions);
             this.unfinishedItems[i].positions = J.range(positions, available);
-            console.log(this.unfinishedItems[i].positions);
         }
 
 
@@ -16497,9 +16488,6 @@ if (!Array.prototype.indexOf) {
             entry = this.unfinishedItems.pop();
             item = entry.item;
             positions = entry.positions;
-
-            // if (item.id === 'Intro Groups' ||
-            //     item.id === 'Between Groups' || item.id === 'Within Groups') debugger
 
             // No valid position specified.
             if (positions.length === 0) {
@@ -16632,11 +16620,7 @@ if (!Array.prototype.indexOf) {
             type: this.type,
             id: this.id
         });
-        console.log('HERE', block.id);
-        if (block.id === '__enclosing_distr_groups_steps_5') debugger
-        else if (block.id === 'Intro Groups') debugger
 
-        // console.log(this)
         block.positions = J.clone(this.positions);
         block.takenPositions = J.clone(this.takenPositions);
         block.items = J.clone(this.items);
@@ -16671,10 +16655,219 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
- * `nodeGame` container and builder of the game sequence
+ * Builds and store the game sequence.
+ *
+ * The game sequence is a sequence of blocks which can be moved around
+ * until they are finalized.
+ *
+ * Blocks are generic containers and can contain steps, stages, and
+ * even other blocks.
+ *
+ * The sequence of blocks always begins with the default block:
+ *
+ * ```js
+ * { type: '__stageBlock_',
+     id: '__default',
+     positions: 'linear',
+     takenPositions: Array(0),
+     items: Array(0),
+     itemsIds: {},
+     unfinishedItems: [],
+     index: 0,
+     finalized: false,
+     resetCache: null
+  }
+* ```
+*
+* which will contain all the others.
+*
+* A block
+
+
+> stager.blocks[1]
+{ type: '__enclosing_stages',
+  id: '__enclosing_distr_groups_1',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[2]
+{ type: '__enclosing_steps',
+  id: '__enclosing_distr_groups_steps_1',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[3]
+{ type: '__stepBlock_',
+  id: 'Intro Groups',
+  positions: '*',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[4]
+{ type: '__stepBlock_',
+  id: 'Between Groups',
+  positions: '*',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[5]
+{ type: '__stepBlock_',
+  id: 'Within Groups',
+  positions: '*',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[6]
+{ type: '__enclosing_stages',
+  id: '__enclosing_justification_3',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[7]
+{ type: '__enclosing_steps',
+  id: '__enclosing_justification_steps_3',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[8]
+{ type: '__enclosing_stages',
+  id: '__enclosing_feedback_4',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[9]
+{ type: '__enclosing_steps',
+  id: '__enclosing_feedback_steps_4',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[10]
+{ type: '__enclosing_stages',
+  id: '__enclosing_end_5',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[11]
+{ type: '__enclosing_steps',
+  id: '__enclosing_end_steps_5',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+> stager.blocks[12]
+{ type: '__enclosing_stages',
+  id: '__enclosing_gameover_6',
+  positions: 'linear',
+  takenPositions: Array(0),
+  items: Array(0),
+  ... }
+
+ * and unfinshed blocks:
+
+ < [
+<   Block {
+<     type: '__stageBlock_',
+<     id: '__default',
+<     positions: 'linear',
+<     takenPositions: [],
+<     items: [],
+<     itemsIds: {},
+<     unfinishedItems: [],
+<     index: 0,
+<     finalized: false,
+<     resetCache: null
+<   },
+<   Block {
+<     type: '__enclosing_stages',
+<     id: '__enclosing_distr_groups_1',
+<     positions: 'linear',
+<     takenPositions: [],
+<     items: [],
+<     itemsIds: { distr_groups: true },
+<     unfinishedItems: [ [Object] ],
+<     index: 0,
+<     finalized: false,
+<     resetCache: null
+<   },
+<   Block {
+<     type: '__enclosing_steps',
+<     id: '__enclosing_distr_groups_steps_1',
+<     positions: 'linear',
+<     takenPositions: [],
+<     items: [],
+<     itemsIds: {
+<       distr_groups: true,
+<       'Within Groups': true,
+<       'Between Groups': true
+<     },
+<     unfinishedItems: [ [Object], [Object], [Object] ],
+<     index: 0,
+<     finalized: false,
+<     resetCache: null
+<   },
+<   Block {
+<     type: '__stepBlock_',
+<     id: 'Intro Groups',
+<     positions: '*',
+<     takenPositions: [],
+<     items: [],
+<     itemsIds: {
+<       groups_intro: true,
+<       groups_intro_treatment: true,
+<       tutorial_groups_quiz: true,
+<       tutorial_groups: true,
+<       groups_task: true,
+<       __enclosing_justification_3: true,
+<       __enclosing_feedback_4: true,
+<       __enclosing_end_5: true
+<     },
+<     unfinishedItems: [
+<       [Object], [Object],
+<       [Object], [Object],
+<       [Object], [Object],
+<       [Object], [Object]
+<     ],
+<     index: 0,
+<     finalized: false,
+<     resetCache: null
+<   },
+<   Block {
+<     type: '__enclosing_stages',
+<     id: '__enclosing_gameover_6',
+<     positions: 'linear',
+<     takenPositions: [],
+<     items: [],
+<     itemsIds: { gameover: true },
+<     unfinishedItems: [ [Object] ],
+<     index: 0,
+<     finalized: false,
+<     resetCache: null
+<   },
+<   Block {
+<     type: '__enclosing_steps',
+<     id: '__enclosing_gameover_steps_6',
+<     positions: 'linear',
+<     takenPositions: [],
+<     items: [],
+<     itemsIds: {},
+<     unfinishedItems: [],
+<     index: 0,
+<     finalized: false,
+<     resetCache: null
+<   }
+< ]
+
+
  */
 (function(exports, parent) {
 
@@ -16682,9 +16875,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    var J = parent.JSUS;
-    var stepRules = parent.stepRules;
-    var Block = parent.Block;
+    const J = parent.JSUS;
 
     // What is in the Stager obj at this point.
     var tmpStager = parent.Stager
@@ -16694,9 +16885,8 @@ if (!Array.prototype.indexOf) {
     exports.Stager = Stager;
 
     // Referencing shared entities.
-    var blockTypes = Stager.blockTypes;
-    var makeDefaultCb = Stager.makeDefaultCb;
-    var isDefaultStep = Stager.isDefaultStep;
+    const blockTypes = Stager.blockTypes;
+    const isDefaultStep = Stager.isDefaultStep;
 
     // ## Static Methods
 
@@ -16716,12 +16906,12 @@ if (!Array.prototype.indexOf) {
     Stager.makeDefaultCb(Stager.defaultCallback);
 
     /**
-     * ## Stager Constructor
+     * ## Stager constructor
      *
      * Creates a new instance of Stager
      *
      * @param {object} stateObj Optional. State to initialize the new
-     *   Stager object with. See `Stager.setState`.
+     *   Stager object.
      *
      * @see Stager.setState
      */
@@ -16730,44 +16920,110 @@ if (!Array.prototype.indexOf) {
         // ## Properties
 
         /**
+        * #### Stager.sequence
+        *
+        * Sequence block container
+        *
+        * Stores the game plan in 'simple mode'.
+        *
+        * @see Stager.gameover
+        * @see Stager.next
+        * @see Stager.repeat
+        * @see Stager.loop
+        * @see Stager.doLoop
+        */
+        this.sequence = [];
+
+        /**
+         * #### Stager.stages
+         *
+         * Maps stage ids to stage objects
+         *
+         * Each stage object contains an array of steps referencing an object
+         * in `Stager.steps`.
+         *
+         * Format:
+         *
+         * ```js
+         * {
+         *     oneStage:  { id: 'oneStage', steps: [ { ...  } },
+         *     anotherStage: { id: 'anotherStage', steps: [ { ... } ] }
+         * }
+         * ```
+         *
+         * Stage aliases are stored the same way, with a reference to
+         * the original stage object as the value.
+         *
+         * @see Stager.steps
+         * @see Stager.addStage
+         */
+        this.stages = {};
+
+        /**
          * #### Stager.steps
          *
-         * Step object container
+         * Maps step ids to step objects
          *
-         * key: step ID,  value: step object
+         * Format:
+         *
+         * ```js
+         * {
+         *     oneStep:  { id: 'oneStep', cb: function() { ... } },
+         *     anotherStep: { id: 'anotherStep', cb: function() { ... } }
+         * }
+         * ```
          *
          * @see Stager.addStep
          */
         this.steps = {};
 
         /**
-         * #### Stager.stages
+         * #### Stager.blocks
          *
-         * Stage object container
-         *
-         * key: stage ID,  value: stage object
-         *
-         * Stage aliases are stored the same way, with a reference to
-         * the original stage object as the value.
-         *
-         * @see Stager.addStage
+         * Array of blocks in the order they were added to the stager
          */
-        this.stages = {};
+        this.blocks = [];
 
         /**
-         * #### Stager.sequence
+         * #### Stager.blocksIds
          *
-         * Sequence block container
+         * Map block-id to block-position in the blocks array
          *
-         * Stores the game plan in 'simple mode'.
-         *
-         * @see Stager.gameover
-         * @see Stager.next
-         * @see Stager.repeat
-         * @see Stager.loop
-         * @see Stager.doLoop
+         * @see blocks
          */
-        this.sequence = [];
+        this.blocksIds = {};
+
+        /**
+         * #### Stager.unfinishedBlocks
+         *
+         * List of all Blocks stager might still modify
+         */
+        this.unfinishedBlocks = [];
+
+        /**
+         * #### Stager.openStepBlocks
+         *
+         * Number of step blocks that need to be closed when the stage is closed
+         *
+         * @see addStageBlock
+         */
+        this.openStepBlocks = 0;
+
+        /**
+         * #### Stager.currentStage
+         *
+         * Name of the current stage in the blocks' hierarchy
+         */
+        this.currentStage = blockTypes.BLOCK_DEFAULT;
+
+        /**
+         * #### Stager.currentBlockType
+         *
+         * The type of block tharwas added last
+         *
+         * @see blockTypes
+         */
+        this.currentBlockType = blockTypes.BLOCK_DEFAULT;
 
         /**
          * #### Stager.generalNextFunction
@@ -16861,28 +17117,6 @@ if (!Array.prototype.indexOf) {
          */
         this.onGameover = null;
 
-        /**
-         * #### Stager.blocks
-         *
-         * Array of blocks as they in the order they were added to the stager
-         */
-        this.blocks = [];
-
-        /**
-         * #### Stager.blocksIds
-         *
-         * Map block-id to block-position in the blocks array
-         *
-         * @see blocks
-         */
-        this.blocksIds = {};
-
-        /**
-         * #### Stager.unfinishedBlocks
-         *
-         * List of all Blocks stager might still modify
-         */
-        this.unfinishedBlocks = [];
 
         /**
          * #### Stager.finalized
@@ -16893,19 +17127,7 @@ if (!Array.prototype.indexOf) {
          */
         this.finalized = false;
 
-        /**
-         * #### Stager.currentType
-         *
-         * Name of the stage currently worked with in building hierarchy
-         */
-        this.currentType = blockTypes.BLOCK_DEFAULT;
 
-        /**
-         * #### Stager.currentBlockType
-         *
-         * Indicates what type of Block was added last
-         */
-        this.currentBlockType = blockTypes.BLOCK_DEFAULT;
 
         /**
          * #### Stager.toSkip
@@ -16969,6 +17191,7 @@ if (!Array.prototype.indexOf) {
         this.steps = {};
         this.stages = {};
         this.sequence = [];
+        this.openStepBlocks = 0;
         this.generalNextFunction = null;
         this.nextFunctions = {};
         this.setDefaultStepRule();
@@ -16980,7 +17203,7 @@ if (!Array.prototype.indexOf) {
         this.blocksIds = {};
         this.unfinishedBlocks = [];
         this.finalized = false;
-        this.currentType = blockTypes.BLOCK_DEFAULT;
+        this.currentStage = blockTypes.BLOCK_DEFAULT;
         this.currentBlockType = blockTypes.BLOCK_DEFAULT;
         this.toSkip = { stages: {}, steps: {} };
         this.defaultCallback = Stager.defaultCallback;
@@ -17006,7 +17229,7 @@ if (!Array.prototype.indexOf) {
     /**
      * #### Stager.finalize
      *
-     * Builds stage and step sequence from the Block hieararchy
+     * Builds stage and step sequence from the blocks' hieararchy
      *
      * Stages and steps are excluded from the sequence if they were marked
      * as _toSkip_.
@@ -17037,20 +17260,18 @@ if (!Array.prototype.indexOf) {
         for (blockIndex = 0; blockIndex < this.blocks.length; ++blockIndex) {
             this.blocks[blockIndex].backup();
         }
-
         // Closes unclosed blocks.
         this.endAllBlocks();
 
         // Fixes the position of unfixed elements inside each block.
         for (blockIndex = 0; blockIndex < this.blocks.length; ++blockIndex) {
-            // if (blockIndex > 9) debugger
             this.blocks[blockIndex].finalize();
         }
 
         // Take outermost block and start building sequence.
         outermostBlock = this.blocks[0];
         currentItem = outermostBlock.next();
-        while (!!currentItem) {
+        while (currentItem) {
             if (currentItem.type === blockTypes.BLOCK_STAGE) {
                 stageId = currentItem.item.id;
                 // Add it to sequence if it was
@@ -17136,38 +17357,31 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager stages and steps
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
 
-    var J      = node.JSUS;
-    var Stager = node.Stager;
-    var Block  = node.Block;
+    const J      = node.JSUS;
+    const Stager = node.Stager;
 
     // Get reference to shared entities in Stager.
-    var checkPositionsParameter = Stager.checkPositionsParameter;
-    var addStageBlock           = Stager.addStageBlock;
-    var addBlock                = Stager.addBlock;
-    var checkFinalized          = Stager.checkFinalized;
-    var handleStepsArray        = Stager.handleStepsArray;
-    var makeDefaultCb           = Stager.makeDefaultCb;
-    var isDefaultCb             = Stager.isDefaultCb;
-    var makeDefaultStep         = Stager.makeDefaultStep;
-    var isDefaultStep           = Stager.isDefaultStep;
-    var addStepToBlock          = Stager.addStepToBlock;
+    const checkPositionsParameter = Stager.checkPositionsParameter;
+    const addStageBlock           = Stager.addStageBlock;
+    const addBlock                = Stager.addBlock;
+    const checkFinalized          = Stager.checkFinalized;
+    const handleStepsArray        = Stager.handleStepsArray;
+    const makeDefaultStep         = Stager.makeDefaultStep;
+    const addStepToBlock          = Stager.addStepToBlock;
 
-    var blockTypes              = Stager.blockTypes;
+    const blockTypes              = Stager.blockTypes;
+    const BLOCK_STAGE             = blockTypes.BLOCK_STAGE;
+    const BLOCK_STEPBLOCK         = blockTypes.BLOCK_STEPBLOCK;
+    const BLOCK_STEP              = blockTypes.BLOCK_STEP;
 
-    var BLOCK_DEFAULT           = blockTypes.BLOCK_DEFAULT;
-    var BLOCK_STAGEBLOCK        = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE             = blockTypes.BLOCK_STAGE;
-    var BLOCK_STEPBLOCK         = blockTypes.BLOCK_STEPBLOCK;
-    var BLOCK_STEP              = blockTypes.BLOCK_STEP;
-
-    var BLOCK_ENCLOSING         = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS   = blockTypes.BLOCK_ENCLOSING_STEPS;
-    var BLOCK_ENCLOSING_STAGES  = blockTypes.BLOCK_ENCLOSING_STAGES;
+    const BLOCK_ENCLOSING         = blockTypes.BLOCK_ENCLOSING;
+    const BLOCK_ENCLOSING_STEPS   = blockTypes.BLOCK_ENCLOSING_STEPS;
+    const BLOCK_ENCLOSING_STAGES  = blockTypes.BLOCK_ENCLOSING_STAGES;
 
     /**
      * #### Stager.addStep | createStep
@@ -17345,9 +17559,9 @@ if (!Array.prototype.indexOf) {
         id = handleStepParameter(this, step, 'step');
         positions = checkPositionsParameter(positions, 'step');
 
-        addStepToBlock(this, curBlock, id, this.currentType, positions);
+        addStepToBlock(this, curBlock, id, this.currentStage, positions);
 
-        this.stages[this.currentType].steps.push(id);
+        this.stages[this.currentStage].steps.push(id);
 
         return this;
     };
@@ -17382,7 +17596,7 @@ if (!Array.prototype.indexOf) {
                 id: stageName
             }, positions);
 
-            // Must be done after addStageToCurrentBlock is called.
+            // Must be done after addStageToCurrentBlock.
             addStepsToCurrentBlock(this, this.stages[stageName].steps);
             return this;
         };
@@ -17568,12 +17782,14 @@ if (!Array.prototype.indexOf) {
         // rndName = '_' + J.randomInt(10000);
         rndName = '_' + Math.floor((that.blocks.length + 1)/2);
 
+        // Closes last step and stage blocks.
+        // Then adds a new enclosing-stages block.
         addStageBlock(that,
                       BLOCK_ENCLOSING + name + rndName,
                       BLOCK_ENCLOSING_STAGES,
-                      positions,
-                      BLOCK_STAGE);
+                      positions);
 
+        // Gets the enclosing-stages block just added.
         curBlock = that.getCurrentBlock();
         curBlock.add({
             type: BLOCK_STAGE,
@@ -17581,7 +17797,7 @@ if (!Array.prototype.indexOf) {
             id: stage.id
         });
 
-        that.currentType = name;
+        that.currentStage = name;
 
         addBlock(that,
                  BLOCK_ENCLOSING + name + '_steps' + rndName,
@@ -17608,7 +17824,7 @@ if (!Array.prototype.indexOf) {
         curBlock = that.getCurrentBlock();
         i = -1, len = steps.length;
         for ( ; ++i < len ; ) {
-            addStepToBlock(that, curBlock, steps[i], that.currentType);
+            addStepToBlock(that, curBlock, steps[i], that.currentStage);
         }
     }
 
@@ -17905,20 +18121,18 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager Setter and Getters
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
 
-    var J = node.JSUS;
-    var Stager = node.Stager;
-    var stepRules = node.stepRules;
+    const J = node.JSUS;
+    const Stager = node.Stager;
+    const stepRules = node.stepRules;
 
     // Referencing shared entities.
-    var blockTypes = Stager.blockTypes;
     var isDefaultCb = Stager.isDefaultCb;
     var makeDefaultCb = Stager.makeDefaultCb;
-    var isDefaultStep = Stager.isDefaultStep;
 
     /**
      * #### Stager.setState
@@ -18395,7 +18609,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see Stager.onGameover
      */
-    Stager.prototype.getOnGameover = function(func) {
+    Stager.prototype.getOnGameover = function() {
         return this.onGameover;
     };
 
@@ -18903,28 +19117,25 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager blocks operations
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
 
-    var Stager     = node.Stager;
-    var Block      = node.Block;
-    var blockTypes = Stager.blockTypes;
+    const Stager     = node.Stager;
 
-    var checkPositionsParameter = Stager.checkPositionsParameter;
-    var addStageBlock = Stager.addStageBlock;
-    var addBlock = Stager.addBlock;
+    const checkPositionsParameter = Stager.checkPositionsParameter;
+    const addStageBlock = Stager.addStageBlock;
+    const addBlock = Stager.addBlock;
 
-    var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
-    var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    var BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
-    var BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
-    var BLOCK_STEP        = blockTypes.BLOCK_STEP;
+    const blockTypes = Stager.blockTypes;
+    const BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
+    const BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
+    const BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
+    const BLOCK_STEP        = blockTypes.BLOCK_STEP;
 
-    var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
-    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
-    var BLOCK_ENCLOSING_STAGES   = blockTypes.BLOCK_ENCLOSING_STAGES;
+    const BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
+    const BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
 
     /**
      * #### Stager.stepBlock
@@ -18941,7 +19152,7 @@ if (!Array.prototype.indexOf) {
      * @return {Stager} Reference to the current instance for method chaining
      */
     Stager.prototype.stepBlock = function() {
-        var positions, id;
+        var positions, id, curBlock, err;
 
         if (arguments.length === 1) {
             positions = arguments[0];
@@ -18959,9 +19170,33 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // Check if a stage block can be added in this position.
+        curBlock = this.getCurrentBlock();
+
+        if (!curBlock || curBlock.id === BLOCK_DEFAULT ||
+            (!curBlock.isType(BLOCK_ENCLOSING_STEPS) &&
+            !curBlock.isType(BLOCK_STEPBLOCK))) {
+
+            err = 'Stager.stepBlock: block ';
+            if (id) err += '"' +  id + '"';
+            err += 'cannot be added here. Did add at least one stage before?'
+            throw new Error(err);
+        }
+
+
+           // !curBlock.isType(BLOCK_STEPBLOCK))
+        if (curBlock.isType(BLOCK_STEPBLOCK) && curBlock.size() === 0) {
+            err = 'Stager.stepBlock: block ';
+            if (id) err += '"' +  id + '"';
+            err += 'cannot be added here. Did add at least one step ' +
+                   'in the previous step block?'
+            throw new Error(err);
+        }
+
         checkPositionsParameter(positions, 'stepBlock');
 
         addBlock(this, id, BLOCK_STEPBLOCK, positions, BLOCK_STEP);
+        this.openStepBlocks++;
 
         return this;
     };
@@ -18983,7 +19218,8 @@ if (!Array.prototype.indexOf) {
      * @see addStageBlock
      */
     Stager.prototype.stageBlock = function() {
-        var positions, id;
+        var positions, id, curBlock, err;
+
         if (arguments.length === 1) {
             positions = arguments[0];
         }
@@ -19000,9 +19236,26 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // Check if a stage block can be added in this position.
+        curBlock = this.getCurrentBlock();
+
+        if (curBlock && curBlock.id !== BLOCK_DEFAULT &&
+            // (curBlock.isType(BLOCK_STAGE) ||
+            curBlock.isType(BLOCK_STAGEBLOCK)) {
+
+            err = 'Stager.stageBlock: block ';
+            if (id) err += '"' +  id + '"';
+            err += 'cannot be added here. Did add at least one stage ' +
+                   'in the previous stage block?'
+            throw new Error(err);
+        }
+
         checkPositionsParameter(positions, 'stageBlock');
 
-        addStageBlock(this, id, BLOCK_STAGEBLOCK, positions, BLOCK_STAGE);
+        // Closes last step and stage blocks.
+        // Then adds a new enclosing-stages block.
+        addStageBlock(this, id, BLOCK_STAGEBLOCK, positions);
+
         return this;
     };
 
@@ -50997,7 +51250,7 @@ if (!Array.prototype.indexOf) {
             // res.err = this.getText('inputErr');
             this.validation(res, values);
             if (opts.highlight && res.err) this.setError(res.err);
-
+            if (res.err) res.isCorrect = false;
         }
         else if (toReset) this.reset(toReset);
         if (!res.isCorrect && opts.highlight) this.highlight();
