@@ -10870,7 +10870,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EventEmitter
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Event emitter engine for `nodeGame`
@@ -10981,20 +10981,7 @@ if (!Array.prototype.indexOf) {
             throw new TypeError('EventEmitter.on: listener must be function.' +
                                 'Found: ' + listener);
         }
-        if (label) {
-            if ('string' === typeof label || 'number' === typeof label) {
-                if (this.labels[label]) {
-                    throw new Error('EventEmitter.on: label is not unique: ' +
-                                    label);
-                }
-                this.labels[label] = true;
-                listener.__ngid = '' + label;
-            }
-            else {
-                throw new TypeError('EventEmitter.on: label must be ' +
-                                    'string or undefined. Found: ' + label);
-            }
-        }
+        if (label) checkAndAddLabel(this, listener, label, 'on');
 
         if (!this.events[type]) {
             // Optimize the case of one listener.
@@ -11025,12 +11012,16 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string} event The name of the event
      * @param {function} listener The callback function
+     * @param {string|number} label Optional. If set, it flags the listener with
+     *    the property .__ngid = label. It will be then possible to remove
+     *    the listener using the label
      *
      * @see EventEmitter.on
      * @see EventEmitter.off
      */
-    EventEmitter.prototype.once = function(type, listener) {
+    EventEmitter.prototype.once = function(type, listener, label) {
         var that = this;
+        if (!label) label = J.uniqueKey(this.labels, type);
         function g() {
             var i, len, args;
             args = [];
@@ -11038,10 +11029,10 @@ if (!Array.prototype.indexOf) {
             for ( ; ++i < len ; ) {
                 args[i] = arguments[i];
             }
-            that.remove(type, g);
+            that.off(type, label);
             listener.apply(that.node.game, args);
         }
-        this.on(type, g);
+        this.on(type, g, label);
     };
 
     /**
@@ -11208,7 +11199,7 @@ if (!Array.prototype.indexOf) {
     EventEmitter.prototype.remove = EventEmitter.prototype.off =
     function(type, listener) {
 
-        var listeners, len, i, node, found, oneFound, name, removed;
+        var listeners, len, i, node, found, oneFound, removed;
 
         removed = [];
         node = this.node;
@@ -11471,6 +11462,33 @@ if (!Array.prototype.indexOf) {
         return this.recordChanges;
     };
 
+    // ### Helper functions
+
+    /**
+     * #### checkAndAddLabel
+     *
+     * If label is valid, adds it to the labels object and marks the listener
+     *
+     * @param {EventEmitter} that The instance of event emitter
+     * @param {function} listener The listener function
+     * @param {string|number} label The label to check
+     * @param {string} method The invoking method (on or once)
+     */
+    function checkAndAddLabel(that, listener, label, method) {
+        if ('string' === typeof label || 'number' === typeof label) {
+            if (that.labels[label]) {
+                throw new Error('EventEmitter.' + method +
+                                ': label is not unique: ' + label);
+            }
+            that.labels[label] = true;
+            listener.__ngid = '' + label;
+        }
+        else {
+            throw new TypeError('EventEmitter.' + method + ': label must be ' +
+                                'string or undefined. Found: ' + label);
+        }
+    }
+
 
     /**
      * ## EventEmitterManager constructor
@@ -11522,7 +11540,6 @@ if (!Array.prototype.indexOf) {
      * @see EventEmitterManager.createEE
      */
     EventEmitterManager.prototype.destroyEE = function(name) {
-        var ee;
         if ('string' !== typeof name) {
             throw new TypeError('EventEmitterManager.destroyEE: name must be ' +
                                 'string. Found: ' + name);
@@ -15798,17 +15815,17 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports, node) {
 
-    const J = node.JSUS;
+    var J = node.JSUS;
 
     // Export Stager.
-    const Stager = exports.Stager = {};
+    var Stager = exports.Stager = {};
 
     /**
      * ## Block.blockTypes
      *
      * List of available block types
      */
-    const blockTypes = {
+    var blockTypes = {
 
         // #### BLOCK_DEFAULT
         //
@@ -15873,9 +15890,9 @@ if (!Array.prototype.indexOf) {
     Stager.unmakeDefaultStep = unmakeDefaultStep;
     Stager.addStepToBlock = addStepToBlock;
 
-    const BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
-    const BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    const BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
+    var BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
+    var BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
+    var BLOCK_STAGE       = blockTypes.BLOCK_STAGE;
 
     /**
      * #### handleStepsArray
@@ -15936,10 +15953,20 @@ if (!Array.prototype.indexOf) {
      */
     function addStageBlock(that, id, type, positions) {
         var toClose;
-        if (that.currentStage !== BLOCK_DEFAULT) {
-            // console.log(that.unfinishedBlocks)
+        // When the default block is added, this does not apply yet.
+        // It is **not** executed only for the first user block.
+        if (that.currentStage !== BLOCK_DEFAULT
+
+            // Adding a stage after a stage block.
+            // && that.currentBlockType !== BLOCK_STAGEBLOCK
+        ) {
+
+            // TODO: check why if type is BLOCK_STAGEBLOCK it wants only one
+            // (or zero?)
+            // block closed. It works, but it is unclear why. In this way,
+            // it closes the steps from the previous block and leaves open
+            // the stage (and stage-block).
             toClose = type === BLOCK_STAGEBLOCK ? 1 : 2;
-            // console.log(that.currentStage, type)
             that.endBlocks(toClose + that.openStepBlocks);
             that.openStepBlocks = 0;
         }
@@ -16162,7 +16189,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Block
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Blocks contain items that can be sorted in the sequence.
@@ -16191,16 +16218,16 @@ if (!Array.prototype.indexOf) {
     // ## Global scope
     exports.Block = Block;
 
-    const J = parent.JSUS;
+    var J = parent.JSUS;
 
     // Mock stager object. Contains only shared variables at this point.
     // The stager class will be added later.
-    const Stager = parent.Stager;
+    var Stager = parent.Stager;
 
     // Referencing shared entities.
-    const isDefaultStep = Stager.isDefaultStep;
-    const blockTypes = Stager.blockTypes;
-    const BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
+    var isDefaultStep = Stager.isDefaultStep;
+    var blockTypes = Stager.blockTypes;
+    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
 
 
     /**
@@ -16666,208 +16693,341 @@ if (!Array.prototype.indexOf) {
  * Blocks are generic containers and can contain steps, stages, and
  * even other blocks.
  *
+ * ## Stager Technical Guide
+ *
+ * ### The Default block.
+ *
  * The sequence of blocks always begins with the default block:
  *
  * ```js
- * { type: '__stageBlock_',
-     id: '__default',
+ * {
+ *     type: '__stageBlock_',
+ *     id: '__default',
+ *     positions: 'linear',
+ *     takenPositions: Array(0),
+ *     items: Array(0),
+ *     itemsIds: {},
+ *     unfinishedItems: [],
+ *     index: 0,
+ *     finalized: false,
+ *     resetCache: null
+ *  }
+ * ```
+ *
+ * which will contain all the other blocks. This block is added to both:
+ *
+ * - `Stager.blocks`, and
+ * - `Stager.unfinishedBlocks`.
+ *
+ *
+ * We test now this sequence and how it affects the stager internals.
+ *
+ * ```js
+ * stager.stage('myStage')
+ * stager.step('myStep')
+ * stager.stage('anotherStage')
+ * stager.stageBlock('myStageBlock', 'linear')
+ * stager.stage('stageInBlock')
+ * stager.stage('stageInBlock2')
+ * stager.stepBlock('myStepBlock', 'linear')
+ * stager.step('stepInBlock')
+ * stager.step('stepInBlock2')
+ * stager.stepBlock('anotherStepBlock', 'linear')
+ * stager.step('anotherStepInBlock')
+ * stager.step('anotherStepInBlock2')
+ * stager.stage('stageInBlock3')
+ * stager.stageBlock('anotherStageBlock', 'linear')
+ * stager.stage('lastStageInBlock')
+ * ```
+ *
+ * ### Adding a first stage
+ *
+ * If we add a stage with
+ *
+ * ```js
+ * stager.stage('myStage');
+ * ```
+ *
+ * two blocks are added:
+ *
+ * ```js
+ * {
+ *     type: '__enclosing_stages',
+ *     id: '__enclosing_myStage_1',
+ *     positions: 'linear',
+ *     ...
+ * },
+ * { type: '__enclosing_steps',
+ *   id: '__enclosing_myStage_steps_1',
+ *   positions: 'linear',
+ *   ...
+ * }
+ * ```
+ *
+ * to both `blocks` and `unfinishedBlocks`.
+ *
+ * ### Adding a first step inside the stage
+ *
+ * If we add a step with
+ *
+ * ```js
+ * stager.step('myStep');
+ * ```
+ *
+ * no new blocks are added, but one item is added inside the `unfinishedItems`
+ * array of the last open block ('__enclosing_myStage_steps_1').
+ *
+ * Note! When the user adds the first step to a stage, it is actually the second
+ * item in the `unfinishedItems` array. The first one the default step named
+ * after the name of the stage. This default item will be removed upon
+ * finalizing the stage (if there are other steps in the stage)
+ *
+ * Any other step added inside the stage will add an item in the
+ * `unfinishedItems` array.
+ *
+ *
+ * ### Adding a second stage
+ *
+ * If we add another stage with
+ *
+ * ```js
+ * stager.stage('anotherStage');
+ * ```
+ *
+ * two blocks are added to the `blocks` array:
+ *
+ * ```js
+ * {
+ *    type: '__enclosing_stages',
+ *    id: '__enclosing_anotherStage_2',
+ *    positions: 'linear',
+ *    ...
+ * },
+ * {
+ *   type: '__enclosing_steps',
+ *   id: '__enclosing_anotherStage_steps_2',
+ *   positions: 'linear',
+ *   ...
+ * }
+ * ```
+ *
+ * The last two blocks in the `unfinishedBlocks` array removed, and two new
+ * ones for the new stage are added.
+ *
+ *
+ * ### Adding a first stage block
+ *
+ * If we add a stage block with:
+ *
+ * ```js
+ * stager.stageBlock('myStageBlock', 'linear');
+ * ```
+ *
+ * one block is added to the `blocks` array:
+ *
+ * ```js
+ * {
+ * type: '__stageBlock_',
+ * id: 'First StageBlock',
+ * positions: 'linear',
+ * ...
+ * }
+ * ```
+ *
+ * The last block in the `unfinishedBlocks` array is removed (for the steps
+ * of the previous stage), and a new one for the new stage block is added
+ * No enclosing stages and steps blocks added yet.
+ *
+ *
+ * ### Adding one stage within a stage block
+ *
+ * If we add a stage in the block with:
+ *
+ * ```js
+ * stager.stage('stageInBlock');
+ * ```
+ *
+ * two blocks are added to the `blocks` array:
+ *
+ * ```js
+ {
+     type: '__enclosing_stages',
+     id: '__enclosing_stageInBlock_3',
      positions: 'linear',
-     takenPositions: Array(0),
-     items: Array(0),
-     itemsIds: {},
-     unfinishedItems: [],
-     index: 0,
-     finalized: false,
-     resetCache: null
-  }
-* ```
-*
-* which will contain all the others.
-*
-* A block
-
-
-> stager.blocks[1]
-{ type: '__enclosing_stages',
-  id: '__enclosing_distr_groups_1',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[2]
-{ type: '__enclosing_steps',
-  id: '__enclosing_distr_groups_steps_1',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[3]
-{ type: '__stepBlock_',
-  id: 'Intro Groups',
-  positions: '*',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[4]
-{ type: '__stepBlock_',
-  id: 'Between Groups',
-  positions: '*',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[5]
-{ type: '__stepBlock_',
-  id: 'Within Groups',
-  positions: '*',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[6]
-{ type: '__enclosing_stages',
-  id: '__enclosing_justification_3',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[7]
-{ type: '__enclosing_steps',
-  id: '__enclosing_justification_steps_3',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[8]
-{ type: '__enclosing_stages',
-  id: '__enclosing_feedback_4',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[9]
-{ type: '__enclosing_steps',
-  id: '__enclosing_feedback_steps_4',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[10]
-{ type: '__enclosing_stages',
-  id: '__enclosing_end_5',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[11]
-{ type: '__enclosing_steps',
-  id: '__enclosing_end_steps_5',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-> stager.blocks[12]
-{ type: '__enclosing_stages',
-  id: '__enclosing_gameover_6',
-  positions: 'linear',
-  takenPositions: Array(0),
-  items: Array(0),
-  ... }
-
- * and unfinshed blocks:
-
- < [
-<   Block {
-<     type: '__stageBlock_',
-<     id: '__default',
-<     positions: 'linear',
-<     takenPositions: [],
-<     items: [],
-<     itemsIds: {},
-<     unfinishedItems: [],
-<     index: 0,
-<     finalized: false,
-<     resetCache: null
-<   },
-<   Block {
-<     type: '__enclosing_stages',
-<     id: '__enclosing_distr_groups_1',
-<     positions: 'linear',
-<     takenPositions: [],
-<     items: [],
-<     itemsIds: { distr_groups: true },
-<     unfinishedItems: [ [Object] ],
-<     index: 0,
-<     finalized: false,
-<     resetCache: null
-<   },
-<   Block {
-<     type: '__enclosing_steps',
-<     id: '__enclosing_distr_groups_steps_1',
-<     positions: 'linear',
-<     takenPositions: [],
-<     items: [],
-<     itemsIds: {
-<       distr_groups: true,
-<       'Within Groups': true,
-<       'Between Groups': true
-<     },
-<     unfinishedItems: [ [Object], [Object], [Object] ],
-<     index: 0,
-<     finalized: false,
-<     resetCache: null
-<   },
-<   Block {
-<     type: '__stepBlock_',
-<     id: 'Intro Groups',
-<     positions: '*',
-<     takenPositions: [],
-<     items: [],
-<     itemsIds: {
-<       groups_intro: true,
-<       groups_intro_treatment: true,
-<       tutorial_groups_quiz: true,
-<       tutorial_groups: true,
-<       groups_task: true,
-<       __enclosing_justification_3: true,
-<       __enclosing_feedback_4: true,
-<       __enclosing_end_5: true
-<     },
-<     unfinishedItems: [
-<       [Object], [Object],
-<       [Object], [Object],
-<       [Object], [Object],
-<       [Object], [Object]
-<     ],
-<     index: 0,
-<     finalized: false,
-<     resetCache: null
-<   },
-<   Block {
-<     type: '__enclosing_stages',
-<     id: '__enclosing_gameover_6',
-<     positions: 'linear',
-<     takenPositions: [],
-<     items: [],
-<     itemsIds: { gameover: true },
-<     unfinishedItems: [ [Object] ],
-<     index: 0,
-<     finalized: false,
-<     resetCache: null
-<   },
-<   Block {
-<     type: '__enclosing_steps',
-<     id: '__enclosing_gameover_steps_6',
-<     positions: 'linear',
-<     takenPositions: [],
-<     items: [],
-<     itemsIds: {},
-<     unfinishedItems: [],
-<     index: 0,
-<     finalized: false,
-<     resetCache: null
-<   }
-< ]
-
-
+     ...
+ },
+ {
+    type: '__enclosing_steps',
+    id: '__enclosing_stageInBlock_steps_3',
+    positions: 'linear',
+    ...
+ }
+ * ```
+ *
+ * to both `blocks` and `unfinishedBlocks`. The two last blocks from
+ * `unfinishedBlocks` are removed before (the stage-block enclosing this stage
+ * and the stage from previous block). ??? TODO CHECK whether this makes sense.
+ *
+ * Adding another stage within the stage block will behave the same way,
+ * will remove the current last two blocks from the `unfinishedBlocks` array
+ * and replaced with two blocks for the new stage.
+ *
+ *
+ * ### Adding a step block inside a stage
+ *
+ * If we add a step block inside a stage with:
+ *
+ * ```js
+ *     stager.stepBlock('myStepBlock', 'linear');
+ * ```
+ *
+ * Adds a new block:
+ *
+ * ```js
+ * {
+ *     type: '__stepBlock_',
+ *     id: 'myStepBlock',
+ *     positions: 'linear',
+ *     ...
+ * }
+ * ```
+ *
+ * to both `blocks` and `unfinishedBlocks`. No block is removed from
+ * the `unfinishedBlocks` array.
+ *
+ *
+ * ### Adding a step inside the step block
+ *
+ *  If we add a step inside the step block with:
+ *
+ * ```js
+ *     stager.step('stepInBlock');
+ * ```
+ *
+ * no new blocks are added, but one item is added inside the `unfinishedItems`
+ * array of the last open block ('myStepBlock').
+ *
+ * ```js
+ * {
+ *    type: 'stageInBlock2',
+ *    item: 'stepInBlock',
+ *    id: 'stepInBlock'
+ * }
+ * ```
+ *
+ * Further steps in the same step block will add new items here.
+ *
+ *
+ * ### Adding another step block inside a stage
+ *
+ * If we add an additional step block inside a stage with:
+ *
+ * ```js
+ *     stager.stepBlock('anotherStepBlock', 'linear');
+ * ```
+ *
+ * Adds a new block:
+ *
+ * ```js
+ * {
+ *     type: '__stepBlock_',
+ *     id: 'anotherStepBlock',
+ *     positions: 'linear',
+ *     ...
+ * }
+ * ```
+ *
+ * to both `blocks` and `unfinishedBlocks`. No block is removed from
+ * the `unfinishedBlocks` array.
+ *
+ * ### Adding another stage after a step block
+ *
+ * If we add another stage with
+ *
+ * ```js
+ * stager.stage('stageInBlock3');
+ * ```
+ *
+ * two blocks are added to the `blocks` array:
+ *
+ * ```js
+ * {
+ *    type: '__enclosing_stages',
+ *    id: '__enclosing_stageInBlock3_6',
+ *    positions: 'linear',
+ *    ...
+ * },
+ * {
+ *   type: '__enclosing_steps',
+ *   id: '__enclosing_stageInBlock3_steps_6',
+ *   positions: 'linear',
+ *   ...
+ * }
+ * ```
+ *
+ * The last two blocks in the `unfinishedBlocks` array plus all step blocks
+ * (in total 4 blocks) are removed, and two new ones for the new
+ * stage are added.
+ *
+ *
+ * ### Adding a second stage block
+ *
+ * If we add a second stage block with:
+ *
+ * ```js
+ * stager.stageBlock('anotherStageBlock', 'linear');
+ * ```
+ *
+ * one block is added to the `blocks` array:
+ *
+ * ```js
+ * {
+ * type: '__stageBlock_',
+ * id: 'anotherStageBlock',
+ * positions: 'linear',
+ * ...
+ * }
+ * ```
+ *
+ * The last block in the `unfinishedBlocks` array is removed (for the steps
+ * of the previous stage), and a new one for the new stage block is added
+ * No enclosing stages and steps blocks added yet.
+ *
+ *
+ * ### Adding one stage within the second stage block
+ *
+ * If we add a stage in the block with:
+ *
+ * ```js
+ * stager.stage('stageInBlock');
+ * ```
+ *
+ * two blocks are added to the `blocks` array:
+ *
+ * ```js
+ {
+     type: '__enclosing_stages',
+     id: '__enclosing_stageInBlock_3',
+     positions: 'linear',
+     ...
+ },
+ {
+    type: '__enclosing_steps',
+    id: '__enclosing_stageInBlock_steps_3',
+    positions: 'linear',
+    ...
+ }
+ * ```
+ *
+ * to both `blocks` and `unfinishedBlocks`. The two last blocks from
+ * `unfinishedBlocks` are removed before (the stage-block enclosing this stage
+ * and the stage from previous block). ??? TODO CHECK whether this makes sense.
+ *
+ * Adding another stage within the stage block will behave the same way,
+ * will remove the current last two blocks from the `unfinishedBlocks` array
+ * and replaced with two blocks for the new stage.
+ *
+ *
  */
 (function(exports, parent) {
 
@@ -16875,7 +17035,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Global scope
 
-    const J = parent.JSUS;
+    var J = parent.JSUS;
 
     // What is in the Stager obj at this point.
     var tmpStager = parent.Stager
@@ -16885,8 +17045,8 @@ if (!Array.prototype.indexOf) {
     exports.Stager = Stager;
 
     // Referencing shared entities.
-    const blockTypes = Stager.blockTypes;
-    const isDefaultStep = Stager.isDefaultStep;
+    var blockTypes = Stager.blockTypes;
+    var isDefaultStep = Stager.isDefaultStep;
 
     // ## Static Methods
 
@@ -17133,6 +17293,13 @@ if (!Array.prototype.indexOf) {
          * #### Stager.toSkip
          *
          * List of stages and steps to skip when building the sequence
+         *
+         * Skipped steps are stored as "stageId.stepId".
+         *
+         * If a stage/step is unskipped, its entry is set to null.
+         *
+         * @see Stager.skip
+         * @see Stager.unskip
          */
         this.toSkip = {
             stages: {},
@@ -17260,6 +17427,8 @@ if (!Array.prototype.indexOf) {
         for (blockIndex = 0; blockIndex < this.blocks.length; ++blockIndex) {
             this.blocks[blockIndex].backup();
         }
+
+
         // Closes unclosed blocks.
         this.endAllBlocks();
 
@@ -17362,26 +17531,26 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports, node) {
 
-    const J      = node.JSUS;
-    const Stager = node.Stager;
+    var J      = node.JSUS;
+    var Stager = node.Stager;
 
     // Get reference to shared entities in Stager.
-    const checkPositionsParameter = Stager.checkPositionsParameter;
-    const addStageBlock           = Stager.addStageBlock;
-    const addBlock                = Stager.addBlock;
-    const checkFinalized          = Stager.checkFinalized;
-    const handleStepsArray        = Stager.handleStepsArray;
-    const makeDefaultStep         = Stager.makeDefaultStep;
-    const addStepToBlock          = Stager.addStepToBlock;
+    var checkPositionsParameter = Stager.checkPositionsParameter;
+    var addStageBlock           = Stager.addStageBlock;
+    var addBlock                = Stager.addBlock;
+    var checkFinalized          = Stager.checkFinalized;
+    var handleStepsArray        = Stager.handleStepsArray;
+    var makeDefaultStep         = Stager.makeDefaultStep;
+    var addStepToBlock          = Stager.addStepToBlock;
 
-    const blockTypes              = Stager.blockTypes;
-    const BLOCK_STAGE             = blockTypes.BLOCK_STAGE;
-    const BLOCK_STEPBLOCK         = blockTypes.BLOCK_STEPBLOCK;
-    const BLOCK_STEP              = blockTypes.BLOCK_STEP;
+    var blockTypes              = Stager.blockTypes;
+    var BLOCK_STAGE             = blockTypes.BLOCK_STAGE;
+    var BLOCK_STEPBLOCK         = blockTypes.BLOCK_STEPBLOCK;
+    var BLOCK_STEP              = blockTypes.BLOCK_STEP;
 
-    const BLOCK_ENCLOSING         = blockTypes.BLOCK_ENCLOSING;
-    const BLOCK_ENCLOSING_STEPS   = blockTypes.BLOCK_ENCLOSING_STEPS;
-    const BLOCK_ENCLOSING_STAGES  = blockTypes.BLOCK_ENCLOSING_STAGES;
+    var BLOCK_ENCLOSING         = blockTypes.BLOCK_ENCLOSING;
+    var BLOCK_ENCLOSING_STEPS   = blockTypes.BLOCK_ENCLOSING_STEPS;
+    var BLOCK_ENCLOSING_STAGES  = blockTypes.BLOCK_ENCLOSING_STAGES;
 
     /**
      * #### Stager.addStep | createStep
@@ -18126,9 +18295,9 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports, node) {
 
-    const J = node.JSUS;
-    const Stager = node.Stager;
-    const stepRules = node.stepRules;
+    var J = node.JSUS;
+    var Stager = node.Stager;
+    var stepRules = node.stepRules;
 
     // Referencing shared entities.
     var isDefaultCb = Stager.isDefaultCb;
@@ -18210,6 +18379,11 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        // Set openStepBlocks.
+        if (stateObj.hasOwnProperty('openStepBlocks')) {
+            this.openStepBlocks = stateObj.openStepBlocks;
+        }
+
         // Add sequence:
         if (stateObj.hasOwnProperty('sequence')) {
             for (idx = 0; idx < stateObj.sequence.length; idx++) {
@@ -18280,8 +18454,8 @@ if (!Array.prototype.indexOf) {
                 this.blocksIds[blockObj.id] = idx;
             }
         }
-        if (stateObj.hasOwnProperty('currentType')) {
-            this.currentType = stateObj.currentType;
+        if (stateObj.hasOwnProperty('currentStage')) {
+            this.currentStage = stateObj.currentStage;
         }
         if (stateObj.hasOwnProperty('currentBlockType')) {
             this.currentBlockType = stateObj.currentBlockType;
@@ -18295,12 +18469,6 @@ if (!Array.prototype.indexOf) {
      * #### Stager.getState
      *
      * Finalizes the stager and returns a copy of internal state
-     *
-     * Fields of returned object:
-     *
-     * steps, stages, sequence, generalNextFunction, nextFunctions,
-     * defaultStepRule, defaultGlobals, defaultProperties, onInit,
-     * onGameover, blocks.
      *
      * // TODO: the finalize param does not do what expected
      * @param {boolean} finalize. If TRUE, it calls finalize before
@@ -18330,8 +18498,9 @@ if (!Array.prototype.indexOf) {
             toSkip:              this.toSkip,
             defaultCallback:     this.defaultCallback,
             cacheReset:          this.cacheReset,
-            currentType:         this.currentType,
-            currentBlockType:    this.currentBlockType
+            currentStage:        this.currentStage,
+            currentBlockType:    this.currentBlockType,
+            openStepBlocks:      this.openStepBlocks
         });
 
         // Cloning blocks separately.
@@ -18568,7 +18737,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see Stager.onInit
      */
-    Stager.prototype.getOnInit = function(func) {
+    Stager.prototype.getOnInit = function() {
         return this.onInit;
     };
 
@@ -18696,7 +18865,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stager extend stages, modify sequence
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, node) {
@@ -18747,8 +18916,9 @@ if (!Array.prototype.indexOf) {
             J.mixin(step, update);
         }
         else {
-            throw new TypeError('Stager.extendStep: update must be object ' +
-                                'or function. Step id: ' + stepId);
+            throw new TypeError('Stager.extendStep: step "' + stepId +
+                                '": update must be object ' +
+                                'or function. Found: ' + update);
         }
     };
 
@@ -18825,6 +18995,36 @@ if (!Array.prototype.indexOf) {
         }
     };
 
+    /**
+     * #### Stager.extendSteps
+     *
+     * Extends steps with given ids
+     *
+     * @param {array} stepIds The ids of the steps to update.
+     * @param {object|function} update The object containing the
+     *   properties to update, or an update function that takes a copy
+     *   of current step and returns the whole new updated step
+     *
+     * @see Stager.addStep
+     * @see Stager.extendStep
+     */
+    Stager.prototype.extendSteps = function(stepIds, update) {
+        if (!J.isArray(stepIds)) {
+            throw new TypeError('Stager.extendSteps: stepIds ' +
+                                'must be array. Found: ' + stepIds);
+        }
+        stepIds.forEach((stepId) => {
+            if (!this.steps[stepId]) {
+                console.log('**warn: Stager.extendSteps: step with id " '+
+                            stepId + '" not found');
+            }
+            else {
+                this.extendStep(stepId, update);
+            }
+
+        });
+    };
+
     /* #### Stager.extendAllStages
      *
      * Extends all existing stages
@@ -18846,22 +19046,51 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * #### Stager.extendStages
+     *
+     * Extends steps with given ids
+     *
+     * @param {array} stageIds The ids of the stages to update.
+     * @param {object|function} update The object containing the
+     *   properties to update, or an update function that takes a copy
+     *   of current stage and returns the whole new updated stage
+     *
+     * @see Stager.extendStage
+     */
+    Stager.prototype.extendStages = function(stageIds, update) {
+        if (!J.isArray(stageIds)) {
+            throw new TypeError('Stager.extendSteps: stageIds ' +
+                                'must be array. Found: ' + stageIds);
+        }
+        stageIds.forEach((stageId) => {
+            if (!this.stages[stageId]) {
+                console.log('**warn: Stager.extendStages: stage with id " '+
+                            stageId + '" not found');
+            }
+            else {
+                this.extendStage(stageId, update);
+            }
+        });
+    };
+
+    /**
      * #### Stager.skip
      *
      * Marks a stage or as step as `toSkip` and won't be added to sequence
      *
      * Must be called before invoking `Stager.finalize()`.
      *
-     * @param {string} stageId The id of the stage to skip
-     * @param {string} stepId Optional. The id of the step within
-     *   the stage to skip
+     * @param {string|array} stageId The id/s of the stage to skip
+     * @param {string|array} stepId Optional. The id/s of the step within
+     *   the stage to skip. Notice stepId and stageId cannot be both arrays.
      *
      * @see Stager.unskip
      * @see Stager.finalize
      */
     Stager.prototype.skip = function(stageId, stepId) {
         checkFinalized(this, 'skip');
-        setSkipStageStep(this, stageId, stepId, true, 'skip');
+        setSkipStageStepArray(this, stageId, stepId, true, 'skip');
+
     };
 
     /**
@@ -18871,15 +19100,16 @@ if (!Array.prototype.indexOf) {
      *
      * Must be called before invoking `Stager.finalize()`.
      *
-     * @param {string} stageId The id of the stage
-     * @param {string} stepId Optional. The id of the step within the stage
+     * @param {string|array} stageId The id/s of the stage to skip
+     * @param {string|array} stepId Optional. The id/s of the step within
+     *   the stage to unskip. Notice stepId and stageId cannot be both arrays.
      *
      * @see Stager.skip
      * @see Stager.finalize
      */
     Stager.prototype.unskip = function(stageId, stepId) {
         checkFinalized(this, 'unskip');
-        setSkipStageStep(this, stageId, stepId, null, 'unskip');
+        setSkipStageStepArray(this, stageId, stepId, false, 'unskip');
     };
 
     /**
@@ -18900,6 +19130,8 @@ if (!Array.prototype.indexOf) {
                                   'isSkipped');
     };
 
+    // ## Helper functions.
+
     /**
      * #### setSkipStageStep
      *
@@ -18915,10 +19147,56 @@ if (!Array.prototype.indexOf) {
      *
      * @api private
      */
+    function setSkipStageStepArray(that, stageId, stepId, value, method) {
+
+        if (J.isArray(stageId) && stageId.length === 1) stageId = stageId[0];
+        if (J.isArray(stepId) && stepId.length === 1) stepId = stepId[0];
+
+        if (J.isArray(stageId) && J.isArray(stepId)) {
+            throw new Error('Staker.' + method + ': stageId and stepId ' +
+                            'cannot be both arrays of length > 1');
+        }
+        if (J.isArray(stageId)) {
+            stageId.forEach((_stageId) => {
+                setSkipStageStep(that, _stageId, stepId, value, method);
+            });
+        }
+        else if (J.isArray(stepId)) {
+            stepId.forEach((_stepId) => {
+                setSkipStageStep(that, stageId, _stepId, value, method);
+            });
+        }
+        else {
+            setSkipStageStep(that, stageId, stepId, value, method);
+        }
+    }
+
+    /**
+     * #### setSkipStageStep
+     *
+     * Sets/Gets the value for the flag `toSkip` for a stage or a step
+     *
+     * @param {Stager} that Stager object
+     * @param {string} stageId The id of the stage
+     * @param {string} stepId Optional. The id of the step within the stage
+     * @param {mixed} value If defined, is assigned to the stage or step
+     * @param {string} method The name of the method calling the validation
+     *
+     * @return {boolean|null} Whether the stage or step is currently skipped.
+     *     A step can be skipped if its stage is skipped; vice versa, a stage
+     *     can be skipped if all of its steps are skipped.
+     *
+     * @api private
+     */
     function setSkipStageStep(that, stageId, stepId, value, method) {
+        var allStepsSkipped, steps, i;
         if ('string' !== typeof stageId || stageId.trim() === '') {
             throw new TypeError('Stager.' + method + ': stageId must ' +
                                 'be a non-empty string. Found: ' + stageId);
+        }
+        if (!that.stages[stageId]) {
+            console.log('**warn: Stager.' + method + ': unknown stage: "' +
+                        stageId + '" (you may still add it later)');
         }
         if (stepId) {
             if ('string' !== typeof stepId || stepId.trim() === '') {
@@ -18926,13 +19204,43 @@ if (!Array.prototype.indexOf) {
                                     'be a non-empty string or undefined.' +
                                     'Found: ' + stepId);
             }
+
+            if (!that.steps[stepId]) {
+                console.log('**warn: Stager.' + method + ': unknown step: "' +
+                            stepId + '" (you may still add it later)');
+            }
+
             if ('undefined' !== typeof value) {
                 that.toSkip.steps[stageId + '.' + stepId] = value;
             }
-            return that.toSkip.steps[stageId + '.' + stepId];
+
+            // A step may be skipped if the stage is skipped.
+            return that.toSkip.stages[stageId] ||
+                   that.toSkip.steps[stageId + '.' + stepId];
         }
+
+        // Set the value.
         if ('undefined' !== typeof value) that.toSkip.stages[stageId] = value;
-        return that.toSkip.stages[stageId];
+
+        // If the stage was previously set to be skipped return TRUE.
+        if (that.toSkip.stages[stageId]) return true;
+
+        // A stage can be skipped if all of its steps are skipped.
+        allStepsSkipped = true;
+        steps = that.stages[stageId].steps;
+        for (i = 0; i < steps.length; i++) {
+            // First step might be the default one and will be removed
+            // if there are additional steps.
+            if (i === 0 && steps.length > 1) {
+                if (isDefaultStep(that.steps[steps[i]])) continue;
+            }
+            if (!that.toSkip.steps[stageId + '.' + steps[i]]) {
+                allStepsSkipped = false;
+                break;
+            }
+        }
+
+        return allStepsSkipped;
     }
 
 
@@ -19122,20 +19430,19 @@ if (!Array.prototype.indexOf) {
  */
 (function(exports, node) {
 
-    const Stager     = node.Stager;
+    var Stager = node.Stager;
 
-    const checkPositionsParameter = Stager.checkPositionsParameter;
-    const addStageBlock = Stager.addStageBlock;
-    const addBlock = Stager.addBlock;
+    var checkPositionsParameter = Stager.checkPositionsParameter;
+    var addStageBlock = Stager.addStageBlock;
+    var addBlock = Stager.addBlock;
 
-    const blockTypes = Stager.blockTypes;
-    const BLOCK_DEFAULT     = blockTypes.BLOCK_DEFAULT;
-    const BLOCK_STAGEBLOCK  = blockTypes.BLOCK_STAGEBLOCK;
-    const BLOCK_STEPBLOCK   = blockTypes.BLOCK_STEPBLOCK;
-    const BLOCK_STEP        = blockTypes.BLOCK_STEP;
-
-    const BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
-    const BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
+    var blockTypes               = Stager.blockTypes;
+    var BLOCK_DEFAULT            = blockTypes.BLOCK_DEFAULT;
+    var BLOCK_STAGEBLOCK         = blockTypes.BLOCK_STAGEBLOCK;
+    var BLOCK_STEPBLOCK          = blockTypes.BLOCK_STEPBLOCK;
+    var BLOCK_STEP               = blockTypes.BLOCK_STEP;
+    var BLOCK_ENCLOSING          = blockTypes.BLOCK_ENCLOSING;
+    var BLOCK_ENCLOSING_STEPS    = blockTypes.BLOCK_ENCLOSING_STEPS;
 
     /**
      * #### Stager.stepBlock
@@ -19145,29 +19452,21 @@ if (!Array.prototype.indexOf) {
      * This function just validates the input paramters and passes them
      * to lower level function `addBlock`.
      *
-     * @param {string} id Optional. The id of the block.
+     * @param {string} id The id of the block.
      * @param {string|number} positions Optional. Positions within the
      *   enclosing Block that this block may occupy.
      *
      * @return {Stager} Reference to the current instance for method chaining
      */
-    Stager.prototype.stepBlock = function() {
-        var positions, id, curBlock, err;
+    Stager.prototype.stepBlock = function(id, positions) {
+        var curBlock, err;
 
-        if (arguments.length === 1) {
-            positions = arguments[0];
+        if ('string' !== typeof id || id.trim() === '') {
+            throw new TypeError('Stager.stepBlock: id must be a non-empty ' +
+                                'string. Found: ' + id);
         }
-        else if (arguments.length === 2) {
-            id = arguments[0];
-            positions = arguments[1];
-
-            if ('string' !== typeof id) {
-                throw new TypeError('Stager.stepBlock: id must be string. ' +
-                                    'Found: ' + id);
-            }
-            if (this.blocksIds[id]) {
-                throw new Error('Stager.stepBlock: non-unique id: ' + id);
-            }
+        if (this.blocksIds[id]) {
+            throw new Error('Stager.stepBlock: non-unique id: ' + id);
         }
 
         // Check if a stage block can be added in this position.
@@ -19209,7 +19508,7 @@ if (!Array.prototype.indexOf) {
      * This function just validates the input paramters and passes them
      * to lower level function `addStageBlock`.
      *
-     * @param {string} id Optional. The id of the block.
+     * @param {string} id The id of the block.
      * @param {string|number} positions Optional. Positions within the
      *   enclosing Block that this block can occupy.
      *
@@ -19217,23 +19516,15 @@ if (!Array.prototype.indexOf) {
      *
      * @see addStageBlock
      */
-    Stager.prototype.stageBlock = function() {
-        var positions, id, curBlock, err;
+    Stager.prototype.stageBlock = function(id, positions) {
+        var curBlock, err;
 
-        if (arguments.length === 1) {
-            positions = arguments[0];
+        if ('string' !== typeof id || id.trim() === '') {
+            throw new TypeError('Stager.stageBlock: id must be a non-empty ' +
+                                'string. Found: ' + id);
         }
-        else if (arguments.length === 2) {
-            id = arguments[0];
-            positions = arguments[1];
-
-            if ('string' !== typeof id) {
-                throw new TypeError('Stager.stageBlock: id must be string. ' +
-                                   'Found: ' + id);
-            }
-            if (this.blocksIds[id]) {
-                throw new Error('Stager.stageBlock: non-unique id: ' + id);
-            }
+        if (this.blocksIds[id]) {
+            throw new Error('Stager.stageBlock: non-unique id: ' + id);
         }
 
         // Check if a stage block can be added in this position.
@@ -19268,10 +19559,8 @@ if (!Array.prototype.indexOf) {
      *   unfinished block is found
      */
     Stager.prototype.getCurrentBlock = function() {
-        if (this.unfinishedBlocks.length > 0) {
-            return this.unfinishedBlocks[this.unfinishedBlocks.length -1];
-        }
-        return false;
+        if (this.unfinishedBlocks.length === 0) return false;
+        return this.unfinishedBlocks[this.unfinishedBlocks.length -1];
     };
 
     /**
@@ -30283,9 +30572,8 @@ if (!Array.prototype.indexOf) {
      *   // only DATA msg with the right label will be fired.
      *   this.alias('data', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
      *       return function(msg) {
-     *           if (msg.text === text) {
-     *               cb.call(that.game, msg);
-     *           }
+     *           if (msg.text === text) cb.call(that.game, msg);
+     *           else return false;
      *       };
      *   });
      *
@@ -30298,7 +30586,8 @@ if (!Array.prototype.indexOf) {
      *   will be registered
      * @param {function} modifier Optional. A function that makes a closure
      *   around its own input parameters, and returns a function that will
-     *   actually be invoked when the aliased event is fired.
+     *   actually be invoked when the aliased event is fired. It should return
+     *   FALSE if it does not executes the user callback.
      */
     NGC.prototype.alias = function(alias, events, modifier) {
         var that;
@@ -30320,34 +30609,220 @@ if (!Array.prototype.indexOf) {
         }
 
         that = this;
-        if (!J.isArray(events)) events = [events];
 
         this.on[alias] = function(func) {
+            var i, len, args;
+
             // If set, we use the callback returned by the modifier.
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
-                func = modifier.apply(that.game, arguments);
+                args = [];
+                i = -1, len = arguments.length;
+                for ( ; ++i < len ; ) {
+                    args[i] = arguments[i];
+                }
+                func = modifier.apply(that.game, args);
             }
+
             J.each(events, function(event) {
                 that.on(event, function() {
                     func.apply(that.game, arguments);
                 });
             });
-        };
 
+        };
         this.once[alias] = function(func) {
+            var i, len, args;
+
             // If set, we use the callback returned by the modifier.
             // Otherwise, we assume the first parameter is the callback.
             if (modifier) {
-                func = modifier.apply(that.game, arguments);
+                args = [];
+                i = -1, len = arguments.length;
+                for ( ; ++i < len ; ) {
+                    args[i] = arguments[i];
+                }
+                func = modifier.apply(that.game, args);
             }
+
             J.each(events, function(event) {
-                that.once(event, function() {
-                    func.apply(that.game, arguments);
-                });
+                // We redo the once method manually because otherwise
+                // the first call to a once method will remove all once listeners
+                // defined with this alias. Normal once calls the listener function,
+                // that wraps the modifier which may or may not execute the
+                // user-defined function. We introduce that if the modifier
+                // return false, it means the user-defined function was not
+                // executed and therefore it should not be removed.
+                function g() {
+                    var i, len, args, toRemove;
+                    args = [];
+                    i = -1, len = arguments.length;
+                    for ( ; ++i < len ; ) {
+                        args[i] = arguments[i];
+                    }
+                    toRemove = func.apply(that.game, args);
+                    // If a modifier returns false it has not executed the
+                    // user-defined listener, so we should not remove it.
+                    if (!modifier || toRemove !== false) that.off(event, g);
+                }
+                that.on(event, g);
             });
         };
+
+        // attachAlias(this, 'on', events, modifier, alias);
+        // attachAlias(this, 'once', events, modifier, alias);
+
+        // this.on[alias] = function(func) {
+        //     var i, len, args;
+        //     args = [];
+        //     i = -1, len = arguments.length;
+        //     for ( ; ++i < len ; ) {
+        //         args[i] = arguments[i];
+        //     }
+        //     // If set, we use the callback returned by the modifier.
+        //     // Otherwise, we assume the first parameter is the callback.
+        //     if (modifier) func = modifier.apply(that.game, args);
+        //
+        //     // Optimized.
+        //     if (eventsLen < 3) {
+        //         that.on(event[0], function() {
+        //             func.apply(that.game, args);
+        //         });
+        //         if (eventsLen === 2) {
+        //             that.on(event[1], function() {
+        //                 func.apply(that.game, args);
+        //             });
+        //         }
+        //     }
+        //     else {
+        //         for ( ; ++i < len ; ) {
+        //             that.on(event[i], function() {
+        //                 func.apply(that.game, args);
+        //             });
+        //         }
+        //     }
+        // };
+
+        // TODO: remove code duplication?
+        // this.once[alias] = function(func) {
+        //     var i, len, args;
+        //     args = [];
+        //     i = -1, len = arguments.length;
+        //     for ( ; ++i < len ; ) {
+        //         args[i] = arguments[i];
+        //     }
+        //     // If set, we use the callback returned by the modifier.
+        //     // Otherwise, we assume the first parameter is the callback.
+        //     if (modifier) func = modifier.apply(that.game, args);
+        //
+        //     // Optimized.
+        //     if (eventsLen < 3) {
+        //         that.once(event[0], function() {
+        //             func.apply(that.game, args);
+        //         });
+        //         if (eventsLen === 2) {
+        //             that.once(event[1], function() {
+        //                 func.apply(that.game, args);
+        //             });
+        //         }
+        //     }
+        //     else {
+        //         for ( ; ++i < len ; ) {
+        //             that.once(event[i], function() {
+        //                 func.apply(that.game, args);
+        //             });
+        //         }
+        //     }
+        // };
+
+
+
     };
+
+    // function attachAlias(that, method, events, modifier, alias) {
+    //     var eventsLen = events.length;
+    //     that[method][alias] = function(func) {
+    //         var i, len, args;
+    //         // Cloning arguments array.
+    //         i = -1;
+    //         len = arguments.length;
+    //         args = new Array(len);
+    //         for ( ; ++i < len ; ) {
+    //             args[i] = arguments[i];
+    //         }
+    //         // If set, we use the callback returned by the modifier.
+    //         // Otherwise, we assume the first parameter is the callback.
+    //         if (modifier) func = modifier.apply(that.game, args);
+    //
+    //         // Optimized.
+    //         if (eventsLen < 3) {
+    //             that[method](events[0], function() {
+    //                 func.apply(that.game, arguments);
+    //             });
+    //             if (eventsLen === 2) {
+    //                 that[method](events[1], function() {
+    //                     func.apply(that.game, arguments);
+    //                 });
+    //             }
+    //         }
+    //         else {
+    //             for ( ; ++i < len ; ) {
+    //                 that[method](events[i], function() {
+    //                     func.apply(that.game, arguments);
+    //                 });
+    //             }
+    //         }
+    //     };
+    // }
+
+
+    // function attachAlias(that, method, events, modifier, alias) {
+    //     var eventsLen = events.length;
+    //     that[method][alias] = function(func) {
+    //         var i;
+    //         // Cloning arguments array.
+    //         // i = -1;
+    //         // len = arguments.length;
+    //         // args = new Array(len);
+    //         // for ( ; ++i < len ; ) {
+    //         //     args[i] = arguments[i];
+    //         // }
+    //         // If set, we use the callback returned by the modifier.
+    //         // Otherwise, we assume the first parameter is the callback.
+    //         // if (modifier) func = modifier.apply(that.game, args);
+    //
+    //         // Optimized.
+    //
+    //         that[method](events[0], function() {
+    //             if (modifier) {
+    //                 func = modifier.apply(that.game, arguments);
+    //                 if (!func) return;
+    //             }
+    //             func.apply(that.game, arguments);
+    //         });
+    //         if (eventsLen === 2) {
+    //             that[method](events[1], function() {
+    //                 if (modifier) {
+    //                     func = modifier.apply(that.game, arguments);
+    //                     if (!func) return;
+    //                 }
+    //                 func.apply(that.game, arguments);
+    //             });
+    //         }
+    //         else {
+    //             i = 0;
+    //             for ( ; ++i < eventsLen ; ) {
+    //                 that[method](events[i], function() {
+    //                     if (modifier) {
+    //                         func = modifier.apply(that.game, arguments);
+    //                         if (!func) return;
+    //                     }
+    //                     func.apply(that.game, arguments);
+    //                 });
+    //             }
+    //         }
+    //     };
+    // }
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -32164,9 +32639,7 @@ if (!Array.prototype.indexOf) {
 
     var NGC = parent.NodeGameClient;
 
-    var J = parent.JSUS,
-    GamePlot = parent.GamePlot,
-    Stager = parent.Stager;
+    var J = parent.JSUS;
 
     var constants = parent.constants;
 
@@ -32666,7 +33139,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # aliases
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Event listener aliases.
@@ -32708,7 +33181,8 @@ if (!Array.prototype.indexOf) {
                                     'string. Found: ' + text);
             }
             return function(msg) {
-                if (msg.text === text) cb.call(that.game, msg);                
+                if (msg.text === text) cb.call(that.game, msg);
+                else return false;
             };
         });
 
@@ -32716,6 +33190,7 @@ if (!Array.prototype.indexOf) {
         this.alias('stage', 'STEPPING', function(cb) {
             return function(curStep, newStep) {
                 if (curStep.stage !== newStep.stage) cb(curStep, newStep);
+                else return false;
             };
         });
 
@@ -57300,7 +57775,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    SVOGauge.version = '0.8.0';
+    SVOGauge.version = '0.8.1';
     SVOGauge.description = 'Displays an interface to measure social ' +
         'value orientation (S.V.O.).';
 
@@ -57314,7 +57789,8 @@ if (!Array.prototype.indexOf) {
         'and the other participant in each row.<br/>' +
         'At the end of the experiment, <em>one of your six choices</em> will ' +
         'be chosen at random, and the bonus added to your and the ' +
-        'other participant\'s payment.',
+        'other participant\'s payment. Your choice will remain '  +
+        '<em>anonymous</em>.',
 
         left: 'Your Bonus:<hr/>Other\'s Bonus:'
     };
@@ -57410,10 +57886,11 @@ if (!Array.prototype.indexOf) {
             }
             this.method = opts.method;
         }
-        if (opts.mainText) {
-            if ('string' !== typeof opts.mainText) {
+        if ('undefined' !== typeof opts.mainText) {
+            if (opts.mainText !== false && 'string' !== typeof opts.mainText) {
                 throw new TypeError('SVOGauge.init: mainText must be string ' +
-                                    'or undefined. Found: ' + opts.mainText);
+                                    'false, or undefined. Found: ' +
+                                     opts.mainText);
             }
             this.mainText = opts.mainText;
         }
@@ -57524,7 +58001,7 @@ if (!Array.prototype.indexOf) {
 
     // ### SVO_Slider
     function SVO_Slider(options) {
-        var items, sliders;
+        var items, sliders, mainText;
         var gauge, i, len;
         var renderer;
 
@@ -57616,11 +58093,16 @@ if (!Array.prototype.indexOf) {
             };
         }
 
+        if (this.mainText) {
+            mainText = this.mainText;
+        }
+        else if ('undefined' === typeof this.mainText) {
+            mainText = this.getText('mainText');
+        }
         gauge = node.widgets.get('ChoiceTableGroup', {
             id: options.id || 'svo_slider',
             items: items,
-            // TODO: should it be on getText at all?
-            mainText: this.mainText || this.getText('mainText'),
+            mainText: mainText,
             title: false,
             renderer: renderer,
             requiredChoice: this.required,
