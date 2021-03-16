@@ -4,6 +4,8 @@
 - DONE is async to respect to node.game.step to let other listeners on DONE
 finish first.
 - missValues from widgets does not block next step execution.
+- Widgets' action required is not checked if the timer is expired.
+- Fixed node.once.data removing all node.once data listeners after first exec.
 
 ## 6.1.0
 - Fixed exit callback of stages leaked into steps.
