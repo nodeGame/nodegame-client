@@ -25838,13 +25838,12 @@ if (!Array.prototype.indexOf) {
      * @see node.constants.stageLevels
      */
     Game.prototype.isReady = function() {
-        var node, stageLevel, stateLevel;
+        var stageLevel, stateLevel;
 
         if (this.paused) return false;
 
         stateLevel = this.getStateLevel();
         stageLevel = this.getStageLevel();
-        node = this.node;
 
         switch (stateLevel) {
         case constants.stateLevels.UNINITIALIZED:
@@ -26290,7 +26289,7 @@ if (!Array.prototype.indexOf) {
             }
         }
         else {
-            s = this.getCurrentGameStage().step
+            s = this.getCurrentGameStage().step;
         }
         if ('number' === typeof step) return step === s;
         // Add the current stage id for normalization if no stage is provided.
@@ -27442,7 +27441,7 @@ if (!Array.prototype.indexOf) {
             num = value.call(this.node.game);
             break;
         case 'string':
-            num = Number(options);
+            num = Number(value);
             break;
         }
 
@@ -27910,7 +27909,6 @@ if (!Array.prototype.indexOf) {
      * @returns {string} The name of the hook
      */
     GameTimer.prototype.addHook = function(hook, ctx, name) {
-        var i;
         checkDestroyed(this, 'addHook');
         if ('undefined' === typeof hook) {
             throw new TypeError('GameTimer.addHook: hook must be function, ' +
@@ -30566,6 +30564,10 @@ if (!Array.prototype.indexOf) {
      * after the alias. The alias can be used as a shortcut to register
      * to new listeners on the given events.
      *
+     * Note: aliases cannot return values to the emit call.
+     * TODO: node.on aliases could do it without problem, node.once aliases
+     * have the problem that the return value is currently used to detect
+     * whether the modifier function actually executed the user callback.
      *
      * ```javascript
      *   // The node.on.data alias example with modifier function
@@ -30577,8 +30579,8 @@ if (!Array.prototype.indexOf) {
      *       };
      *   });
      *
-     *  node.on.data('myLabel', function(){ ... };
-     *  node.once.data('myLabel', function(){ ... };
+     *  node.on.data('myLabel', function() { ... };
+     *  node.once.data('myLabel', function() { ... };
      * ```
      *
      * @param {string} alias The name of alias
@@ -30647,8 +30649,8 @@ if (!Array.prototype.indexOf) {
 
             J.each(events, function(event) {
                 // We redo the once method manually because otherwise
-                // the first call to a once method will remove all once listeners
-                // defined with this alias. Normal once calls the listener function,
+                // the first call to once will remove all once listeners
+                // defined with this alias. Normal one calls the listener
                 // that wraps the modifier which may or may not execute the
                 // user-defined function. We introduce that if the modifier
                 // return false, it means the user-defined function was not
@@ -31456,7 +31458,7 @@ if (!Array.prototype.indexOf) {
         // Check if there are required widgets that are not ready.
         // Widget steps update the done callback, so no need to check them.
         if (!game.isWidgetStep()) {
-            if (this.widgets &&
+            if (!game.timer.isTimeup() && this.widgets &&
                 this.widgets.isActionRequired({
                     markAttempt: true,
                     highlight: true
@@ -41229,7 +41231,7 @@ if (!Array.prototype.indexOf) {
         // block node.done().
         if (options.required ||
             options.requiredChoice ||
-            options.correctChoice) {
+            'undefined' !== typeof options.correctChoice) {
 
             // Flag required is undefined, if not set to false explicitely.
             widget.required = true;
@@ -57787,8 +57789,8 @@ if (!Array.prototype.indexOf) {
         'will receive an <em>extra bonus</em>.<br/>' +
         'Choose the preferred bonus amounts (in cents) for you ' +
         'and the other participant in each row.<br/>' +
-        'At the end of the experiment, <em>one of your six choices</em> will ' +
-        'be chosen at random, and the bonus added to your and the ' +
+        'We will select <em>one row at random</em> ' +
+        'and add the bonus to your and the ' +
         'other participant\'s payment. Your choice will remain '  +
         '<em>anonymous</em>.',
 
