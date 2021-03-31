@@ -5469,7 +5469,7 @@ if (!Array.prototype.indexOf) {
      * @see PARSE.isFloat
      */
     PARSE.isNumber = function(n, lower, upper, leq, ueq) {
-        if (isNaN(n) || !isFinite(n)) return false;
+        if (isNaN(n) || !isFinite(n) || n === "") return false;
         n = parseFloat(n);
         if ('number' === typeof lower && (leq ? n < lower : n <= lower)) {
             return false;
@@ -10676,7 +10676,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Stepping Rules
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Collections of rules to determine whether the game should step forward.
@@ -10777,6 +10777,7 @@ if (!Array.prototype.indexOf) {
     exports.stepRules.OTHERS_SYNC_STAGE = function(stage, myStageLevel, pl,
                                                    game) {
 
+        var nSteps;
         if (!pl.size()) return false;
         stage = pl.first().stage;
         nSteps = game.plot.stepsToNextStage(stage);
@@ -32823,7 +32824,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameWindow
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * API to interface nodeGame with the browser window
@@ -33676,17 +33677,16 @@ if (!Array.prototype.indexOf) {
      *
      * Appends a configurable div element at to "top" of the page
      *
-     * @param {Element} root Optional. The HTML element to which the info
-     *   panel will be appended. Default:
+     * @param {object} opts Optional. Configuration options: TODO
      *
-     *   - above the main frame, or
-     *   - below the header, or
-     *   - inside _documents.body_.
+     *    - toggleBtn
+     *    - toggleBtnLabel
+     *    - toggleBtnRoot:
+     *    - force: destroys current Info Panel
      *
-     * @param {string} frameName Optional. The name of the iframe. Default:
-     *   'ng_mainframe'
      * @param {boolean} force Optional. Will create the frame even if an
-     *   existing one is found. Default: FALSE
+     *   existing one is found. Deprecated, use force flag in options.
+     *   Default: FALSE
      *
      * @return {InfoPanel} A reference to the InfoPanel object
      *
@@ -33698,12 +33698,20 @@ if (!Array.prototype.indexOf) {
         var infoPanelDiv, root, btn;
         opts = opts || {};
 
-        if (force) {
+        // Backward compatible.
+        if ('undefined' === typeof force) force = opts.force;
+
+        if (force && this.infoPanel) {
             this.infoPanel.destroy();
             this.infoPanel = null;
         }
 
         if (this.infoPanel) {
+            if (this.infoPanel.toggleBtn) {
+                if ('undefined' === typeof opts.toggleBtn) {
+                    opts.toggleBtn = false;
+                }
+            }
             // if (!force) {
             //     throw new Error('GameWindow.generateInfoPanel: info panel is ' +
             //                     'already existing. Use force to regenerate.');
@@ -33735,26 +33743,26 @@ if (!Array.prototype.indexOf) {
         }
 
         // Adds Toggle Button if not false.
-        if (opts.btn !== false) {
+        if (opts.toggleBtn !== false) {
             root = null;
-            if (!opts.btnRoot) {
+            if (!opts.toggleBtnRoot) {
                 if (this.headerElement) root = this.headerElement;
             }
             else {
-                if ('string' === typeof opts.btnRoot) {
-                    root = W.gid(opts.btnRoot);
+                if ('string' === typeof opts.toggleBtnRoot) {
+                    root = W.gid(opts.toggleBtnRoot);
                 }
                 else {
-                    root = opts.btnRoot;
+                    root = opts.toggleBtnRoot;
                 }
                 if (!J.isElement(root)) {
-                    throw new Error('GameWindow.generateInfoPanel: btnRoot ' +
-                                    'did not resolve to a valid HTMLElement: ' +
-                                    opts.btnRoot);
+                    throw new Error('GameWindow.generateInfoPanel: ' +
+                                    'toggleBtnRoot did not resolve to a ' +
+                                    'valid HTMLElement: ' + opts.toggleBtnRoot);
                 }
             }
             if (root) {
-                btn = W.infoPanel.createToggleButton(opts.btnLabel);
+                btn = W.infoPanel.createToggleBtn(opts.toggleBtnLabel);
                 root.appendChild(btn);
             }
         }
@@ -36650,6 +36658,7 @@ if (!Array.prototype.indexOf) {
      * @see InfoPanel.toggleBtn
      * @see InfoPanel.toggle
      */
+    InfoPanel.prototype.createToggleBtn = 
     InfoPanel.prototype.createToggleButton = function(label) {
         var that, button;
 
@@ -40483,7 +40492,7 @@ if (!Array.prototype.indexOf) {
         // block node.done().
         if (options.required ||
             options.requiredChoice ||
-            options.correctChoice) {
+            'undefined' !== typeof options.correctChoice) {
 
             // Flag required is undefined, if not set to false explicitely.
             widget.required = true;
@@ -44657,7 +44666,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChoiceTable
- * Copyright(c) 2020 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Creates a configurable table where each cell is a selectable choice
@@ -44674,7 +44683,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.7.0';
+    ChoiceTable.version = '1.8.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -45953,7 +45962,10 @@ if (!Array.prototype.indexOf) {
             }
             // Set table id.
             this.table.id = this.id;
-            if (this.className) J.addClass(this.table, this.className);
+            // Class.
+            tmp = this.className ? [ this.className ] : [];
+            if (this.orientation !== 'H') tmp.push('choicetable-vertical');
+            if (tmp.length) J.addClass(this.table, tmp);
             else this.table.className = '';
             // Append table.
             this.bodyDiv.appendChild(this.table);
@@ -46184,8 +46196,8 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|number} i The numeric position of a choice in display
      *
-     * @return {string|undefined} The value associated the numeric position.
-     *   If no value is found, returns undefined
+     * @return {string|undefined} The value associated with the numeric
+     *   position. If no value is found, returns undefined
      *
      * @see ChoiceTable.order
      * @see ChoiceTable.choices
@@ -46408,7 +46420,7 @@ if (!Array.prototype.indexOf) {
                 // This is the positional index.
                 j = J.randomInt(-1, (this.choicesCells.length-1));
                 // If shuffled, we need to resolve it.
-                choice = this.shuffleChoices ? this.getChoiceAtPosition(j) : j;
+                choice = this.shuffleChoices ? this.choicesValues[j] : j;
                 // Do not click it again if it is already selected.
                 if (!this.isChoiceCurrent(choice)) this.choicesCells[j].click();
             }
@@ -46594,7 +46606,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChoiceTableGroup
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Creates a table that groups together several choice tables widgets
@@ -46611,12 +46623,12 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.6.1';
+    ChoiceTableGroup.version = '1.7.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
     ChoiceTableGroup.title = 'Make your choice';
-    ChoiceTableGroup.className = 'choicetable'; // TODO: choicetablegroup?
+    ChoiceTableGroup.className = 'choicetable choicetablegroup';
 
     ChoiceTableGroup.separator = '::';
 
@@ -47225,11 +47237,11 @@ if (!Array.prototype.indexOf) {
 
         if (opts.header) {
             if (!J.isArray(opts.header) ||
-                opts.header.length !== opts.items.length - 1) {
+                opts.header.length !== opts.choices.length) {
 
                 throw new Error('ChoiceTableGroup.init: header ' +
                                 'must be an array of length ' +
-                                (opts.items.length - 1) +
+                                opts.choices.length +
                                 ' or undefined. Found: ' + opts.header);
             }
 
@@ -50100,12 +50112,12 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    CustomInputGroup.version = '0.2.0';
+    CustomInputGroup.version = '0.3.0';
     CustomInputGroup.description = 'Groups together and manages sets of ' +
         'CustomInput widgets.';
 
     CustomInputGroup.title = false;
-    CustomInputGroup.className = 'custominputgroup';
+    CustomInputGroup.className = 'custominput custominputgroup';
 
     CustomInputGroup.separator = '::';
 
@@ -50130,9 +50142,7 @@ if (!Array.prototype.indexOf) {
      *   If a `table` option is specified, it sets it as main
      *   table. All other options are passed to the init method.
      */
-    function CustomInputGroup(options) {
-        var that;
-        that = this;
+    function CustomInputGroup() {
 
         /**
          * ### CustomInputGroup.dl
@@ -50979,14 +50989,14 @@ if (!Array.prototype.indexOf) {
             // res.err = this.getText('inputErr');
             this.validation(res, values);
             if (opts.highlight && res.err) this.setError(res.err);
-
+            if (res.err) res.isCorrect = false;
         }
         else if (toReset) this.reset(toReset);
         if (!res.isCorrect && opts.highlight) this.highlight();
 
         // Restore opts.reset.
         opts.reset = toReset;
-        
+
         if (this.textarea) res.freetext = this.textarea.value;
         return res;
     };
@@ -55881,15 +55891,15 @@ if (!Array.prototype.indexOf) {
             str += 'Every box contains a prize of ' +
                     widget.boxValue + ' ' + widget.currency + ', but ';
             if (probBomb === 1) {
-                str += 'one box contains a <em>bomb</em>.';
+                str += 'one random box contains a <em>bomb</em>.';
             }
             else {
                 if (widget.revealProbBomb) {
                     str += 'with probability ' + probBomb +
-                    ' one of those boxes contains a <em>bomb</em>.';
+                    ' one random box contains a <em>bomb</em>.';
                 }
                 else {
-                    str += 'one of those boxes might contain a <em>bomb</em>.';
+                    str += 'one random box might contain a <em>bomb</em>.';
                 }
             }
             str += ' You must decide how many boxes you want to open.';
@@ -57014,7 +57024,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # SVOGauge
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Displays an interface to measure users' social value orientation (S.V.O.)
@@ -57029,16 +57039,25 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    SVOGauge.version = '0.7.0';
+    SVOGauge.version = '0.8.1';
     SVOGauge.description = 'Displays an interface to measure social ' +
         'value orientation (S.V.O.).';
 
     SVOGauge.title = 'SVO Gauge';
     SVOGauge.className = 'svogauge';
 
-    SVOGauge.texts.mainText = 'Select your preferred option among those' +
-                               ' available below:';
-    SVOGauge.texts.left = 'You:<hr/>Other:';
+    SVOGauge.texts = {
+        mainText: 'You and another randomly selected participant ' +
+        'will receive an <em>extra bonus</em>.<br/>' +
+        'Choose the preferred bonus amounts (in cents) for you ' +
+        'and the other participant in each row.<br/>' +
+        'We will select <em>one row at random</em> ' +
+        'and add the bonus to your and the ' +
+        'other participant\'s payment. Your choice will remain '  +
+        '<em>anonymous</em>.',
+
+        left: 'Your Bonus:<hr/>Other\'s Bonus:'
+    };
 
     // ## Dependencies
 
@@ -57131,10 +57150,11 @@ if (!Array.prototype.indexOf) {
             }
             this.method = opts.method;
         }
-        if (opts.mainText) {
-            if ('string' !== typeof opts.mainText) {
+        if ('undefined' !== typeof opts.mainText) {
+            if (opts.mainText !== false && 'string' !== typeof opts.mainText) {
                 throw new TypeError('SVOGauge.init: mainText must be string ' +
-                                    'or undefined. Found: ' + opts.mainText);
+                                    'false, or undefined. Found: ' +
+                                     opts.mainText);
             }
             this.mainText = opts.mainText;
         }
@@ -57245,7 +57265,7 @@ if (!Array.prototype.indexOf) {
 
     // ### SVO_Slider
     function SVO_Slider(options) {
-        var items, sliders;
+        var items, sliders, mainText;
         var gauge, i, len;
         var renderer;
 
@@ -57337,14 +57357,19 @@ if (!Array.prototype.indexOf) {
             };
         }
 
+        if (this.mainText) {
+            mainText = this.mainText;
+        }
+        else if ('undefined' === typeof this.mainText) {
+            mainText = this.getText('mainText');
+        }
         gauge = node.widgets.get('ChoiceTableGroup', {
             id: options.id || 'svo_slider',
             items: items,
-            // TODO: should it be on getText at all?
-            mainText: this.mainText || this.getText('mainText'),
+            mainText: mainText,
             title: false,
             renderer: renderer,
-            requiredChoice: true,
+            requiredChoice: this.required,
             storeRef: false
         });
 
