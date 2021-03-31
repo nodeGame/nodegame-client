@@ -5469,7 +5469,7 @@ if (!Array.prototype.indexOf) {
      * @see PARSE.isFloat
      */
     PARSE.isNumber = function(n, lower, upper, leq, ueq) {
-        if (isNaN(n) || !isFinite(n)) return false;
+        if (isNaN(n) || !isFinite(n) || n === "") return false;
         n = parseFloat(n);
         if ('number' === typeof lower && (leq ? n < lower : n <= lower)) {
             return false;
@@ -45405,7 +45405,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChoiceTable
- * Copyright(c) 2020 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Creates a configurable table where each cell is a selectable choice
@@ -45422,7 +45422,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.7.0';
+    ChoiceTable.version = '1.8.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -46701,7 +46701,10 @@ if (!Array.prototype.indexOf) {
             }
             // Set table id.
             this.table.id = this.id;
-            if (this.className) J.addClass(this.table, this.className);
+            // Class.
+            tmp = this.className ? [ this.className ] : [];
+            if (this.orientation !== 'H') tmp.push('choicetable-vertical');
+            if (tmp.length) J.addClass(this.table, tmp);
             else this.table.className = '';
             // Append table.
             this.bodyDiv.appendChild(this.table);
@@ -46932,8 +46935,8 @@ if (!Array.prototype.indexOf) {
      *
      * @param {string|number} i The numeric position of a choice in display
      *
-     * @return {string|undefined} The value associated the numeric position.
-     *   If no value is found, returns undefined
+     * @return {string|undefined} The value associated with the numeric
+     *   position. If no value is found, returns undefined
      *
      * @see ChoiceTable.order
      * @see ChoiceTable.choices
@@ -47156,7 +47159,7 @@ if (!Array.prototype.indexOf) {
                 // This is the positional index.
                 j = J.randomInt(-1, (this.choicesCells.length-1));
                 // If shuffled, we need to resolve it.
-                choice = this.shuffleChoices ? this.getChoiceAtPosition(j) : j;
+                choice = this.shuffleChoices ? this.choicesValues[j] : j;
                 // Do not click it again if it is already selected.
                 if (!this.isChoiceCurrent(choice)) this.choicesCells[j].click();
             }
@@ -47359,12 +47362,12 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.6.1';
+    ChoiceTableGroup.version = '1.7.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
     ChoiceTableGroup.title = 'Make your choice';
-    ChoiceTableGroup.className = 'choicetable'; // TODO: choicetablegroup?
+    ChoiceTableGroup.className = 'choicetable choicetablegroup';
 
     ChoiceTableGroup.separator = '::';
 
@@ -47973,11 +47976,11 @@ if (!Array.prototype.indexOf) {
 
         if (opts.header) {
             if (!J.isArray(opts.header) ||
-                opts.header.length !== opts.items.length - 1) {
+                opts.header.length !== opts.choices.length) {
 
                 throw new Error('ChoiceTableGroup.init: header ' +
                                 'must be an array of length ' +
-                                (opts.items.length - 1) +
+                                opts.choices.length +
                                 ' or undefined. Found: ' + opts.header);
             }
 
@@ -50848,12 +50851,12 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    CustomInputGroup.version = '0.2.0';
+    CustomInputGroup.version = '0.3.0';
     CustomInputGroup.description = 'Groups together and manages sets of ' +
         'CustomInput widgets.';
 
     CustomInputGroup.title = false;
-    CustomInputGroup.className = 'custominputgroup';
+    CustomInputGroup.className = 'custominput custominputgroup';
 
     CustomInputGroup.separator = '::';
 
@@ -50878,9 +50881,7 @@ if (!Array.prototype.indexOf) {
      *   If a `table` option is specified, it sets it as main
      *   table. All other options are passed to the init method.
      */
-    function CustomInputGroup(options) {
-        var that;
-        that = this;
+    function CustomInputGroup() {
 
         /**
          * ### CustomInputGroup.dl
