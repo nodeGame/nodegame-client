@@ -1,6 +1,6 @@
 # nodegame-client change log
 
-## Current
+## 6.2.0
 - DONE is async with respect to node.game.step to let other listeners on DONE
 finish first.
 - missValues from widgets does not block next step execution.
