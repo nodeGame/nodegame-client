@@ -1,6 +1,6 @@
 /**
  * # aliases
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Event listener aliases.
@@ -42,7 +42,8 @@
                                     'string. Found: ' + text);
             }
             return function(msg) {
-                if (msg.text === text) cb.call(that.game, msg);                
+                if (msg.text === text) cb.call(that.game, msg);
+                else return false;
             };
         });
 
@@ -50,6 +51,7 @@
         this.alias('stage', 'STEPPING', function(cb) {
             return function(curStep, newStep) {
                 if (curStep.stage !== newStep.stage) cb(curStep, newStep);
+                else return false;
             };
         });
 

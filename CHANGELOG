@@ -1,9 +1,17 @@
 # nodegame-client change log
 
 ## Current
-- DONE is async to respect to node.game.step to let other listeners on DONE
+- DONE is async with respect to node.game.step to let other listeners on DONE
 finish first.
 - missValues from widgets does not block next step execution.
+- Widgets' action required is not checked if the timer is expired.
+- Fixed node.once.data removing all node.once data listeners after first exec.
+- Improved error-checkings with stager.stageBlock and stager.stepBlock.
+- Added stager.extendSteps and stager.extendStages.
+- Improved stager.skip and stager.unskip: support for arrays.
+- Improved stager.isSkipped: checks if all steps inside a stage are skipped to
+determine if a stage is skipped.
+- Fixing typos, improving doc.
 
 ## 6.1.0
 - Fixed exit callback of stages leaked into steps.

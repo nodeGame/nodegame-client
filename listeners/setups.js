@@ -12,9 +12,7 @@
 
     var NGC = parent.NodeGameClient;
 
-    var J = parent.JSUS,
-    GamePlot = parent.GamePlot,
-    Stager = parent.Stager;
+    var J = parent.JSUS;
 
     var constants = parent.constants;
 
