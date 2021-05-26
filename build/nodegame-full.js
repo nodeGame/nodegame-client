@@ -25482,7 +25482,7 @@ if (!Array.prototype.indexOf) {
             this.execCallback(cb);
             if (w) {
                 w.adjustFrameHeight(0, 120);
-                if (frame.scrollUp !== false) window.scrollTo(0, 0);
+                window.scrollTo(0, 0);
             }
         }
     };
@@ -45876,7 +45876,7 @@ if (!Array.prototype.indexOf) {
         this.rightCell = null;
 
         /**
-         * ### CustomInput.errorBox
+         * ### ChoiceTable.errorBox
          *
          * An HTML element displayed when a validation error occurs
          */
@@ -46409,19 +46409,6 @@ if (!Array.prototype.indexOf) {
         this.freeText = 'string' === typeof opts.freeText ?
             opts.freeText : !!opts.freeText;
 
-        // Add the choices.
-        if ('undefined' !== typeof opts.choices) {
-            this.setChoices(opts.choices);
-        }
-
-        // Add the correct choices.
-        if ('undefined' !== typeof opts.correctChoice) {
-            if (this.requiredChoice) {
-                throw new Error('ChoiceTable.init: cannot specify both ' +
-                                'opts requiredChoice and correctChoice');
-            }
-            this.setCorrectChoice(opts.correctChoice);
-        }
 
         // Add the correct choices.
         if ('undefined' !== typeof opts.choicesSetSize) {
@@ -46439,6 +46426,21 @@ if (!Array.prototype.indexOf) {
 
             this.choicesSetSize = opts.choicesSetSize;
         }
+
+        // Add the choices.
+        if ('undefined' !== typeof opts.choices) {
+            this.setChoices(opts.choices);
+        }
+
+        // Add the correct choices.
+        if ('undefined' !== typeof opts.correctChoice) {
+            if (this.requiredChoice) {
+                throw new Error('ChoiceTable.init: cannot specify both ' +
+                                'opts requiredChoice and correctChoice');
+            }
+            this.setCorrectChoice(opts.correctChoice);
+        }
+
 
         // Add the correct choices.
         if ('undefined' !== typeof opts.disabledChoices) {
@@ -46744,7 +46746,6 @@ if (!Array.prototype.indexOf) {
 
         // Forces equal width.
         if (this.sameWidthCells) {
-            debugger
             width = this.left ? 70 : 100;
             if (this.right) width = width - 30;
             width = width / (this.choicesSetSize || this.choices.length);
@@ -46921,7 +46922,9 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceTable.errorBox
      */
     ChoiceTable.prototype.setError = function(err) {
-        this.errorBox.innerHTML = err || '';
+        // TODO: the errorBox is added only if .append() is called.
+        // However, ChoiceTableGroup use the table without calling .append().
+        if (this.errorBox) this.errorBox.innerHTML = err || '';
         if (err) this.highlight();
         else this.unhighlight();
     };
@@ -47568,7 +47571,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTableGroup.version = '1.7.0';
+    ChoiceTableGroup.version = '1.8.0';
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
@@ -47577,9 +47580,14 @@ if (!Array.prototype.indexOf) {
 
     ChoiceTableGroup.separator = '::';
 
-    ChoiceTableGroup.texts.autoHint = function(w) {
-        if (w.requiredChoice) return '*';
-        else return false;
+    ChoiceTableGroup.texts = {
+
+        autoHint: function(w) {
+            if (w.requiredChoice) return '*';
+            else return false;
+        },
+
+        error: 'Selection required.'
     };
 
     // ## Dependencies
@@ -47740,6 +47748,13 @@ if (!Array.prototype.indexOf) {
          * @see Feedback.texts.autoHint
          */
         this.hint = null;
+
+        /**
+         * ### ChoiceTableGroup.errorBox
+         *
+         * An HTML element displayed when a validation error occurs
+         */
+        this.errorBox = null;
 
         /**
          * ### ChoiceTableGroup.items
@@ -48411,6 +48426,8 @@ if (!Array.prototype.indexOf) {
             this.bodyDiv.appendChild(this.table);
         }
 
+        this.errorBox = W.append('div', this.bodyDiv, { className: 'errbox' });
+
         // Creates a free-text textarea, possibly with placeholder text.
         if (this.freeText) {
             this.textarea = document.createElement('textarea');
@@ -48579,6 +48596,7 @@ if (!Array.prototype.indexOf) {
         if (!this.table || this.highlighted !== true) return;
         this.table.style.border = '';
         this.highlighted = false;
+        this.setError();
         this.emit('unhighlighted');
     };
 
@@ -48633,12 +48651,34 @@ if (!Array.prototype.indexOf) {
                 toHighlight = true;
             }
         }
-        if (opts.highlight && toHighlight) this.highlight();
-        else if (toReset) this.reset(toReset);
+        if (opts.highlight && toHighlight) {
+            this.setError(this.getText('error'));
+        }
+        else if (toReset) {
+            this.reset(toReset);
+        }
         opts.reset = toReset;
         if (this.textarea) obj.freetext = this.textarea.value;
         return obj;
     };
+
+
+    /**
+     * ### ChoiceTableGroup.setError
+     *
+     * Set the error msg inside the errorBox and call highlight
+     *
+     * @param {string} The error msg (can contain HTML)
+     *
+     * @see ChoiceTableGroup.highlight
+     * @see ChoiceTableGroup.errorBox
+     */
+    ChoiceTableGroup.prototype.setError = function(err) {
+        this.errorBox.innerHTML = err || '';
+        if (err) this.highlight();
+        else this.unhighlight();
+    };
+
 
     /**
      * ### ChoiceTableGroup.setValues
@@ -56900,7 +56940,8 @@ if (!Array.prototype.indexOf) {
         },
 
         bomb_sliderHint:
-            'Move the slider below to change the number of boxes to open.',
+            'Move the slider to choose the number of boxes to open, ' +
+            'then click "Open Boxes"',
 
         bomb_boxValue: 'Prize per box: ',
 
@@ -57334,12 +57375,6 @@ if (!Array.prototype.indexOf) {
                                that.getText('bomb_mainText', probBomb)
                 });
 
-                // Table.
-                nRows = Math.ceil(that.totBoxes / that.boxesInRow);
-                W.add('div', that.bodyDiv, {
-                    innerHTML: makeTable(nRows, that.boxesInRow, that.totBoxes)
-                });
-
                 // Slider.
                 slider = node.widgets.add('Slider', that.bodyDiv, {
                     min: 0,
@@ -57351,6 +57386,7 @@ if (!Array.prototype.indexOf) {
                     displayNoChange: false,
                     type: 'flat',
                     required: true,
+                    panel: false,
                     // texts: {
                     //     currentValue: that.getText('sliderValue')
                     // },
@@ -57392,6 +57428,12 @@ if (!Array.prototype.indexOf) {
                     },
                     storeRef: false,
                     width: '100%'
+                });
+
+                // Table.
+                nRows = Math.ceil(that.totBoxes / that.boxesInRow);
+                W.add('div', that.bodyDiv, {
+                    innerHTML: makeTable(nRows, that.boxesInRow, that.totBoxes)
                 });
 
                 // Info div.
@@ -58342,7 +58384,7 @@ if (!Array.prototype.indexOf) {
         if (this.mainText) {
             mainText = this.mainText;
         }
-        else if ('undefined' === typeof this.mainText) {
+        else if (this.mainText !== false) {
             mainText = this.getText('mainText');
         }
         gauge = node.widgets.get('ChoiceTableGroup', {
