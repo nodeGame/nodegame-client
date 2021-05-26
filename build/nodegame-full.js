@@ -15712,10 +15712,10 @@ if (!Array.prototype.indexOf) {
         var that;
         that = this;
         this.node.events.step.on('in.say.PCONNECT', function(p) {
-            that.changeHandler('pconnect', p);
+            that.changeHandler('pconnect', p.data);
         }, 'plManagerCon');
         this.node.events.step.on('in.say.PDISCONNECT', function(p) {
-            that.changeHandler('pdisconnect', p);
+            that.changeHandler('pdisconnect', p.data);
         }, 'plManagerDis');
     };
 
