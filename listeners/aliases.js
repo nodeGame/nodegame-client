@@ -47,6 +47,18 @@
             };
         });
 
+        // ### node.on.data
+        this.alias('done', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+            if ('string' !== typeof text || text === '') {
+                throw new TypeError('node.on.data: text must be a non-empty ' +
+                                    'string. Found: ' + text);
+            }
+            return function(msg) {
+                if (msg.text === text) cb.call(that.game, msg);
+                else return false;
+            };
+        });
+
         // ### node.on.stage
         this.alias('stage', 'STEPPING', function(cb) {
             return function(curStep, newStep) {

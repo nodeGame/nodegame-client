@@ -1,6 +1,6 @@
 /**
  * # nodegame-client build file
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Builds the different components together in one file for the browser
@@ -43,6 +43,7 @@
     require('./lib/stager/stager_extends.js');
     require('./lib/stager/stager_blocks.js');
     require('./lib/stager/stager_extract_info.js');
+    require('./lib/stager/stager_require.js');
 
     // Core.
     exports.GameStage = require('./lib/core/GameStage').GameStage;

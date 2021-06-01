@@ -14911,7 +14911,7 @@ if (!Array.prototype.indexOf) {
  *
  * Push players to advance to next step, otherwise disconnects them.
  *
- * Copyright(c) 2020 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
 (function(exports, parent) {
@@ -14922,7 +14922,6 @@ if (!Array.prototype.indexOf) {
     exports.PushManager = PushManager;
 
     var GameStage = parent.GameStage;
-    var J = parent.JSUS;
 
     var DONE = parent.constants.stageLevels.DONE;
     var PUSH_STEP = parent.constants.gamecommands.push_step;
@@ -15033,7 +15032,7 @@ if (!Array.prototype.indexOf) {
             conf = {};
         }
         else if ('object' !== typeof conf) {
-            throw new TypError('PushManager.startTimer: conf must be ' +
+            throw new TypeError('PushManager.startTimer: conf must be ' +
                                'object, TRUE, or undefined. Found: ' + conf);
         }
 
@@ -15176,7 +15175,6 @@ if (!Array.prototype.indexOf) {
      *   wait before checking again the stage of a client. Default 0.
      */
     function checkIfPushWorked(node, p, stage, milliseconds) {
-        var stage;
 
         node.info('push-manager: received reply from ' + p.id);
 
@@ -24172,9 +24170,14 @@ if (!Array.prototype.indexOf) {
             }
         }
 
+        if ('undefined' === typeof opts.header &&
+            'undefined' === typeof opts.headers) {
+
+            opts.header = 'all';
+        }
+
         // Flatten.
         if (opts.flatten) {
-            if ('undefined' === typeof opts.headers) opts.headers = 'all';
             opts.preprocess = function(item, current) {
                 var s;
                 s = item.stage.stage + '.' + item.stage.step +
@@ -33211,6 +33214,18 @@ if (!Array.prototype.indexOf) {
             };
         });
 
+        // ### node.on.data
+        this.alias('done', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
+            if ('string' !== typeof text || text === '') {
+                throw new TypeError('node.on.data: text must be a non-empty ' +
+                                    'string. Found: ' + text);
+            }
+            return function(msg) {
+                if (msg.text === text) cb.call(that.game, msg);
+                else return false;
+            };
+        });
+
         // ### node.on.stage
         this.alias('stage', 'STEPPING', function(cb) {
             return function(curStep, newStep) {
@@ -33608,7 +33623,7 @@ if (!Array.prototype.indexOf) {
     var DOM;
 
     var constants, windowLevels, screenLevels;
-    var CB_EXECUTED, WIN_LOADING, lockedUpdate;
+    var CB_EXECUTED, WIN_LOADING;
 
     if (!J) throw new Error('GameWindow: JSUS not found');
     DOM = J.require('DOM');
@@ -33621,9 +33636,6 @@ if (!Array.prototype.indexOf) {
     CB_EXECUTED = constants.stageLevels.CALLBACK_EXECUTED;
 
     WIN_LOADING = windowLevels.LOADING;
-
-    // Allows just one update at the time to the counter of loading frames.
-    lockedUpdate = false;
 
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
@@ -33648,10 +33660,7 @@ if (!Array.prototype.indexOf) {
         var iframeWin;
         iframeWin = iframe.contentWindow;
 
-        function completed(event) {
-            var iframeDoc;
-            iframeDoc = J.getIFrameDocument(iframe);
-
+        function completed() {
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
             iframeWin.removeEventListener('load', completed, false);
@@ -34439,16 +34448,22 @@ if (!Array.prototype.indexOf) {
      *
      * Appends a configurable div element at to "top" of the page
      *
-     * @param {object} opts Optional. Configuration options: TODO
+     * @param {object} opts Optional. Configuration options:
      *
-     *    - toggleBtn
-     *    - toggleBtnLabel
-     *    - toggleBtnRoot:
-     *    - force: destroys current Info Panel
+     *    - root: The HTML element (or its id) under which the Info Panel
+     *        will be appended. Default: above the main frame, or below the
+     *        the header, or under document.body.
+     *    - innerHTML: the content of the Info Panel.
+     *    - force: It destroys current frame, if existing.
+     *    - toggleBtn: If TRUE, it creates a button to toggle the Info Panel.
+     *        Default: TRUE.
+     *    - toggleBtnRoot: the HTML element (or its id) under which the button
+     *        to toggle the Info Panel will be appended. Default: the header.
+     *    - toggleBtnLabel: The text on the button to toggle the Info Panel.
+     *        Default: 'Info'.
      *
-     * @param {boolean} force Optional. Will create the frame even if an
-     *   existing one is found. Deprecated, use force flag in options.
-     *   Default: FALSE
+     * @param {boolean} force Optional. Deprecated, use force flag in
+     *    options. Default: FALSE
      *
      * @return {InfoPanel} A reference to the InfoPanel object
      *
@@ -34474,11 +34489,7 @@ if (!Array.prototype.indexOf) {
                     opts.toggleBtn = false;
                 }
             }
-            // if (!force) {
-            //     throw new Error('GameWindow.generateInfoPanel: info panel is ' +
-            //                     'already existing. Use force to regenerate.');
-            // }
-
+            node.warn('W.generateInfoPanel: Info Panel already existing.')
         }
         else {
             this.infoPanel = new node.InfoPanel(opts);
@@ -34488,6 +34499,7 @@ if (!Array.prototype.indexOf) {
 
         root = opts.root;
         if (root) {
+            if ('string' === typeof root) root = W.gid(root);
             if (!J.isElement(root)) {
                 throw new Error('GameWindow.generateInfoPanel: root must be ' +
                                 'undefined or HTMLElement. Found: ' + root);
@@ -35955,8 +35967,6 @@ if (!Array.prototype.indexOf) {
      * @param {GameWindow} that A reference to the GameWindow instance
      * @param {number} update The number to add to the counter
      *
-     * @see GameWindow.lockedUpdate
-     *
      * @api private
      */
     function updateAreLoading(that, update) {
@@ -36497,7 +36507,6 @@ if (!Array.prototype.indexOf) {
                                 countdown);
         }
         this.setScreenLevel('LOCKING');
-        text = text || 'Screen locked. Please wait...';
         this.waitScreen.lock(text, countdown);
         this.setScreenLevel('LOCKED');
     };
@@ -36668,7 +36677,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitScreen
- * Copyright(c) 2018 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Overlays the screen, disables inputs, and displays a message/timer
@@ -36684,8 +36693,8 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    WaitScreen.version = '0.9.0';
-    WaitScreen.description = 'Shows a standard waiting screen';
+    WaitScreen.version = '0.10.0';
+    WaitScreen.description = 'Shows a waiting screen';
 
     // ## Helper functions
 
@@ -36792,10 +36801,10 @@ if (!Array.prototype.indexOf) {
      *
      * Instantiates a new WaitScreen object
      *
-     * @param {object} options Optional. Configuration options
+     * @param {object} opts Optional. Configuration options
      */
-    function WaitScreen(options) {
-        options = options || {};
+    function WaitScreen(opts) {
+        opts = opts || {};
 
         /**
          * ### WaitScreen.id
@@ -36804,7 +36813,7 @@ if (!Array.prototype.indexOf) {
          *
          * @see WaitScreen.waitingDiv
          */
-        this.id = options.id || 'ng_waitScreen';
+        this.id = opts.id || 'ng_waitScreen';
 
         /**
          * ### WaitScreen.root
@@ -36813,7 +36822,7 @@ if (!Array.prototype.indexOf) {
          *
          * @see WaitScreen.waitingDiv
          */
-        this.root = options.root || null;
+        this.root = opts.root || null;
 
         /**
          * ### WaitScreen.waitingDiv
@@ -36871,10 +36880,19 @@ if (!Array.prototype.indexOf) {
          * ### WaitScreen.countdown
          *
          * Countdown of max waiting time
-         *
-         * @see WaitScreen.countdown
          */
         this.countdown = null;
+
+        /**
+         * ### WaitScreen.displayCountdown
+         *
+         * If FALSE, countdown is never displayed by lock
+         *
+         * @see WaitScreen.lock
+         */
+        this.displayCountdown =
+            'undefined' !== typeof opts.displayCountdown ?
+                !!opts.displayCountdown : true;
 
         /**
          * ### WaitScreen.text
@@ -36882,12 +36900,40 @@ if (!Array.prototype.indexOf) {
          * Default texts for default events
          */
         this.defaultTexts = {
-            waiting: options.waitingText ||
+
+            // Default text for locked screen.
+            locked: opts.lockedText ||
+                'Screen locked. Please wait...',
+
+            // When player is DONE and waiting for others.
+            waiting: opts.waitingText ||
                 'Waiting for other players to be done...',
-            stepping: options.steppingText ||
+
+            // When entering a new step after DONE (displayed quickly usually).
+            stepping: opts.steppingText ||
                 'Initializing game step, will be ready soon...',
-            paused: options.pausedText ||
-                'Game is paused. Please wait.'
+
+            // Game paused.
+            paused: opts.pausedText ||
+                'Game is paused. Please wait.',
+
+            // Countdown text displayed under waiting text.
+            countdown: opts.countdownResumingText ||
+                '<br>Do not refresh the page!<br>Maximum Waiting Time: ',
+
+            // Displayed after resuming from waiting.
+            countdownResuming: opts.countdownResumingText ||
+                'Resuming soon...',
+
+            // Formats the countdown in minutes and seconds.
+            formatCountdown: function(time) {
+                var out;
+                out = '';
+                time = J.parseMilliseconds(time);
+                if (time[2]) out += time[2] + ' min ';
+                if (time[3]) out += time[3] + ' sec';
+                return out || 0;
+            }
         };
 
         /**
@@ -36954,9 +37000,11 @@ if (!Array.prototype.indexOf) {
      * @see WaitScren.updateText
      */
     WaitScreen.prototype.lock = function(text, countdown) {
-        var frameDoc;
+        var frameDoc, t;
+        t = this.defaultTexts;
+        if ('undefined' === typeof text) text = t.locked;
         if ('undefined' === typeof document.getElementsByTagName) {
-            node.warn('WaitScreen.lock: cannot lock inputs.');
+            node.warn('WaitScreen.lock: cannot lock inputs');
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
@@ -36978,20 +37026,20 @@ if (!Array.prototype.indexOf) {
         }
         this.contentDiv.innerHTML = text;
 
-        if (countdown) {
+        if (this.displayCountdown && countdown) {
+
             if (!this.countdownDiv) {
                 this.countdownDiv = W.add('div', this.waitingDiv,
                                           'ng_waitscreen-countdown-div');
 
-                this.countdownDiv.innerHTML = '<br>Do not refresh the page!' +
-                    '<br>Maximum Waiting Time: ';
+                this.countdownDiv.innerHTML = t.countdown;
 
                 this.countdownSpan = W.add('span', this.countdownDiv,
                                            'ng_waitscreen-countdown-span');
             }
 
             this.countdown = countdown;
-            this.countdownSpan.innerHTML = formatCountdown(countdown);
+            this.countdownSpan.innerHTML = t.formatCountdown(countdown);
             this.countdownDiv.style.display = '';
 
             this.countdownInterval = setInterval(function() {
@@ -37006,10 +37054,10 @@ if (!Array.prototype.indexOf) {
                 if (w.countdown < 0) {
                     clearInterval(w.countdownInterval);
                     w.countdownDiv.style.display = 'none';
-                    w.contentDiv.innerHTML = 'Resuming soon...';
+                    w.contentDiv.innerHTML = t.countdownResuming;
                 }
                 else {
-                    w.countdownSpan.innerHTML = formatCountdown(w.countdown);
+                    w.countdownSpan.innerHTML = t.formatCountdown(w.countdown);
                 }
             }, 1000);
         }
@@ -37091,19 +37139,6 @@ if (!Array.prototype.indexOf) {
         this.disable();
     };
 
-
-    // ## Helper functions.
-
-    function formatCountdown(time) {
-        var out;
-        out = '';
-        time = J.parseMilliseconds(time);
-        if (time[2]) out += time[2] + ' min ';
-        if (time[3]) out += time[3] + ' sec';
-        return out || 0;
-    }
-
-
 })(
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
     ('undefined' !== typeof window) ? window : module.parent.exports.window
@@ -37111,7 +37146,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # InfoPanel
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Adds a configurable extra panel at the top of the screen
@@ -37420,7 +37455,7 @@ if (!Array.prototype.indexOf) {
      * @see InfoPanel.toggleBtn
      * @see InfoPanel.toggle
      */
-    InfoPanel.prototype.createToggleBtn = 
+    InfoPanel.prototype.createToggleBtn =
     InfoPanel.prototype.createToggleButton = function(label) {
         var that, button;
 
@@ -37447,7 +37482,7 @@ if (!Array.prototype.indexOf) {
 })(
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
     ('undefined' !== typeof window) ? window : module.parent.exports.window
-);;
+);
 
 /**
  * # selector
@@ -42015,17 +42050,22 @@ if (!Array.prototype.indexOf) {
         // Locks the back button in case of a timeout.
         node.events.game.on('PLAYING', function() {
             var prop, step;
-            step = node.game.getPreviousStep(1, that.stepOptions);
-            // It might be enabled already, but we do it again.
-            if (step) that.enable();
+
             // Check options.
+            step = node.game.getPreviousStep(1, that.stepOptions);
             prop = node.game.getProperty('backbutton');
+
             if (!step || prop === false ||
                 (prop && prop.enableOnPlaying === false)) {
 
                 // It might be disabled already, but we do it again.
                 that.disable();
             }
+            else {
+                // It might be enabled already, but we do it again.
+                if (step) that.enable();
+            }
+
             if ('string' === typeof prop) that.button.value = prop;
             else if (prop && prop.text) that.button.value = prop.text;
         });
@@ -45504,6 +45544,9 @@ if (!Array.prototype.indexOf) {
             }
             obj._scrolledIntoView = true;
             obj.isCorrect = false;
+            // Adjust frame heights because of error msgs.
+            // TODO: error msgs should not change the height.
+            W.adjustFrameHeight();
         }
         // if (obj.missValues.length) obj.isCorrect = false;
         if (this.textarea) obj.freetext = this.textarea.value;
@@ -53958,6 +54001,8 @@ if (!Array.prototype.indexOf) {
          * The currency displayed after totalWin
          *
          * Default: 'USD'
+         *
+         * // TODO: deprecate and rename to currency.
          */
          this.totalWinCurrency = 'USD';
 
@@ -54270,13 +54315,20 @@ if (!Array.prototype.indexOf) {
                 }
             }
 
+            preWin = '';
+            if ('undefined' !== typeof data.basePay) {
+                preWin = data.basePay + ' + ' + data.bonus;
+            }
+
             if (data.partials) {
                 if (!J.isArray(data.partials)) {
                     node.err('EndScreen error, invalid partials win: ' +
                              data.partials);
                 }
                 else {
-                    preWin = data.partials.join(' + ');
+                    // If there is a basePay we already have a preWin.
+                    if (preWin !== '') preWin += ' + ';
+                    preWin += data.partials.join(' + ');
                 }
             }
 
@@ -54304,10 +54356,12 @@ if (!Array.prototype.indexOf) {
                         err = true;
                     }
                 }
-                if (!err) totalWin = preWin + ' = ' + totalWin;
             }
 
-            if (!err) totalWin += ' ' + this.totalWinCurrency;
+            if (!err) {
+                totalWin = preWin + ' = ' + totalWin;
+                totalWin += ' ' + this.totalWinCurrency;
+            }
         }
 
         exitCode = data.exit;
