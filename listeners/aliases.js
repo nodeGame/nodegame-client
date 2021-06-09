@@ -48,14 +48,14 @@
         });
 
         // ### node.on.data
-        this.alias('done', ['in.say.DATA', 'in.set.DATA'], function(text, cb) {
-            if ('string' !== typeof text || text === '') {
-                throw new TypeError('node.on.data: text must be a non-empty ' +
-                                    'string. Found: ' + text);
-            }
+        this.alias('done', 'in.set.DATA', function(step, cb) {
             return function(msg) {
-                if (msg.text === text) cb.call(that.game, msg);
-                else return false;
+                if (!msg.data || !msg.data.done ||
+                    !that.game.isStep(step, msg.stage)) {
+
+                    return false;
+                }
+                cb.call(that.game, msg);
             };
         });
 
