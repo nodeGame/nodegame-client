@@ -96,10 +96,21 @@
          * @emit PLAYING
          */
         this.events.ng.on('LOADED', function() {
+            var frame;
             node.game.setStageLevel(constants.stageLevels.LOADED);
             if (node.socket.shouldClearBuffer()) {
                 node.socket.clearBuffer();
             }
+
+            // Make the frame visibile (if any).
+            // The Window hides it with every new load, so that if the page
+            // is manipulated in the step callback, the user still sees it
+            // appearing all at once.
+            if (node.window) {
+                frame = node.window.getFrame();
+                if (frame) frame.style.visibility = '';
+            }
+
             if (node.game.shouldEmitPlaying()) {
                 node.emit('PLAYING');
             }
