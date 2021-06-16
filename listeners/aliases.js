@@ -49,9 +49,13 @@
 
         // ### node.on.data
         this.alias('done', 'in.set.DATA', function(step, cb) {
+            if ('undefined' === typeof cb && 'function' === typeof step) {
+                cb = step;
+                step = null;
+            }
             return function(msg) {
                 if (!msg.data || !msg.data.done ||
-                    !that.game.isStep(step, msg.stage)) {
+                    (step && !that.game.isStep(step, msg.stage))) {
 
                     return false;
                 }
