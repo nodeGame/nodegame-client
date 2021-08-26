@@ -4984,7 +4984,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # TIME
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to the generation,
@@ -4996,28 +4996,34 @@ if (!Array.prototype.indexOf) {
 
     function TIME() {}
 
+    function pad(number) {
+        return (number < 10) ? '0' + number : number;
+    }
+
+    function _getTime(ms) {
+        var d, res;
+        d = new Date();
+        res = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' +
+              pad(d.getSeconds());
+        if (ms) res += ':' + pad(d.getMilliseconds());
+        return res;
+    }
+
     // Polyfill for Date.toISOString (IE7, IE8, IE9)
     // Kudos: https://developer.mozilla.org/en-US/docs/Web/
     // JavaScript/Reference/Global_Objects/Date/toISOString
     if (!Date.prototype.toISOString) {
-        (function() {
 
-            function pad(number) {
-                return (number < 10) ? '0' + number : number;
-            }
-
-            Date.prototype.toISOString = function() {
-                var ms = (this.getUTCMilliseconds() / 1000).toFixed(3);
-                return this.getUTCFullYear() +
-                    '-' + pad(this.getUTCMonth() + 1) +
-                    '-' + pad(this.getUTCDate()) +
-                    'T' + pad(this.getUTCHours()) +
-                    ':' + pad(this.getUTCMinutes()) +
-                    ':' + pad(this.getUTCSeconds()) +
-                    '.' + ms.slice(2, 5) + 'Z';
-            };
-
-        }());
+        Date.prototype.toISOString = function() {
+            var ms = (this.getUTCMilliseconds() / 1000).toFixed(3);
+            return this.getUTCFullYear() +
+                '-' + pad(this.getUTCMonth() + 1) +
+                '-' + pad(this.getUTCDate()) +
+                'T' + pad(this.getUTCHours()) +
+                ':' + pad(this.getUTCMinutes()) +
+                ':' + pad(this.getUTCSeconds()) +
+                '.' + ms.slice(2, 5) + 'Z';
+        };
     }
 
     /**
@@ -5049,9 +5055,7 @@ if (!Array.prototype.indexOf) {
      * @see TIME.getTimeM
      */
     TIME.getTime = function() {
-        var d;
-        d = new Date();
-        return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        return _getTime();
     };
 
     /**
@@ -5068,10 +5072,7 @@ if (!Array.prototype.indexOf) {
      * @see TIME.getTime
      */
     TIME.getTimeM = function() {
-        var d;
-        d = new Date();
-        return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() +
-            ':' + d.getMilliseconds();
+        return _getTime(true);
     };
 
     /**
@@ -5104,7 +5105,6 @@ if (!Array.prototype.indexOf) {
         result[1] = Math.floor(days);
         return result;
     };
-
 
     /**
      * ## TIME.now
@@ -5356,6 +5356,8 @@ if (!Array.prototype.indexOf) {
                     else o[i] = reviver(o[i]);
                 }
             }
+            // On the full object.
+            if (customCb) customCb(o);
             return o;
         }
 
@@ -5389,8 +5391,6 @@ if (!Array.prototype.indexOf) {
                     return -Infinity;
                 }
             }
-
-            if (customCb) customCb(value);
 
             return value;
         }
@@ -5837,7 +5837,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -5876,6 +5876,22 @@ if (!Array.prototype.indexOf) {
     var df = J.compatibility().defineProperty;
 
     /**
+     * ### NDDB.db
+     *
+     * Returns a new db
+     *
+     * @param {object} options Optional. Configuration options
+     * @param {db} db Optional. An initial set of items to import
+     *
+     * @return {object} A new database
+     */
+    NDDB.db = function(opts, db) { return new NDDB(opts, db); };
+
+    // Might get overwritten in index.js.
+    NDDB.lineBreak = '\n';
+
+
+    /**
      * ### NDDB.decycle
      *
      * Removes cyclic references from an object
@@ -5887,7 +5903,7 @@ if (!Array.prototype.indexOf) {
      * @see https://github.com/douglascrockford/JSON-js/
      */
     NDDB.decycle = function(e) {
-        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+        if (JSON && 'function' === typeof JSON.decycle) {
             e = JSON.decycle(e);
         }
         return e;
@@ -5905,7 +5921,7 @@ if (!Array.prototype.indexOf) {
      * @see https://github.com/douglascrockford/JSON-js/
      */
     NDDB.retrocycle = function(e) {
-        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+        if (JSON && 'function' === typeof JSON.retrocycle) {
             e = JSON.retrocycle(e);
         }
         return e;
@@ -5919,14 +5935,14 @@ if (!Array.prototype.indexOf) {
      * @param {object} options Optional. Configuration options
      * @param {db} db Optional. An initial set of items to import
      */
-    function NDDB(options, db) {
+    function NDDB(opts, db) {
         var that;
         that = this;
-        options = options || {};
+        opts = opts || {};
 
         // ## Public properties.
 
-        this.name = options.name || 'nddb';
+        this.name = opts.name || 'nddb';
 
         // ### nddbid
         // A global index of all objects.
@@ -5985,6 +6001,7 @@ if (!Array.prototype.indexOf) {
 
         // ### filters
         // Available db filters
+        this.filters = {};
         this.addDefaultFilters();
 
         // ### __userDefinedFilters
@@ -6050,8 +6067,8 @@ if (!Array.prototype.indexOf) {
         // ### log
         // Std out for log messages
         //
-        // It can be overriden in options by another function (`options.log`).
-        // `options.logCtx` specif the context of execution.
+        // It can be overriden in options by another function (`opts.log`).
+        // `opts.logCtx` specif the context of execution.
         // @see NDDB.initLog
         this.log = console.log;
 
@@ -6107,10 +6124,14 @@ if (!Array.prototype.indexOf) {
         this.__cache = {};
 
         // Mixing in user options and defaults.
-        this.init(options);
+        this.init(opts);
 
         // Importing items, if any.
         if (db) this.importDB(db);
+
+        if (opts.journal && 'function' === typeof NDDB.prototype.journal) {
+            this.journal({ filename: opts.journal, load: true, cb: opts.cb });
+        }
     }
 
     /**
@@ -6167,7 +6188,6 @@ if (!Array.prototype.indexOf) {
      * @see NDDB.filters
      */
     NDDB.prototype.addDefaultFilters = function() {
-        if (!this.filters) this.filters = {};
         var that;
         that = this;
 
@@ -6964,39 +6984,74 @@ if (!Array.prototype.indexOf) {
     /**
      * ### NDDB.stringify
      *
-     * Stringifies the items in the database in an expanded JSON format
+     * Stringifies the items in the database in *JSON format
      *
      * Cyclic objects are decycled, functions, null, undefined, are kept.
      *
      * Evaluates pending queries with `fetch`.
      *
-     * @param {boolean} compress Optional. If TRUE, JSON is pretty-printed
-     * @param {boolean} enclose Optional. If TRUE, items are enclosed in an
-     *   array so that they can be read with a require statement.
+     * @param {object} opts Configuration options:
+     *    - enclose:    adds [] around all items. Default: false.
+     *    - comma:      separates items with a comma. Default: false.
+     *    - pretty:     pretty-print items. Default: false
+     *    - lineBreak:  line-break separator. Default: os.EOL or '\n';
+     *    - decycle:    Decycle ciclic objects. Default: true.
      *
      * @return {string} out A machine-readable representation of the database
      *
      * @see JSUS.stringify
      */
-    NDDB.prototype.stringify = function(compress, enclose) {
-        var db, spaces, out;
-        var item, i, len;
-        enclose = 'undefined' === typeof enclose ? true: enclose;
-        if (!this.size()) return enclose ? '[]' : '';
-        compress = ('undefined' === typeof compress) ? true : compress;
-        spaces = compress ? 0 : 4;
-        out = enclose ? '[' : '';
-        db = this.fetch();
-        i = -1, len = db.length;
-        for ( ; ++i < len ; ) {
-            // Decycle, if possible.
-            item = NDDB.decycle(db[i]);
-            out += J.stringify(item, spaces);
-            if (i !== len-1) out += ', ';
-        }
-        if (enclose) out += ']';
-        return out;
-    };
+    NDDB.prototype.stringify = (function() {
+
+        function stringifyItem(item, lineBreak, spaces, comma, decycle) {
+            var item, res, re;
+            // TODO: merge stringify and decycle in one.
+            if (decycle) item = NDDB.decycle(item);
+            res = J.stringify(item, spaces);
+            // Auto-escaped.
+            // if (stripLineBreaks) {
+            //     re = new RegExp(lineBreak, 'g');
+            //     res = res.replace(re, lineBreakReplace);
+            // }
+            if (comma) res += ', ';
+            if (lineBreak) res += lineBreak;
+            return res;
+        };
+
+        return function(opts) {
+            var db, i, len, out;
+            var spaces, lineBreak, decycle;
+
+            opts = opts || {};
+
+            if (!this.size()) return opts.enclose ? '[]' : '';
+
+            decycle = opts.decycle !== false;
+            lineBreak = opts.lineBreak || NDDB.lineBreak;
+
+            spaces = opts.pretty ? 4 : 0;
+            out = opts.enclose ? '[' + lineBreak : '';
+
+            db = this.fetch();
+
+
+            // Main loop.
+            i = -1, len = (db.length -1);
+            for ( ; ++i < len ; ) {
+                out += stringifyItem(db[i], lineBreak, spaces,
+                                     opts.comma, decycle);
+            }
+            // Last item (no comma).
+            out += stringifyItem(db[i], lineBreak, spaces, false, decycle);
+
+            if (opts.enclose) out += ']';
+            return out;
+        };
+    })();
+
+
+
+
 
     /**
      * ### NDDB.comparator
@@ -8188,6 +8243,33 @@ if (!Array.prototype.indexOf) {
     };
 
     // ## Custom callbacks
+
+    /**
+     * ### NDDB.table
+     *
+     * Returns the frequency table for the specified indexes
+     *
+     * TODO: support multiple indexes, at least two.
+     * TODO: support returning a sorted array.
+     * TODO: keep table in memory if key is already an index
+     *
+     * @param {string} idx The name of first index
+     *
+     * @return {object} res An object containing the frequency table
+     */
+    NDDB.prototype.table = function(idx) {
+        var res, db, i, v;
+        db = this.fetch();
+        res = {};
+        for (i = 0; i < db.length; i++) {
+            v = db[i][idx];
+            if ('undefined' !== typeof v) {
+                if ('undefined' === typeof res[v]) res[v] = 1;
+                else res[v]++;
+            }
+        }
+        return res;
+    };
 
     /**
      * ### NDDB.filter
@@ -9517,7 +9599,7 @@ if (!Array.prototype.indexOf) {
      * Reads items in the specified format and loads them into db asynchronously
      *
      * @param {string} file The name of the file or other persistent storage
-     * @param {object} options Optional. A configuration object. Available
+     * @param {object} opts Optional. A configuration object. Available
      *    options are format-dependent.
      * @param {function} cb Optional. A callback function to execute at
      *    the end of the operation. If options is not specified,
@@ -9525,12 +9607,8 @@ if (!Array.prototype.indexOf) {
      *
      * @see NDDB.loadSync
      */
-    NDDB.prototype.load = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
-        executeSaveLoad(this, 'load', file, cb, options);
+    NDDB.prototype.load = function(file, opts, cb) {
+        return executeSaveLoad(this, 'load', file, cb, opts);
     };
 
     /**
@@ -9540,12 +9618,8 @@ if (!Array.prototype.indexOf) {
      *
      * @see NDDB.saveSync
      */
-    NDDB.prototype.save = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
-        executeSaveLoad(this, 'save', file, cb, options);
+    NDDB.prototype.save = function(file, opts, cb) {
+        return executeSaveLoad(this, 'save', file, cb, opts);
     };
 
     /**
@@ -9555,12 +9629,8 @@ if (!Array.prototype.indexOf) {
      *
      * @see NDDB.load
      */
-    NDDB.prototype.loadSync = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
-        executeSaveLoad(this, 'loadSync', file, cb, options);
+    NDDB.prototype.loadSync = function(file, opts, cb) {
+        return executeSaveLoad(this, 'loadSync', file, cb, opts);
     };
 
     /**
@@ -9570,12 +9640,8 @@ if (!Array.prototype.indexOf) {
      *
      * @see NDDB.save
      */
-    NDDB.prototype.saveSync = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
-        executeSaveLoad(this, 'saveSync', file, cb, options);
+    NDDB.prototype.saveSync = function(file, opts, cb) {
+        return executeSaveLoad(this, 'saveSync', file, cb, opts);
     };
 
     // ## Formats.
@@ -9626,13 +9692,7 @@ if (!Array.prototype.indexOf) {
      */
     NDDB.prototype.getFormat = function(format, method) {
         var f;
-        if ('string' !== typeof format) {
-            this.throwErr('TypeError', 'getFormat', 'format must be string');
-        }
-        if (method && 'string' !== typeof method) {
-            this.throwErr('TypeError', 'getFormat', 'method must be string ' +
-                          'or undefined');
-        }
+
         f = this.__formats[format];
         if (f && method) f = f[method];
         return f || null;
@@ -9732,9 +9792,6 @@ if (!Array.prototype.indexOf) {
         res = this.emit('insert', o, this.db.length);
         // Stop inserting elements if one callback returned FALSE.
         if (res === false) return false;
-        // Replace element with return value if object.
-
-
         this.db.push(o);
         if (doUpdate) {
             this._indexIt(o, (this.db.length-1));
@@ -9765,13 +9822,15 @@ if (!Array.prototype.indexOf) {
                           'or undefined. Found: ' + cb);
         }
         if (options && 'object' !== typeof options) {
-            that.throwErr('TypeError', method, 'options must be object ' +
-                          'or undefined. Found: ' + options);
+            if ('function' !== typeof options || 'undefined' !== typeof cb) {
+                that.throwErr('TypeError', method, 'options must be object ' +
+                    'or undefined. Found: ' + options);
+            }
         }
     }
 
     /**
-     * ### extractExtension
+     * ### getExtension
      *
      * Extracts the extension from a file name
      *
@@ -9779,7 +9838,7 @@ if (!Array.prototype.indexOf) {
      *
      * @return {string} The extension or NULL if not found
      */
-    function extractExtension(file) {
+    function getExtension(file) {
         var format;
         format = file.lastIndexOf('.');
         return format < 0 ? null : file.substr(format+1);
@@ -9798,17 +9857,28 @@ if (!Array.prototype.indexOf) {
      * @param {string} method The name of the method invoking validation
      * @param {string} file The file parameter
      * @param {function} cb The callback parameter
-     * @param {object} The options parameter
+     * @param {object} options The options parameter
+     *
+     * @return {NDDB} that The current instance for chaining
      */
     function executeSaveLoad(that, method, file, cb, options) {
         var ff, format;
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
+        // Cb not specified.
+        if ('undefined' === typeof options && 'object' === typeof cb) {
+            options = cb;
+            cb = undefined;
+        }
+        else if ('undefined' === typeof cb && 'function' === typeof options) {
+            cb = options;
+            options = undefined;
+        }
         validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
-        format = extractExtension(file);
-        // If try to get the format function based on the extension,
+        format = options.format || getExtension(file);
+        // Try to get the format function based on the extension,
         // otherwise try to use the default one. Throws errors.
         ff = findFormatFunction(that, method, format);
         // Emit save or load. Options can be modified.
@@ -9818,6 +9888,8 @@ if (!Array.prototype.indexOf) {
             cb: cb
         });
         ff(that, file, cb, options);
+
+        return that;
     }
 
     /**
@@ -10306,6 +10378,7 @@ if (!Array.prototype.indexOf) {
      */
     NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb, res;
+        if ('undefined' === typeof update) return false;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         nddb = this.nddb;
@@ -10895,12 +10968,22 @@ if (!Array.prototype.indexOf) {
         that = this;
         if (!J.isNodeJS()) {
             window.onerror = function(msg, url, lineno, colno, error) {
+                var str;
                 msg = node.game.getCurrentGameStage().toString() +
                     '@' + J.getTime() + '> ' +
                     url + ' ' + lineno + ',' + colno + ': ' + msg;
                 if (error) msg + ' - ' + JSON.stringify(error);
                 that.lastError = msg;
                 node.err(msg);
+                if (node.debug) {
+                    W.init({ waitScreen: true });
+                    str = '<strong>DEBUG mode: client-side error ' +
+                          'detected</strong><br/><br/>';
+                    str += msg;
+                    str += '</br></br><em style="font-size: smaller">' +
+                    'This message will not be shown in production mode.</em>';
+                    W.lockScreen(str);
+                }
                 return !node.debug;
             };
         }
@@ -20528,7 +20611,9 @@ if (!Array.prototype.indexOf) {
             if (msg.to === parent.constants.UNAUTH_PLAYER) {
                 this.node.warn('connection was not authorized.');
                 if (msg.text === 'redirect') {
-                    window.location = msg.data;
+                    if ('undefined' !== typeof window) {
+                        window.location = msg.data;
+                    }
                 }
                 else {
                     this.disconnect();
@@ -40459,7 +40544,9 @@ if (!Array.prototype.indexOf) {
             if (!this.headingDiv) {
                 // Add heading.
                 if (!options) {
-                    options = { className: 'panel-heading' };
+                    // Bootstrap 3
+                    // options = { className: 'panel-heading' };
+                    options = { className: 'card-header' };
                 }
                 else if ('object' !== typeof options) {
                     throw new TypeError('Widget.setTitle: options must ' +
@@ -40517,6 +40604,23 @@ if (!Array.prototype.indexOf) {
                     that.headingDiv.appendChild(link);
                 })(this);
             }
+            if (this.info) {
+                (function(that) {
+                    var link, img, a;
+
+                    link = W.add('span', that.headingDiv);
+                    link.className = 'panel-collapse-link';
+
+                    // link.style['margin-right'] = '8px';
+                    a = W.add('a', link);
+                    a.href = that.info;
+                    a.target = '_blank';
+
+                    img = W.add('img', a);
+                    img.src = '/images/info.png';
+
+                })(this);
+            }
         }
     };
 
@@ -40551,7 +40655,10 @@ if (!Array.prototype.indexOf) {
             if (!this.footerDiv) {
                 // Add footer.
                 if (!options) {
-                    options = { className: 'panel-footer' };
+                    // Bootstrap 3.
+                    // options = { className: 'panel-footer' };
+                    // Bootstrap 5.
+                    options = { className: 'card-footer' };
                 }
                 else if ('object' !== typeof options) {
                     throw new TypeError('Widget.setFooter: options must ' +
@@ -40573,7 +40680,7 @@ if (!Array.prototype.indexOf) {
             else {
                 throw new TypeError(J.funcName(this.constructor) +
                                     '.setFooter: footer must be string, ' +
-                                    'HTML element or falsy. Found: ' + title);
+                                    'HTML element or falsy. Found: ' + footer);
             }
         }
     };
@@ -40581,20 +40688,11 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Widget.setContext
      *
-     * Changes the default context of the class 'panel-' + context
-     *
-     * Context are defined in Bootstrap framework.
-     *
-     * @param {string} context The type of the context
+     * @deprecated
      */
-    Widget.prototype.setContext = function(context) {
-        if ('string' !== typeof context) {
-            throw new TypeError(J.funcName(this.constructor) + '.setContext: ' +
-                                'context must be string. Found: ' + context);
-
-        }
-        W.removeClass(this.panelDiv, 'panel-[a-z]*');
-        W.addClass(this.panelDiv, 'panel-' + context);
+    Widget.prototype.setContext = function() {
+        console.log('*** Deprecation warning: setContext no longer ' +
+                    'available in Bootstrap5.');
     };
 
     /**
@@ -41077,7 +41175,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Widgets
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Helper class to interact with nodeGame widgets
@@ -41402,6 +41500,8 @@ if (!Array.prototype.indexOf) {
         widget.closable = options.closable || false;
         widget.collapseTarget =
             options.collapseTarget || this.collapseTarget || null;
+        widget.info = options.info || false;
+
         widget.hooks = {
             hidden: [],
             shown: [],
@@ -41440,7 +41540,7 @@ if (!Array.prototype.indexOf) {
         widget.highlighted = null;
         widget.collapsed = null;
         widget.hidden = null;
-        widget.docked = null
+        widget.docked = null;
 
         // Properties that will modify the UI of the widget once appended.
 
@@ -41632,10 +41732,21 @@ if (!Array.prototype.indexOf) {
 
         // Add panelDiv (with or without panel).
         tmp = options.panel === false ? true : w.panel === false;
-        tmp = {
-            className: tmp ? [ 'ng_widget',  'no-panel', w.className ] :
-                [ 'ng_widget', 'panel', 'panel-default', w.className ]
-        };
+
+        if (options.bootstrap5) {
+            // Bootstrap 5
+            tmp = {
+                className: tmp ? [ 'ng_widget', 'no-panel', w.className ] :
+                    [ 'ng_widget', 'card', w.className ]
+            };
+        }
+        else {
+            // Bootstrap 3
+            tmp = {
+                className: tmp ? [ 'ng_widget',  'no-panel', w.className ] :
+                    [ 'ng_widget', 'panel', 'panel-default', w.className ]
+            };
+        }
 
         // Dock it.
         if (options.docked || w._docked) {
@@ -41649,19 +41760,46 @@ if (!Array.prototype.indexOf) {
 
         // Optionally add title (and div).
         if (options.title !== false && w.title) {
-            tmp = options.panel === false ?
-                'no-panel-heading' : 'panel-heading';
+
+            if (options.bootstrap5) {
+                // Bootstrap 5.
+                tmp = options.panel === false ?
+                    'no-panel-heading' : 'card-header';
+            }
+            else {
+                // Bootstrap 3.
+                tmp = options.panel === false ?
+                    'no-panel-heading' : 'panel-heading';
+            }
+
             w.setTitle(w.title, { className: tmp });
         }
 
         // Add body (with or without panel).
-        tmp = options.panel !== false ? 'panel-body' : 'no-panel-body';
+        if (options.bootstrap5) {
+            // Bootstrap 5.
+            tmp = options.panel !== false ? 'card-body' : 'no-panel-body';
+        }
+        else {
+            // Bootstrap 3.
+            tmp = options.panel !== false ? 'panel-body' : 'no-panel-body';
+        }
+
         w.bodyDiv = W.append('div', w.panelDiv, { className: tmp });
 
         // Optionally add footer.
         if (w.footer) {
-            tmp = options.panel === false ?
-                'no-panel-heading' : 'panel-heading';
+            if (options.bootstrap5) {
+                // Bootstrap 5.
+                tmp = options.panel === false ?
+                    'no-panel-heading' : 'card-footer';
+            }
+            else {
+                    // Bootstrap 3.
+                    tmp = options.panel === false ?
+                        'no-panel-heading' : 'panel-heading';
+            }
+
             w.setFooter(w.footer);
         }
 
@@ -47481,7 +47619,7 @@ if (!Array.prototype.indexOf) {
                             'built yet.');
         }
 
-        // Value this.correctChoice can undefined, string or array.
+        // Value this.correctChoice can be undefined, string or array.
         // If no correct choice is set, we simply ignore the correct param.
         if (options.correct && this.correctChoice !== null) {
 
@@ -47536,16 +47674,32 @@ if (!Array.prototype.indexOf) {
         }
         else {
             // How many random choices?
-            if (!this.selectMultiple) len = 1;
-            else len = J.randomInt(0, this.choicesCells.length);
+            len = 1;
+            if (this.selectMultiple) {
+                // Max random cells.
+                len = 'number' === typeof this.selectMultiple ?
+                    this.selectMultiple : this.choicesCells.length;
+                // Min random cells.
+                tmp = this.requiredChoice;
+                len = J.randomInt('number' === typeof tmp ? (tmp-1) : 0, len);
+            }
 
             for ( ; ++i < len ; ) {
-                // This is the positional index.
-                j = J.randomInt(-1, (this.choicesCells.length-1));
-                // If shuffled, we need to resolve it.
-                choice = this.shuffleChoices ? this.choicesValues[j] : j;
+                // This is the choice idx.
+                choice = J.randomInt(-1, (this.choicesCells.length-1));
+
                 // Do not click it again if it is already selected.
-                if (!this.isChoiceCurrent(choice)) this.choicesCells[j].click();
+                // Else increment len and try again (until 300 failsafe).
+                if (this.disabledChoices[choice] ||
+                    this.isChoiceCurrent(choice)) {
+                    // Failsafe.
+                    if (len < 300) len++;
+                }
+                else {
+                    // Resolve to cell idx (might differ if shuffled).
+                    j =  this.choicesValues[choice];
+                    this.choicesCells[j].click();
+                }
             }
         }
 
@@ -50130,10 +50284,10 @@ if (!Array.prototype.indexOf) {
                                     'requiredChoice are incompatible. Option ' +
                                     'requiredChoice will be deprecated.');
             }
-            this.required = this.requiredChoice = !!opts.required;
+            this.required = this.requiredChoice = !!opts.requiredChoice;
         }
         if ('undefined' === typeof this.required) {
-            this.required = this.requiredChoice = !!opts.required;
+            this.required = this.requiredChoice = false;
         }
 
         if (opts.userValidation) {
@@ -52835,7 +52989,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DebugWall
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Creates a wall where all incoming and outgoing messages are printed
@@ -52850,7 +53004,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    DebugWall.version = '1.0.0';
+    DebugWall.version = '1.1.0';
     DebugWall.description = 'Intercepts incoming and outgoing messages, and ' +
         'logs and prints them numbered and timestamped. Warning! Modifies ' +
         'core functions, therefore its usage in production is ' +
@@ -52950,7 +53104,7 @@ if (!Array.prototype.indexOf) {
      *
      * Initializes the instance
      *
-     * @param {object} options Optional. Configuration options
+     * @param {object} opts Optional. Configuration options
      *
      *  - msgIn: If FALSE, incoming messages are ignored.
      *  - msgOut: If FALSE, outgoing  messages are ignored.
@@ -52958,24 +53112,24 @@ if (!Array.prototype.indexOf) {
      *  - hiddenTypes: An object containing what is currently hidden
      *     in the wall.
      */
-    DebugWall.prototype.init = function(options) {
+    DebugWall.prototype.init = function(opts) {
         var that;
         that = this;
-        if (options.msgIn !== false) {
+        if (opts.msgIn !== false) {
             this.origMsgInCb = node.socket.onMessage;
             node.socket.onMessage = function(msg) {
                 that.write('in', that.makeTextIn(msg));
                 that.origMsgInCb.call(node.socket, msg);
             };
         }
-        if (options.msgOut !== false) {
+        if (opts.msgOut !== false) {
             this.origMsgOutCb = node.socket.send;
             node.socket.send = function(msg) {
                 that.write('out', that.makeTextOut(msg));
                 that.origMsgOutCb.call(node.socket, msg);
             };
         }
-        if (options.log !== false) {
+        if (opts.log !== false) {
             this.origLogCb = node.log;
             node.log = function(txt, level, prefix) {
                 that.write(level || 'info',
@@ -52984,12 +53138,12 @@ if (!Array.prototype.indexOf) {
             };
         }
 
-        if (options.hiddenTypes) {
-            if ('object' !== typeof hiddenTypes) {
+        if (opts.hiddenTypes) {
+            if ('object' !== typeof opts.hiddenTypes) {
                 throw new TypeError('DebugWall.init: hiddenTypes must be ' +
-                                    'object. Found: ' + hiddenTypes);
+                                    'object. Found: ' + opts.hiddenTypes);
             }
-            this.hiddenTypes = hiddenTypes;
+            this.hiddenTypes = opts.hiddenTypes;
         }
 
         this.on('destroyed', function() {
@@ -53002,37 +53156,76 @@ if (!Array.prototype.indexOf) {
 
     DebugWall.prototype.append = function() {
         var displayIn, displayOut, displayLog, that;
-        var btnGroup, cb, div;
+        var btnGroup, cb;
+
         this.buttonsDiv = W.add('div', this.bodyDiv, {
             className: 'wallbuttonsdiv'
         });
 
-        btnGroup = document.createElement('div');
-        btnGroup.role = 'group';
-        btnGroup['aria-label'] = 'Toggle visibility';
-        btnGroup.className = 'btn-group';
-
-        displayIn = W.add('button', btnGroup, {
-            innerHTML: 'Incoming',
-            className: 'btn btn-secondary'
-        });
-        displayOut = W.add('button', btnGroup, {
-            innerHTML: 'Outgoing',
-            className: 'btn btn-secondary'
-        });
-        displayLog = W.add('button', btnGroup, {
-            innerHTML: 'Log',
-            className: 'btn btn-secondary'
+        btnGroup = W.add('div', this.buttonsDiv, {
+            className: 'btn-group',
+            role: 'group',
+            'aria-label': 'Toggle visibility of messages on wall'
         });
 
-        this.buttonsDiv.appendChild(btnGroup);
+        // Incoming.
+        W.add('input', btnGroup, {
+            id: 'debug-wall-incoming',
+            // name: 'debug-wall-check',
+            className: 'btn-check',
+            autocomplete: "off",
+            checked: true,
+            type: 'checkbox'
+        });
+        displayIn = W.add('label', btnGroup, {
+            className: "btn btn-outline-primary",
+            'for': "debug-wall-incoming",
+            innerHTML: 'Incoming'
+        });
+        // Outgoing.
+        W.add('input', btnGroup, {
+            id: 'debug-wall-outgoing',
+            className: 'btn-check',
+            // name: 'debug-wall-check',
+            autocomplete: "off",
+            checked: true,
+            type: 'checkbox'
+        });
+        displayOut = W.add('label', btnGroup, {
+            className: "btn btn-outline-primary",
+            'for': "debug-wall-outgoing",
+            innerHTML: 'Outgoing'
+        });
+        // Log.
+        W.add('input', btnGroup, {
+            id: 'debug-wall-log',
+            className: 'btn-check',
+            // name: 'debug-wall-check',
+            autocomplete: "off",
+            checked: true,
+            type: 'checkbox'
+        });
+        displayLog = W.add('label', btnGroup, {
+            className: "btn btn-outline-primary",
+            'for': "debug-wall-log",
+            innerHTML: 'Log'
+        });
 
         that = this;
+
+        W.add('button', this.buttonsDiv, {
+            className: "btn btn-outline-danger me-2",
+            innerHTML: 'Clear'
+        })
+        .onclick = function() { that.clear(); };
+
+        this.buttonsDiv.appendChild(btnGroup);
 
         cb = function(type) {
             var items, i, vis, className;
             className = 'wall_' + type;
             items = that.wall.getElementsByClassName(className);
+            if (!items || !items.length) return;
             vis = items[0].style.display === '' ? 'none' : '';
             for (i = 0; i < items.length; i++) {
                 items[i].style.display = vis;
@@ -53056,9 +53249,22 @@ if (!Array.prototype.indexOf) {
      * @param {string} type 'in', 'out', or 'log' (different levels)
      * @param {string} text The text to write
      */
-    DebugWall.prototype.shouldHide = function(type, text) {
+    DebugWall.prototype.shouldHide = function(type) {
         return this.hiddenTypes[type];
     };
+
+    /**
+     * ### DebugWall.write
+     *
+     * Writes argument as first entry of this.wall if document is fully loaded
+     *
+     * @param {string} type 'in', 'out', or 'log' (different levels)
+     * @param {string} text The text to write
+     */
+    DebugWall.prototype.clear = function() {
+        this.wall.innerHTML = '';
+    };
+
     /**
      * ### DebugWall.write
      *
@@ -53147,7 +53353,7 @@ if (!Array.prototype.indexOf) {
         return text;
     };
 
-    DebugWall.prototype.makeTextLog = function(text, level, prefix) {
+    DebugWall.prototype.makeTextLog = function(text) {
         return text;
     };
 
@@ -53631,7 +53837,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    EmailForm.version = '0.13.0';
+    EmailForm.version = '0.13.1';
     EmailForm.description = 'Displays a configurable email form.';
 
     EmailForm.title = false;
@@ -53921,9 +54127,8 @@ if (!Array.prototype.indexOf) {
                 email: email,
                 attempts: this.attempts,
             };
+            if (opts.markAttempt) email.isCorrect = res;
         }
-
-        if (opts.markAttempt) email.isCorrect = res;
 
         if (res === false) {
             if (opts.updateUI || opts.highlight) this.highlight();
@@ -54450,8 +54655,15 @@ if (!Array.prototype.indexOf) {
             }
 
             preWin = '';
+
             if ('undefined' !== typeof data.basePay) {
-                preWin = data.basePay + ' + ' + data.bonus;
+                preWin = data.basePay;
+
+            }
+
+            if (data.showBonus !== false) {
+                if (preWin !== '') preWin += ' + ';
+                preWin += data.bonus;
             }
 
             if (data.partials) {
@@ -54493,7 +54705,7 @@ if (!Array.prototype.indexOf) {
             }
 
             if (!err) {
-                totalWin = preWin + ' = ' + totalWin;
+                if (totalWin !== preWin) totalWin = preWin + ' = ' + totalWin;
                 totalWin += ' ' + this.totalWinCurrency;
             }
         }
@@ -58107,6 +58319,17 @@ if (!Array.prototype.indexOf) {
             }
             this.hoverColor = opts.hoverColor;
         }
+
+        if ('undefined' !== typeof opts.correctValue) {
+            if (false === J.isNumber(opts.correctValue,
+                                     this.min, this.max, true, true)) {
+
+                throw new Error(e + 'correctValue must be a number between ' +
+                                this.min + ' and ' + this.max + '. Found: ' +
+                                opts.correctValue);
+            }
+            this.correctValue = opts.correctValue;
+        }
     };
 
     /**
@@ -58287,7 +58510,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see SVOGauge.init
      */
-    function SVOGauge(options) {
+    function SVOGauge() {
 
         /**
          * ### SVOGauge.methods
@@ -61310,7 +61533,7 @@ if (!Array.prototype.indexOf) {
                     ul.className = 'dropdown-menu';
                     ul.style['text-align'] = 'left';
 
-                    var li, a, t, liT1, liT2;
+                    var li, a, t, liT1, liT2, liT3;
                     if (conf.availableTreatments) {
                         li = document.createElement('li');
                         li.innerHTML = w.getText('gameTreatments');
@@ -61325,7 +61548,8 @@ if (!Array.prototype.indexOf) {
                                 a.innerHTML = '<strong>' + t + '</strong>: ' +
                                     conf.availableTreatments[t];
                                 li.appendChild(a);
-                                if (t === 'treatment_rotate') liT1 = li;
+                                if (t === 'treatment_latin_square') liT3 = li;
+                                else if (t === 'treatment_rotate') liT1 = li;
                                 else if (t === 'treatment_random') liT2 = li;
                                 else ul.appendChild(li);
                             }
@@ -61340,6 +61564,7 @@ if (!Array.prototype.indexOf) {
                         ul.appendChild(li);
                         ul.appendChild(liT1);
                         ul.appendChild(liT2);
+                        ul.appendChild(liT3);
                     }
 
                     btnGroupTreatments.appendChild(btnTreatment);
