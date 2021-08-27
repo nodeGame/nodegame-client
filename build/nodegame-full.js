@@ -26050,7 +26050,8 @@ if (!Array.prototype.indexOf) {
             case stageLevels.PAUSING:
             case stageLevels.RESUMING:
             case stageLevels.GETTING_DONE:
-            case stageLevels.DONE:
+            // TODO: should this be commented? See issue #168
+            // case stageLevels.DONE:
                 return false;
             }
             break;
