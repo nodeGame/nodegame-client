@@ -20650,6 +20650,11 @@ if (!Array.prototype.indexOf) {
         msg = this.validateIncomingMsg(msg);
         if (!msg) return;
 
+        console.log('---------------------')
+        console.log(this.node.game.getStateLevel())
+        console.log(this.node.game.getStageLevel())
+        console.log('---------------------')
+
         // Message with high priority are executed immediately.
         if (msg.priority > 0 || this.node.game.isReady()) {
             this.node.emit(msg.toInEvent(), msg);
@@ -24385,6 +24390,8 @@ if (!Array.prototype.indexOf) {
         J = parent.JSUS;
 
     var constants = parent.constants;
+    var stageLevels = constants.stageLevels;
+    var stateLevels = constants.stateLevels;
 
     /**
      * ## Game constructor
@@ -24398,8 +24405,8 @@ if (!Array.prototype.indexOf) {
         this.node = node;
 
         // This updates are never published.
-        this.setStateLevel(constants.stateLevels.UNINITIALIZED, 'S');
-        this.setStageLevel(constants.stageLevels.UNINITIALIZED, 'S');
+        this.setStateLevel(stateLevels.UNINITIALIZED, 'S');
+        this.setStageLevel(stageLevels.UNINITIALIZED, 'S');
 
         // ## Properties
 
@@ -24552,7 +24559,7 @@ if (!Array.prototype.indexOf) {
 
         // Setting to stage 0.0.0 and starting.
         this.setCurrentGameStage(new GameStage(), 'S');
-        this.setStateLevel(constants.stateLevels.STARTING, 'S');
+        this.setStateLevel(stateLevels.STARTING, 'S');
 
         /**
          * ### Game.paused
@@ -24693,12 +24700,12 @@ if (!Array.prototype.indexOf) {
         // INIT the game.
         onInit = this.plot.stager.getOnInit();
         if (onInit) {
-            this.setStateLevel(constants.stateLevels.INITIALIZING);
+            this.setStateLevel(stateLevels.INITIALIZING);
             node.emit('INIT');
             onInit.call(node.game);
         }
 
-        this.setStateLevel(constants.stateLevels.INITIALIZED);
+        this.setStateLevel(stateLevels.INITIALIZED);
 
         this.setCurrentGameStage(startStage, 'S');
 
@@ -24757,8 +24764,8 @@ if (!Array.prototype.indexOf) {
         if (node.window) node.window.reset();
 
         // Update state/stage levels and game stage.
-        this.setStateLevel(constants.stateLevels.STARTING, 'S');
-        this.setStageLevel(constants.stageLevels.UNINITIALIZED, 'S');
+        this.setStateLevel(stateLevels.STARTING, 'S');
+        this.setStageLevel(stageLevels.UNINITIALIZED, 'S');
         // This command is notifying the server.
         this.setCurrentGameStage(new GameStage());
 
@@ -24784,7 +24791,7 @@ if (!Array.prototype.indexOf) {
         var onGameover, node;
         node = this.node;
 
-        if (this.getStateLevel() >= constants.stateLevels.FINISHING) {
+        if (this.getStateLevel() >= stateLevels.FINISHING) {
             node.warn('Game.gameover called on a finishing game.');
             return;
         }
@@ -24794,12 +24801,12 @@ if (!Array.prototype.indexOf) {
         // Call gameover callback, if it exists.
         onGameover = this.plot.stager.getOnGameover();
         if (onGameover) {
-            this.setStateLevel(constants.stateLevels.FINISHING);
+            this.setStateLevel(stateLevels.FINISHING);
             onGameover.call(node.game);
         }
 
-        this.setStateLevel(constants.stateLevels.GAMEOVER);
-        this.setStageLevel(constants.stageLevels.DONE);
+        this.setStateLevel(stateLevels.GAMEOVER);
+        this.setStageLevel(stageLevels.DONE);
 
         node.log('game over.');
         node.emit('GAME_OVER');
@@ -25179,8 +25186,8 @@ if (!Array.prototype.indexOf) {
 
         // Calling exit function of the step.
         if (curStepExitCb) {
-            this.setStateLevel(constants.stateLevels.STEP_EXIT);
-            this.setStageLevel(constants.stageLevels.EXITING);
+            this.setStateLevel(stateLevels.STEP_EXIT);
+            this.setStageLevel(stageLevels.EXITING);
 
             curStepExitCb.call(this);
         }
@@ -25204,8 +25211,8 @@ if (!Array.prototype.indexOf) {
             // Calling exit function of the stage.
             // Note: stage.exit is not inherited.
             if (curStageObj && curStageObj.exit) {
-                this.setStateLevel(constants.stateLevels.STAGE_EXIT);
-                this.setStageLevel(constants.stageLevels.EXITING);
+                this.setStateLevel(stateLevels.STAGE_EXIT);
+                this.setStageLevel(stageLevels.EXITING);
 
                 curStageObj.exit.call(this);
             }
@@ -25252,8 +25259,8 @@ if (!Array.prototype.indexOf) {
             // Calling exit function.
             // Note: stage.exit is not inherited.
             if (curStageObj && curStageObj.exit) {
-                this.setStateLevel(constants.stateLevels.STAGE_EXIT);
-                this.setStageLevel(constants.stageLevels.EXITING);
+                this.setStateLevel(stateLevels.STAGE_EXIT);
+                this.setStageLevel(stageLevels.EXITING);
 
                 curStageObj.exit.call(this);
             }
@@ -25267,7 +25274,7 @@ if (!Array.prototype.indexOf) {
 
         // stageLevel needs to be changed (silent), otherwise it stays
         // DONE for a short time in the new game stage:
-        this.setStageLevel(constants.stageLevels.UNINITIALIZED, 'S');
+        this.setStageLevel(stageLevels.UNINITIALIZED, 'S');
         this.setCurrentGameStage(nextStep);
 
         // Process options before calling any init function. Sets a role also.
@@ -25316,8 +25323,8 @@ if (!Array.prototype.indexOf) {
             // Clear the previous stage listeners.
             node.events.ee.stage.clear();
 
-            this.setStateLevel(constants.stateLevels.STAGE_INIT);
-            this.setStageLevel(constants.stageLevels.INITIALIZING);
+            this.setStateLevel(stateLevels.STAGE_INIT);
+            this.setStageLevel(stageLevels.INITIALIZING);
 
             // Execute the init function of the stage, if any:
             // Note: this property is not inherited.
@@ -25335,13 +25342,13 @@ if (!Array.prototype.indexOf) {
 
         // Execute the init function of the step, if any.
         if (stepInitCb) {
-            this.setStateLevel(constants.stateLevels.STEP_INIT);
-            this.setStageLevel(constants.stageLevels.INITIALIZING);
+            this.setStateLevel(stateLevels.STEP_INIT);
+            this.setStageLevel(stageLevels.INITIALIZING);
             stepInitCb.call(node.game);
         }
 
-        this.setStateLevel(constants.stateLevels.PLAYING_STEP);
-        this.setStageLevel(constants.stageLevels.INITIALIZED);
+        this.setStateLevel(stateLevels.PLAYING_STEP);
+        this.setStageLevel(stageLevels.INITIALIZED);
 
         // Updating the globals object.
         this.updateGlobals(nextStep);
@@ -25667,7 +25674,7 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.execCallback = function(cb) {
         var res;
-        this.setStageLevel(constants.stageLevels.EXECUTING_CALLBACK);
+        this.setStageLevel(stageLevels.EXECUTING_CALLBACK);
 
         // Execute custom callback. Can throw errors.
         res = cb.call(this.node.game);
@@ -25677,7 +25684,7 @@ if (!Array.prototype.indexOf) {
                           'of stage ' + this.getCurrentGameStage());
         }
 
-        this.setStageLevel(constants.stageLevels.CALLBACK_EXECUTED);
+        this.setStageLevel(stageLevels.CALLBACK_EXECUTED);
         this.node.emit('STEP_CALLBACK_EXECUTED');
         // Internal listeners will check whether we need to emit PLAYING.
     };
@@ -25806,13 +25813,13 @@ if (!Array.prototype.indexOf) {
      *
      * Returns the state of the nodeGame engine
      *
-     * The engine states are defined in `node.constants.stateLevels`,
+     * The engine states are defined in `node.stateLevels`,
      * and it is of the type: STAGE_INIT, PLAYING_STEP, GAMEOVER, etc.
      * The return value is a reference to `node.player.stateLevel`.
      *
      * @return {number} The state of the engine.
      * @see node.player.stateLevel
-     * @see node.constants.stateLevels
+     * @see node.stateLevels
      */
     Game.prototype.getStateLevel = function() {
         return this.node.player.stateLevel;
@@ -25825,7 +25832,7 @@ if (!Array.prototype.indexOf) {
      *
      * The value is actually stored in `node.player.stateLevel`.
      *
-     * Stage levels are defined in `node.constants.stageLevels`, for example:
+     * Stage levels are defined in `node.stageLevels`, for example:
      * STAGE_INIT, PLAYING_STEP, GAMEOVER, etc.
      *
      * By default, it does not send the update to the server if the
@@ -25838,7 +25845,7 @@ if (!Array.prototype.indexOf) {
      *   behavior ('F' = force, 'S' = silent').
      *
      * @see Game.publishUpdate
-     * @see node.constants.stageLevels
+     * @see node.stageLevels
      */
     Game.prototype.setStateLevel = function(stateLevel, mod) {
         var node;
@@ -25861,13 +25868,13 @@ if (!Array.prototype.indexOf) {
      *
      * Return the execution level of the current game stage
      *
-     * The execution level is defined in `node.constants.stageLevels`,
+     * The execution level is defined in `node.stageLevels`,
      * and it is of the type INITIALIZED, CALLBACK_EXECUTED, etc.
      * The return value is a reference to `node.player.stageLevel`.
      *
      * @return {number} The level of the stage execution.
      * @see node.player.stageLevel
-     * @see node.constants.stageLevels
+     * @see node.stageLevels
      */
     Game.prototype.getStageLevel = function() {
         return this.node.player.stageLevel;
@@ -25880,7 +25887,7 @@ if (!Array.prototype.indexOf) {
      *
      * The value is actually stored in `node.player.stageLevel`.
      *
-     * Stage levels are defined in `node.constants.stageLevels`, for example:
+     * Stage levels are defined in `node.stageLevels`, for example:
      * PLAYING, DONE, etc.
      *
      * By default, it does not send the update to the server if the
@@ -25893,7 +25900,7 @@ if (!Array.prototype.indexOf) {
      *   behavior ('F' = force, 'S' = silent').
      *
      * @see Game.publishUpdate
-     * @see node.constants.stageLevels
+     * @see node.stageLevels
      */
     Game.prototype.setStageLevel = function(stageLevel, mod) {
         var node;
@@ -25964,8 +25971,7 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE, if the update should be sent
      */
     Game.prototype.shouldPublishUpdate = function(type, value) {
-        var myStage;
-        var levels, myPublishLevel, stageLevels;
+        var myStage, levels, myPublishLevel;
         if ('string' !== typeof type) {
             throw new TypeError(
                 'Game.shouldPublishUpdate: type must be string.');
@@ -25973,7 +25979,6 @@ if (!Array.prototype.indexOf) {
 
         myStage = this.getCurrentGameStage();
         levels = constants.publishLevels;
-        stageLevels = constants.stageLevels;
 
         myPublishLevel = this.plot.getProperty(myStage, 'publishLevel');
 
@@ -26017,12 +26022,12 @@ if (!Array.prototype.indexOf) {
      * Returns TRUE if a game is set and interactive
      *
      * A game is ready unless a stage or step is currently being
-     * loaded or DONE procedure has been started, i.e. between the
+     * loaded or a DONE procedure has been started, i.e. between the
      * stage levels: PLAYING and GETTING_DONE.
      *
      * If a game is paused, it is also NOT ready.
      *
-     * @see node.constants.stageLevels
+     * @see node.stageLevels
      */
     Game.prototype.isReady = function() {
         var stageLevel, stateLevel;
@@ -26032,24 +26037,25 @@ if (!Array.prototype.indexOf) {
         stateLevel = this.getStateLevel();
 
         switch (stateLevel) {
-        case constants.stateLevels.UNINITIALIZED:
-        case constants.stateLevels.INITIALIZING:
-        case constants.stateLevels.STAGE_INIT:
-        case constants.stateLevels.STEP_INIT:
-        case constants.stateLevels.FINISHING:
-        case constants.stateLevels.STAGE_EXIT:
-        case constants.stateLevels.STEP_EXIT:
+        case stateLevels.UNINITIALIZED:
+        case stateLevels.INITIALIZING:
+        case stateLevels.STAGE_INIT:
+        case stateLevels.STEP_INIT:
+        case stateLevels.FINISHING:
+        case stateLevels.STAGE_EXIT:
+        case stateLevels.STEP_EXIT:
             return false;
 
-        case constants.stateLevels.PLAYING_STEP:
+        case stateLevels.PLAYING_STEP:
 
             stageLevel = this.getStageLevel();
             switch (stageLevel) {
-            case constants.stageLevels.EXECUTING_CALLBACK:
-            case constants.stageLevels.CALLBACK_EXECUTED:
-            case constants.stageLevels.PAUSING:
-            case constants.stageLevels.RESUMING:
-            case constants.stageLevels.GETTING_DONE:
+            case stageLevels.EXECUTING_CALLBACK:
+            case stageLevels.CALLBACK_EXECUTED:
+            case stageLevels.PAUSING:
+            case stageLevels.RESUMING:
+            case stageLevels.GETTING_DONE:
+            case stageLevels.DONE:
                 return false;
             }
             break;
@@ -26066,7 +26072,7 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.isStartable = function() {
         return this.plot.isReady() &&
-            this.getStateLevel() < constants.stateLevels.INITIALIZING;
+            this.getStateLevel() < stateLevels.INITIALIZING;
     };
 
 
@@ -26078,7 +26084,7 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE if the game can be stopped.
      */
     Game.prototype.isStoppable = function() {
-        return this.getStateLevel() > constants.stateLevels.INITIALIZING;
+        return this.getStateLevel() > stateLevels.INITIALIZING;
     };
 
 
@@ -26091,7 +26097,7 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.isPausable = function() {
         return !this.paused &&
-            this.getStateLevel() > constants.stateLevels.INITIALIZING;
+            this.getStateLevel() > stateLevels.INITIALIZING;
     };
 
 
@@ -26104,7 +26110,7 @@ if (!Array.prototype.indexOf) {
      */
     Game.prototype.isResumable = function() {
         return this.paused &&
-            this.getStateLevel() > constants.stateLevels.INITIALIZING;
+            this.getStateLevel() > stateLevels.INITIALIZING;
     };
 
 
@@ -26119,8 +26125,8 @@ if (!Array.prototype.indexOf) {
         var stateLevel;
         stateLevel = this.getStateLevel();
 
-        return stateLevel > constants.stateLevels.INITIALIZING &&
-            stateLevel < constants.stateLevels.FINISHING;
+        return stateLevel > stateLevels.INITIALIZING &&
+            stateLevel < stateLevels.FINISHING;
     };
 
     /**
@@ -26131,7 +26137,7 @@ if (!Array.prototype.indexOf) {
      * @return {boolean} TRUE if is game over
      */
     Game.prototype.isGameover = Game.prototype.isGameOver = function() {
-        return this.getStateLevel() === constants.stateLevels.GAMEOVER;
+        return this.getStateLevel() === stateLevels.GAMEOVER;
     };
 
     /**
@@ -26159,7 +26165,7 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof strict || strict) {
             // Should emit PLAYING only after LOADED.
             curStageLevel = this.getStageLevel();
-            if (curStageLevel !== constants.stageLevels.LOADED) return false;
+            if (curStageLevel !== stageLevels.LOADED) return false;
         }
         node = this.node;
         curGameStage = this.getCurrentGameStage();
@@ -31745,7 +31751,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Prevents messages in reply to DONE, to be executed before
-        //  the asyn stepping procedure starts.
+        // the async stepping procedure starts.
         this.game.setStageLevel(stageLevels.GETTING_DONE);
 
         that = this;
