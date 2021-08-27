@@ -26030,7 +26030,6 @@ if (!Array.prototype.indexOf) {
         if (this.paused) return false;
 
         stateLevel = this.getStateLevel();
-        stageLevel = this.getStageLevel();
 
         switch (stateLevel) {
         case constants.stateLevels.UNINITIALIZED:
@@ -26043,6 +26042,8 @@ if (!Array.prototype.indexOf) {
             return false;
 
         case constants.stateLevels.PLAYING_STEP:
+
+            stageLevel = this.getStageLevel();
             switch (stageLevel) {
             case constants.stageLevels.EXECUTING_CALLBACK:
             case constants.stageLevels.CALLBACK_EXECUTED:
@@ -31372,7 +31373,8 @@ if (!Array.prototype.indexOf) {
     var NGC = parent.NodeGameClient;
     var J = parent.JSUS;
 
-    var GETTING_DONE = parent.constants.stageLevels.GETTING_DONE;
+    var stageLevels = parent.constants.stageLevels;
+    var GETTING_DONE = stageLevels.GETTING_DONE;
 
     /**
      * ### NodeGameClient.say
@@ -31741,6 +31743,10 @@ if (!Array.prototype.indexOf) {
             // Send to server.
             this.set(o, 'SERVER', 'done');
         }
+
+        // Prevents messages in reply to DONE, to be executed before
+        //  the asyn stepping procedure starts.
+        this.game.setStageLevel(stageLevels.GETTING_DONE);
 
         that = this;
         setTimeout(function() { that.events.emit('DONE', param); }, 0);
@@ -32619,7 +32625,6 @@ if (!Array.prototype.indexOf) {
 
         function done() {
             var res;
-            node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
             node.game.beDone = false;
             node.emit('REALLY_DONE');
