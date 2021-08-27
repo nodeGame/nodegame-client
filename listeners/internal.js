@@ -47,7 +47,6 @@
 
         function done() {
             var res;
-            node.game.setStageLevel(stageLevels.GETTING_DONE);
             node.game.willBeDone = false;
             node.game.beDone = false;
             node.emit('REALLY_DONE');
