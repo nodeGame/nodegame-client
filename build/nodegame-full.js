@@ -25332,7 +25332,7 @@ if (!Array.prototype.indexOf) {
                                                          widgetRoot,
                                                          widget.options);
                 }
-                this[widget.ref] = widgetObj;
+                node.game[widget.ref] = widgetObj;
             };
 
             // Make the step callback.
@@ -41669,7 +41669,11 @@ if (!Array.prototype.indexOf) {
         if (strict) return w instanceof node.Widget;
         return ('object' === typeof w &&
                 'function' === typeof w.append &&
-                'function' === typeof w.getValues);
+                'function' === typeof w.getValues &&
+                // Used by widgets.append
+                'function' === typeof w.isHidden &&
+                'function' === typeof w.isCollapsed
+            );
     };
 
     /**
@@ -45003,7 +45007,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceManager.version = '1.4.0';
+    ChoiceManager.version = '1.4.1';
     ChoiceManager.description = 'Groups together and manages a set of ' +
         'survey forms (e.g., ChoiceTable).';
 
@@ -45586,7 +45590,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.verifyChoice
      */
     ChoiceManager.prototype.getValues = function(opts) {
-        var obj, i, len, form, lastErrored;
+        var obj, i, len, form, lastErrored, res;
         obj = {
             order: this.order,
             forms: {},
@@ -45602,13 +45606,17 @@ if (!Array.prototype.indexOf) {
             form = this.forms[i];
             // If it is hidden or disabled we do not do validation.
             if (form.isHidden() || form.isDisabled()) {
-                obj.forms[form.id] = form.getValues({
+                res = form.getValues({
                     markAttempt: false,
                     highlight: false
                 });
+                if (res) obj.forms[form.id] = res;
             }
             else {
-                obj.forms[form.id] = form.getValues(opts);
+                // ContentBox does not return a value.
+                res = form.getValues(opts);
+                if (!res) continue;
+                obj.forms[form.id] = res;
                 // Backward compatible (requiredChoice).
                 if ((form.required || form.requiredChoice) &&
                     (obj.forms[form.id].choice === null ||
@@ -45693,7 +45701,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.8.0';
+    ChoiceTable.version = '1.8.1';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -45796,7 +45804,7 @@ if (!Array.prototype.indexOf) {
          * @see ChoiceTable.onclick
          */
         this.listener = function(e) {
-            var name, value, td;
+            var name, value, td, tr;
             var i, len, removed;
 
             e = e || window.event;
@@ -45806,8 +45814,12 @@ if (!Array.prototype.indexOf) {
             if ('undefined' === typeof that.choicesIds[td.id]) {
                 // It might be a nested element, try the parent.
                 td = td.parentNode;
-                if (!td || 'undefined' === typeof that.choicesIds[td.id]) {
-                    return;
+                if (!td) return;
+                if ('undefined' === typeof that.choicesIds[td.id]) {
+                    td = td.parentNode;
+                    if (!td || 'undefined' === typeof that.choicesIds[td.id]) {
+                        return;
+                    }
                 }
             }
 
@@ -45828,7 +45840,8 @@ if (!Array.prototype.indexOf) {
             if (value.length === 1) return;
 
             name = value[0];
-            value = value[1];
+            value = parseInt(value[1], 10);
+            // value = value[1];
 
             // Choice disabled.
             // console.log('VALUE: ', value);
@@ -46912,6 +46925,9 @@ if (!Array.prototype.indexOf) {
             else if (J.isElement(choice) || J.isNode(choice)) {
                 td.appendChild(choice);
             }
+            else if (node.widgets.isWidget(choice)) {
+                node.widgets.append(choice, td);
+            }
             else {
                 throw new Error('ChoiceTable.renderChoice: invalid choice: ' +
                                 choice);
@@ -47254,10 +47270,10 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTable.prototype.isChoiceCurrent = function(choice) {
         var i, len;
-        if ('number' === typeof choice) {
-            choice = '' + choice;
+        if ('string' === typeof choice) {
+            choice = parseInt(choice, 10);
         }
-        else if ('string' !== typeof choice) {
+        else if ('number' !== typeof choice) {
             throw new TypeError('ChoiceTable.isChoiceCurrent: choice ' +
                                 'must be string or number. Found: ' + choice);
         }
@@ -47635,8 +47651,8 @@ if (!Array.prototype.indexOf) {
      * @return {string} The checked choice
      */
     function checkCorrectChoiceParam(that, choice) {
-        if ('number' === typeof choice) choice = '' + choice;
-        if ('string' !== typeof choice) {
+        if ('string' === typeof choice) choice = parseInt(choice, 10);
+        if ('number' !== typeof choice) {
             throw new TypeError('ChoiceTable.setCorrectChoice: each choice ' +
                                 'must be number or string. Found: ' + choice);
         }
@@ -49056,6 +49072,213 @@ if (!Array.prototype.indexOf) {
         that.trs.push(tr);
         return tr;
     }
+
+})(node);
+
+/**
+ * # Consent
+ * Copyright(c) 2021 Stefano Balietti
+ * MIT Licensed
+ *
+ * Displays a consent form with buttons to accept/reject it
+ *
+ * www.nodegame.org
+ */
+(function(node) {
+
+    "use strict";
+
+    node.widgets.register('Consent', Consent);
+
+    // ## Meta-data
+
+    Consent.version = '0.3.0';
+    Consent.description = 'Displays a configurable consent form.';
+
+    Consent.title = false;
+    Consent.panel = false;
+    Consent.className = 'consent';
+
+    Consent.texts = {
+
+        areYouSure: 'You did not consent and are about to leave the ' +
+                    'study. Are you sure?',
+
+        printText:
+        '<br/><p>If you need a copy of this consent form, you may ' +
+        'print a copy of this page for your records.</p>',
+
+        printBtn: 'Print this page',
+
+        consentTerms: 'Do you understand and consent to these terms?',
+
+        agree: 'Yes, I agree',
+
+        notAgree: 'No, I do not agree',
+
+    };
+
+    /**
+     * ## Consent constructor
+     *
+     * Creates a new instance of Consent
+     *
+     * @param {object} options Optional. Configuration options
+     * which is forwarded to Consent.init.
+     *
+     * @see Consent.init
+     */
+    function Consent() {
+
+        /**
+         * ## Consent.consent
+         *
+         * The object containing the variables to substitute
+         *
+         * Default: node.game.settings.CONSENT
+         */
+        this.consent = null;
+
+        /**
+         * ## Consent.showPrint
+         *
+         * If TRUE, the print button is shown
+         *
+         * Default: TRUE
+         */
+        this.showPrint = null;
+    }
+
+    // ## Consent methods.
+
+    /**
+     * ### Consent.init
+     *
+     * Initializes the widget
+     *
+     * @param {object} opts Optional. Configuration options.
+     */
+    Consent.prototype.init = function(opts) {
+        opts = opts || {};
+
+        this.consent = opts.consent || node.game.settings.CONSENT;
+
+        if ('object' !== typeof this.consent) {
+            throw new TypeError('Consent: consent must be object. Found: ' +
+                                this.consent);
+        }
+
+        this.showPrint = opts.showPrint === false ? false : true;
+    };
+
+    Consent.prototype.enable = function() {
+        var a, na;
+        if (this.notAgreed) return;
+        a = W.gid('agree');
+        if (a) a.disabled = false;
+        na = W.gid('notAgree');
+        if (na) na.disabled = false;
+    };
+
+    Consent.prototype.disable = function() {
+        var a, na;
+        if (this.notAgreed) return;
+        a = W.gid('agree');
+        if (a) a.disabled = true;
+        na = W.gid('notAgree');
+        if (na) na.disabled = true;
+    };
+
+    Consent.prototype.append = function() {
+        var consent, html;
+        consent = W.gid('consent');
+        html = '';
+
+        // Print.
+        if (this.showPrint) {
+            html = this.getText('printText');
+            html += '<input class="btn" type="button" value="' +
+            this.getText('printBtn') +
+            '" onclick="window.print()" /><br/><br/>';
+        }
+
+        // Header for buttons.
+        html += '<strong>' + this.getText('consentTerms') + '</strong><br/>';
+
+        // Buttons.
+        html += '<div style="margin-top: 20px;">' +
+        '<button class="btn btn-lg btn-info" id="agree" ' +
+        'style="margin-right: 30px">' + this.getText('agree') +
+        '</button><button class="btn btn-lg btn-danger" id="notAgree">' +
+        this.getText('notAgree') + '</button></div>';
+
+        consent.innerHTML += html;
+        setTimeout(function() { W.adjustFrameHeight(); });
+    };
+
+    Consent.prototype.listeners = function() {
+        var that = this;
+        var consent = this.consent;
+        node.on('FRAME_LOADED', function() {
+            var a, na, p, id;
+
+            // Replace all texts.
+            for (p in consent) {
+                if (consent.hasOwnProperty(p)) {
+                    // Making lower-case and replacing underscores with dashes.
+                    id = p.toLowerCase();
+                    id = id.replace(new RegExp("_", 'g'), "-");
+                    W.setInnerHTML(id, consent[p]);
+                }
+            }
+
+            // Add listeners on buttons.
+            a = W.gid('agree');
+            na = W.gid('notAgree');
+
+            if (!a) throw new Error('Consent: agree button not found');
+            if (!na) throw new Error('Consent: notAgree button not found');
+
+
+            a.onclick = function() { node.done(); };
+            na.onclick = function() {
+                var showIt, confirmed;
+
+                confirmed = confirm(that.getText('areYouSure'));
+                if (!confirmed) return;
+
+                node.emit('CONSENT_REJECTING');
+
+                that.notAgreed = true;
+                node.set({
+                    consent: false,
+                    // Need to send these two because it's not a DONE msg.
+                    time: node.timer.getTimeSince('step'),
+                    timeup: false
+                });
+                a.disabled = true;
+                na.disabled = true;
+                a.onclick = null;
+                na.onclick = null;
+
+                node.socket.disconnect();
+                W.hide('consent');
+                W.show('notAgreed');
+
+                // If a show-consent button is found enable it.
+                showIt = W.gid('show-consent');
+                if (showIt) {
+                    showIt.onclick = function() {
+                        var div, s;
+                        div = W.toggle('consent');
+                        s = div.style.display === '' ? 'hide' : 'show';
+                        this.innerHTML = that.getText('showHideConsent', s);
+                    };
+                }
+                node.emit('CONSENT_REJECTED');
+            };
+       });
+    };
 
 })(node);
 
@@ -54081,7 +54304,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Add Meta-data
 
-    EndScreen.version = '0.7.1';
+    EndScreen.version = '0.7.2';
     EndScreen.description = 'Game end screen. With end game message, ' +
                             'email form, and exit code.';
 
@@ -54484,7 +54707,9 @@ if (!Array.prototype.indexOf) {
 
             }
 
-            if (data.showBonus !== false) {
+            if ('undefined' !== typeof data.bonus &&
+                data.showBonus !== false) {
+
                 if (preWin !== '') preWin += ' + ';
                 preWin += data.bonus;
             }
@@ -54528,7 +54753,9 @@ if (!Array.prototype.indexOf) {
             }
 
             if (!err) {
-                if (totalWin !== preWin) totalWin = preWin + ' = ' + totalWin;
+                if (totalWin !== preWin & preWin !== '') {
+                    totalWin = preWin + ' = ' + totalWin;
+                }
                 totalWin += ' ' + this.totalWinCurrency;
             }
         }
@@ -57452,7 +57679,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} opts Optional. Configuration options.
      */
     RiskGauge.prototype.init = function(opts) {
-        var gauge;
+        var gauge, that;
         if ('undefined' !== typeof opts.method) {
             if ('string' !== typeof opts.method) {
                 throw new TypeError('RiskGauge.init: method must be string ' +
@@ -57473,6 +57700,11 @@ if (!Array.prototype.indexOf) {
         }
         // Call method.
         gauge = this.methods[this.method].call(this, opts);
+
+        // Add defaults.
+        that = this;
+        gauge.isHidden = function() { return that.isHidden(); };
+        gauge.isCollapsed = function() { return that.isCollapsed(); };
 
         // Check properties.
         if (!node.widgets.isWidget(gauge)) {
@@ -58873,7 +59105,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} opts Optional. Configuration options.
      */
     SVOGauge.prototype.init = function(opts) {
-        var gauge;
+        var gauge, that;
         if ('undefined' !== typeof opts.method) {
             if ('string' !== typeof opts.method) {
                 throw new TypeError('SVOGauge.init: method must be string ' +
@@ -58896,8 +59128,18 @@ if (!Array.prototype.indexOf) {
 
         // Call method.
         gauge = this.methods[this.method].call(this, opts);
+
+        // Add defaults.
+        that = this;
+        gauge.isHidden = function() { return that.isHidden(); };
+        gauge.isCollapsed = function() { return that.isCollapsed(); };
+
         // Check properties.
-        checkGauge(this.method, gauge);
+        if (!node.widgets.isWidget(gauge)) {
+            throw new Error('SVOGauge.init: method ' + this.method +
+                            ' created invalid gauge: missing default widget ' +
+                            'methods.')
+        }
         // Approved.
         this.gauge = gauge;
 
@@ -58960,41 +59202,6 @@ if (!Array.prototype.indexOf) {
     SVOGauge.prototype.setValues = function(opts) {
         return this.gauge.setValues(opts);
     };
-
-    // ## Helper functions.
-
-    /**
-     * ### checkGauge
-     *
-     * Checks if a gauge is properly constructed, throws an error otherwise
-     *
-     * @param {string} method The name of the method creating it
-     * @param {object} gauge The object to check
-     *
-     * @see ModdGauge.init
-     */
-    function checkGauge(method, gauge) {
-        if (!gauge) {
-            throw new Error('SVOGauge.init: method ' + method +
-                            'did not create element gauge.');
-        }
-        if ('function' !== typeof gauge.getValues) {
-            throw new Error('SVOGauge.init: method ' + method +
-                            ': gauge missing function getValues.');
-        }
-        if ('function' !== typeof gauge.enable) {
-            throw new Error('SVOGauge.init: method ' + method +
-                            ': gauge missing function enable.');
-        }
-        if ('function' !== typeof gauge.disable) {
-            throw new Error('SVOGauge.init: method ' + method +
-                            ': gauge missing function disable.');
-        }
-        if ('function' !== typeof gauge.append) {
-            throw new Error('SVOGauge.init: method ' + method +
-                            ': gauge missing function append.');
-        }
-    }
 
     // ## Available methods.
 
@@ -60202,7 +60409,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualStage.version = '0.10.0';
+    VisualStage.version = '0.11.0';
     VisualStage.description =
         'Displays the name of the current, previous and next step of the game.';
 
@@ -60262,10 +60469,10 @@ if (!Array.prototype.indexOf) {
 
         // Default display settings.
 
-        // ### VisualStage.showRounds
+        // ### VisualStage.addRound
         //
         // If TRUE, round number is added to the name of steps in repeat stages
-        this.showRounds = true;
+        this.addRound = true;
 
         // ### VisualStage.showPrevious
         //
@@ -60297,8 +60504,8 @@ if (!Array.prototype.indexOf) {
             }
             this.displayMode = opts.displayMode;
         }
-        if ('undefined' !== typeof opts.rounds) {
-            this.showRounds = !!opts.rounds;
+        if ('undefined' !== typeof opts.addRound) {
+            this.addRound = !!opts.addRound;
         }
         if ('undefined' !== typeof opts.previous) {
             this.showPrevious = !!opts.previous;
@@ -60440,10 +60647,19 @@ if (!Array.prototype.indexOf) {
      * @return {string} name The name of the step
      */
     VisualStage.prototype.getStepName = function(gameStage, curStage, mod) {
-        var name, round;
+        var name, round, preprocess, addRound;
         // Get the name. If no step property is defined, use the id and
         // do some text replacing.
         name = node.game.plot.getProperty(gameStage, 'name');
+        if ('function' === typeof name) {
+            preprocess = name;
+            name = null;
+        }
+        else if ('object' === typeof name && name !== null) {
+            preprocess = name.preprocess;
+            addRound = name.addRound;
+            name = name.name;
+        }
         if (!name) {
             name = node.game.plot.getStep(gameStage);
             if (!name) {
@@ -60455,15 +60671,15 @@ if (!Array.prototype.indexOf) {
                 if (this.capitalize) name = capitalize(name);
             }
         }
+        if (!preprocess) preprocess = this.preprocess;
+        if ('undefined' === typeof addRound) addRound = this.addRound;
+
+        round = getRound(gameStage, curStage, mod);
 
         // If function, executes it.
-        if ('function' === typeof name) name = name.call(node.game);
+        if (preprocess) name = preprocess.call(node.game, name, mod, round);
+        if (addRound && round) name += ' ' + round;
 
-        if (this.showRounds) {
-            round = getRound(gameStage, curStage, mod);
-            if (round) name += ' ' + round;
-        }
-        if (this.preprocess) name = this.preprocess(name, mod, round);
         return name;
     };
 
