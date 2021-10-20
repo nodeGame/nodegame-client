@@ -1,5 +1,17 @@
 # nodegame-client change log
 
+## 7.0.0
+- New method: Timer.isDetroyed.
+- Widget steps add widgetStep option = true.
+- Improved ErrorManager.
+- Redirect messages for bots gracefully handled.
+- New alias: node.on.done.
+- New properties added to every DONE msg: stepId and stageId.
+- Frame appears at once, waiting for the callback to be executed.
+- Stager.require: lets split stages across files.
+- Stager.share: shares some variables with all requires.
+- Fixed: game scrolls up when a new frame is not loaded.
+
 ## 6.2.0
 - DONE is async with respect to node.game.step to let other listeners on DONE
 finish first.
