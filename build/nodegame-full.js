@@ -6036,7 +6036,7 @@ if (!Array.prototype.indexOf) {
 
         // ### __update.indexes
         // If TRUE, rebuild indexes on every insert and remove
-        this.__update.indexes = false;
+        this.__update.indexes = true;
 
         // ### __update.sort
         // If TRUE, sort db on every insert and remove
@@ -10455,7 +10455,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '6.2.0';
+    node.version = '7.0.0';
 
 })(window);
 
@@ -25297,7 +25297,9 @@ if (!Array.prototype.indexOf) {
             }
 
             // Add options, if missing.
-            if (!widget.options) widget.options = {};
+            // User can specify the options in a nested object, or flat them
+            // down in case there are no conflicts.
+            if (!widget.options) widget.options = widget;
 
             // Make main callback to get/append the widget.
             widgetCb = function() {
@@ -39955,11 +39957,11 @@ if (!Array.prototype.indexOf) {
      *
      * Inits the widget after constructor and default properties are added
      *
-     * @param {object} options Configuration options
+     * @param {object} opts Configuration options
      *
      * @see Widgets.get
      */
-    Widget.prototype.init = function(options) {};
+    Widget.prototype.init = function(opts) {};
 
     /**
      * ### Widget.listeners
@@ -40003,14 +40005,14 @@ if (!Array.prototype.indexOf) {
      *
      * Returns the values currently stored by the widget
      *
-     * @param {mixed} options Settings controlling the content of return value
+     * @param {mixed} opts Settings controlling the content of return value
      *
      * @return {mixed} The values of the widget
      */
-    Widget.prototype.getValues = function(options) {};
+    Widget.prototype.getValues = function(opts) {};
 
     /**
-     * ### Widget.getValues
+     * ### Widget.setValues
      *
      * Set the stored values directly
      *
@@ -40028,7 +40030,7 @@ if (!Array.prototype.indexOf) {
      * Deletes current selection, any highlighting, and other data
      * that the widget might have collected to far.
      */
-    Widget.prototype.reset = function(options) {};
+    Widget.prototype.reset = function(opts) {};
 
     /**
      * ### Widget.highlight
@@ -42071,56 +42073,56 @@ if (!Array.prototype.indexOf) {
      *
      * @param {object} options Optional. Configuration options
      */
-    BackButton.prototype.init = function(options) {
+    BackButton.prototype.init = function(opts) {
         var tmp;
-        options = options || {};
+        opts = opts || {};
 
         //Button
-        if ('undefined' === typeof options.id) {
+        if ('undefined' === typeof opts.id) {
             tmp = BackButton.className;
         }
-        else if ('string' === typeof options.id) {
-            tmp = options.id;
+        else if ('string' === typeof opts.id) {
+            tmp = opts.id;
         }
-        else if (false === options.id) {
+        else if (false === opts.id) {
             tmp = '';
         }
         else {
-            throw new TypeError('BackButton.init: options.id must ' +
+            throw new TypeError('BackButton.init: opts.id must ' +
                                 'be string, false, or undefined. Found: ' +
-                                options.id);
+                                opts.id);
         }
         this.button.id = tmp;
 
-        if ('undefined' === typeof options.className) {
+        if ('undefined' === typeof opts.className) {
             tmp  = 'btn btn-lg btn-secondary';
         }
-        else if (options.className === false) {
+        else if (opts.className === false) {
             tmp = '';
         }
-        else if ('string' === typeof options.className) {
-            tmp = options.className;
+        else if ('string' === typeof opts.className) {
+            tmp = opts.className;
         }
-        else if (J.isArray(options.className)) {
-            tmp = options.className.join(' ');
+        else if (J.isArray(opts.className)) {
+            tmp = opts.className.join(' ');
         }
         else  {
-            throw new TypeError('BackButton.init: options.className must ' +
+            throw new TypeError('BackButton.init: opts.className must ' +
                                 'be string, array, or undefined. Found: ' +
-                                options.className);
+                                opts.className);
         }
         this.button.className = tmp;
 
         // Button text.
-        this.button.value = 'string' === typeof options.text ?
-            options.text : this.getText('back');
+        this.button.value = 'string' === typeof opts.text ?
+            opts.text : this.getText('back');
 
         this.stepOptions.acrossStages =
-            'undefined' === typeof options.acrossStages ?
-            false : !!options.acrossStages;
+            'undefined' === typeof opts.acrossStages ?
+            false : !!opts.acrossStages;
         this.stepOptions.acrossRounds =
-            'undefined' === typeof options.acrossRounds ?
-            true : !!options.acrossRounds;
+            'undefined' === typeof opts.acrossRounds ?
+            true : !!opts.acrossRounds;
     };
 
     BackButton.prototype.append = function() {
@@ -45650,7 +45652,12 @@ if (!Array.prototype.indexOf) {
         if (this.textarea) obj.freetext = this.textarea.value;
 
         // Simplify everything, if requested.
-        if (opts.simplify || this.simplify) obj = obj.forms;
+        if (opts.simplify || this.simplify) {
+            res = obj;
+            obj = obj.forms;
+            if (res.isCorrect === false) obj.isCorrect = false;
+            if (res.freetext) obj.freetext = res.freetext;
+        }
         return obj;
     };
 
@@ -49116,6 +49123,10 @@ if (!Array.prototype.indexOf) {
 
         notAgree: 'No, I do not agree',
 
+        showHideConsent: function(w, s) {
+            return (s === 'hide' ? 'Hide' : 'Show') + ' Consent Form';
+        }
+
     };
 
     /**
@@ -49163,9 +49174,9 @@ if (!Array.prototype.indexOf) {
 
         this.consent = opts.consent || node.game.settings.CONSENT;
 
-        if ('object' !== typeof this.consent) {
-            throw new TypeError('Consent: consent must be object. Found: ' +
-                                this.consent);
+        if (this.consent && 'object' !== typeof this.consent) {
+            throw new TypeError('Consent: consent must be object or ' +
+                                'undefined. Found: ' + this.consent);
         }
 
         this.showPrint = opts.showPrint === false ? false : true;
@@ -49191,6 +49202,9 @@ if (!Array.prototype.indexOf) {
 
     Consent.prototype.append = function() {
         var consent, html;
+        // Hide not agreed div.
+        W.hide('notAgreed');
+
         consent = W.gid('consent');
         html = '';
 
@@ -49223,12 +49237,15 @@ if (!Array.prototype.indexOf) {
             var a, na, p, id;
 
             // Replace all texts.
-            for (p in consent) {
-                if (consent.hasOwnProperty(p)) {
-                    // Making lower-case and replacing underscores with dashes.
-                    id = p.toLowerCase();
-                    id = id.replace(new RegExp("_", 'g'), "-");
-                    W.setInnerHTML(id, consent[p]);
+            if (consent) {
+                for (p in consent) {
+                    if (consent.hasOwnProperty(p)) {
+                        // Making lower-case and replacing underscore
+                        // s with dashes.
+                        id = p.toLowerCase();
+                        id = id.replace(new RegExp("_", 'g'), "-");
+                        W.setInnerHTML(id, consent[p]);
+                    }
                 }
             }
 
@@ -49240,7 +49257,7 @@ if (!Array.prototype.indexOf) {
             if (!na) throw new Error('Consent: notAgree button not found');
 
 
-            a.onclick = function() { node.done(); };
+            a.onclick = function() { node.done({ consent: true }); };
             na.onclick = function() {
                 var showIt, confirmed;
 
@@ -59028,9 +59045,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Dependencies
 
-    SVOGauge.dependencies = {
-        JSUS: {}
-    };
+    SVOGauge.dependencies = {};
 
     /**
      * ## SVOGauge constructor
