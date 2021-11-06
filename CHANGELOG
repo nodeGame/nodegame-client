@@ -1,5 +1,8 @@
 # nodegame-client change log
 
+## 7.1.0
+- Widget steps supports flattened options inside widget object.
+
 ## 7.0.0
 - New method: Timer.isDetroyed.
 - Widget steps add widgetStep option = true.
