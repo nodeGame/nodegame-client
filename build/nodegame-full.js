@@ -10455,7 +10455,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '7.0.0';
+    node.version = '7.1.0';
 
 })(window);
 
@@ -25352,9 +25352,10 @@ if (!Array.prototype.indexOf) {
 
             // Make the done callback to send results.
             widgetDone = function() {
-                var values, opts;
+                var values, opts, req;
+                req = widgetObj.required || widgetObj.requiredChoice;
                 // TODO: harmonize: required or checkValues?
-                if (widgetObj.required && widget.checkValues !== false) {
+                if (req && widget.checkValues !== false) {
                     opts = { highlight: true, markAttempt: true };
                 }
                 else {
@@ -25367,7 +25368,7 @@ if (!Array.prototype.indexOf) {
 
                 // If it is not timeup, and user did not
                 // disabled it, check answers.
-                if (widgetObj.required && widget.checkValues !== false &&
+                if (req && widget.checkValues !== false &&
                     !node.game.timer.isTimeup()) {
 
                     // Widget must return some values (otherwise it
@@ -39916,7 +39917,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Widget
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Prototype of a widget class
@@ -40817,6 +40818,28 @@ if (!Array.prototype.indexOf) {
         throw new Error(errMsg);
     };
 
+    /**
+     * ### Widget.next
+     *
+     * Updates the widget with the next visualization within the same step
+     *
+     * @param {boolean} FALSE if there is no next visualization.
+     *
+     * @see Widget.prev
+     */
+    Widget.prototype.next = function() { return false; };
+
+    /**
+     * ### Widget.prev
+     *
+     * Updates the widget with the previous visualization within the same step
+     *
+     * @param {boolean} FALSE if there is no prev visualization.
+     *
+     * @see Widget.next
+     */
+    Widget.prototype.prev = function() { return false; };
+
     // ## Helper methods.
 
     /**
@@ -40842,11 +40865,12 @@ if (!Array.prototype.indexOf) {
      */
     function strGetter(that, name, collection, method, param) {
         var res;
-        if (!that.constructor[collection].hasOwnProperty(name)) {
-            throw new Error(method + ': name not found: ' + name);
-        }
         res = 'undefined' !== typeof that[collection][name] ?
             that[collection][name] : that.constructor[collection][name];
+        if ('undefined' === typeof res) {
+            throw new Error(method + ': name not found: ' + name);
+        }
+
         if ('function' === typeof res) {
             res = res(that, param);
             if ('string' !== typeof res && res !== false) {
@@ -40997,18 +41021,18 @@ if (!Array.prototype.indexOf) {
          * Container of appended widget instances
          *
          * @see Widgets.append
-         * @see Widgets.lastAppended
+         * @see Widgets.last
          */
         this.instances = [];
 
         /**
-         * ### Widgets.lastAppended
+        * ### Widgets.last|lastAppended
          *
          * Reference to lastAppended widget
          *
          * @see Widgets.append
          */
-        this.lastAppended = null;
+        this.last = this.lastAppended = null;
 
         /**
          * ### Widgets.docked
@@ -41447,11 +41471,11 @@ if (!Array.prototype.indexOf) {
                     }
                 }
                 // Remove from lastAppended.
-                if (node.widgets.lastAppended &&
-                    node.widgets.lastAppended.wid === this.wid) {
+                if (node.widgets.last &&
+                    node.widgets.last.wid === this.wid) {
 
-                    node.warn('node.widgets.lastAppended destroyed.');
-                    node.widgets.lastAppended = null;
+                    node.warn('node.widgets.last destroyed.');
+                    node.widgets.lastAppended = node.widgets.last = null;
                 }
             }
 
@@ -41640,7 +41664,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Store reference of last appended widget (.get method set storeRef).
-        if (w.storeRef !== false) this.lastAppended = w;
+        if (w.storeRef !== false) this.lastAppended = this.last = w;
 
         return w;
     };
@@ -41693,7 +41717,7 @@ if (!Array.prototype.indexOf) {
         for ( ; ++i < len ; ) {
             this.instances[0].destroy();
         }
-        this.lastAppended = null;
+        this.lastAppended = this.last = null;
         if (this.instances.length) {
             node.warn('node.widgets.destroyAll: some widgets could ' +
                       'not be destroyed.');
@@ -41972,19 +41996,13 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    BackButton.version = '0.4.0';
+    BackButton.version = '0.5.0';
     BackButton.description = 'Creates a button that if ' +
         'pressed goes to the previous step.';
 
     BackButton.title = false;
     BackButton.className = 'backbutton';
     BackButton.texts.back = 'Back';
-
-    // ## Dependencies
-
-    BackButton.dependencies = {
-        JSUS: {}
-    };
 
     /**
      * ## BackButton constructor
@@ -42022,6 +42040,11 @@ if (!Array.prototype.indexOf) {
         this.button.onclick = function() {
             var res;
             that.disable();
+            if (that.onclick && false === that.onclick()) return;
+            if (node.game.isWidgetStep()) {
+                // Widget has a next visualization in the same step.
+                if (node.widgets.last.prev() !== false) return;
+            }
             res = node.game.stepBack(that.stepOptions);
             if (res === false) that.enable();
         };
@@ -42050,6 +42073,18 @@ if (!Array.prototype.indexOf) {
             // ## @api: private.
             noZeroStep: true
         };
+
+
+        /**
+         * #### BackButton.onclick
+         *
+         * A callback function executed when the button is clicked
+         *
+         * If the function returns FALSE, the procedure is aborted.
+         *
+         * Default: TRUE
+         */
+        this.onclick = null;
     }
 
     // ## BackButton methods
@@ -42123,6 +42158,8 @@ if (!Array.prototype.indexOf) {
         this.stepOptions.acrossRounds =
             'undefined' === typeof opts.acrossRounds ?
             true : !!opts.acrossRounds;
+
+        setOnClick(this, opts.onclick);
     };
 
     BackButton.prototype.append = function() {
@@ -42145,19 +42182,30 @@ if (!Array.prototype.indexOf) {
             step = node.game.getPreviousStep(1, that.stepOptions);
             prop = node.game.getProperty('backbutton');
 
-            if (!step || prop === false ||
-                (prop && prop.enableOnPlaying === false)) {
+            if (prop !== true &&
+                (!step || prop === false ||
+                (prop && prop.enableOnPlaying === false))) {
 
                 // It might be disabled already, but we do it again.
                 that.disable();
             }
             else {
                 // It might be enabled already, but we do it again.
-                if (step) that.enable();
+                if (prop === true || step) that.enable();
             }
 
             if ('string' === typeof prop) that.button.value = prop;
             else if (prop && prop.text) that.button.value = prop.text;
+
+            if (prop) {
+                setOnClick(that, prop.onclick, true);
+                if (prop.enable) that.enable();
+            }
+        });
+
+        // Catch those events.
+        node.events.game.on('WIDGET_NEXT', function() {
+            that.enable();
         });
     };
 
@@ -42178,6 +42226,22 @@ if (!Array.prototype.indexOf) {
     BackButton.prototype.enable = function() {
         this.button.disabled = false;
     };
+
+    // ## Helper functions.
+
+    // Checks and sets the onclick function.
+    function setOnClick(that, onclick, step) {
+        var str;
+        if ('undefined' !== typeof onclick) {
+            if ('function' !== typeof onclick && onclick !== null) {
+                str = 'BackButton.init';
+                if (step) str += ' (step property)';
+                throw new TypeError(str + ': onclick must be function, null,' +
+                                    ' or undefined. Found: ' + onclick);
+            }
+            that.onclick = onclick;
+        }
+    }
 
 })(node);
 
@@ -45009,7 +45073,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceManager.version = '1.4.1';
+    ChoiceManager.version = '1.6.0';
     ChoiceManager.description = 'Groups together and manages a set of ' +
         'survey forms (e.g., ChoiceTable).';
 
@@ -45141,9 +45205,39 @@ if (!Array.prototype.indexOf) {
         /**
          * ### ChoiceManager.required
          *
-         * TRUE if widget should be checked upon node.done.
+         * If TRUE, the widget is checked upon node.done.
          */
         this.required = null;
+
+        /**
+         * ### ChoiceManager.oneByOne
+         *
+         * If, TRUE the widget displays only one form at the time
+         *
+         * Calling node.done will display the next form.
+         */
+        this.oneByOne = null;
+
+        /**
+         * ### ChoiceManager.oneByOneCounter
+         *
+         * Index the currently displayed form if oneByOne is TRUE
+         */
+        this.oneByOneCounter = 0;
+
+        /**
+         * ### ChoiceManager.oneByOneResults
+         *
+         * Contains partial results from forms if OneByOne is true
+         */
+        this.oneByOneResults = {};
+
+        /**
+         * ### ChoiceManager.conditionals
+         *
+         * Contains conditions to display or hide forms based on other forms
+         */
+        this.conditionals = {};
     }
 
     // ## ChoiceManager methods
@@ -45240,6 +45334,9 @@ if (!Array.prototype.indexOf) {
         // If TRUE, it returns getValues returns forms.values.
         this.simplify = !!options.simplify;
 
+        // If TRUE, forms are displayed one by one.
+        this.oneByOne = !!options.oneByOne;
+
         // After all configuration options are evaluated, add forms.
 
         if ('undefined' !== typeof options.forms) this.setForms(options.forms);
@@ -45307,7 +45404,18 @@ if (!Array.prototype.indexOf) {
                 name = form.name || 'ChoiceTable';
                 // Add defaults.
                 J.mixout(form, this.formsOptions);
+
+                // Display forms one by one.
+                if (this.oneByOne && this.oneByOneCounter !== i) {
+                    form.hidden = true;
+                }
+
+                if (form.conditional) {
+                    this.conditionals[form.id] = form.conditional;
+                }
+
                 form = node.widgets.get(name, form);
+
             }
 
             if (form.id) {
@@ -45603,39 +45711,62 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof opts.markAttempt) opts.markAttempt = true;
         if ('undefined' === typeof opts.highlight) opts.highlight = true;
         if (opts.markAttempt) obj.isCorrect = true;
-        i = -1, len = this.forms.length;
-        for ( ; ++i < len ; ) {
-            form = this.forms[i];
-            // If it is hidden or disabled we do not do validation.
-            if (form.isHidden() || form.isDisabled()) {
-                res = form.getValues({
-                    markAttempt: false,
-                    highlight: false
-                });
-                if (res) obj.forms[form.id] = res;
-            }
-            else {
-                // ContentBox does not return a value.
+
+        len = this.forms.length;
+
+        // Only one form displayed.
+        if (this.oneByOne) {
+
+            // Evaluate one-by-one and store partial results.
+            if (this.oneByOneCounter < (len-1)) {
+                form = this.forms[this.oneByOneCounter];
                 res = form.getValues(opts);
-                if (!res) continue;
-                obj.forms[form.id] = res;
-                // Backward compatible (requiredChoice).
-                if ((form.required || form.requiredChoice) &&
-                    (obj.forms[form.id].choice === null ||
-                     (form.selectMultiple &&
-                      !obj.forms[form.id].choice.length))) {
+                if (res) {
+                    this.oneByOneResults[form.id] = res;
+                    lastErrored = checkFormResult(res, form, opts);
 
-                    obj.missValues.push(form.id);
-                    lastErrored = form;
+                    if (!lastErrored) {
+                        this.forms[this.oneByOneCounter].hide();
+                        this.oneByOneCounter++;
+                        this.forms[this.oneByOneCounter].show();
+                        W.adjustFrameHeight();
+                        // Prevent stepping.
+                        obj.isCorrect = false;
+                    }
                 }
-                if (opts.markAttempt &&
-                    obj.forms[form.id].isCorrect === false) {
+            }
+            // All one-by-one pages executed.
+            else {
+                // Copy all partial results in the obj returning the
+                obj.forms = this.oneByOneResults;
+            }
 
-                    // obj.isCorrect = false;
-                    lastErrored = form;
+        }
+        // All forms on the page.
+        else {
+            i = -1;
+            for ( ; ++i < len ; ) {
+                form = this.forms[i];
+                // If it is hidden or disabled we do not do validation.
+                if (form.isHidden() || form.isDisabled()) {
+                    res = form.getValues({
+                        markAttempt: false,
+                        highlight: false
+                    });
+                    if (res) obj.forms[form.id] = res;
+                }
+                else {
+                    // ContentBox does not return a value.
+                    res = form.getValues(opts);
+                    if (!res) continue;
+                    obj.forms[form.id] = res;
+
+                    res = checkFormResult(res, form, opts, obj);
+                    if (res) lastErrored = res;
                 }
             }
         }
+
         if (lastErrored) {
             if (opts.highlight &&
                 'function' === typeof lastErrored.bodyDiv.scrollIntoView) {
@@ -45685,7 +45816,106 @@ if (!Array.prototype.indexOf) {
         if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
     };
 
+    /**
+     * ### ChoiceManager.setValues
+     *
+     * Sets values for forms in manager as specified by the options
+     *
+     * @param {object} options Optional. Options specifying how to set
+     *   the values. If no parameter is specified, random values will
+     *   be set.
+     */
+    ChoiceManager.prototype.next = function() {
+        var form, conditional, failsafe;
+        if (!this.oneByOne) return false;
+        if (!this.forms || !this.forms.length) {
+            throw new Error('ChoiceManager.next: no forms found.');
+        }
+        form = this.forms[this.oneByOneCounter];
+        if (!form || form.next()) return false;
+        if (this.oneByOneCounter >= (this.forms.length-1)) return false;
+        form.hide();
+
+        failsafe = 500;
+        while (form && !conditional && this.oneByOneCounter < failsafe) {
+            form = this.forms[++this.oneByOneCounter];
+            if (!form) return false;
+            conditional = checkConditional(this, form.id);
+        }
+        form.show();
+        W.adjustFrameHeight();
+
+        node.emit('WIDGET_NEXT', this);
+    };
+
+    ChoiceManager.prototype.prev = function() {
+        var form;
+        if (!this.oneByOne) return false;
+        if (!this.forms || !this.forms.length) {
+            throw new Error('ChoiceManager.prev: no forms found.');
+        }
+        form = this.forms[this.oneByOneCounter];
+        if (form.prev()) return true;
+        if (this.oneByOneCounter <= 1) return false;
+        form.hide();
+        this.oneByOneCounter--;
+        this.forms[this.oneByOneCounter].show();
+        W.adjustFrameHeight();
+        node.emit('WIDGET_PREV', this);
+    };
+
     // ## Helper methods.
+
+    function checkFormResult(res, form, opts, out) {
+        var err;
+        // Backward compatible (requiredChoice).
+        if ((form.required || form.requiredChoice) &&
+            (res.choice === null ||
+            (form.selectMultiple && !res.choice.length))) {
+
+            if (out) out.missValues.push(form.id);
+            err = form;
+        }
+        if (opts.markAttempt && res.isCorrect === false) {
+            // out.isCorrect = false;
+            err = form;
+        }
+
+        return err;
+    }
+
+    function checkConditional(that, id) {
+        var f, c, form;
+        f = that.conditionals[id];
+        if (f) {
+            for (c in f) {
+                if (f.hasOwnProperty(c)) {
+                    form = that.formsById[c];
+                    // No multiple choice allowed.
+                    if (form && form.currentChoice !== f[c]) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+// In progress.
+//     const createOnClick = (choice, question) => {
+//     return function(value, removed, td) {
+//         var w, hide;
+//         w = node.widgets.lastAppended.formsById[question];
+//         if (J.isArray(choice)) {
+//             hide = !J.inArray(this.currentChoice, choice);
+//         }
+//         else {
+//             hide = this.currentChoice !== choice;
+//         }
+//         if (hide) w.hide();
+//         else w.show();
+//         W.adjustFrameHeight();
+//     };
+// };
+// onclick: createOnClick([0, 1], 'crypto_occupation')
 
 })(node);
 
@@ -45708,7 +45938,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.8.1';
+    ChoiceTable.version = '1.10.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -45748,6 +45978,7 @@ if (!Array.prototype.indexOf) {
             if (w.requiredChoice) res += ' *';
             return res;
         },
+
         error: function(w, value) {
             if (value !== null &&
                 ('number' === typeof w.correctChoice ||
@@ -45756,17 +45987,15 @@ if (!Array.prototype.indexOf) {
                 return 'Not correct, try again.';
             }
             return 'Selection required.';
-        }
-        // correct: 'Correct.'
+        },
+
+        other: 'Other',
+
+        customInput: 'Please specify.'
+
     };
 
     ChoiceTable.separator = '::';
-
-    // ## Dependencies
-
-    ChoiceTable.dependencies = {
-        JSUS: {}
-    };
 
     /**
      * ## ChoiceTable constructor
@@ -45811,8 +46040,8 @@ if (!Array.prototype.indexOf) {
          * @see ChoiceTable.onclick
          */
         this.listener = function(e) {
-            var name, value, td, tr;
-            var i, len, removed;
+            var name, value, td;
+            var i, len, removed, other;
 
             e = e || window.event;
             td = e.target || e.srcElement;
@@ -45856,6 +46085,19 @@ if (!Array.prototype.indexOf) {
 
             // One more click.
             that.numberOfClicks++;
+
+            len = that.choices.length;
+
+            if (that.customInput) {
+                // Is "Other" currently selected?
+                other = value === (len - 1);
+                if (that.customInput.isHidden()) {
+                    if (other) that.customInput.show();
+                }
+                else {
+                    if (other) that.customInput.hide();
+                }
+            }
 
             // Click on an already selected choice.
             if (that.isChoiceCurrent(value)) {
@@ -45918,6 +46160,8 @@ if (!Array.prototype.indexOf) {
                 value = parseInt(value, 10);
                 that.onclick.call(that, value, removed, td);
             }
+
+            if (that.doneOnClick) node.done();
         };
 
         /**
@@ -46251,6 +46495,59 @@ if (!Array.prototype.indexOf) {
         * If TRUE, cells have same width regardless of content
         */
         this.sameWidthCells = true;
+
+        /**
+        * ### ChoiceTable.other
+        *
+        * If TRUE, adds an "Other" choice as last choice
+        *
+        * Accepted values:
+        * - true: adds "Other" choice as last choice.
+        * - 'CustomInput':  adds "Other" choice AND a CustomInput widget below
+        *   the choicetable (initially hidden).
+        * - object: as previous, but it also allows for custom options for the
+        *   custom input
+        *
+        * @see ChoiceTable.customInput
+        */
+        this.other = null;
+
+        /**
+        * ### ChoiceTable.customInput
+        *
+        * The customInput widget
+        *
+        * @see ChoiceTable.other
+        */
+        this.customInput = null;
+
+        /**
+        * ### ChoiceTable.doneOnClick
+        *
+        * If TRUE, node.done() will be invoked after the first click
+        */
+        this.doneOnClick = null;
+
+        /**
+        * ### ChoiceTable.solution
+        *
+        * Additional information to be displayed after a selection is confirmed
+        */
+        this.solution = null;
+
+        /**
+        * ### ChoiceTable.solutionDisplayed
+        *
+        * TRUE, if the solution is currently displayed
+        */
+        this.solutionDisplayed = false;
+
+        /**
+        * ### ChoiceTable.solutionDiv
+        *
+        * The <div> element containing the solution
+        */
+        this.solutionDiv = null;
     }
 
     // ## ChoiceTable methods
@@ -46583,6 +46880,11 @@ if (!Array.prototype.indexOf) {
             this.choicesSetSize = opts.choicesSetSize;
         }
 
+        // Add other.
+        if ('undefined' !== typeof opts.other) {
+            this.other = opts.other;
+        }
+
         // Add the choices.
         if ('undefined' !== typeof opts.choices) {
             this.setChoices(opts.choices);
@@ -46601,9 +46903,9 @@ if (!Array.prototype.indexOf) {
         // Add the correct choices.
         if ('undefined' !== typeof opts.disabledChoices) {
             if (!J.isArray(opts.disabledChoices)) {
-                throw new Error('ChoiceTable.init: disabledChoices must be ' +
-                                'undefined or array. Found: ' +
-                                opts.disabledChoices);
+                throw new TypeError('ChoiceTable.init: disabledChoices ' +
+                                    'must be undefined or array. Found: ' +
+                                    opts.disabledChoices);
             }
 
             // TODO: check if values of disabled choices are correct?
@@ -46618,8 +46920,21 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        if ('undefined' === typeof opts.sameWidthCells) {
+        if ('undefined' !== typeof opts.sameWidthCells) {
             this.sameWidthCells = !!opts.sameWidthCells;
+        }
+
+        if ('undefined' !== typeof opts.doneOnClick) {
+            this.doneOnClick = !!opts.doneOnClick;
+        }
+
+        tmp = opts.solution;
+        if ('undefined' !== typeof tmp) {
+            if ('string' !== typeof tmp && 'function' !== typeof tmp) {
+                throw new TypeError('ChoiceTable.init: solution must be ' +
+                                    'string or undefined. Found: ' + tmp);
+            }
+            this.solution = tmp;
         }
     };
 
@@ -46676,6 +46991,11 @@ if (!Array.prototype.indexOf) {
         // Save the order in which the choices will be added.
         this.order = J.seq(0, len-1);
         if (this.shuffleChoices) this.order = J.shuffle(this.order);
+
+        if (this.other) {
+          this.choices[len] = this.getText('other');
+          this.order[len] = len
+        }
 
         // Build the table and choices at once (faster).
         if (this.table) this.buildTableAndChoices();
@@ -47055,6 +47375,11 @@ if (!Array.prototype.indexOf) {
 
         this.errorBox = W.append('div', this.bodyDiv, { className: 'errbox' });
 
+        this.setCustomInput(this.other, this.bodyDiv);
+
+        if (this.solution) {
+            this.solutionDiv = W.append('div', this.bodyDiv);
+        }
 
         // Creates a free-text textarea, possibly with placeholder text.
         if (this.freeText) {
@@ -47068,6 +47393,28 @@ if (!Array.prototype.indexOf) {
             // Append textarea.
             this.bodyDiv.appendChild(this.textarea);
         }
+    };
+
+    /**
+     * ### ChoiceTable.setCustomInput
+     *
+     * Set Custom Input widget.
+     *
+     */
+    ChoiceTable.prototype.setCustomInput = function(other, root) {
+        var opts;
+        if (other === null || 'boolean' === typeof other) return;
+        opts = {
+            id: 'other' + this.id,
+            mainText: this.getText('customInput'),
+            requiredChoice: this.requiredChoice
+        }
+        // other is the string 'CustomInput' or a conf object.
+        if ('object' === typeof other) J.mixin(opts, other);
+        // Force initially hidden.
+        opts.hidden = true;
+        this.customInput = node.widgets.append('CustomInput', root, opts);
+
     };
 
     /**
@@ -47122,6 +47469,7 @@ if (!Array.prototype.indexOf) {
             // Remove listener to make cells clickable with the keyboard.
             if (this.tabbable) J.makeClickable(this.table, false);
         }
+        if (this.customInput) this.customInput.disable();
         this.emit('disabled');
     };
 
@@ -47142,6 +47490,7 @@ if (!Array.prototype.indexOf) {
         this.table.addEventListener('click', this.listener);
         // Add listener to make cells clickable with the keyboard.
         if (this.tabbable) J.makeClickable(this.table);
+        if (this.customInput) this.customInput.enable();
         this.emit('enabled');
     };
 
@@ -47166,9 +47515,24 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceTable.attempts
      * @see ChoiceTable.setCorrectChoice
      */
-    ChoiceTable.prototype.verifyChoice = function(markAttempt) {
+     ChoiceTable.prototype.verifyChoice = function(markAttempt) {
         var i, len, j, lenJ, c, clone, found;
-        var correctChoice;
+        var correctChoice, ci, ciCorrect;
+
+        // Mark attempt by default.
+        markAttempt = 'undefined' === typeof markAttempt ? true : markAttempt;
+        if (markAttempt) this.attempts.push(this.currentChoice);
+
+         // Custom input to check.
+         ci = this.customInput && !this.customInput.isHidden();
+         if (ci) {
+             ciCorrect = this.customInput.getValues({
+                 markAttempt: markAttempt
+             }).isCorrect;
+             if (ciCorrect === false) return false;
+             // Set it to null so it is returned correctly, later below.
+             if ('undefined' === typeof ciCorrect) ciCorrect = null;
+         }
 
         // Check the number of choices.
         if (this.requiredChoice !== null) {
@@ -47176,40 +47540,40 @@ if (!Array.prototype.indexOf) {
             else return this.currentChoice.length >= this.requiredChoice;
         }
 
-        // If no correct choice is set return null.
-        if ('undefined' === typeof this.correctChoice) return null;
-        // Mark attempt by default.
-        markAttempt = 'undefined' === typeof markAttempt ? true : markAttempt;
-        if (markAttempt) this.attempts.push(this.currentChoice);
-        if (!this.selectMultiple) {
-            return this.currentChoice === this.correctChoice;
-        }
-        else {
-            // Make it an array (can be a string).
-            correctChoice = J.isArray(this.correctChoice) ?
-                this.correctChoice : [this.correctChoice];
+        correctChoice = this.correctChoice;
+        // If no correct choice is set return null or ciCorrect (true|null).
+        if (null === correctChoice) return ci ? ciCorrect : null;
 
-            len = correctChoice.length;
-            lenJ = this.currentChoice.length;
-            // Quick check.
-            if (len !== lenJ) return false;
-            // Check every item.
-            i = -1;
-            clone = this.currentChoice.slice(0);
-            for ( ; ++i < len ; ) {
-                found = false;
-                c = correctChoice[i];
-                j = -1;
-                for ( ; ++j < lenJ ; ) {
-                    if (clone[j] === c) {
-                        found = true;
-                        break;
-                    }
+        // Only one choice allowed, ci is correct,
+        // otherwise we would have returned already.
+        if (!this.selectMultiple) return this.currentChoice === correctChoice;
+
+        // Multiple selections allowed.
+
+        // Make it an array (can be a string).
+        if (J.isArray(correctChoice)) correctChoice = [correctChoice];
+
+        len = correctChoice.length;
+        lenJ = this.currentChoice.length;
+        // Quick check.
+        if (len !== lenJ) return false;
+        // Check every item.
+        i = -1;
+        clone = this.currentChoice.slice(0);
+        for ( ; ++i < len ; ) {
+            found = false;
+            c = correctChoice[i];
+            j = -1;
+            for ( ; ++j < lenJ ; ) {
+                if (clone[j] === c) {
+                    found = true;
+                    break;
                 }
-                if (!found) return false;
             }
-            return true;
+            if (!found) return false;
         }
+        return true;
+
     };
 
     /**
@@ -47315,18 +47679,26 @@ if (!Array.prototype.indexOf) {
      *
      * Highlights the choice table
      *
-     * @param {string} The style for the table's border.
+     * @param {string|obj} opts Optional. If string is the 'border'
+     *   option for backward compatibilityThe style for the table's border.
      *   Default '3px solid red'
      *
      * @see ChoiceTable.highlighted
      */
-    ChoiceTable.prototype.highlight = function(border) {
+    ChoiceTable.prototype.highlight = function(opts) {
+        var border, ci;
+        opts = opts || {};
+        // Backward compatible.
+        if ('string' === typeof opts) opts = { border: opts };
+        border = opts.border;
         if (border && 'string' !== typeof border) {
             throw new TypeError('ChoiceTable.highlight: border must be ' +
                                 'string or undefined. Found: ' + border);
         }
         if (!this.table || this.highlighted) return;
         this.table.style.border = border || '3px solid red';
+        ci = this.customInput;
+        if (opts.customInput !== false && ci && !ci.isHidden()) ci.highlight();
         this.highlighted = true;
         this.emit('highlighted', border);
     };
@@ -47338,9 +47710,14 @@ if (!Array.prototype.indexOf) {
      *
      * @see ChoiceTable.highlighted
      */
-    ChoiceTable.prototype.unhighlight = function() {
+    ChoiceTable.prototype.unhighlight = function(opts) {
+        var ci;
         if (!this.table || this.highlighted !== true) return;
         this.table.style.border = '';
+        ci = this.customInput;
+        if (opts.customInput !== false && ci && !ci.isHidden()) {
+            ci.unhighlight();
+        }
         this.highlighted = false;
         this.setError();
         this.emit('unhighlighted');
@@ -47374,7 +47751,10 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceTable.reset
      */
     ChoiceTable.prototype.getValues = function(opts) {
-        var obj, resetOpts, i, len;
+        var obj, resetOpts, i, len, ci, ciCorrect;
+        var that;
+
+        that = this;
         opts = opts || {};
         obj = {
             id: this.id,
@@ -47392,20 +47772,21 @@ if (!Array.prototype.indexOf) {
         // Option getValue backward compatible.
         if (opts.addValue !== false && opts.getValue !== false) {
             if (!this.selectMultiple) {
-                obj.value = getValueFromChoice(this.choices[obj.choice]);
+                obj.value = getValueFromChoice(that,this.choices[obj.choice]);
             }
             else {
                 len = obj.choice.length;
                 obj.value = new Array(len);
                 if (len === 1) {
                     obj.value[0] =
-                        getValueFromChoice(this.choices[obj.choice[0]]);
+                        getValueFromChoice(that,this.choices[obj.choice[0]]);
                 }
                 else {
                     i = -1;
                     for ( ; ++i < len ; ) {
                         obj.value[i] =
-                            getValueFromChoice(this.choices[obj.choice[i]]);
+                            getValueFromChoice(that,
+                                               this.choices[obj.choice[i]]);
                     }
                     if (opts.sortValue !== false) obj.value.sort();
                 }
@@ -47418,18 +47799,42 @@ if (!Array.prototype.indexOf) {
         if (this.groupOrder === 0 || this.groupOrder) {
             obj.groupOrder = this.groupOrder;
         }
-        if (null !== this.correctChoice || null !== this.requiredChoice) {
+
+        ci = this.customInput;
+        if (null !== this.correctChoice || null !== this.requiredChoice ||
+            (ci && !ci.isHidden())) {
+
             obj.isCorrect = this.verifyChoice(opts.markAttempt);
             obj.attempts = this.attempts;
-            if (!obj.isCorrect && opts.highlight) this.highlight();
+            if (!obj.isCorrect && opts.highlight) this.highlight({
+                // If errored, it is already highlighted
+                customInput: false
+            });
         }
+
         if (this.textarea) obj.freetext = this.textarea.value;
+
         if (obj.isCorrect === false) {
-            this.setError(this.getText('error', obj.value));
+            // If there is an error on CI, we just highlight CI.
+            // However, there could be an error also on the choice table,
+            // e.g., not enough options selected. It will be catched
+            // at next click.
+            // TODO: change verifyChoice to say where the error is coming from.
+            if (ci) {
+                ciCorrect = ci.getValues({
+                    markAttempt: false
+                }).isCorrect;
+            }
+            if (ci && !ciCorrect && !ci.isHidden()) {
+                this.unhighlight({ customInput: false });
+            }
+            else {
+                this.setError(this.getText('error', obj.value));
+            }
         }
         else if (opts.reset) {
-            resetOpts = 'object' !== typeof opts.reset ? {} : opts.reset;
-            this.reset(resetOpts);
+             resetOpts = 'object' !== typeof opts.reset ? {} : opts.reset;
+             this.reset(resetOpts);
         }
         return obj;
     };
@@ -47551,6 +47956,9 @@ if (!Array.prototype.indexOf) {
 
         // Make a random comment.
         if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
+        if (this.custominput && !this.custominput.isHidden()) {
+            this.custominput.setValues();
+        }
     };
 
     /**
@@ -47591,6 +47999,7 @@ if (!Array.prototype.indexOf) {
         if (this.isHighlighted()) this.unhighlight();
 
         if (options.shuffleChoices) this.shuffle();
+        if (this.customInput) this.customInput.reset();
     };
 
     /**
@@ -47605,8 +48014,15 @@ if (!Array.prototype.indexOf) {
         var parentTR;
 
         H = this.orientation === 'H';
-        order = J.shuffle(this.order);
-        i = -1, len = order.length;
+        len = this.order.length;
+        if (this.other) {
+            order = J.shuffle(this.order.slice(0,-1));
+            order.push(this.order[len - 1]);
+        }
+        else {
+            order = J.shuffle(this.order);
+        }
+        i = -1;
         choicesValues = {};
         choicesCells = new Array(len);
 
@@ -47637,6 +48053,40 @@ if (!Array.prototype.indexOf) {
         this.order = order;
         this.choicesCells = choicesCells;
         this.choicesValues = choicesValues;
+    };
+
+    /**
+     * ### ChoiceManager.setValues
+     *
+     * Sets values for forms in manager as specified by the options
+     *
+     * @param {object} options Optional. Options specifying how to set
+     *   the values. If no parameter is specified, random values will
+     *   be set.
+     */
+    ChoiceTable.prototype.next = function() {
+        var sol;
+        if (!this.solution || this.solutionDisplayed) return false;
+        this.solutionDisplayed = true;
+        sol = this.solution;
+        if ('function' === typeof sol) {
+            sol = this.solution(this.verifyChoice(false), this);
+        }
+        this.solutionDiv.innerHTML = sol;
+        this.disable();
+        W.adjustFrameHeight();
+        node.emit('WIDGET_NEXT', this);
+        return true;
+    };
+
+    ChoiceTable.prototype.prev = function() {
+        if (!this.solutionDisplayed) return false;
+        this.solutionDisplayed = false;
+        this.solutionDiv.innerHTML = '';
+        this.enable();
+        W.adjustFrameHeight();
+        node.emit('WIDGET_NEXT', this);
+        return true;
     };
 
     // ## Helper methods.
@@ -47713,7 +48163,10 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceTable.getValues
      * @see ChoiceTable.renderChoice
      */
-    function getValueFromChoice(choice, display) {
+    function getValueFromChoice(that, choice, display) {
+        if (choice === that.getText('other') && that.customInput) {
+          return that.customInput.getValues().value;
+        }
         if ('string' === typeof choice || 'number' === typeof choice) {
             return choice;
         }
@@ -51287,7 +51740,6 @@ if (!Array.prototype.indexOf) {
      *
      * @return {mixed} The value in the input
      *
-     * @see CustomInput.verifyChoice
      * @see CustomInput.reset
      */
     CustomInput.prototype.getValues = function(opts) {
@@ -53608,12 +54060,6 @@ if (!Array.prototype.indexOf) {
     DoneButton.className = 'donebutton';
     DoneButton.texts.done = 'Done';
 
-    // ## Dependencies
-
-    DoneButton.dependencies = {
-        JSUS: {}
-    };
-
     /**
      * ## DoneButton constructor
      *
@@ -53649,6 +54095,10 @@ if (!Array.prototype.indexOf) {
 
         this.button.onclick = function() {
             if (that.onclick && false === that.onclick()) return;
+            if (node.game.isWidgetStep()) {
+                // Widget has a next visualization in the same step.
+                if (node.widgets.last.next() !== false) return;
+            }
             if (node.done()) that.disable();
         };
 
@@ -53757,14 +54207,7 @@ if (!Array.prototype.indexOf) {
                                 'be number or undefined. Found: ' + tmp);
         }
 
-        tmp = opts.onclick;
-        if (tmp) {
-            if ('function' !== typeof tmp) {
-                throw new TypeError('DoneButton.init: onclick must function ' +
-                                    'or undefined. Found: ' + tmp);
-            }
-            this.onclick = tmp;
-        }
+        setOnClick(this, opts.onclick);
     };
 
     DoneButton.prototype.append = function() {
@@ -53817,6 +54260,8 @@ if (!Array.prototype.indexOf) {
             }
             if ('string' === typeof prop) that.button.value = prop;
             else if (prop && prop.text) that.button.value = prop.text;
+
+            if (prop) setOnClick(this, prop.onclick, true);
         });
 
         if (this.disableOnDisconnect) {
@@ -53880,6 +54325,910 @@ if (!Array.prototype.indexOf) {
         this.button.disabled = false;
         this.emit('enabled', opts);
     };
+
+
+    // ## Helper functions.
+
+    // Checks and sets the onclick function.
+    function setOnClick(that, onclick, step) {
+        var str;
+        if ('undefined' !== typeof onclick) {
+            if ('function' !== typeof onclick && onclick !== null) {
+                str = 'DoneButton.init';
+                if (step) str += ' (step property)';
+                throw new TypeError(str + ': onclick must be function, null,' +
+                                    ' or undefined. Found: ' + onclick);
+            }
+            that.onclick = onclick;
+        }
+    }
+
+})(node);
+
+(function(node) {
+
+    node.widgets.register('Dropdown', Dropdown);
+
+    // Meta-data.
+
+    Dropdown.version = '0.3.0';
+    Dropdown.description = 'Creates a configurable dropdown menu.';
+
+    Dropdown.texts = {
+        // Texts here (more info on this later).
+        error: function (w, value) {
+            if (value !== null && w.fixedChoice &&
+                w.choices.indexOf(value) < 0) {
+                return 'No custom values allowed.'
+            }
+            if (value !== null && w.correctChoice !== null) {
+                return 'Not correct, try again.';
+            }
+            if (value !== null && w.verifyChoice().err) {
+                return w.verifyChoice().err;
+            }
+
+            return 'Answer required.';
+        }
+    };
+
+    // Title is displayed in the header.
+    Dropdown.title = false;
+    // Classname is added to the widgets.
+    Dropdown.className = 'dropdown';
+
+    // Constructor taking a configuration parameter.
+    // The options object is always existing.
+    function Dropdown() {
+        var that;
+        that = this;
+
+        // You can define widget properties here,
+        // but they should get assigned a value in init.
+
+        this.id = null;
+
+        /**
+         * ### Dropdown.mainText
+         *
+         * Main text above the dropdown
+         */
+        this.mainText = null;
+
+        /**
+         * ### Dropdown.labelText
+         *
+         * A label text for the input
+         */
+        this.labelText = null;
+
+        /**
+         * ### Dropdown.placeholder
+         *
+         * A placeholder text for the input
+         */
+        this.placeholder = null;
+
+        /**
+         * ### Dropdown.choices
+         *
+         * The array available choices
+         */
+        this.choices = null;
+
+        /**
+         * ### Dropdown.tag
+         *
+         * The HTML tag: "datalist" or "select"
+         */
+        this.tag = null;
+
+        /**
+         * ### Dropdown.menu
+         *
+         * Holder of the selected value (input or select)
+         */
+        this.menu = null;
+
+        /**
+         * ### Dropdown.datalist
+         *
+         * Holder of the options for the datalist element
+         */
+        this.datalist = null;
+
+        /**
+         * ### Dropdown.listener
+         *
+         * The main listener
+         *
+         * @see Dropdown.onchange
+         */
+        this.listener = function (e) {
+            var menu, timeout;
+
+            e = e || window.event;
+            menu = e.target || e.srcElement;
+
+            that.currentChoice = menu.value;
+            if (that.currentChoice.length === 0) that.currentChoice = null;
+
+            // Relative time.
+            if ('string' === typeof that.timeFrom) {
+                that.timeCurrentChoice = node.timer.getTimeSince(that.timeFrom);
+            }
+            // Absolute time.
+            else {
+                that.timeCurrentChoice = Date.now ?
+                    Date.now() : new Date().getTime();
+            }
+
+            // One more change.
+            that.numberOfChanges++;
+
+            // Remove any warning/errors on change.
+            if (that.isHighlighted()) that.unhighlight();
+
+            if (timeout) clearTimeout(timeout);
+
+            timeout = setTimeout(function () {
+                that.verifyChoice();
+                if (that.verifyChoice().err) {
+                    that.setError(that.verifyChoice().err)
+                }
+
+            }, that.validationSpeed);
+
+            // Call onchange, if any.
+            if (that.onchange) {
+                that.onchange(that.currentChoice, that);
+            }
+
+        };
+
+        /*
+         * ### Dropdown.onchange
+         *
+         * User defined onchange function
+         */
+        this.onchange = null;
+
+        /**
+         * ### Dropdown.timeCurrentChoice
+         *
+         * Time when the last choice was made
+         */
+        this.timeCurrentChoice = null;
+
+        /**
+         * ### Dropdown.timeFrom
+         *
+         * Time is measured from timestamp as saved by node.timer
+         *
+         * Default event is a new step is loaded (user can interact with
+         * the screen). Set it to FALSE, to have absolute time.
+         *
+         * @see node.timer.getTimeSince
+         */
+        this.timeFrom = 'step';
+
+        /**
+         * ### Dropdown.numberOfChanges
+         *
+         * Total number of changes between different choices
+         */
+        this.numberOfChanges = 0;
+
+        /**
+         * ### Dropdown.currentChoice
+         *
+         * Choice associated with currently selected cell/s
+         *
+         * The field is a  number.
+         */
+        this.currentChoice = null;
+
+        /**
+         * ###  Dropdown.shuffleChoices
+         *
+         * If TRUE, choices are shuffled.
+         */
+        this.shuffleChoices = null;
+
+        /**
+         * ### Dropdown.order
+         *
+         * The current order of display of choices
+         *
+         */
+        this.order = null;
+
+        /**
+         * ### Dropdown.errorBox
+         *
+         * An HTML element displayed when a validation error occurs
+         */
+        this.errorBox = null;
+
+        /**
+         * ### Dropdown.correctChoice
+         *
+         * The correct choice/s
+         *
+         * The field is an array or number|string.
+         *
+         */
+        this.correctChoice = null;
+
+        /**
+         * ### Dropdown.requiredChoice
+         *
+         * If True, a choice is required.
+         */
+        this.requiredChoice = null;
+
+        /**
+         * ### Dropdown.fixedChoice
+         *
+         * If True, custom values in menu do not validated.
+         */
+        this.fixedChoice = null;
+
+        /**
+        * ### Dropdown.inputWidth
+        *
+        * The width of the input form as string (css attribute)
+        *
+        * Some types preset it automatically
+        */
+        this.inputWidth = null;
+
+        /**
+          * ### CustomInput.userValidation
+          *
+          * An additional validation executed after the main validation function
+          *
+          * The function returns an object like:
+          *
+          * ```javascript
+          *  {
+          *    value: 'validvalue',
+          *    err:   'This error occurred' // If invalid.
+          *  }
+          * ```
+          */
+        this.validation = null;
+
+        /**
+         * ### Dropdown.validationSpeed
+         *
+         * How often (in milliseconds) the validation function is called
+         *
+         * Default: 500
+         */
+        this.validationSpeed = 500;
+
+    }
+
+
+    Dropdown.prototype.init = function (options) {
+        // Init widget variables, but do not create
+        // HTML elements, they should be created in append.
+
+        var tmp;
+
+        if (!this.id) {
+            throw new TypeError('Dropdown.init: options.id is missing');
+        }
+
+        if ('string' === typeof options.mainText) {
+            this.mainText = options.mainText;
+        }
+        else if ('undefined' !== typeof options.mainText) {
+            throw new TypeError('Dropdown.init: options.mainText must ' +
+                'be string or undefined. Found: ' +
+                options.mainText);
+        }
+
+        // Set the labelText, if any.
+        if ('string' === typeof options.labelText) {
+            this.labelText = options.labelText;
+        }
+        else if ('undefined' !== typeof options.labelText) {
+            throw new TypeError('Dropdown.init: options.labelText must ' +
+                'be string or undefined. Found: ' +
+                options.labelText);
+        }
+
+        // Set the placeholder text, if any.
+        if ('string' === typeof options.placeholder) {
+            this.placeholder = options.placeholder;
+        }
+        else if ('undefined' !== typeof options.placeholder) {
+            throw new TypeError('Dropdown.init: options.placeholder must ' +
+                'be string or undefined. Found: ' +
+                options.placeholder);
+        }
+
+        // Add the choices.
+        if ('undefined' !== typeof options.choices) {
+            this.choices = options.choices;
+        }
+
+        // Option requiredChoice, if any.
+        if ('boolean' === typeof options.requiredChoice) {
+            this.requiredChoice = options.requiredChoice;
+        }
+        else if ('undefined' !== typeof options.requiredChoice) {
+            throw new TypeError('Dropdown.init: options.requiredChoice ' +
+                'be boolean or undefined. Found: ' +
+                options.requiredChoice);
+        }
+
+        // Add the correct choices.
+        if ('undefined' !== typeof options.correctChoice) {
+            if (this.requiredChoice) {
+                throw new Error('Dropdown.init: cannot specify both ' +
+                    'options requiredChoice and correctChoice');
+            }
+            if (J.isArray(options.correctChoice) &&
+                options.correctChoice.length > options.choices.length) {
+                throw new Error('Dropdown.init: options.correctChoice ' +
+                    'length cannot exceed options.choices length');
+            }
+            else {
+                this.correctChoice = options.correctChoice;
+            }
+
+        }
+
+        // Option fixedChoice, if any.
+        if ('boolean' === typeof options.fixedChoice) {
+            this.fixedChoice = options.fixedChoice;
+        }
+        else if ('undefined' !== typeof options.fixedChoice) {
+            throw new TypeError('Dropdown.init: options.fixedChoice ' +
+                'be boolean or undefined. Found: ' +
+                options.fixedChoice);
+        }
+
+        if ("undefined" === typeof options.tag) {
+            this.tag = "datalist";
+        }
+        else if ("datalist" === options.tag || "select" === options.tag) {
+            this.tag = options.tag;
+        }
+        else {
+            throw new TypeError('Dropdown.init: options.tag must ' +
+                'be "datalist", "select" or undefined. Found: ' + options.tag);
+        }
+
+        // Set the main onchange listener, if any.
+        if ('function' === typeof options.listener) {
+            this.listener = function (e) {
+                options.listener.call(this, e);
+            };
+        }
+        else if ('undefined' !== typeof options.listener) {
+            throw new TypeError('Dropdown.init: opts.listener must ' +
+                'be function or undefined. Found: ' +
+                options.listener);
+        }
+
+        // Set an additional onchange, if any.
+        if ('function' === typeof options.onchange) {
+            this.onchange = options.onchange;
+        }
+        else if ('undefined' !== typeof options.onchange) {
+            throw new TypeError('Dropdownn.init: opts.onchange must ' +
+                'be function or undefined. Found: ' +
+                options.onchange);
+        }
+
+        // Set an additional validation, if any.
+        if ('function' === typeof options.validation) {
+            this.validation = options.validation;
+        }
+        else if ('undefined' !== typeof options.validation) {
+            throw new TypeError('Dropdownn.init: opts.validation must ' +
+                'be function or undefined. Found: ' +
+                options.validation);
+        }
+
+
+        // Option shuffleChoices, default false.
+        if ('undefined' === typeof options.shuffleChoices) tmp = false;
+        else tmp = !!options.shuffleChoices;
+        this.shuffleChoices = tmp;
+
+        if (options.width) {
+            if ('string' !== typeof options.width) {
+                throw new TypeError('Dropdownn.init:width must be string or ' +
+                    'undefined. Found: ' + options.width);
+            }
+            this.inputWidth = options.width;
+        }
+
+        // Validation Speed
+        if ('undefined' !== typeof options.validationSpeed) {
+
+            tmp = J.isInt(options.valiadtionSpeed, 0, undefined, true);
+            if (tmp === false) {
+                throw new TypeError('Dropdownn.init: validationSpeed must ' +
+                    ' a non-negative number or undefined. Found: ' +
+                    options.validationSpeed);
+            }
+            this.validationSpeed = tmp;
+        }
+
+    }
+
+    // Implements the Widget.append method.
+    Dropdown.prototype.append = function () {
+        if (W.gid(this.id)) {
+            throw new Error('Dropdown.append: id is not unique: ' + this.id);
+        }
+        var text = this.text;
+        var label = this.label;
+
+        text = W.get('p');
+        text.innerHTML = this.mainText;
+        text.id = 'p';
+        this.bodyDiv.appendChild(text);
+
+        label = W.get('label');
+        label.innerHTML = this.labelText
+        this.bodyDiv.appendChild(label);
+
+        this.setChoices(this.choices, true);
+
+        this.errorBox = W.append('div', this.bodyDiv, {
+            className: 'errbox', id: 'errbox'
+        });
+    };
+
+
+    Dropdown.prototype.setChoices = function (choices, append) {
+        var isDatalist, order;
+        var select;
+        var i, len, value, name;
+
+        // TODO validate choices.
+        this.choices = choices;
+
+        if (!append) return;
+
+        isDatalist = this.tag === 'datalist';
+
+        // Create the structure from scratch or just clear all options.
+        if (this.menu) {
+            select = isDatalist ? this.datalist : this.menu;
+            select.innerHTML = '';
+        }
+        else {
+            if (isDatalist) {
+
+                this.menu = W.add('input', this.bodyDiv, {
+                    id: this.id,
+                    autocomplete: 'off'
+                });
+
+                this.datalist = select = W.add('datalist', this.bodyDiv, {
+                    id: this.id + "_datalist"
+                });
+
+                this.menu.setAttribute('list', this.datalist.id);
+            }
+            else {
+
+                select = W.get('select');
+                select.id = this.id;
+
+                this.bodyDiv.appendChild(select);
+                this.menu = select;
+            }
+        }
+
+        // Set width.
+        if (this.inputWidth) this.menu.style.width = this.inputWidth;
+
+        // Adding placeholder.
+        if (this.placeholder) {
+            if (isDatalist) {
+                this.menu.placeholder = this.placeholder;
+            }
+            else {
+
+                W.add('option', this.menu, {
+                    value: '',
+                    innerHTML: this.placeholder,
+                    // Makes the placeholder unselectable after first click.
+                    disabled: '',
+                    selected: '',
+                    hidden: ''
+                });
+            }
+        }
+
+        // Adding all options.
+        len = choices.length;
+        order = J.seq(0, len - 1);
+        if (this.shuffleChoices) order = J.shuffle(order);
+        for (i = 0; i < len; i++) {
+
+            // Determining value and name of choice.
+            value = name = choices[order[i]];
+            if ('object' === typeof value) {
+                if ('undefined' !== typeof value.value) {
+                    name = value.name;
+                    value = value.value;
+                }
+                else if (J.isArray(value)) {
+                    name = value[1];
+                    value = value[0];
+                }
+            }
+
+            // select is a datalist element if tag is "datalist".
+            W.add('option', select, {
+                value: value,
+                innerHTML: name
+            });
+        }
+
+        this.enable();
+    };
+
+    /**
+     * ### Dropdown.verifyChoice
+     *
+     * Compares the current choice/s with the correct one/s
+     *
+     * Depending on current settings, there are three modes of verifying
+     * choices:
+     *
+     *    - requiredChoice: either true or false.
+     *    - correctChoice:  the choices are compared against correct ones.
+     *    - fixedChoice: compares the choice with given choices.
+     *
+     * @return {boolean|null} TRUE if current choice is correct,
+     *   FALSE if it is not correct, or NULL if no correct choice
+     *   was set
+     *
+     */
+    Dropdown.prototype.verifyChoice = function () {
+
+        var that = this;
+        var correct = this.correctChoice;
+        var current = this.currentChoice;
+        var correctOptions;
+        var res = { value: '' };
+
+
+        if (this.tag === "select" && this.numberOfChanges === 0) {
+            current = this.currentChoice = this.menu.value;
+        }
+
+        if (this.requiredChoice) {
+            res.value = current !== null && current !== this.placeholder;
+        }
+
+        // If no correct choice is set return null.
+        if ('undefined' === typeof correct) res.value = null;
+        if ('string' === typeof correct) {
+            res.value = current === correct;
+        }
+        if ('number' === typeof correct) {
+            res.value = current === this.choices[correct];
+        }
+        if (J.isArray(correct)) {
+            correctOptions = correct.map(function (x) {
+                return that.choices[x];
+            });
+            res.value = correctOptions.indexOf(current) >= 0;
+        }
+
+        if (this.fixedChoice) {
+            if (this.choices.indexOf(current) < 0) res.value = false;
+        }
+
+        if (this.validation) this.validation(this.currentChoice, res);
+
+        return res;
+    };
+
+    /**
+     * ### Dropdown.setError
+     *
+     * Set the error msg inside the errorBox
+     *
+     * @param {string} The error msg (can contain HTML)
+     *
+     * @see Dropdown.errorBox
+     */
+    Dropdown.prototype.setError = function (err) {
+        // TODO: the errorBox is added only if .append() is called.
+        // However, DropdownGroup use the table without calling .append().
+        if (this.errorBox) this.errorBox.innerHTML = err || '';
+        if (err) this.highlight();
+        else this.unhighlight();
+    };
+
+    /**
+     * ### Dropdown.highlight
+     *
+     * Highlights the input
+     *
+     * @param {string} The style for the table's border.
+     *   Default '3px solid red'
+     *
+     * @see Dropdown.highlighted
+     */
+    Dropdown.prototype.highlight = function (border) {
+        if (border && 'string' !== typeof border) {
+            throw new TypeError('Dropdown.highlight: border must be ' +
+                'string or undefined. Found: ' + border);
+        }
+        if (this.highlighted) return;
+        this.menu.style.border = border || '3px solid red';
+        this.highlighted = true;
+        this.emit('highlighted', border);
+    };
+
+    /**
+     * ### Dropdown.unhighlight
+     *
+     * Removes highlight
+     *
+     * @see Dropdown.highlighted
+     */
+    Dropdown.prototype.unhighlight = function () {
+        if (this.highlighted !== true) return;
+        this.menu.style.border = '';
+        this.highlighted = false;
+        this.setError();
+        this.emit('unhighlighted');
+    };
+
+    /**
+     * ### Dropdown.selectChoice
+     *
+     * Select a given choice in the datalist or select tag.
+     *
+     * @param {string|number} choice. Its value depends on the tag.
+     *
+     *   - "datalist": a string, if number it is resolved to the name of
+     *     the choice at idx === choice.
+     *   - "select": a number, if string it is resolved to the idx of
+     *     the choice name === choice. Value -1 will unselect all choices.
+     *
+     * @return {string|number} idx The resolved name or index
+     */
+    Dropdown.prototype.selectChoice = function (choice) {
+        // idx is a number if tag is select and a string if tag is datalist.
+        var idx;
+
+        if (!this.choices || !this.choices.length) return;
+        if ('undefined' === typeof choice) return;
+
+        idx = choice;
+
+        if (this.tag === 'select') {
+            if ('string' === typeof choice) {
+                idx = getIdxOfChoice(this, choice);
+                if (idx === -1) {
+                    node.warn('Dropdown.selectChoice: choice not found: ' +
+                               choice);
+                    return;
+                }
+            }
+            else if ('number' !== typeof choice) {
+                throw new TypeError('Dropdown.selectChoice: invalid choice: ' +
+                                    choice);
+            }
+
+            // Set the choice.
+            this.menu.selectedIndex = idx;
+        }
+        else {
+
+            if ('number' === typeof choice) {
+                idx = getChoiceOfIdx(this, choice);
+                if ('undefined' === typeof idx) {
+                    node.warn('Dropdown.selectChoice: choice not found: ' +
+                               choice);
+                    return;
+                }
+            }
+            else if ('string' !== typeof choice) {
+                throw new TypeError('Dropdown.selectChoice: invalid choice: ' +
+                                    choice);
+            }
+
+            this.menu.value = idx;
+        }
+
+        // Simulate event.
+        this.listener({ target: this.menu });
+
+        return idx;
+    };
+
+    /**
+     * ### Dropdown.setValues
+     *
+     * Set the values on the dropdown menu
+     *
+     * @param {object} opts Optional. Configuration options.
+     *
+     * @see Dropdown.verifyChoice
+     */
+    Dropdown.prototype.setValues = function(opts) {
+        var choice, correctChoice;
+        var i, len, j, lenJ;
+
+        if (!this.choices || !this.choices.length) {
+            throw new Error('Dropdown.setValues: no choices found.');
+        }
+        opts = opts || {};
+
+        // TODO: this code is duplicated from ChoiceTable.
+        if (opts.correct && this.correctChoice !== null) {
+
+            // Make it an array (can be a string).
+            correctChoice = J.isArray(this.correctChoice) ?
+                this.correctChoice : [this.correctChoice];
+
+            i = -1, len = correctChoice.length;
+            for ( ; ++i < len ; ) {
+                choice = parseInt(correctChoice[i], 10);
+                if (this.shuffleChoices) {
+                    j = -1, lenJ = this.order.length;
+                    for ( ; ++j < lenJ ; ) {
+                        if (this.order[j] === choice) {
+                            choice = j;
+                            break;
+                        }
+                    }
+                }
+
+                this.selectChoice(choice);
+            }
+            return;
+        }
+
+        // Set values, random or pre-set.
+        if ('number' === typeof opts || 'string' === typeof opts) {
+            opts = { values: opts };
+        }
+        else if (opts && 'undefined' === typeof opts.values) {
+            opts.values = J.randomInt(this.choices.length) -1;
+        }
+
+        this.selectChoice(opts.values);
+
+    };
+
+    /**
+     * ### Dropdown.getValues
+     *
+     * Returns the values for current selection and other paradata
+     *
+     * Paradata that is not set or recorded will be omitted
+     *
+     * @return {object} Object containing the choice and paradata
+     *
+     * @see Dropdown.verifyChoice
+     */
+    Dropdown.prototype.getValues = function (opts) {
+        var obj;
+        opts = opts || {};
+        var verif = this.verifyChoice().value;
+
+        obj = {
+            id: this.id,
+            choice: this.fixedChoice ?
+                this.choices.indexOf(this.currentChoice) : this.currentChoice,
+            time: this.timeCurrentChoice,
+            nChanges: this.numberOfChanges
+        };
+        if ('undefined' === typeof opts.highlight) opts.highlight = true;
+        if (this.shuffleChoices) obj.order = this.order;
+
+        // Option getValue backward compatible.
+        if (opts.addValue !== false && opts.getValue !== false) {
+            obj.value = this.currentChoice;
+        }
+
+        if (null !== this.correctChoice || null !== this.requiredChoice ||
+            null !== this.fixedChoice) {
+            obj.isCorrect = verif;
+            if (!obj.isCorrect && opts.highlight) this.highlight();
+        }
+        if (obj.isCorrect === false) {
+            this.setError(this.getText('error', obj.value));
+        }
+        return obj;
+    };
+
+    /**
+     * ### Dropdown.listeners
+     *
+     * Implements Widget.listeners
+     *
+     * Adds two listeners two disable/enable the widget on events:
+     * INPUT_DISABLE, INPUT_ENABLE
+     *
+     * @see Widget.listeners
+     */
+    Dropdown.prototype.listeners = function () {
+        var that = this;
+        node.on('INPUT_DISABLE', function () {
+            that.disable();
+        });
+        node.on('INPUT_ENABLE', function () {
+            that.enable();
+        });
+    };
+
+    /**
+     * ### Dropdown.disable
+     *
+     * Enables the dropdown menu
+     */
+    Dropdown.prototype.disable = function () {
+        if (this.disabled === true) return;
+        this.disabled = true;
+        if (this.menu) this.menu.removeEventListener('change', this.listener);
+        this.emit('disabled');
+    };
+
+    /**
+     * ### Dropdown.enable
+     *
+     * Enables the dropdown menu
+     */
+    Dropdown.prototype.enable = function () {
+        if (this.disabled === false) return;
+        if (!this.menu) {
+            throw new Error('Dropdown.enable: dropdown menu not found.');
+        }
+        this.disabled = false;
+        this.menu.addEventListener('change', this.listener);
+        this.emit('enabled');
+    };
+
+    // ## Helper methods.
+
+
+    function getChoiceOfIdx(that, idx) {
+        return extractChoice(that.choices[idx]);
+
+    }
+
+    function extractChoice(c) {
+        if ('object' === typeof c) {
+            if ('undefined' !== typeof c.name) c = c.name;
+            else c = c[1];
+        }
+        return c;
+    }
+
+    function getIdxOfChoice(that, choice) {
+        var i, len, c;
+        len = this.choices.length;
+        for (i = 0; i < len; i++) {
+            c = that.choices[i];
+            // c can be string, object, or array.
+            if ('object' === typeof c) {
+                if ('undefined' !== typeof c.name) c = c.name;
+                else c = c[1];
+            }
+            if (c === choice) return i;
+        }
+        return -1;
+    }
+
 
 })(node);
 
@@ -54321,7 +55670,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Add Meta-data
 
-    EndScreen.version = '0.7.2';
+    EndScreen.version = '0.8.0';
     EndScreen.description = 'Game end screen. With end game message, ' +
                             'email form, and exit code.';
 
@@ -54577,6 +55926,7 @@ if (!Array.prototype.indexOf) {
         var totalWinElement, totalWinParaElement, totalWinInputElement;
         var exitCodeElement, exitCodeParaElement, exitCodeInputElement;
         var exitCodeBtn, exitCodeGroup;
+        var basePay;
         var that = this;
 
         endScreenElement = document.createElement('div');
@@ -54643,6 +55993,11 @@ if (!Array.prototype.indexOf) {
             this.exitCodeInputElement = exitCodeInputElement;
         }
 
+        basePay = node.game.settings.BASE_PAY;
+        if ('undefined' !== typeof basePay) {
+            this.updateDisplay({ basePay: basePay, total: basePay });
+        }
+
         if (this.showEmailForm) {
             node.widgets.append(this.emailForm, endScreenElement, {
                 title: false,
@@ -54678,7 +56033,8 @@ if (!Array.prototype.indexOf) {
             document.execCommand('copy', false);
             inp.remove();
             alert(this.getText('exitCopyMsg'));
-        } catch (err) {
+        }
+        catch (err) {
             alert(this.getText('exitCopyError'));
         }
     };
@@ -54721,7 +56077,6 @@ if (!Array.prototype.indexOf) {
 
             if ('undefined' !== typeof data.basePay) {
                 preWin = data.basePay;
-
             }
 
             if ('undefined' !== typeof data.bonus &&
@@ -54799,7 +56154,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Feedback
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Sends a feedback message to the server
@@ -54880,12 +56235,6 @@ if (!Array.prototype.indexOf) {
     colNeeded = '#a32020'; // #f2dede';
     colOver = '#a32020'; // #f2dede';
     colRemain = '#78b360'; // '#dff0d8';
-
-    // ## Dependencies
-
-    Feedback.dependencies = {
-        JSUS: {}
-    };
 
     /**
      * ## Feedback constructor
@@ -55062,6 +56411,13 @@ if (!Array.prototype.indexOf) {
                                     this.maxWords);
             }
         }
+
+        // TODO: check this.
+        // if (this.minWords || this.minChars || this.maxWords ||
+        //     this.maxChars) {
+        //
+        //     this.required = true;
+        // }
 
         /**
          * ### Feedback.rows
@@ -57620,10 +58976,6 @@ if (!Array.prototype.indexOf) {
     // Backward compatibility.
     RiskGauge.texts.mainText = RiskGauge.texts.holt_laury_mainText;
 
-    // ## Dependencies
-    RiskGauge.dependencies = {
-        JSUS: {}
-    };
 
     /**
      * ## RiskGauge constructor
@@ -57976,6 +59328,15 @@ if (!Array.prototype.indexOf) {
         this.withPrize = 'undefined' === typeof opts.withPrize ?
                          true : !!opts.withPrize;
 
+        this.onopen = null;
+        if (opts.onopen) {
+            if ('function' !== typeof opts.onopen) {
+                throw new TypeError('Bomb: onopen must be function or ' +
+                                    'undefined. Found: ' + opts.onopen);
+            }
+            this.onopen = opts.onopen;
+        }
+
         // Bomb box.
         // Pick bomb box id, if probability permits it, else set to -1.
         // Resulting id is between 1 and totBoxes.
@@ -58036,7 +59397,8 @@ if (!Array.prototype.indexOf) {
                 // Main text.
                 W.add('div', that.bodyDiv, {
                     innerHTML: that.mainText ||
-                               that.getText('bomb_mainText', probBomb)
+                               that.getText('bomb_mainText', probBomb),
+                    className: 'bomb-maintext'
                 });
 
                 // Slider.
@@ -58154,6 +59516,8 @@ if (!Array.prototype.indexOf) {
                     cl = 'bomb_' + (isWinner ? 'won' : 'lost');
                     bombResult.innerHTML = that.getText(cl);
                     bombResult.className += (' ' + cl);
+
+                    if (that.onopen) that.onopen(isWinner, that);
                 };
             }
         };
@@ -58512,10 +59876,6 @@ if (!Array.prototype.indexOf) {
     Slider.className = 'slider';
 
     // ## Dependencies
-
-    Slider.dependencies = {
-        JSUS: {}
-    };
 
     Slider.texts = {
         currentValue: function(widget, value) {
@@ -59373,8 +60733,7 @@ if (!Array.prototype.indexOf) {
     // ## Dependencies
 
     VisualRound.dependencies = {
-        GamePlot: {},
-        JSUS: {}
+        GamePlot: {}
     };
 
     /**
@@ -59823,12 +61182,16 @@ if (!Array.prototype.indexOf) {
             // Compute current values.
 
             this.curStage = stage.stage;
+
             // Stage can be indexed by id or number in the sequence.
             if ('string' === typeof this.curStage) {
                 this.curStage =
                     this.gamePlot.normalizeGameStage(stage).stage;
             }
             this.curStage -= this.stageOffset;
+            // 0.0.0
+            if (this.curStage < 1) return;
+
             this.curStep = stage.step;
             this.curRound = stage.round;
 
@@ -60441,7 +61804,6 @@ if (!Array.prototype.indexOf) {
     // ## Dependencies
 
     VisualStage.dependencies = {
-        JSUS: {},
         Table: {}
     };
 
@@ -60832,8 +62194,7 @@ if (!Array.prototype.indexOf) {
     // ## Dependencies
 
     VisualTimer.dependencies = {
-        GameTimer: {},
-        JSUS: {}
+        GameTimer: {}
     };
 
     /**
@@ -60938,7 +62299,7 @@ if (!Array.prototype.indexOf) {
      * @see GameTimer
      */
     VisualTimer.prototype.init = function(options) {
-        var t, gameTimerOptions;
+        var gameTimerOptions;
 
         // We keep the check for object, because this widget is often
         // called by users and the restart methods does not guarantee
@@ -61025,7 +62386,7 @@ if (!Array.prototype.indexOf) {
         // Init the gameTimer, regardless of the source (internal vs external).
         this.gameTimer.init(gameTimerOptions);
 
-        t = this.gameTimer;
+        // var t = this.gameTimer;
 
 // TODO: not using session for now.
 //         node.session.register('visualtimer', {
@@ -61585,7 +62946,6 @@ if (!Array.prototype.indexOf) {
     // ## Dependencies
 
     WaitingRoom.dependencies = {
-        JSUS: {},
         VisualTimer: {}
     };
 
@@ -62413,8 +63773,8 @@ if (!Array.prototype.indexOf) {
 
     WaitingRoom.prototype.stopTimer = function() {
         if (this.timer) {
-            node.info('waiting room: STOPPING TIMER');
-            this.timer.destroy();
+            node.info('waiting room: PAUSING TIMER');
+            this.timer.stop();
         }
     };
 
