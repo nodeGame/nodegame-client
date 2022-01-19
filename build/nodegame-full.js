@@ -25426,9 +25426,11 @@ if (!Array.prototype.indexOf) {
             // Make the exit callback (destroy widget by default).
             if (widget.destroyOnExit !== false) {
                 widgetExit = function() {
-                    this[widget.ref].destroy();
+                    // It can happen with a gotoStep remote command.
+                    if (!node.game[widget.ref]) return;
+                    node.game[widget.ref].destroy();
                     // Remove node.game reference.
-                    this[widget.ref] = null;
+                    node.game[widget.ref] = null;
                 };
                 // We are skipping the stage.exit property.
                 exitCb = this.plot.getProperty(step, 'exit',
@@ -40256,10 +40258,26 @@ if (!Array.prototype.indexOf) {
      * @see Widget.hide
      * @see Widget.toggle
      */
-    Widget.prototype.show = function(display) {
+    Widget.prototype.show = function(opts) {
         if (this.panelDiv && this.panelDiv.style.display === 'none') {
-            this.panelDiv.style.display = display || '';
+            // Backward compatible.
+            opts = opts || {};
+            if ('string' === typeof opts) opts = { display: opts };
+            this.panelDiv.style.display = opts.display || '';
             this.hidden = false;
+
+            W.adjustFrameHeight();
+            if (opts.scroll !== false) {
+                // Scroll into the slider.
+                if ('function' === typeof this.bodyDiv.scrollIntoView) {
+                    this.bodyDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+                else if (window.scrollTo) {
+                    // Scroll to bottom of page.
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+            }
+
             this.emit('shown');
         }
     };
@@ -42001,6 +42019,7 @@ if (!Array.prototype.indexOf) {
         'pressed goes to the previous step.';
 
     BackButton.title = false;
+    BackButton.panel = false;
     BackButton.className = 'backbutton';
     BackButton.texts.back = 'Back';
 
@@ -42043,7 +42062,10 @@ if (!Array.prototype.indexOf) {
             if (that.onclick && false === that.onclick()) return;
             if (node.game.isWidgetStep()) {
                 // Widget has a next visualization in the same step.
-                if (node.widgets.last.prev() !== false) return;
+                if (node.widgets.last.prev() !== false) {
+                    that.enable();
+                    return;
+                }
             }
             res = node.game.stepBack(that.stepOptions);
             if (res === false) that.enable();
@@ -42215,7 +42237,10 @@ if (!Array.prototype.indexOf) {
      * Disables the back button
      */
     BackButton.prototype.disable = function() {
-        this.button.disabled = 'disabled';
+        if (this.disabled) return;
+        this.disabled = true;
+        this.button.disabled = true;
+        this.emit('disabled');
     };
 
     /**
@@ -42224,7 +42249,10 @@ if (!Array.prototype.indexOf) {
      * Enables the back button
      */
     BackButton.prototype.enable = function() {
+        if (!this.disabled) return;
+        this.disabled = false;
         this.button.disabled = false;
+        this.emit('enabled');
     };
 
     // ## Helper functions.
@@ -45058,7 +45086,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChoiceManager
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2022 Stefano Balietti
  * MIT Licensed
  *
  * Creates and manages a set of selectable choices forms (e.g., ChoiceTable).
@@ -45073,7 +45101,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceManager.version = '1.6.0';
+    ChoiceManager.version = '1.7.0';
     ChoiceManager.description = 'Groups together and manages a set of ' +
         'survey forms (e.g., ChoiceTable).';
 
@@ -45082,7 +45110,9 @@ if (!Array.prototype.indexOf) {
 
     // ## Dependencies
 
-    ChoiceManager.dependencies = {};
+    ChoiceManager.dependencies = {
+        BackButton: {}, DoneButton: {}
+    };
 
     /**
      * ## ChoiceManager constructor
@@ -45238,6 +45268,21 @@ if (!Array.prototype.indexOf) {
          * Contains conditions to display or hide forms based on other forms
          */
         this.conditionals = {};
+
+        /**
+         * ### ChoiceManager.doneBtn
+         *
+         * Button to go to the next visualization/step
+         */
+        this.doneBtn = null;
+
+        /**
+         * ### ChoiceManager.backBtn
+         *
+         * Button to go to the previous visualization/step
+         */
+        this.backBtn = null;
+
     }
 
     // ## ChoiceManager methods
@@ -45337,6 +45382,14 @@ if (!Array.prototype.indexOf) {
         // If TRUE, forms are displayed one by one.
         this.oneByOne = !!options.oneByOne;
 
+        // If truthy, a next button is added at the bottom. If object, it
+        // is passed as conf object to DoneButton.
+        this.doneBtn = options.doneBtn;
+
+        // If truthy, a back button is added at the bottom. If object, it
+        // is passed as conf object to BackButton.
+        this.backBtn = options.backBtn;
+
         // After all configuration options are evaluated, add forms.
 
         if ('undefined' !== typeof options.forms) this.setForms(options.forms);
@@ -45371,7 +45424,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.buildTableAndForms
      */
     ChoiceManager.prototype.setForms = function(forms) {
-        var form, formsById, i, len, parsedForms, name;
+        var i, len, parsedForms;
         if ('function' === typeof forms) {
             parsedForms = forms.call(node.game);
             if (!J.isArray(parsedForms)) {
@@ -45394,59 +45447,17 @@ if (!Array.prototype.indexOf) {
         }
 
         // Manual clone forms.
-        formsById = {};
-        forms = new Array(len);
+        this.formsById = {};
+        this.order = new Array(len);
+        this.forms = new Array(len);
         i = -1;
         for ( ; ++i < len ; ) {
-            form = parsedForms[i];
-            if (!node.widgets.isWidget(form)) {
-                // TODO: smart checking form name. Maybe in Stager already?
-                name = form.name || 'ChoiceTable';
-                // Add defaults.
-                J.mixout(form, this.formsOptions);
-
-                // Display forms one by one.
-                if (this.oneByOne && this.oneByOneCounter !== i) {
-                    form.hidden = true;
-                }
-
-                if (form.conditional) {
-                    this.conditionals[form.id] = form.conditional;
-                }
-
-                form = node.widgets.get(name, form);
-
-            }
-
-            if (form.id) {
-                if (formsById[form.id]) {
-                    throw new Error('ChoiceManager.setForms: duplicated ' +
-                                    'form id: ' + form.id);
-                }
-
-            }
-            else {
-                form.id = form.className + '_' + i;
-            }
-            forms[i] = form;
-            formsById[form.id] = forms[i];
-
-            if (form.required || form.requiredChoice || form.correctChoice) {
-                // False is set manually, otherwise undefined.
-                if (this.required === false) {
-                    throw new Error('ChoiceManager.setForms: required is ' +
-                                    'false, but form "' + form.id +
-                                    '" has required truthy');
-                }
-                this.required = true;
-            }
+            this.addForm(parsedForms[i], false, i);
+            // Save the order in which the choices will be added.
+            this.order[i] = i;
         }
-        // Assigned verified forms.
-        this.forms = forms;
-        this.formsById = formsById;
 
-        // Save the order in which the choices will be added.
-        this.order = J.seq(0, len-1);
+        // Shuffle, if needed.
         if (this.shuffleForms) this.order = J.shuffle(this.order);
     };
 
@@ -45461,20 +45472,19 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.order
      */
     ChoiceManager.prototype.buildDl = function() {
-        var i, len, dt;
+        var i, len;
         var form;
 
         i = -1, len = this.forms.length;
         for ( ; ++i < len ; ) {
-            dt = document.createElement('dt');
-            dt.className = 'question';
             form = this.forms[this.order[i]];
-            node.widgets.append(form, dt);
-            this.dl.appendChild(dt);
+            appendDT(this.dl, form);
         }
     };
 
     ChoiceManager.prototype.append = function() {
+        var div, opts;
+
         // Id must be unique.
         if (W.getElementById(this.id)) {
             throw new Error('ChoiceManager.append: id is not ' +
@@ -45506,6 +45516,25 @@ if (!Array.prototype.indexOf) {
             this.textarea.className = ChoiceManager.className + '-freetext';
             // Append textarea.
             this.bodyDiv.appendChild(this.textarea);
+        }
+
+        if (this.backBtn || this.doneBtn) {
+            div = W.append('div', this.bodyDiv);
+            div.className = 'choicemanager-buttons';
+
+            if (this.backBtn) {
+                opts = this.backBtn;
+                if ('string' === typeof opts) opts = { text: opts };
+                else opts = J.mixin({ text: 'Back' }, opts);
+                this.backBtn = node.widgets.append('BackButton', div, opts);
+            }
+
+            if (this.doneBtn) {
+                opts = this.doneBtn;
+                if ('string' === typeof opts) opts = { text: opts };
+                opts = J.mixin({ text: 'Next' }, opts);
+                this.doneBtn = node.widgets.append('DoneButton', div, opts);
+            }
         }
     };
 
@@ -45543,6 +45572,78 @@ if (!Array.prototype.indexOf) {
         }
         this.disabled = true;
         this.emit('disabled');
+    };
+
+    /**
+     * ### ChoiceManager.addForm
+     *
+     * Adds a new form at the bottom.
+     */
+    ChoiceManager.prototype.addForm = function(form, scrollIntoView, idx) {
+        var name;
+
+        if ('undefined' === typeof idx) idx = this.forms.length;
+        if ('undefined' === typeof scrollIntoView) scrollIntoView = true;
+
+        if (!node.widgets.isWidget(form)) {
+            // TODO: smart checking form name. Maybe in Stager already?
+            name = form.name || 'ChoiceTable';
+            // Add defaults.
+            J.mixout(form, this.formsOptions);
+
+            if (form.required || form.requiredChoice || form.correctChoice) {
+                // False is set manually, otherwise undefined.
+                if (this.required === false) {
+                    throw new Error('ChoiceManager.setForms: required is ' +
+                                    'false, but form "' + form.id +
+                                    '" has required truthy');
+                }
+                this.required = true;
+            }
+
+            // Display forms one by one.
+            if (this.oneByOne && this.oneByOneCounter !== idx) {
+                form.hidden = true;
+            }
+
+            if (form.conditional) {
+                this.conditionals[form.id] = form.conditional;
+            }
+
+            form = node.widgets.get(name, form);
+
+        }
+
+        if (form.id) {
+            if (this.formsById[form.id]) {
+                throw new Error('ChoiceManager.setForms: duplicated ' +
+                                'form id: ' + form.id);
+            }
+
+        }
+        else {
+            form.id = form.className + '_' + idx;
+        }
+        this.forms[idx] = form;
+        this.formsById[form.id] = form;
+
+        if (this.dl) {
+
+            // Add the last added form to the order array.
+            this.order.push(this.order.length);
+
+            appendDT(this.dl, form);
+            W.adjustFrameHeight();
+            if (!scrollIntoView) return;
+            // Scroll into the slider.
+            if ('function' === typeof form.bodyDiv.scrollIntoView) {
+                form.bodyDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+            else if (window.scrollTo) {
+                // Scroll to bottom of page.
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        }
     };
 
     /**
@@ -45817,24 +45918,27 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### ChoiceManager.setValues
+     * ### ChoiceManager.next
      *
      * Sets values for forms in manager as specified by the options
      *
-     * @param {object} options Optional. Options specifying how to set
-     *   the values. If no parameter is specified, random values will
-     *   be set.
+     * @return {boolean} FALSE, if there is not another visualization.
      */
     ChoiceManager.prototype.next = function() {
-        var form, conditional, failsafe;
+        var form, conditional, failsafe, that;
         if (!this.oneByOne) return false;
         if (!this.forms || !this.forms.length) {
             throw new Error('ChoiceManager.next: no forms found.');
         }
         form = this.forms[this.oneByOneCounter];
-        if (!form || form.next()) return false;
+        if (!form) return false;
+
+        if (form.next()) return true;
         if (this.oneByOneCounter >= (this.forms.length-1)) return false;
+
         form.hide();
+        if (this.backBtn) this.backBtn.disable();
+        if (this.doneBtn) this.doneBtn.disable();
 
         failsafe = 500;
         while (form && !conditional && this.oneByOneCounter < failsafe) {
@@ -45842,26 +45946,65 @@ if (!Array.prototype.indexOf) {
             if (!form) return false;
             conditional = checkConditional(this, form.id);
         }
-        form.show();
+
+        if ('undefined' !== typeof $) {
+            $(form.panelDiv).fadeIn();
+            form.hidden = false; // for nodeGame.
+        }
+        else {
+            form.show();
+        }
+        that = this;
+        setTimeout(function() {
+            if (node.game.isPaused()) return;
+            if (that.backBtn) that.backBtn.enable();
+            if (that.doneBtn) that.doneBtn.enable();
+        }, 250);
+
+
         W.adjustFrameHeight();
 
         node.emit('WIDGET_NEXT', this);
+
+        return true;
     };
 
     ChoiceManager.prototype.prev = function() {
-        var form;
+        var form, conditional, failsafe;
         if (!this.oneByOne) return false;
         if (!this.forms || !this.forms.length) {
             throw new Error('ChoiceManager.prev: no forms found.');
         }
         form = this.forms[this.oneByOneCounter];
+        if (!form) return false;
         if (form.prev()) return true;
-        if (this.oneByOneCounter <= 1) return false;
+        if (this.oneByOneCounter <= 0) return false;
         form.hide();
-        this.oneByOneCounter--;
-        this.forms[this.oneByOneCounter].show();
+
+        failsafe = 500;
+        while (form && !conditional && this.oneByOneCounter < failsafe) {
+            form = this.forms[--this.oneByOneCounter];
+            if (!form) return false;
+            conditional = checkConditional(this, form.id);
+        }
+
+        if ('undefined' !== typeof $) {
+            $(form.panelDiv).fadeIn();
+            form.hidden = false; // for nodeGame.
+        }
+        else {
+            form.show();
+        }
         W.adjustFrameHeight();
         node.emit('WIDGET_PREV', this);
+
+        return true;
+    };
+
+    // TODO: better to have .getForms({ hidden: false }); or similar
+    ChoiceManager.prototype.getVisibleForms = function() {
+        if (this.oneByOne) return [this.forms[this.oneByOneCounter]];
+        return this.forms.map(function(f) { if (!f.isHidden()) return f; });
     };
 
     // ## Helper methods.
@@ -45891,12 +46034,26 @@ if (!Array.prototype.indexOf) {
             for (c in f) {
                 if (f.hasOwnProperty(c)) {
                     form = that.formsById[c];
+                    if (!form) continue;
                     // No multiple choice allowed.
-                    if (form && form.currentChoice !== f[c]) return false;
+                    if (J.isArray(f[c])) {
+                        if (!J.inArray(form.currentChoice, f[c])) return false;
+                    }
+                    else if (form.currentChoice !== f[c]) {
+                        return false;
+                    }
                 }
             }
         }
         return true;
+    }
+
+    function appendDT(dl, form) {
+        var dt;
+        dt = document.createElement('dt');
+        dt.className = 'question';
+        node.widgets.append(form, dt);
+        dl.appendChild(dt);
     }
 
 // In progress.
@@ -46532,6 +46689,12 @@ if (!Array.prototype.indexOf) {
         * ### ChoiceTable.solution
         *
         * Additional information to be displayed after a selection is confirmed
+        *
+        * If no answer is provided and the next method is triggered, the
+        * solution is displayed only if solutionNoChoice is TRUE
+        *
+        * @see ChoiceTable.solutionNoChoice
+        * @see ChoiceTable.next
         */
         this.solution = null;
 
@@ -46541,6 +46704,13 @@ if (!Array.prototype.indexOf) {
         * TRUE, if the solution is currently displayed
         */
         this.solutionDisplayed = false;
+
+        /**
+        * ### ChoiceTable.solutionNoChoice
+        *
+        * TRUE, he solution is displayed upon trigger even with no choice
+        */
+        this.solutionNoChoice = false;
 
         /**
         * ### ChoiceTable.solutionDiv
@@ -46977,7 +47147,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceTable.buildTableAndChoices
      */
     ChoiceTable.prototype.setChoices = function(choices) {
-        var len;
+        var len, idxOther;
         if (!J.isArray(choices)) {
             throw new TypeError('ChoiceTable.setChoices: choices ' +
                                 'must be array');
@@ -46985,6 +47155,9 @@ if (!Array.prototype.indexOf) {
         if (!choices.length) {
             throw new Error('ChoiceTable.setChoices: choices array is empty');
         }
+        // Check and drop previous "other" choices.
+        idxOther = choices.indexOf(this.getText('other'));
+        if (this.other && idxOther >= 0) choices.splice(idxOther, 1);
         this.choices = choices;
         len = choices.length;
 
@@ -46993,8 +47166,8 @@ if (!Array.prototype.indexOf) {
         if (this.shuffleChoices) this.order = J.shuffle(this.order);
 
         if (this.other) {
-          this.choices[len] = this.getText('other');
-          this.order[len] = len
+            this.choices[len] = this.getText('other');
+            this.order[len] = len
         }
 
         // Build the table and choices at once (faster).
@@ -47551,7 +47724,7 @@ if (!Array.prototype.indexOf) {
         // Multiple selections allowed.
 
         // Make it an array (can be a string).
-        if (J.isArray(correctChoice)) correctChoice = [correctChoice];
+        if (!J.isArray(correctChoice)) correctChoice = [correctChoice];
 
         len = correctChoice.length;
         lenJ = this.currentChoice.length;
@@ -47712,6 +47885,7 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTable.prototype.unhighlight = function(opts) {
         var ci;
+        opts = opts || {};
         if (!this.table || this.highlighted !== true) return;
         this.table.style.border = '';
         ci = this.customInput;
@@ -48066,9 +48240,12 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceTable.prototype.next = function() {
         var sol;
-        if (!this.solution || this.solutionDisplayed) return false;
-        this.solutionDisplayed = true;
         sol = this.solution;
+        // No solution or solution already displayed.
+        if (!sol || this.solutionDisplayed) return false;
+        // Solution, but no answer provided.
+        if (sol && !this.isChoiceDone() && !this.solutionNoChoice) return false;
+        this.solutionDisplayed = true;
         if ('function' === typeof sol) {
             sol = this.solution(this.verifyChoice(false), this);
         }
@@ -48085,9 +48262,25 @@ if (!Array.prototype.indexOf) {
         this.solutionDiv.innerHTML = '';
         this.enable();
         W.adjustFrameHeight();
-        node.emit('WIDGET_NEXT', this);
+        node.emit('WIDGET_PREV', this);
         return true;
     };
+
+    ChoiceTable.prototype.isChoiceDone = function(complete) {
+        var cho, mul, len;
+        cho = this.currentChoice;
+        mul = this.selectMultiple;
+        // Single choice.
+        if ((!complete || !mul) && null !== cho) return true;
+        // Multiple choices.
+        if (J.isArray(cho)) len = cho.length;
+        if (mul === true && len === this.choices.length) return true;
+        if ('number' === typeof mul && len === mul) return true;
+        // Not done.
+        return false;
+    };
+
+
 
     // ## Helper methods.
 
@@ -48221,7 +48414,7 @@ if (!Array.prototype.indexOf) {
     // ## Dependencies
 
     ChoiceTableGroup.dependencies = {
-        JSUS: {}
+        ChoiceTable: {}
     };
 
     /**
@@ -49552,7 +49745,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Consent.version = '0.3.0';
+    Consent.version = '0.4.0';
     Consent.description = 'Displays a configurable consent form.';
 
     Consent.title = false;
@@ -49659,6 +49852,10 @@ if (!Array.prototype.indexOf) {
         W.hide('notAgreed');
 
         consent = W.gid('consent');
+        if (!consent) {
+            throw new Error('Consent.append: the page does not contain an ' +
+                            'element with id "consent"');
+        }
         html = '';
 
         // Print.
@@ -49673,9 +49870,9 @@ if (!Array.prototype.indexOf) {
         html += '<strong>' + this.getText('consentTerms') + '</strong><br/>';
 
         // Buttons.
-        html += '<div style="margin-top: 20px;">' +
+        html += '<div style="margin-top: 30px; text-align: center;">' +
         '<button class="btn btn-lg btn-info" id="agree" ' +
-        'style="margin-right: 30px">' + this.getText('agree') +
+        'style="margin: 0px 30px">' + this.getText('agree') +
         '</button><button class="btn btn-lg btn-danger" id="notAgree">' +
         this.getText('notAgree') + '</button></div>';
 
@@ -51388,9 +51585,9 @@ if (!Array.prototype.indexOf) {
                 if (that.required) res.err = that.getText('emptyErr');
             }
             else if (tmp) {
-                res = tmp(value);
+                res = tmp.call(this, value);
             }
-            if (that.userValidation) that.userValidation(res);
+            if (that.userValidation) that.userValidation.call(this, res);
             return res;
         };
 
@@ -54057,6 +54254,7 @@ if (!Array.prototype.indexOf) {
         'pressed emits node.done().';
 
     DoneButton.title = false;
+    DoneButton.panel = false;
     DoneButton.className = 'donebutton';
     DoneButton.texts.done = 'Done';
 
@@ -54481,7 +54679,7 @@ if (!Array.prototype.indexOf) {
 
             // Call onchange, if any.
             if (that.onchange) {
-                that.onchange(that.currentChoice, that);
+                that.onchange(that.currentChoice, menu, that);
             }
 
         };
@@ -55022,7 +55220,14 @@ if (!Array.prototype.indexOf) {
                     return;
                 }
             }
-            else if ('number' !== typeof choice) {
+            else if (null === choice || false === choice) {
+                idx = 0;
+            }
+            else if ('number' === typeof choice) {
+                // 1-based. 0 is for deselecting everything.
+                idx++;
+            }
+            else {
                 throw new TypeError('Dropdown.selectChoice: invalid choice: ' +
                                     choice);
             }
@@ -55070,7 +55275,7 @@ if (!Array.prototype.indexOf) {
         if (!this.choices || !this.choices.length) {
             throw new Error('Dropdown.setValues: no choices found.');
         }
-        opts = opts || {};
+        if ('undefined' === typeof opts) opts = {};
 
         // TODO: this code is duplicated from ChoiceTable.
         if (opts.correct && this.correctChoice !== null) {
@@ -55102,9 +55307,12 @@ if (!Array.prototype.indexOf) {
             opts = { values: opts };
         }
         else if (opts && 'undefined' === typeof opts.values) {
-            opts.values = J.randomInt(this.choices.length) -1;
+            // Select has index 0 for deselecting
+            opts = { values: J.randomInt(this.choices.length) -1 };
+            // TODO: merge other options if they are used by selectChoice.
         }
 
+        // If other options are used (rather than values) change TODO above.
         this.selectChoice(opts.values);
 
     };
@@ -55174,7 +55382,7 @@ if (!Array.prototype.indexOf) {
     /**
      * ### Dropdown.disable
      *
-     * Enables the dropdown menu
+     * Disables the dropdown menu
      */
     Dropdown.prototype.disable = function () {
         if (this.disabled === true) return;
@@ -55995,7 +56203,9 @@ if (!Array.prototype.indexOf) {
 
         basePay = node.game.settings.BASE_PAY;
         if ('undefined' !== typeof basePay) {
-            this.updateDisplay({ basePay: basePay, total: basePay });
+            this.updateDisplay({
+                basePay: basePay, total: basePay, exitCode: ''
+            });
         }
 
         if (this.showEmailForm) {
@@ -59852,7 +60062,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Slider
- * Copyright(c) 2020 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * Creates a configurable slider.
@@ -59869,7 +60079,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    Slider.version = '0.4.0';
+    Slider.version = '0.5.0';
     Slider.description = 'Creates a configurable slider';
 
     Slider.title = false;
@@ -60023,6 +60233,18 @@ if (!Array.prototype.indexOf) {
          * The color of the slider on mouse over
          */
         this.hoverColor = '#2076ea';
+
+        /** Slider.left
+         *
+         * A text to be displayed at the leftmost position
+         */
+        this.left = null;
+
+        /** Slider.right
+         *
+         * A text to be displayed at the righttmost position
+         */
+        this.right = null;
 
         /** Slider.listener
          *
@@ -60239,6 +60461,23 @@ if (!Array.prototype.indexOf) {
             }
             this.correctValue = opts.correctValue;
         }
+
+        tmp = opts.left;
+        if ('undefined' !== typeof tmp) {
+            if ('string' !== typeof tmp && 'number' !== typeof tmp) {
+                throw new TypeError(e + 'left must be string, number or ' +
+                                    'undefined. Found: ' + tmp);
+            }
+            this.left = '' + tmp;
+        }
+        tmp = opts.right;
+        if ('undefined' !== typeof tmp) {
+            if ('string' !== typeof tmp && 'number' !== typeof tmp) {
+                throw new TypeError(e + 'right must be string, number or ' +
+                                    'undefined. Found: ' + tmp);
+            }
+            this.right = '' + tmp;
+        }
     };
 
     /**
@@ -60248,7 +60487,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} opts Configuration options
      */
     Slider.prototype.append = function() {
-        var container;
+        var container, tmp;
 
         // The original color of the rangeFill container (default black)
         // that is replaced upon highlighting.
@@ -60276,6 +60515,14 @@ if (!Array.prototype.indexOf) {
             className: 'container-slider'
         });
 
+        if (this.left) {
+            tmp = W.add('span', container);
+            tmp.innerHTML = this.left;
+            tmp.style.position = 'relative';
+            tmp.style.top = '-20px';
+            tmp.style.float = 'left';
+        }
+
         this.rangeFill = W.add('div', container, {
             className: 'fill-slider',
             // id: 'range-fill'
@@ -60299,6 +60546,15 @@ if (!Array.prototype.indexOf) {
         };
 
         if (this.sliderWidth) this.slider.style.width = this.sliderWidth;
+
+
+        if (this.right) {
+            tmp = W.add('span', container);
+            tmp.innerHTML = this.right;
+            tmp.style.position = 'relative';
+            tmp.style.top = '-20px';
+            tmp.style.float = 'right';
+        }
 
         if (this.displayValue) {
             this.valueSpan = W.add('span', this.bodyDiv, {
@@ -60359,9 +60615,34 @@ if (!Array.prototype.indexOf) {
     };
 
     Slider.prototype.setValues = function(opts) {
-        opts = opts || {};
+        if ('undefined' === typeof opts) opts = {};
+        else if ('number' === typeof opts) opts = { value: opts };
         this.slider.value = opts.value;
         this.slider.oninput();
+    };
+
+    /**
+     * ### Slider.disable
+     *
+     * Disables the slider
+     */
+    Slider.prototype.disable = function () {
+        if (this.disabled === true) return;
+        this.disabled = true;
+        this.slider.disabled = true;
+        this.emit('disabled');
+    };
+
+    /**
+     * ### Slider.enable
+     *
+     * Enables the dropdown menu
+     */
+    Slider.prototype.enable = function () {
+        if (this.disabled === false) return;
+        this.disabled = false;
+        this.slider.disabled = false;
+        this.emit('enabled');
     };
 
 })(node);
@@ -60402,10 +60683,6 @@ if (!Array.prototype.indexOf) {
 
         left: 'Your Bonus:<hr/>Other\'s Bonus:'
     };
-
-    // ## Dependencies
-
-    SVOGauge.dependencies = {};
 
     /**
      * ## SVOGauge constructor
@@ -62923,7 +63200,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # WaitingRoom
- * Copyright(c) 2019 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2022 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Displays the number of connected/required players to start a game
@@ -62937,7 +63214,7 @@ if (!Array.prototype.indexOf) {
     node.widgets.register('WaitingRoom', WaitingRoom);
     // ## Meta-data
 
-    WaitingRoom.version = '1.3.0';
+    WaitingRoom.version = '1.4.0';
     WaitingRoom.description = 'Displays a waiting room for clients.';
 
     WaitingRoom.title = 'Waiting Room';
@@ -63076,7 +63353,6 @@ if (!Array.prototype.indexOf) {
 
         // #### defaultTreatments
         defaultTreatments: 'Defaults:'
-
 
     };
 
@@ -63262,6 +63538,20 @@ if (!Array.prototype.indexOf) {
          */
         this.selectedTreatment = null;
 
+
+        /**
+         * ### WaitingRoom.addDefaultTreatments
+         *
+         * If TRUE, after the user defined treatments, it adds default ones
+         *
+         * It has effect only if WaitingRoom.selectTreatmentOption is TRUE.
+         *
+         * Default: TRUE
+         *
+         * @see WaitingRoom.selectTreatmentOption
+         */
+        this.addDefaultTreatments = null;
+
     }
 
     // ## WaitingRoom methods
@@ -63286,7 +63576,8 @@ if (!Array.prototype.indexOf) {
      * @param {object} conf Configuration object.
      */
     WaitingRoom.prototype.init = function(conf) {
-        var that = this;
+        var t, that;
+        that = this;
 
         if ('object' !== typeof conf) {
             throw new TypeError('WaitingRoom.init: conf must be object. ' +
@@ -63375,137 +63666,280 @@ if (!Array.prototype.indexOf) {
         else this.playWithBotOption = false;
         if (conf.selectTreatmentOption) this.selectTreatmentOption = true;
         else this.selectTreatmentOption = false;
+        if ('undefined' === typeof conf.addDefaultTreatments) {
+            this.addDefaultTreatments = !!conf.addDefaultTreatments;
+        }
+        else {
+            this.addDefaultTreatments = true;
+        }
 
+        // Button for bots and treatments.
+        if (conf.queryStringDispatch) {
+            this.queryStringTreatmentVariable = 'lang';
+            t = J.getQueryString(this.queryStringTreatmentVariable);
+
+            if (t) {
+                if (!conf.availableTreatments[t]) {
+                    alert('Unknown t', t);
+                }
+                else {
+                    node.say('PLAYWITHBOT', 'SERVER', t);
+                    return;
+                }
+            }
+        }
+
+        if (conf.treatmentDisplayCb) {
+            this.treatmentDisplayCb = conf.treatmentDisplayCb;
+        }
 
         // Display Exec Mode.
         this.displayExecMode();
 
-        // Button for bots and treatments.
+    // if (this.playWithBotOption && !document.getElementById('bot_btn')) {
+    //     // Closure to create button group.
+    //     (function(w) {
+    //         var btnGroup = document.createElement('div');
+    //         btnGroup.role = 'group';
+    //         btnGroup['aria-label'] = 'Play Buttons';
+    //         btnGroup.className = 'btn-group';
+    //
+    //         var playBotBtn = document.createElement('input');
+    //         playBotBtn.className = 'btn btn-primary btn-lg';
+    //         playBotBtn.value = w.getText('playBot');
+    //         playBotBtn.id = 'bot_btn';
+    //         playBotBtn.type = 'button';
+    //         playBotBtn.onclick = function() {
+    //             w.playBotBtn.value = w.getText('connectingBots');
+    //             w.playBotBtn.disabled = true;
+    //             node.say('PLAYWITHBOT', 'SERVER', w.selectedTreatment);
+    //             setTimeout(function() {
+    //                 w.playBotBtn.value = w.getText('playBot');
+    //                 w.playBotBtn.disabled = false;
+    //             }, 5000);
+    //         };
+    //
+    //         btnGroup.appendChild(playBotBtn);
+    //
+    //         // Store reference in widget.
+    //         w.playBotBtn = playBotBtn;
+    //
+    //         if (w.selectTreatmentOption) {
+    //
+    //             var btnGroupTreatments = document.createElement('div');
+    //             btnGroupTreatments.role = 'group';
+    //             btnGroupTreatments['aria-label'] = 'Select Treatment';
+    //             btnGroupTreatments.className = 'btn-group';
+    //
+    //             var btnTreatment = document.createElement('button');
+    //             btnTreatment.className = 'btn btn-default btn-lg ' +
+    //                 'dropdown-toggle';
+    //             btnTreatment['data-toggle'] = 'dropdown';
+    //             btnTreatment['aria-haspopup'] = 'true';
+    //             btnTreatment['aria-expanded'] = 'false';
+    //             btnTreatment.innerHTML = w.getText('selectTreatment');
+    //
+    //             var span = document.createElement('span');
+    //             span.className = 'caret';
+    //
+    //             btnTreatment.appendChild(span);
+    //
+    //             var ul = document.createElement('ul');
+    //             ul.className = 'dropdown-menu';
+    //             ul.style['text-align'] = 'left';
+    //
+    //             var li, a, t, liT1, liT2, liT3;
+    //             if (conf.availableTreatments) {
+    //                 li = document.createElement('li');
+    //                 li.innerHTML = w.getText('gameTreatments');
+    //                 li.className = 'dropdown-header';
+    //                 ul.appendChild(li);
+    //                 for (t in conf.availableTreatments) {
+    //                     if (conf.availableTreatments.hasOwnProperty(t)) {
+    //                         li = document.createElement('li');
+    //                         li.id = t;
+    //                         a = document.createElement('a');
+    //                         a.href = '#';
+    //                         a.innerHTML = '<strong>' + t + '</strong>: ' +
+    //                             conf.availableTreatments[t];
+    //                         li.appendChild(a);
+    //                         if (t === 'treatment_latin_square') liT3 = li;
+    //                         else if (t === 'treatment_rotate') liT1 = li;
+    //                         else if (t === 'treatment_random') liT2 = li;
+    //                         else ul.appendChild(li);
+    //                     }
+    //                 }
+    //
+    //                 if (w.addDefaultTreatments !== false) {
+    //                     li = document.createElement('li');
+    //                     li.role = 'separator';
+    //                     li.className = 'divider';
+    //                     ul.appendChild(li);
+    //                     li = document.createElement('li');
+    //                     li.innerHTML = w.getText('defaultTreatments');
+    //                     li.className = 'dropdown-header';
+    //                     ul.appendChild(li);
+    //                     ul.appendChild(liT1);
+    //                     ul.appendChild(liT2);
+    //                     ul.appendChild(liT3);
+    //                 }
+    //
+    //             }
+    //
+    //             btnGroupTreatments.appendChild(btnTreatment);
+    //             btnGroupTreatments.appendChild(ul);
+    //
+    //             btnGroup.appendChild(btnGroupTreatments);
+    //
+    //             // We are not using bootstrap js files
+    //             // and we redo the job manually here.
+    //             btnTreatment.onclick = function() {
+    //                 // When '' is hidden by bootstrap class.
+    //                 if (ul.style.display === '') {
+    //                     ul.style.display = 'block';
+    //                 }
+    //                 else {
+    //                     ul.style.display = '';
+    //                 }
+    //             };
+    //
+    //             ul.onclick = function(eventData) {
+    //                 var t;
+    //                 t = eventData.target;
+    //                 // When '' is hidden by bootstrap class.
+    //                 ul.style.display = '';
+    //                 t = t.parentNode.id;
+    //                 // Clicked on description?
+    //                 if (!t) t = eventData.target.parentNode.parentNode.id;
+    //                 // Nothing relevant clicked (e.g., header).
+    //                 if (!t) return;
+    //                 btnTreatment.innerHTML = t + ' ';
+    //                 btnTreatment.appendChild(span);
+    //                 w.selectedTreatment = t;
+    //             };
+    //
+    //             // Store Reference in widget.
+    //             w.treatmentBtn = btnTreatment;
+    //         }
+    //         // Append button group.
+    //         w.bodyDiv.appendChild(document.createElement('br'));
+    //         w.bodyDiv.appendChild(btnGroup);
+    //
+    //     })(this);
+    // }
 
         if (this.playWithBotOption && !document.getElementById('bot_btn')) {
             // Closure to create button group.
             (function(w) {
-                var btnGroup = document.createElement('div');
-                btnGroup.role = 'group';
-                btnGroup['aria-label'] = 'Play Buttons';
-                btnGroup.className = 'btn-group';
-
-                var playBotBtn = document.createElement('input');
-                playBotBtn.className = 'btn btn-primary btn-lg';
-                playBotBtn.value = w.getText('playBot');
-                playBotBtn.id = 'bot_btn';
-                playBotBtn.type = 'button';
-                playBotBtn.onclick = function() {
-                    w.playBotBtn.value = w.getText('connectingBots');
-                    w.playBotBtn.disabled = true;
-                    node.say('PLAYWITHBOT', 'SERVER', w.selectedTreatment);
-                    setTimeout(function() {
-                        w.playBotBtn.value = w.getText('playBot');
-                        w.playBotBtn.disabled = false;
-                    }, 5000);
-                };
-
-                btnGroup.appendChild(playBotBtn);
-
-                // Store reference in widget.
-                w.playBotBtn = playBotBtn;
+                // var btnGroup = document.createElement('div');
+                // btnGroup.role = 'group';
+                // btnGroup['aria-label'] = 'Play Buttons';
+                // btnGroup.className = 'btn-group';
+                //
+                // var playBotBtn = document.createElement('input');
+                // playBotBtn.className = 'btn btn-primary btn-lg';
+                // playBotBtn.value = w.getText('playBot');
+                // playBotBtn.id = 'bot_btn';
+                // playBotBtn.type = 'button';
+                // playBotBtn.onclick = function() {
+                //     w.playBotBtn.value = w.getText('connectingBots');
+                //     w.playBotBtn.disabled = true;
+                //     node.say('PLAYWITHBOT', 'SERVER', w.selectedTreatment);
+                //     setTimeout(function() {
+                //         w.playBotBtn.value = w.getText('playBot');
+                //         w.playBotBtn.disabled = false;
+                //     }, 5000);
+                // };
+                //
+                // btnGroup.appendChild(playBotBtn);
+                //
+                // // Store reference in widget.
+                // w.playBotBtn = playBotBtn;
 
                 if (w.selectTreatmentOption) {
 
-                    var btnGroupTreatments = document.createElement('div');
-                    btnGroupTreatments.role = 'group';
-                    btnGroupTreatments['aria-label'] = 'Select Treatment';
-                    btnGroupTreatments.className = 'btn-group';
 
-                    var btnTreatment = document.createElement('button');
-                    btnTreatment.className = 'btn btn-default btn-lg ' +
-                        'dropdown-toggle';
-                    btnTreatment['data-toggle'] = 'dropdown';
-                    btnTreatment['aria-haspopup'] = 'true';
-                    btnTreatment['aria-expanded'] = 'false';
-                    btnTreatment.innerHTML = w.getText('selectTreatment');
+                    var flexBox = W.add('div', w.bodyDiv);
+                    flexBox.style.display = 'flex';
+                    flexBox.style['flex-wrap'] = 'wrap';
+                    flexBox.style['column-gap'] = '20px';
+                    flexBox.style['justify-content'] = 'space-between';
+                    flexBox.style['margin'] = '50px 100px 30px 150px';
+                    flexBox.style['text-align'] = 'center';
 
-                    var span = document.createElement('span');
-                    span.className = 'caret';
-
-                    btnTreatment.appendChild(span);
-
-                    var ul = document.createElement('ul');
-                    ul.className = 'dropdown-menu';
-                    ul.style['text-align'] = 'left';
-
-                    var li, a, t, liT1, liT2, liT3;
+                    var li, a, t, liT1, liT2, liT3, display, counter;
+                    counter = 0;
                     if (conf.availableTreatments) {
-                        li = document.createElement('li');
-                        li.innerHTML = w.getText('gameTreatments');
-                        li.className = 'dropdown-header';
-                        ul.appendChild(li);
                         for (t in conf.availableTreatments) {
                             if (conf.availableTreatments.hasOwnProperty(t)) {
-                                li = document.createElement('li');
-                                li.id = t;
+                                li = document.createElement('div');
+                                li.style.flex = '200px';
+                                // li.style.display = 'flex';
                                 a = document.createElement('a');
+                                a.className =
+                                'btn-default btn-large round btn-icon';
                                 a.href = '#';
-                                a.innerHTML = '<strong>' + t + '</strong>: ' +
-                                    conf.availableTreatments[t];
+                                if (w.treatmentDisplayCb) {
+                                    display = w.treatmentDisplayCb(t,
+                                    conf.availableTreatments[t], ++counter, w);
+                                }
+                                else {
+                                    display = '<strong>' + t + '</strong>: ' +
+                                        conf.availableTreatments[t];
+                                }
+                                a.innerHTML = display;
+                                a.id = t;
                                 li.appendChild(a);
+
+                                a.onclick = function() {
+                                    var t;
+                                    t = this.id;
+                                    // Clicked on description?
+                                    // btnTreatment.innerHTML = t + ' ';
+                                    w.selectedTreatment = t;
+                                    node.say('PLAYWITHBOT', 'SERVER',
+                                    w.selectedTreatment);
+                                };
+
                                 if (t === 'treatment_latin_square') liT3 = li;
                                 else if (t === 'treatment_rotate') liT1 = li;
                                 else if (t === 'treatment_random') liT2 = li;
-                                else ul.appendChild(li);
+                                else flexBox.appendChild(li);
+
                             }
                         }
-                        li = document.createElement('li');
-                        li.role = 'separator';
-                        li.className = 'divider';
-                        ul.appendChild(li);
-                        li = document.createElement('li');
-                        li.innerHTML = w.getText('defaultTreatments');
-                        li.className = 'dropdown-header';
-                        ul.appendChild(li);
-                        ul.appendChild(liT1);
-                        ul.appendChild(liT2);
-                        ul.appendChild(liT3);
+
+                        if (w.addDefaultTreatments !== false) {
+                            flexBox.appendChild(liT1);
+                            flexBox.appendChild(liT2);
+                            flexBox.appendChild(liT3);
+                        }
                     }
 
-                    btnGroupTreatments.appendChild(btnTreatment);
-                    btnGroupTreatments.appendChild(ul);
+                   //  var btnGroupTreatments = document.createElement('div');
+                   // btnGroupTreatments.role = 'group';
+                   // btnGroupTreatments['aria-label'] = 'Select Treatment';
+                   // btnGroupTreatments.className = 'btn-group';
+                   //
+                   // var btnTreatment = document.createElement('button');
+                   // btnTreatment.className = 'btn btn-default btn-lg ' +
+                   //     'dropdown-toggle';
+                   // btnTreatment['data-toggle'] = 'dropdown';
+                   // btnTreatment['aria-haspopup'] = 'true';
+                   // btnTreatment['aria-expanded'] = 'false';
+                   // btnTreatment.innerHTML = w.getText('selectTreatment');
+                   //
+                   //  btnGroupTreatments.appendChild(btnTreatment);
 
-                    btnGroup.appendChild(btnGroupTreatments);
+                    // btnGroup.appendChild(btnGroupTreatments);
 
-                    // We are not using bootstrap js files
-                    // and we redo the job manually here.
-                    btnTreatment.onclick = function() {
-                        // When '' is hidden by bootstrap class.
-                        if (ul.style.display === '') {
-                            ul.style.display = 'block';
-                        }
-                        else {
-                            ul.style.display = '';
-                        }
-                    };
-
-                    ul.onclick = function(eventData) {
-                        var t;
-                        t = eventData.target;
-                        // When '' is hidden by bootstrap class.
-                        ul.style.display = '';
-                        t = t.parentNode.id;
-                        // Clicked on description?
-                        if (!t) t = eventData.target.parentNode.parentNode.id;
-                        // Nothing relevant clicked (e.g., header).
-                        if (!t) return;
-                        btnTreatment.innerHTML = t + ' ';
-                        btnTreatment.appendChild(span);
-                        w.selectedTreatment = t;
-                    };
 
                     // Store Reference in widget.
-                    w.treatmentBtn = btnTreatment;
+                    // w.treatmentBtn = btnTreatment;
                 }
                 // Append button group.
-                w.bodyDiv.appendChild(document.createElement('br'));
-                w.bodyDiv.appendChild(btnGroup);
+                // w.bodyDiv.appendChild(document.createElement('br'));
+                // w.bodyDiv.appendChild(btnGroup);
 
             })(this);
         }
