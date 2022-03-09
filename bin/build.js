@@ -88,7 +88,7 @@ var ng_client = [
     rootDir + "lib/core/Game.js",
 
     // Not used for now.
-    // rootDir + "lib/core/Session.js",
+    rootDir + "lib/core/Session.js",
 
 
     rootDir + "lib/core/Timer.js",

@@ -26552,22 +26552,22 @@ if (!Array.prototype.indexOf) {
      *       object itself as parameter
      *
      * @param {Game} game The game instance
-     * @param {object} options The options to process
+     * @param {object} opts The options to process
      *
      * @see Game.gotoStep
      * @see GamePlot.tmpCache
      * @see Game.willBeDone
      * @see Game.beDone
      */
-    function processGotoStepOptions(game, options) {
+    function processGotoStepOptions(game, opts) {
         var prop;
 
         // Be done.. now! Skips Game.execStep.
-        if (options.beDone) {
+        if (opts.beDone) {
             game.willBeDone = true;
             game.beDone = true;
         }
-        else if (options.willBeDone) {
+        else if (opts.willBeDone) {
             // TODO: why not setting willBeDone? It was not working, check!
             // Call node.done() immediately after PLAYING is emitted.
             game.node.once('PLAYING', function() {
@@ -26577,35 +26577,397 @@ if (!Array.prototype.indexOf) {
 
         // Temporarily modify plot properties.
         // Must be done after setting the role.
-        if (options.plot) {
-            for (prop in options.plot) {
-                if (options.plot.hasOwnProperty(prop)) {
-                    game.plot.tmpCache(prop, options.plot[prop]);
+        if (opts.plot) {
+            for (prop in opts.plot) {
+                if (opts.plot.hasOwnProperty(prop)) {
+                    game.plot.tmpCache(prop, opts.plot[prop]);
                 }
             }
         }
 
-        if (options.msgs) {
-            options.msgs.foreach(function(msg) {
+        if (opts.msgs) {
+            opts.msgs.foreach(function(msg) {
                 game.node.socket.onMessage(new GameMsg(msg).toInEvent(), msg);
             });
         }
 
+        if (opts.game) {
+            for (prop in opts.game) {
+                if (opts.game.hasOwnProperty(prop)) {
+                    game[prop] = opts.game[prop];
+                }
+            }
+        }
+
         // TODO: rename cb.
-        // Call the cb with options as param, if found.
-        if (options.cb) {
-            if ('function' === typeof options.cb) {
-                options.cb.call(game, options);
+        // Call the cb with opts as param, if found.
+        if (opts.cb) {
+            if ('function' === typeof opts.cb) {
+                opts.cb.call(game, opts);
             }
             else {
-                throw new TypeError('Game.gotoStep: options.cb must be ' +
+                throw new TypeError('Game.gotoStep: opts.cb must be ' +
                                     'function or undefined. Found: ' +
-                                    options.cb);
+                                    opts.cb);
             }
         }
     }
 
     // ## Closure
+})(
+    'undefined' != typeof node ? node : module.exports,
+    'undefined' != typeof node ? node : module.parent.exports
+);
+
+/**
+ * # GameSession
+ * Copyright(c) 2022 Stefano Balietti
+ * MIT Licensed
+ *
+ * `nodeGame` session manager
+ */
+(function(exports, node) {
+
+    "use strict";
+
+    // ## Global scope
+
+    var J = node.JSUS;
+
+    // Exposing constructor.
+    exports.GameSession = GameSession;
+    exports.GameSession.SessionManager = SessionManager;
+
+    GameSession.prototype = new SessionManager();
+    GameSession.prototype.constructor = GameSession;
+
+    /**
+     * ## GameSession constructor
+     *
+     * Creates a new instance of GameSession
+     *
+     * @param {NodeGameClient} node A reference to the node object.
+     */
+    function GameSession(node) {
+        SessionManager.call(this);
+
+        /**
+         * ### GameSession.node
+         *
+         * The reference to the node object.
+         */
+        this.node = node;
+
+        // Register default variables in the session.
+        this.register('player', {
+            set: function(p) {
+                node.createPlayer(p);
+            },
+            get: function() {
+                return node.player;
+            }
+        });
+
+        this.register('game.memory', {
+            set: function(value) {
+                node.game.memory.clear(true);
+                node.game.memory.importDB(value);
+            },
+            get: function() {
+                return (node.game.memory) ? node.game.memory.fetch() : null;
+            }
+        });
+
+        this.register('events.history', {
+            set: function(value) {
+                node.events.history.history.clear(true);
+                node.events.history.history.importDB(value);
+            },
+            get: function() {
+                return node.events.history ?
+                    node.events.history.history.fetch() : null;
+            }
+        });
+
+        this.register('stage', {
+            set: function() {
+                // GameSession.restoreStage
+            },
+            get: function() {
+                return node.player.stage;
+            }
+        });
+
+        this.register('node.env');
+    }
+
+
+//    GameSession.prototype.restoreStage = function(stage) {
+//
+//        try {
+//            // GOTO STATE
+//            node.game.execStage(node.plot.getStep(stage));
+//
+//            var discard = ['LOG',
+//                           'STATECHANGE',
+//                           'WINDOW_LOADED',
+//                           'BEFORE_LOADING',
+//                           'LOADED',
+//                           'in.say.STATE',
+//                           'UPDATED_PLIST',
+//                           'NODEGAME_READY',
+//                           'out.say.STATE',
+//                           'out.set.STATE',
+//                           'in.say.PLIST',
+//                           'STAGEDONE', // maybe not here
+//                           'out.say.HI'
+//                          ];
+//
+//            // RE-EMIT EVENTS
+//            node.events.history.remit(node.game.getStateLevel(), discard);
+//            node.info('game stage restored');
+//            return true;
+//        }
+//        catch(e) {
+//            node.err('could not restore game stage. ' +
+//                     'An error has occurred: ' + e);
+//            return false;
+//        }
+//
+//    };
+
+    /**
+     * ## SessionManager constructor
+     *
+     * Creates a new session manager.
+     */
+    function SessionManager() {
+
+        /**
+         * ### SessionManager.session
+         *
+         * Container of all variables registered in the session.
+         */
+        this.session = {};
+    }
+
+    // ## SessionManager methods
+
+    /**
+     * ### SessionManager.getVariable (static)
+     *
+     * Default session getter.
+     *
+     * @param {string} p The path to a variable included in _node_
+     * @return {mixed} The requested variable
+     */
+    SessionManager.getVariable = function(p) {
+        return J.getNestedValue(p, node);
+    };
+
+    /**
+     * ### SessionManager.setVariable (static)
+     *
+     * Default session setter.
+     *
+     * @param {string} p The path to the variable to set in _node_
+     * @param {mixed} value The value to set
+     */
+    SessionManager.setVariable = function(p, value) {
+        J.setNestedValue(p, value, node);
+    };
+
+    /**
+     * ### SessionManager.register
+     *
+     * Register a new variable to the session
+     *
+     * Overwrites previously registered variables with the same name.
+     *
+     * Usage example:
+     *
+     * ```javascript
+     * node.session.register('player', {
+     *       set: function(p) {
+     *           node.createPlayer(p);
+     *       },
+     *       get: function() {
+     *           return node.player;
+     *       }
+     * });
+     * ```
+     *
+     * @param {string} path A string containing a path to a variable
+     * @param {object} conf Optional. Configuration object containing setters
+     *   and getters
+     */
+    SessionManager.prototype.register = function(path, conf) {
+        if ('string' !== typeof path) {
+            throw new TypeError('SessionManager.register: path must be ' +
+                                'string.');
+        }
+        if (conf && 'object' !== typeof conf) {
+            throw new TypeError('SessionManager.register: conf must be ' +
+                                'object or undefined.');
+        }
+
+        this.session[path] = {
+
+            get: (conf && conf.get) ?
+                conf.get : function() {
+                    return J.getNestedValue(path, node);
+                },
+
+            set: (conf && conf.set) ?
+                conf.set : function(value) {
+                    J.setNestedValue(path, value, node);
+                }
+        };
+
+        return this.session[path];
+    };
+
+    /**
+     * ### SessionManager.unregister
+     *
+     * Unegister a variable from session
+     *
+     * @param {string} path A string containing a path to a variable previously
+     *   registered.
+     *
+     * @see SessionManager.register
+     */
+    SessionManager.prototype.unregister = function(path) {
+        if ('string' !== typeof path) {
+            throw new TypeError('SessionManager.unregister: path must be ' +
+                                'string.');
+        }
+        if (!this.session[path]) {
+            node.warn('SessionManager.unregister: path is not registered ' +
+                      'in the session: ' + path + '.');
+            return false;
+        }
+
+        delete this.session[path];
+        return true;
+    };
+
+    /**
+     * ### SessionManager.clear
+     *
+     * Unegister all registered session variables
+     *
+     * @see SessionManager.unregister
+     */
+    SessionManager.prototype.clear = function() {
+        this.session = {};
+    };
+
+    /**
+     * ### SessionManager.get
+     *
+     * Returns the value/s of one/all registered session variable/s
+     *
+     * @param {string|undefined} path A previously registred variable or
+     *   undefined to return all values
+     *
+     * @see SessionManager.register
+     */
+    SessionManager.prototype.get = function(path) {
+        var session = {};
+        // Returns one variable.
+        if ('string' === typeof path) {
+            return this.session[path] ? this.session[path].get() : undefined;
+        }
+        // Returns all registered variables.
+        else if ('undefined' === typeof path) {
+            for (path in this.session) {
+                if (this.session.hasOwnProperty(path)) {
+                    session[path] = this.session[path].get();
+                }
+            }
+            return session;
+        }
+        else {
+            throw new TypeError('SessionManager.get: path must be string or ' +
+                                'undefined.');
+        }
+    };
+
+    /**
+     * ### SessionManager.isRegistered
+     *
+     * Returns TRUE, if a variable is registred
+     *
+     * @param {string} path A previously registred variable
+     *
+     * @return {boolean} TRUE, if the variable is registered
+     *
+     * @see SessionManager.register
+     * @see SessionManager.unregister
+     */
+    SessionManager.prototype.isRegistered = function(path) {
+        if ('string' !== typeof path) {
+            throw new TypeError('SessionManager.isRegistered: path must be ' +
+                                'string.');
+        }
+        return this.session.hasOwnProperty(path);
+    };
+
+    /**
+     * ### SessionManager.serialize
+     *
+     * Returns an object containing that can be to restore the session
+     *
+     * The serialized session is an object containing _getter_, _setter_, and
+     * current value of each of the registered session variables.
+     *
+     * @return {object} session The serialized session
+     *
+     * @see SessionManager.restore
+     */
+    SessionManager.prototype.serialize = function() {
+        var session = {};
+        for (var path in this.session) {
+            if (this.session.hasOwnProperty(path)) {
+                session[path] = {
+                    value: this.session[path].get(),
+                    get: this.session[path].get,
+                    set: this.session[path].set
+                };
+            }
+        }
+        return session;
+    };
+
+    /**
+     * ### SessionManager.restore
+     *
+     * Restore a previously serialized session object
+     *
+     * @param {object} session A serialized session object
+     * @param {boolean} register Optional. If TRUE, every path is also
+     *    registered before being restored.
+     */
+    SessionManager.prototype.restore = function(session, register) {
+        var i;
+        if ('object' !== typeof session) {
+            throw new TypeError('SessionManager.restore: session must be ' +
+                                'object.');
+        }
+        register = 'undefined' !== typeof register ? register : true;
+        for (i in session) {
+            if (session.hasOwnProperty(i)) {
+                if (register) this.register(i, session[i]);
+                session[i].set(session[i].value);
+            }
+        }
+    };
+
+//    SessionManager.prototype.store = function() {
+//        //node.store(node.socket.id, this.get());
+//    };
+
 })(
     'undefined' != typeof node ? node : module.exports,
     'undefined' != typeof node ? node : module.parent.exports
@@ -37721,7 +38083,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # extra
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2022 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -37942,24 +38304,25 @@ if (!Array.prototype.indexOf) {
      *   and a method stop, that clears the interval
      */
     GameWindow.prototype.getLoadingDots = function(len, id) {
-        var spanDots, i, limit, intervalId;
+        var spanDots, counter, intervalId;
         if (len & len < 0) {
             throw new Error('GameWindow.getLoadingDots: len cannot be < 0. ' +
                             'Found: ' + len);
         }
-        len = len || 5;
         spanDots = document.createElement('span');
         spanDots.id = id || 'span_dots';
-        limit = '';
-        for (i = 0; i < len; i++) {
-            limit = limit + '.';
-        }
         // Refreshing the dots...
+        counter = 0;
+        len = len || 5;
+        // So the height does not change.
+        spanDots.innerHTML = '&nbsp;';
         intervalId = setInterval(function() {
-            if (spanDots.innerHTML !== limit) {
+            if (counter < len) {
+                counter++;
                 spanDots.innerHTML = spanDots.innerHTML + '.';
             }
             else {
+                counter = 0;
                 spanDots.innerHTML = '.';
             }
         }, 1000);
@@ -38144,8 +38507,13 @@ if (!Array.prototype.indexOf) {
 
     };
 
+    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
+        // console.log('***deprecated: use W.html instead of W.setInnerHTML');
+        this.html(search, replace, mod);
+    };
+
     /**
-     * ### GameWindow.setInnerHTML
+     * ### GameWindow.html
      *
      * Replaces the innerHTML of the element with matching id or class name
      *
@@ -38158,19 +38526,21 @@ if (!Array.prototype.indexOf) {
      *    - 'className': replaces all elements with same class name
      *    - 'g': replaces globally, both by id and className
      */
-    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
+    GameWindow.prototype.html = function(search, replace, mod) {
         var el, i, len;
 
         // Only process strings or numbers.
         if ('string' !== typeof search && 'number' !== typeof search) {
             throw new TypeError('GameWindow.setInnerHTML: search must be ' +
-                                'string or number. Found: ' + search);
+                                'string or number. Found: ' + search +
+                                " (replace = " + replace + ")");
         }
 
         // Only process strings or numbers.
         if ('string' !== typeof replace && 'number' !== typeof replace) {
             throw new TypeError('GameWindow.setInnerHTML: replace must be ' +
-                                'string or number. Found: ' + replace);
+                                'string or number. Found: ' + replace +
+                                " (search = " + search + ")");
         }
 
         if ('undefined' === typeof mod) {
@@ -38179,12 +38549,14 @@ if (!Array.prototype.indexOf) {
         else if ('string' === typeof mod) {
             if (mod !== 'g' && mod !== 'id' && mod !== 'className') {
                 throw new Error('GameWindow.setInnerHTML: invalid ' +
-                                'mod value: ' + mod);
+                                'mod value: ' + mod  +
+                                " (search = " + search + ")");
             }
         }
         else {
             throw new TypeError('GameWindow.setInnerHTML: mod must be ' +
-                                'string or undefined. Found: ' + mod);
+                                'string or undefined. Found: ' + mod  +
+                                " (search = " + search + ")");
         }
 
         if (mod === 'id' || mod === 'g') {
@@ -40470,7 +40842,7 @@ if (!Array.prototype.indexOf) {
                     // Bootstrap 5.
                     options = { className: 'card-footer' };
                 }
-                else if ('object' !== typeof options) {
+                else if ('object' !== typeof options && 'function') {
                     throw new TypeError('Widget.setFooter: options must ' +
                                         'be object or undefined. Found: ' +
                                         options);
@@ -40486,6 +40858,9 @@ if (!Array.prototype.indexOf) {
             }
             else if ('string' === typeof footer) {
                 this.footerDiv.innerHTML = footer;
+            }
+            else if ('function' === typeof footer) {
+                footer.call(this, this.footerDiv);
             }
             else {
                 throw new TypeError(J.funcName(this.constructor) +
@@ -41397,6 +41772,7 @@ if (!Array.prototype.indexOf) {
 
         // Properties that will modify the UI of the widget once appended.
 
+        if (options.bootstrap5) widget._bootstrap5 = true;
         if (options.disabled) widget._disabled = true;
         if (options.highlighted) widget._highlighted = true;
         if (options.collapsed) widget._collapsed = true;
@@ -41515,7 +41891,7 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
-     * ### Widgets.append
+     * ### Widgets.append|add
      *
      * Appends a widget to the specified root element
      *
@@ -41539,6 +41915,7 @@ if (!Array.prototype.indexOf) {
      *
      * @see Widgets.get
      */
+    Widgets.prototype.add =
     Widgets.prototype.append = function(w, root, options) {
         var tmp;
 
@@ -41586,7 +41963,7 @@ if (!Array.prototype.indexOf) {
         // Add panelDiv (with or without panel).
         tmp = options.panel === false ? true : w.panel === false;
 
-        if (options.bootstrap5) {
+        if (w._bootstrap5) {
             // Bootstrap 5
             tmp = {
                 className: tmp ? [ 'ng_widget', 'no-panel', w.className ] :
@@ -41614,7 +41991,7 @@ if (!Array.prototype.indexOf) {
         // Optionally add title (and div).
         if (options.title !== false && w.title) {
 
-            if (options.bootstrap5) {
+            if (w._bootstrap5) {
                 // Bootstrap 5.
                 tmp = options.panel === false ?
                     'no-panel-heading' : 'card-header';
@@ -41629,7 +42006,7 @@ if (!Array.prototype.indexOf) {
         }
 
         // Add body (with or without panel).
-        if (options.bootstrap5) {
+        if (w._bootstrap5) {
             // Bootstrap 5.
             tmp = options.panel !== false ? 'card-body' : 'no-panel-body';
         }
@@ -41642,7 +42019,7 @@ if (!Array.prototype.indexOf) {
 
         // Optionally add footer.
         if (w.footer) {
-            if (options.bootstrap5) {
+            if (w._bootstrap5) {
                 // Bootstrap 5.
                 tmp = options.panel === false ?
                     'no-panel-heading' : 'card-footer';
@@ -41685,12 +42062,6 @@ if (!Array.prototype.indexOf) {
         if (w.storeRef !== false) this.lastAppended = this.last = w;
 
         return w;
-    };
-
-    Widgets.prototype.add = function(w, root, options) {
-        console.log('***Widgets.add is deprecated. Use ' +
-                    'Widgets.append instead.***');
-        return this.append(w, root, options);
     };
 
     /**
@@ -45101,7 +45472,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceManager.version = '1.7.0';
+    ChoiceManager.version = '1.8.0';
     ChoiceManager.description = 'Groups together and manages a set of ' +
         'survey forms (e.g., ChoiceTable).';
 
@@ -45283,6 +45654,13 @@ if (!Array.prototype.indexOf) {
          */
         this.backBtn = null;
 
+        /**
+         * ### ChoiceManager.honeypot
+         *
+         * Array of unused input forms to detect bots.
+         */
+        this.honeypot = null;
+
     }
 
     // ## ChoiceManager methods
@@ -45390,9 +45768,13 @@ if (!Array.prototype.indexOf) {
         // is passed as conf object to BackButton.
         this.backBtn = options.backBtn;
 
+        // If truthy a useless form is added to detect bots.
+        this.honeypot = options.honeypot;
+
         // After all configuration options are evaluated, add forms.
 
         if ('undefined' !== typeof options.forms) this.setForms(options.forms);
+
     };
 
     /**
@@ -45536,6 +45918,9 @@ if (!Array.prototype.indexOf) {
                 this.doneBtn = node.widgets.append('DoneButton', div, opts);
             }
         }
+
+
+        if (this.honeypot) this.addHoneypot(this.honeypot);
     };
 
     /**
@@ -45608,6 +45993,10 @@ if (!Array.prototype.indexOf) {
 
             if (form.conditional) {
                 this.conditionals[form.id] = form.conditional;
+            }
+
+            if (this._bootstrap5 && 'undefined' === typeof form.bootstrap5) {
+                form.bootstrap5 = true;
             }
 
             form = node.widgets.get(name, form);
@@ -45815,36 +46204,39 @@ if (!Array.prototype.indexOf) {
 
         len = this.forms.length;
 
+        // TODO: we could save the results when #next() is called or
+        // have an option to get the values of current form or a specific form.
+        // The code below is a old and created before #next() was created.
         // Only one form displayed.
-        if (this.oneByOne) {
-
-            // Evaluate one-by-one and store partial results.
-            if (this.oneByOneCounter < (len-1)) {
-                form = this.forms[this.oneByOneCounter];
-                res = form.getValues(opts);
-                if (res) {
-                    this.oneByOneResults[form.id] = res;
-                    lastErrored = checkFormResult(res, form, opts);
-
-                    if (!lastErrored) {
-                        this.forms[this.oneByOneCounter].hide();
-                        this.oneByOneCounter++;
-                        this.forms[this.oneByOneCounter].show();
-                        W.adjustFrameHeight();
-                        // Prevent stepping.
-                        obj.isCorrect = false;
-                    }
-                }
-            }
-            // All one-by-one pages executed.
-            else {
-                // Copy all partial results in the obj returning the
-                obj.forms = this.oneByOneResults;
-            }
-
-        }
+        // if (this.oneByOne) {
+        //
+        //     // Evaluate one-by-one and store partial results.
+        //     if (this.oneByOneCounter < (len-1)) {
+        //         form = this.forms[this.oneByOneCounter];
+        //         res = form.getValues(opts);
+        //         if (res) {
+        //             this.oneByOneResults[form.id] = res;
+        //             lastErrored = checkFormResult(res, form, opts);
+        //
+        //             if (!lastErrored) {
+        //                 this.forms[this.oneByOneCounter].hide();
+        //                 this.oneByOneCounter++;
+        //                 this.forms[this.oneByOneCounter].show();
+        //                 W.adjustFrameHeight();
+        //                 // Prevent stepping.
+        //                 obj.isCorrect = false;
+        //             }
+        //         }
+        //     }
+        //     // All one-by-one pages executed.
+        //     else {
+        //         // Copy all partial results in the obj returning the
+        //         obj.forms = this.oneByOneResults;
+        //     }
+        //
+        // }
         // All forms on the page.
-        else {
+        // else {
             i = -1;
             for ( ; ++i < len ; ) {
                 form = this.forms[i];
@@ -45866,7 +46258,7 @@ if (!Array.prototype.indexOf) {
                     if (res) lastErrored = res;
                 }
             }
-        }
+        // }
 
         if (lastErrored) {
             if (opts.highlight &&
@@ -45889,6 +46281,14 @@ if (!Array.prototype.indexOf) {
             obj = obj.forms;
             if (res.isCorrect === false) obj.isCorrect = false;
             if (res.freetext) obj.freetext = res.freetext;
+        }
+
+        if (this.honeypot) {
+            obj.honeypotHit = 0;
+            obj.honeypot = this.honeypot.map(function(h) {
+                if (h.value) obj.honeypotHit++;
+                return h.value || false;
+            });
         }
         return obj;
     };
@@ -45915,6 +46315,69 @@ if (!Array.prototype.indexOf) {
 
         // Make a random comment.
         if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
+    };
+
+    /**
+     * ### ChoiceManager.addHoneypot
+     *
+     * Adds a hidden <form> tag with nested <input> that bots should fill
+     *
+     * The inputs created are added under ChoiceManager.honeypot
+     *
+     * @param {object} opts Optional. Options to configure the honeypot.
+     *  - id: id of the <form> tag
+     *  - action: action attribute of the <form> tag
+     *  - forms: array of forms to add to the <form> tag. Format:
+     *      - id: id of input and "for" attribute of the label
+     *      - label: text of the label
+     *      - placeholder: placeholder for the input
+     *      - type: type of input (default 'text')
+     */
+    ChoiceManager.prototype.addHoneypot = function(opts) {
+        var h, forms, that;
+        if (!this.isAppended()) {
+            node.warn('ChoiceManager.addHoneypot: not appended yet');
+            return;
+        }
+        if ('object' !== typeof opts) opts = {};
+        h = W.add('form', this.panelDiv, {
+            id: opts.id || (this.id + 'form'),
+            action: opts.action || ('/' + this.id + 'receive')
+        });
+
+        h.style.opacity = 0;
+        h.style.position = 'absolute';
+        h.style.top = 0;
+        h.style.left = 0;
+        h.style.height = 0;
+        h.style.width = 0;
+        h.style['z-index'] = -1;
+
+        if (!opts.forms) {
+            forms = [
+                { id: 'name', label: 'Your name',
+                  placeholder: 'Enter your name' },
+                { id: 'email', label: 'Your email',
+                  placeholder: 'Type your email', type: 'email' }
+            ];
+        }
+
+        // Change from options to array linking to honeypot inputs.
+        this.honeypot = [];
+
+        that = this;
+        forms.forEach(function(f) {
+            var hh;
+            W.add('label', h, { 'for': f.id });
+            hh = W.add('input', h, {
+                id: f.id,
+                type: f.type || 'text',
+                placeholder: f.placeholder,
+                required: true,
+                autocomplete: 'off'
+            });
+            that.honeypot.push(hh);
+        });
     };
 
     /**
@@ -45954,6 +46417,8 @@ if (!Array.prototype.indexOf) {
         else {
             form.show();
         }
+        window.scrollTo(0,0);
+
         that = this;
         setTimeout(function() {
             if (node.game.isPaused()) return;
@@ -45995,6 +46460,8 @@ if (!Array.prototype.indexOf) {
         else {
             form.show();
         }
+        window.scrollTo(0,0);
+
         W.adjustFrameHeight();
         node.emit('WIDGET_PREV', this);
 
@@ -46031,6 +46498,9 @@ if (!Array.prototype.indexOf) {
         var f, c, form;
         f = that.conditionals[id];
         if (f) {
+            if ('function' === typeof f) {
+                return f.call(that, that.formsById);
+            }
             for (c in f) {
                 if (f.hasOwnProperty(c)) {
                     form = that.formsById[c];
@@ -46197,21 +46667,26 @@ if (!Array.prototype.indexOf) {
          * @see ChoiceTable.onclick
          */
         this.listener = function(e) {
-            var name, value, td;
+            var name, value, td, ci;
             var i, len, removed, other;
 
             e = e || window.event;
             td = e.target || e.srcElement;
 
             // See if it is a clickable choice.
-            if ('undefined' === typeof that.choicesIds[td.id]) {
+            ci = that.choicesIds;
+            if ('undefined' === typeof ci[td.id]) {
                 // It might be a nested element, try the parent.
                 td = td.parentNode;
                 if (!td) return;
-                if ('undefined' === typeof that.choicesIds[td.id]) {
+                if ('undefined' === typeof ci[td.id]) {
                     td = td.parentNode;
-                    if (!td || 'undefined' === typeof that.choicesIds[td.id]) {
-                        return;
+                    if (!td) return;
+                    if ('undefined' === typeof ci[td.id]) {
+                        td = td.parentNode;
+                        if (!td || 'undefined' === typeof ci[td.id]) {
+                            return;
+                        }
                     }
                 }
             }
@@ -46243,21 +46718,21 @@ if (!Array.prototype.indexOf) {
             // One more click.
             that.numberOfClicks++;
 
+            removed = that.isChoiceCurrent(value);
             len = that.choices.length;
 
             if (that.customInput) {
                 // Is "Other" currently selected?
-                other = value === (len - 1);
-                if (that.customInput.isHidden()) {
-                    if (other) that.customInput.show();
+                if (value === (len - 1) && !removed) {
+                    that.customInput.show();
                 }
                 else {
-                    if (other) that.customInput.hide();
+                    that.customInput.hide();
                 }
             }
 
             // Click on an already selected choice.
-            if (that.isChoiceCurrent(value)) {
+            if (removed) {
                 that.unsetCurrentChoice(value);
                 J.removeClass(td, 'selected');
 
@@ -46274,7 +46749,6 @@ if (!Array.prototype.indexOf) {
                 else {
                     that.selected = null;
                 }
-                removed = true;
             }
             // Click on a new choice.
             else {
@@ -46892,24 +47366,42 @@ if (!Array.prototype.indexOf) {
         }
 
         // Set the mainText, if any.
-        if ('string' === typeof opts.mainText) {
-            this.mainText = opts.mainText;
+        tmp = opts.mainText
+        if ('function' === typeof tmp) {
+            tmp = tmp.call(this);
+            if ('string' !== typeof tmp) {
+                throw new TypeError('ChoiceTable.init: opts.mainText cb ' +
+                                    'must return a string. Found: ' +
+                                    tmp);
+            }
         }
-        else if ('undefined' !== typeof opts.mainText) {
+        if ('string' === typeof tmp) {
+            this.mainText = tmp;
+        }
+        else if ('undefined' !== typeof tmp) {
             throw new TypeError('ChoiceTable.init: opts.mainText must ' +
-                                'be string or undefined. Found: ' +
-                                opts.mainText);
+                                'be function, string or undefined. Found: ' +
+                                tmp);
         }
 
         // Set the hint, if any.
-        if ('string' === typeof opts.hint || false === opts.hint) {
-            this.hint = opts.hint;
-            if (this.requiredChoice) this.hint += ' *';
+        tmp = opts.hint;
+        if ('function' === typeof tmp) {
+            tmp = tmp.call(this);
+            if ('string' !== typeof tmp && false !== tmp) {
+                throw new TypeError('ChoiceTable.init: opts.hint cb must ' +
+                                    'return string or false. Found: ' +
+                                    tmp);
+            }
         }
-        else if ('undefined' !== typeof opts.hint) {
+        if ('string' === typeof tmp || false === tmp) {
+            this.hint = tmp;
+            if (this.requiredChoice && tmp !== false) this.hint += ' *';
+        }
+        else if ('undefined' !== typeof tmp) {
             throw new TypeError('ChoiceTable.init: opts.hint must ' +
                                 'be a string, false, or undefined. Found: ' +
-                                opts.hint);
+                                tmp);
         }
         else {
             // Returns undefined if there are no constraints.
@@ -46949,10 +47441,18 @@ if (!Array.prototype.indexOf) {
                             'separator option. Found: ' + this.separator);
         }
 
-        if ('string' === typeof opts.left ||
-            'number' === typeof opts.left) {
-
-            this.left = '' + opts.left;
+        // left.
+        tmp = opts.left;
+        if ('function' === typeof tmp) {
+            tmp = tmp.call(this);
+            if ('string' !== typeof tmp && 'undefined' !== typeof tmp) {
+                throw new TypeError('ChoiceTable.init: opts.left cb must ' +
+                                    'return string or undefined. Found: ' +
+                                    tmp);
+            }
+        }
+        if ('string' === typeof tmp || 'number' === typeof tmp) {
+            this.left = '' + tmp;
         }
         else if (J.isNode(opts.left) ||
                  J.isElement(opts.left)) {
@@ -46960,19 +47460,24 @@ if (!Array.prototype.indexOf) {
             this.left = opts.left;
         }
         else if ('undefined' !== typeof opts.left) {
-            throw new TypeError('ChoiceTable.init: opts.left must ' +
-                                'be string, number, an HTML Element or ' +
-                                'undefined. Found: ' + opts.left);
+            throw new TypeError('ChoiceTable.init: opts.left must be string, ' +
+                                'number, function, an HTML Element or ' +
+                                'undefined. Found: ' + tmp);
         }
 
-        if ('string' === typeof opts.right ||
-            'number' === typeof opts.right) {
-
-            this.right = '' + opts.right;
+        tmp = opts.right;
+        if ('function' === typeof tmp) {
+            tmp = tmp.call(this);
+            if ('string' !== typeof tmp && 'undefined' !== typeof tmp) {
+                throw new TypeError('ChoiceTable.init: opts.right cb must ' +
+                                    'return string or undefined. Found: ' +
+                                    tmp);
+            }
         }
-        else if (J.isNode(opts.right) ||
-                 J.isElement(opts.right)) {
-
+        if ('string' === typeof tmp || 'number' === typeof tmp) {
+            this.right = '' + tmp;
+        }
+        else if (J.isNode(opts.right) || J.isElement(opts.right)) {
             this.right = opts.right;
         }
         else if ('undefined' !== typeof opts.right) {
@@ -47034,11 +47539,14 @@ if (!Array.prototype.indexOf) {
 
 
         // Add the correct choices.
-        if ('undefined' !== typeof opts.choicesSetSize) {
-            if (!J.isInt(opts.choicesSetSize, 0)) {
+        tmp = opts.choicesSetSize;
+        if ('function' === typeof tmp) {
+            tmp = tmp.call(this);
+        }
+        if ('undefined' !== typeof tmp) {
+            if (!J.isInt(tmp, 0)) {
                 throw new Error('ChoiceTable.init: choicesSetSize must be ' +
-                                'undefined or an integer > 0. Found: ' +
-                                opts.choicesSetSize);
+                                'undefined or an integer > 0. Found: ' + tmp);
             }
 
             if (this.left || this.right) {
@@ -47047,7 +47555,7 @@ if (!Array.prototype.indexOf) {
                                 'right options are set.');
             }
 
-            this.choicesSetSize = opts.choicesSetSize;
+            this.choicesSetSize = tmp;
         }
 
         // Add other.
@@ -47056,35 +47564,51 @@ if (!Array.prototype.indexOf) {
         }
 
         // Add the choices.
-        if ('undefined' !== typeof opts.choices) {
-            this.setChoices(opts.choices);
+        tmp = opts.choices;
+        if ('function' === typeof tmp) {
+            tmp = tmp.call(this);
+            if (!J.isArray(tmp) || !tmp.length) {
+                throw new TypeError('ChoiceTable.init: opts.choices cb must ' +
+                                    'return a non-empty array. Found: ' + tmp);
+            }
+        }
+        if ('undefined' !== typeof tmp) {
+            this.setChoices(tmp);
         }
 
         // Add the correct choices.
-        if ('undefined' !== typeof opts.correctChoice) {
+        tmp = opts.correctChoice;
+        if ('undefined' !== typeof tmp) {
             if (this.requiredChoice) {
                 throw new Error('ChoiceTable.init: cannot specify both ' +
                                 'opts requiredChoice and correctChoice');
+            }
+            if ('function' === typeof tmp) {
+                tmp = tmp.call(this);
+                // No checks.
             }
             this.setCorrectChoice(opts.correctChoice);
         }
 
 
         // Add the correct choices.
-        if ('undefined' !== typeof opts.disabledChoices) {
+        tmp = opts.disabledChoices;
+        if ('undefined' !== typeof tmp) {
+            if ('function' === typeof tmp) {
+                tmp = tmp.call(this);
+            }
             if (!J.isArray(opts.disabledChoices)) {
                 throw new TypeError('ChoiceTable.init: disabledChoices ' +
                                     'must be undefined or array. Found: ' +
-                                    opts.disabledChoices);
+                                    tmp);
             }
 
             // TODO: check if values of disabled choices are correct?
             // Do we have the choices now, or can they be added later?
-            tmp = opts.disabledChoices.length;
             if (tmp) {
                 (function() {
-                    for (var i = 0; i < tmp; i++) {
-                        that.disableChoice(opts.disabledChoices[i]);
+                    for (var i = 0; i < tmp.length; i++) {
+                        that.disableChoice(tmp[i]);
                     }
                 })();
             }
@@ -48244,12 +48768,14 @@ if (!Array.prototype.indexOf) {
         // No solution or solution already displayed.
         if (!sol || this.solutionDisplayed) return false;
         // Solution, but no answer provided.
-        if (sol && !this.isChoiceDone() && !this.solutionNoChoice) return false;
-        this.solutionDisplayed = true;
-        if ('function' === typeof sol) {
-            sol = this.solution(this.verifyChoice(false), this);
+        if (sol) {
+            if (!this.isChoiceDone() && !this.solutionNoChoice) return false;
+            this.solutionDisplayed = true;
+            if ('function' === typeof sol) {
+                sol = this.solution(this.verifyChoice(false), this);
+            }
+            this.solutionDiv.innerHTML = sol;
         }
-        this.solutionDiv.innerHTML = sol;
         this.disable();
         W.adjustFrameHeight();
         node.emit('WIDGET_NEXT', this);
@@ -48257,6 +48783,7 @@ if (!Array.prototype.indexOf) {
     };
 
     ChoiceTable.prototype.prev = function() {
+        return false;
         if (!this.solutionDisplayed) return false;
         this.solutionDisplayed = false;
         this.solutionDiv.innerHTML = '';
@@ -48267,9 +48794,12 @@ if (!Array.prototype.indexOf) {
     };
 
     ChoiceTable.prototype.isChoiceDone = function(complete) {
-        var cho, mul, len;
+        var cho, mul, len, ci;
+        ci = this.customInput;
         cho = this.currentChoice;
         mul = this.selectMultiple;
+        // Selected "Other, Specify"
+        if (ci && this.isChoiceCurrent(this.choices.length-1)) return false;
         // Single choice.
         if ((!complete || !mul) && null !== cho) return true;
         // Multiple choices.
@@ -49847,7 +50377,7 @@ if (!Array.prototype.indexOf) {
     };
 
     Consent.prototype.append = function() {
-        var consent, html;
+        var consent, html, btn1, btn2, st1, st2;
         // Hide not agreed div.
         W.hide('notAgreed');
 
@@ -49870,11 +50400,27 @@ if (!Array.prototype.indexOf) {
         html += '<strong>' + this.getText('consentTerms') + '</strong><br/>';
 
         // Buttons.
-        html += '<div style="margin-top: 30px; text-align: center;">' +
-        '<button class="btn btn-lg btn-info" id="agree" ' +
-        'style="margin: 0px 30px">' + this.getText('agree') +
-        '</button><button class="btn btn-lg btn-danger" id="notAgree">' +
-        this.getText('notAgree') + '</button></div>';
+        html += '<div style="margin-top: 30px; text-align: center;">';
+
+        if (document.querySelector('html').dir === 'rtl') {
+            btn1 = 'agree';
+            btn2 = 'notAgree';
+            st1 = 'info';
+            st2 = 'danger';
+        }
+        else {
+            btn1 = 'notAgree';
+            btn2 = 'agree';
+            st1 = 'danger';
+            st2 = 'info';
+        }
+
+        html += '<button class="btn btn-lg btn-' + st1 +
+              '" style="margin: 0px 30px" id="' + btn1 + '">' +
+              this.getText(btn1) + '</button>';
+
+        html += '<button class="btn btn-lg btn-' + st2 + '" id="' +
+                 btn2 + '">' + this.getText(btn2) + '</button></div>';
 
         consent.innerHTML += html;
         setTimeout(function() { W.adjustFrameHeight(); });
@@ -63874,6 +64420,7 @@ if (!Array.prototype.indexOf) {
                             if (conf.availableTreatments.hasOwnProperty(t)) {
                                 li = document.createElement('div');
                                 li.style.flex = '200px';
+                                li.style['margin-top'] = '10px';
                                 // li.style.display = 'flex';
                                 a = document.createElement('a');
                                 a.className =
@@ -63908,6 +64455,11 @@ if (!Array.prototype.indexOf) {
 
                             }
                         }
+                        li = document.createElement('div');
+                        li.style.flex = '200px';
+                        li.style['margin-top'] = '10px';
+                        // Hack to fit nicely the treatments.
+                        flexBox.appendChild(li);
 
                         if (w.addDefaultTreatments !== false) {
                             flexBox.appendChild(liT1);
