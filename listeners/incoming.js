@@ -67,7 +67,8 @@
         node.events.ng.on( IN + say + 'SESSION', function(msg) {
             if (msg.data) {
                 node.game.session(msg.data.name, msg.data.value, {
-                    from: msg.from
+                    from: msg.from,
+                    to: false
                 });
             }
         });
