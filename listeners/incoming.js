@@ -60,6 +60,19 @@
         });
 
         /**
+         * ## in.say.SESSION
+         *
+         * Incoming session data from another client
+         */
+        node.events.ng.on( IN + say + 'SESSION', function(msg) {
+            if (msg.data) {
+                node.game.session(msg.data.name, msg.data.value, {
+                    from: msg.from
+                });
+            }
+        });
+
+        /**
          * ## in.say.PCONNECT
          *
          * Adds a new player to the player list

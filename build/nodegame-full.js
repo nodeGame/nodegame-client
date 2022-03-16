@@ -10610,6 +10610,10 @@ if (!Array.prototype.indexOf) {
     // Force disconnection upon reception.
     k.target.BYE  = 'BYE';
 
+    // #### target.SESSION
+    // Stores the value of the message in the session.
+    k.target.SESSION  = 'SESSION';
+
     //#### not used targets (for future development)
 
 
@@ -24522,6 +24526,53 @@ if (!Array.prototype.indexOf) {
          * @see SizeManager
          */
         this.sizeManager = new SizeManager(this.node);
+
+
+        /** ### Game.session
+         *
+         * Stores variables and shares them with logic and other players
+         *
+         */
+        (function(that, s, msg) {
+            s = {};
+
+            that.session = function(name, value, opts) {
+                var to, from;
+                opts = opts || {};
+                from = opts.from || node.player.id;
+                // If it is called from HTML before game is init.
+                if (!from) {
+                    from = '_own_';
+                    node.once('PLAYER_CREATED', function(p) {
+                        if (!s[from]) return;
+                        s[p.id] = s[from];
+                        s[from] = null;
+                    });
+                }
+                if (!s[from]) s[from] = {};
+                if (arguments.length > 1) {
+                    s[from][name] = value;
+                    to = 'undefined' === typeof opts.to ? 'SERVER' : opts.to;
+                    if (to !== false) {
+                        node.socket.send(node.msg.create({
+                            target: 'SESSION',
+                            data: { name: name, value: value },
+                            to: to
+                        }));
+                    }
+                }
+                return s[from][name];
+            };
+
+            that.session.player = function(p) {
+                return s[p] || {};
+            };
+
+        })(this);
+
+
+
+
     }
 
     // ## Game methods
@@ -26560,7 +26611,7 @@ if (!Array.prototype.indexOf) {
      * @see Game.beDone
      */
     function processGotoStepOptions(game, opts) {
-        var prop;
+        var prop, so;
 
         // Be done.. now! Skips Game.execStep.
         if (opts.beDone) {
@@ -26591,10 +26642,20 @@ if (!Array.prototype.indexOf) {
             });
         }
 
-        if (opts.game) {
-            for (prop in opts.game) {
-                if (opts.game.hasOwnProperty(prop)) {
-                    game[prop] = opts.game[prop];
+        // Experimental. To be replaced by a session manager.
+        // if (opts.game) {
+        //     for (prop in opts.game) {
+        //         if (opts.game.hasOwnProperty(prop)) {
+        //             game[prop] = opts.game[prop];
+        //         }
+        //     }
+        // }
+
+        if (opts.session) {
+            so = { to: false };
+            for (prop in opts.session) {
+                if (opts.session.hasOwnProperty(prop)) {
+                    node.game.session(prop, opts.session[prop], so);
                 }
             }
         }
@@ -32325,6 +32386,17 @@ if (!Array.prototype.indexOf) {
             }
             force = true;
             node.socket.disconnect(force);
+        });
+
+        /**
+         * ## in.say.SESSION
+         *
+         * Forces disconnection
+         */
+        node.events.ng.on( IN + say + 'SESSION', function(msg) {
+            console.log('SESSION!!!!!!!!!!!!');
+            console.log(msg.data);
+            if (msg.data) node.game.session(msg.data.name, msg.data.value);
         });
 
         /**
