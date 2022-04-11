@@ -41685,7 +41685,7 @@ if (!Array.prototype.indexOf) {
      * Finally, a reference to the widget is added in `Widgets.instances`.
      *
      * @param {string} widgetName The name of the widget to load
-     * @param {object} options Optional. Configuration options, will be
+     * @param {object} opts Optional. Configuration options, will be
      *    mixed out with attributes in the `defaults` property
      *    of the widget prototype.
      *
@@ -41694,26 +41694,25 @@ if (!Array.prototype.indexOf) {
      * @see Widgets.append
      * @see Widgets.instances
      */
-    Widgets.prototype.get = function(widgetName, options) {
+    Widgets.prototype.get = function(widgetName, opts) {
         var WidgetPrototype, widget, changes, tmp;
 
         if ('string' !== typeof widgetName) {
             throw new TypeError('Widgets.get: widgetName must be string.' +
                                'Found: ' + widgetName);
         }
-        if (!options) {
-            options = {};
-        }
-        else if ('object' !== typeof options) {
-            throw new TypeError('Widgets.get: ' + widgetName + ' options ' +
+        if (!opts) opts = {};
+
+        else if ('object' !== typeof opts) {
+            throw new TypeError('Widgets.get: ' + widgetName + ' opts ' +
                                 'must be object or undefined. Found: ' +
-                                options);
+                                opts);
         }
-        if (options.storeRef === false) {
-            if (options.docked === true) {
-                throw new TypeError('Widgets.get: '  + widgetName +
-                                    'options.storeRef cannot be false ' +
-                                    'if options.docked is true.');
+        if (opts.storeRef === false) {
+            if (opts.docked === true) {
+                throw new TypeError('Widgets.get: ' + widgetName +
+                                    'opts.storeRef cannot be false ' +
+                                    'if opts.docked is true.');
             }
         }
 
@@ -41732,44 +41731,44 @@ if (!Array.prototype.indexOf) {
         }
 
         // Create widget.
-        widget = new WidgetPrototype(options);
+        widget = new WidgetPrototype(opts);
 
         // Set ID.
-        tmp = options.id;
+        tmp = opts.id;
         if ('undefined' !== typeof tmp) {
             if ('number' === typeof tmp) tmp += '';
             if ('string' === typeof tmp) {
 
-                if ('undefined' !== typeof options.idPrefix) {
-                    if ('string' === typeof options.idPrefix &&
-                        'number' !== typeof options.idPrefix) {
+                if ('undefined' !== typeof opts.idPrefix) {
+                    if ('string' === typeof opts.idPrefix &&
+                        'number' !== typeof opts.idPrefix) {
 
-                        tmp = options.idPrefix + tmp;
+                        tmp = opts.idPrefix + tmp;
                     }
                     else {
-                        throw new TypeError('Widgets.get: options.idPrefix ' +
+                        throw new TypeError('Widgets.get: opts.idPrefix ' +
                                             'must be string, number or ' +
                                             'undefined. Found: ' +
-                                            options.idPrefix);
+                                            opts.idPrefix);
                     }
                 }
 
                 widget.id = tmp;
             }
             else {
-                throw new TypeError('Widgets.get: options.id must be ' +
+                throw new TypeError('Widgets.get: opts.id must be ' +
                                     'string, number or undefined. Found: ' +
                                     tmp);
             }
         }
         // Assign step id as widget id, if widget step and no custom id.
-        else if (options.widgetStep) {
+        else if (opts.widgetStep) {
             widget.id = node.game.getStepId();
         }
 
-        // Set prototype values or options values.
-        if ('undefined' !== typeof options.title) {
-            widget.title = options.title;
+        // Set prototype values or opts values.
+        if ('undefined' !== typeof opts.title) {
+            widget.title = opts.title;
         }
         else if ('undefined' !== typeof WidgetPrototype.title) {
             widget.title = WidgetPrototype.title;
@@ -41777,33 +41776,33 @@ if (!Array.prototype.indexOf) {
         else {
             widget.title = '&nbsp;';
         }
-        widget.panel = 'undefined' === typeof options.panel ?
-            WidgetPrototype.panel : options.panel;
-        widget.footer = 'undefined' === typeof options.footer ?
-            WidgetPrototype.footer : options.footer;
+        widget.panel = 'undefined' === typeof opts.panel ?
+            WidgetPrototype.panel : opts.panel;
+        widget.footer = 'undefined' === typeof opts.footer ?
+            WidgetPrototype.footer : opts.footer;
         widget.className = WidgetPrototype.className;
-        if (J.isArray(options.className)) {
-            widget.className += ' ' + options.className.join(' ');
+        if (J.isArray(opts.className)) {
+            widget.className += ' ' + opts.className.join(' ');
         }
-        else if ('string' === typeof options.className) {
-            widget.className += ' ' + options.className;
+        else if ('string' === typeof opts.className) {
+            widget.className += ' ' + opts.className;
         }
-        else if ('undefined' !== typeof options.className) {
+        else if ('undefined' !== typeof opts.className) {
             throw new TypeError('Widgets.get: className must be array, ' +
                                 'string, or undefined. Found: ' +
-                                options.className);
+                                opts.className);
         }
-        widget.context = 'undefined' === typeof options.context ?
-            WidgetPrototype.context : options.context;
-        widget.sounds = 'undefined' === typeof options.sounds ?
-            WidgetPrototype.sounds : options.sounds;
-        widget.texts = 'undefined' === typeof options.texts ?
-            WidgetPrototype.texts : options.texts;
-        widget.collapsible = options.collapsible || false;
-        widget.closable = options.closable || false;
+        widget.context = 'undefined' === typeof opts.context ?
+            WidgetPrototype.context : opts.context;
+        widget.sounds = 'undefined' === typeof opts.sounds ?
+            WidgetPrototype.sounds : opts.sounds;
+        widget.texts = 'undefined' === typeof opts.texts ?
+            WidgetPrototype.texts : opts.texts;
+        widget.collapsible = opts.collapsible || false;
+        widget.closable = opts.closable || false;
         widget.collapseTarget =
-            options.collapseTarget || this.collapseTarget || null;
-        widget.info = options.info || false;
+            opts.collapseTarget || this.collapseTarget || null;
+        widget.info = opts.info || false;
 
         widget.hooks = {
             hidden: [],
@@ -41818,13 +41817,16 @@ if (!Array.prototype.indexOf) {
         };
 
         // By default destroy widget on exit step.
-        widget.destroyOnExit = options.destroyOnExit !== false;
+        widget.destroyOnExit = opts.destroyOnExit !== false;
 
         // Required widgets require action from user, otherwise they will
         // block node.done().
-        if (options.required ||
-            options.requiredChoice ||
-            'undefined' !== typeof options.correctChoice) {
+        if (opts.required === false) {
+            widget.required = false;
+        }
+        else if (opts.required || opts.requiredChoice ||
+            ('undefined' !== typeof opts.correctChoice &&
+             opts.correctChoice !== false)) {
 
             // Flag required is undefined, if not set to false explicitely.
             widget.required = true;
@@ -41847,41 +41849,41 @@ if (!Array.prototype.indexOf) {
 
         // Properties that will modify the UI of the widget once appended.
 
-        if (options.bootstrap5) widget._bootstrap5 = true;
-        if (options.disabled) widget._disabled = true;
-        if (options.highlighted) widget._highlighted = true;
-        if (options.collapsed) widget._collapsed = true;
-        if (options.hidden) widget._hidden = true;
-        if (options.docked) widget._docked = true;
+        if (opts.bootstrap5) widget._bootstrap5 = true;
+        if (opts.disabled) widget._disabled = true;
+        if (opts.highlighted) widget._highlighted = true;
+        if (opts.collapsed) widget._collapsed = true;
+        if (opts.hidden) widget._hidden = true;
+        if (opts.docked) widget._docked = true;
 
         // Call init.
-        widget.init(options);
+        widget.init(opts);
 
         // Call listeners.
-        if (options.listeners !== false) {
+        if (opts.listeners !== false) {
 
             // TODO: future versions should pass the right event listener
             // to the listeners method. However, the problem is that it
             // does not have `on.data` methods, those are aliases.
 
-         //  if ('undefined' === typeof options.listeners) {
+         //  if ('undefined' === typeof opts.listeners) {
          //      ee = node.getCurrentEventEmitter();
          //  }
-         //  else if ('string' === typeof options.listeners) {
-         //      if (options.listeners !== 'game' &&
-         //          options.listeners !== 'stage' &&
-         //          options.listeners !== 'step') {
+         //  else if ('string' === typeof opts.listeners) {
+         //      if (opts.listeners !== 'game' &&
+         //          opts.listeners !== 'stage' &&
+         //          opts.listeners !== 'step') {
          //
          //          throw new Error('Widget.get: widget ' + widgetName +
          //                          ' has invalid value for option ' +
-         //                          'listeners: ' + options.listeners);
+         //                          'listeners: ' + opts.listeners);
          //      }
-         //      ee = node.events[options.listeners];
+         //      ee = node.events[opts.listeners];
          //  }
          //  else {
          //      throw new Error('Widget.get: widget ' + widgetName +
-         //                      ' options.listeners must be false, string ' +
-         //                      'or undefined. Found: ' + options.listeners);
+         //                      ' opts.listeners must be false, string ' +
+         //                      'or undefined. Found: ' + opts.listeners);
          //  }
 
             // Start recording changes.
@@ -41959,7 +41961,7 @@ if (!Array.prototype.indexOf) {
         };
 
         // Store widget instance (e.g., used for destruction).
-        if (options.storeRef !== false) this.instances.push(widget);
+        if (opts.storeRef !== false) this.instances.push(widget);
         else widget.storeRef = false;
 
         return widget;
@@ -46051,7 +46053,14 @@ if (!Array.prototype.indexOf) {
             // Add defaults.
             J.mixout(form, this.formsOptions);
 
-            if (form.required || form.requiredChoice || form.correctChoice) {
+            // By default correctChoice means required.
+            // However, it is possible to add required = false and correctChoice
+            // truthy, for instance if there is a solution to display.
+            if ((form.required !== false && form.requiredChoice !== false) &&
+                (form.required || form.requiredChoice ||
+                ('undefined' !== typeof form.correctChoice &&
+                form.correctChoice !== false))) {
+
                 // False is set manually, otherwise undefined.
                 if (this.required === false) {
                     throw new Error('ChoiceManager.setForms: required is ' +
@@ -46265,7 +46274,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.verifyChoice
      */
     ChoiceManager.prototype.getValues = function(opts) {
-        var obj, i, len, form, lastErrored, res;
+        var obj, i, len, form, lastErrored, res, toCheck;
         obj = {
             order: this.order,
             forms: {},
@@ -46278,6 +46287,7 @@ if (!Array.prototype.indexOf) {
         if (opts.markAttempt) obj.isCorrect = true;
 
         len = this.forms.length;
+
 
         // TODO: we could save the results when #next() is called or
         // have an option to get the values of current form or a specific form.
@@ -46315,15 +46325,14 @@ if (!Array.prototype.indexOf) {
             i = -1;
             for ( ; ++i < len ; ) {
                 form = this.forms[i];
+
+                // Not one-by-one because there could be many hidden.
                 // If it is hidden or disabled we do not do validation.
-                if (form.isHidden() || form.isDisabled()) {
-                    res = form.getValues({
-                        markAttempt: false,
-                        highlight: false
-                    });
-                    if (res) obj.forms[form.id] = res;
-                }
-                else {
+
+                if (this.oneByOne) toCheck = form._shown && form.required;
+                else toCheck = !(form.isDisabled() || form.isHidden());
+
+                if (toCheck) {
                     // ContentBox does not return a value.
                     res = form.getValues(opts);
                     if (!res) continue;
@@ -46331,6 +46340,13 @@ if (!Array.prototype.indexOf) {
 
                     res = checkFormResult(res, form, opts, obj);
                     if (res) lastErrored = res;
+                }
+                else {
+                    res = form.getValues({
+                        markAttempt: false,
+                        highlight: false
+                    });
+                    if (res) obj.forms[form.id] = res;
                 }
             }
         // }
@@ -46436,6 +46452,9 @@ if (!Array.prototype.indexOf) {
                   placeholder: 'Type your email', type: 'email' }
             ];
         }
+        else {
+            forms = opts.forms;
+        }
 
         // Change from options to array linking to honeypot inputs.
         this.honeypot = [];
@@ -46484,6 +46503,9 @@ if (!Array.prototype.indexOf) {
             if (!form) return false;
             conditional = checkConditional(this, form.id);
         }
+
+        // TODO: make this property a reserved keyword.
+        form._shown = true;
 
         if ('undefined' !== typeof $) {
             $(form.panelDiv).fadeIn();
@@ -48574,8 +48596,9 @@ if (!Array.prototype.indexOf) {
         }
 
         ci = this.customInput;
-        if (null !== this.correctChoice || null !== this.requiredChoice ||
-            (ci && !ci.isHidden())) {
+        if (this.required !== false &&
+            (null !== this.correctChoice || null !== this.requiredChoice ||
+            (ci && !ci.isHidden()))) {
 
             obj.isCorrect = this.verifyChoice(opts.markAttempt);
             obj.attempts = this.attempts;
@@ -51582,7 +51605,7 @@ if (!Array.prototype.indexOf) {
      * @param {object} opts Configuration options
      */
     CustomInput.prototype.init = function(opts) {
-        var tmp, that, e, isText, setValues;
+        var tmp, val, that, e, isText, setValues;
         that = this;
         e = 'CustomInput.init: ';
 
@@ -51649,102 +51672,102 @@ if (!Array.prototype.indexOf) {
                                     'or undefined. Found: ' +
                                     opts.validation);
             }
-            tmp = opts.validation;
+            val = opts.validation;
         }
-        else {
-            // Add default validations based on type.
+        // Add default validations based on type.
 
-            if (this.type === 'number' || this.type === 'float' ||
-                this.type === 'int' || this.type === 'text') {
+        if (this.type === 'number' || this.type === 'float' ||
+            this.type === 'int' || this.type === 'text') {
 
-                isText = this.type === 'text';
+            isText = this.type === 'text';
 
-                // Greater than.
-                if ('undefined' !== typeof opts.min) {
-                    tmp = J.isNumber(opts.min);
-                    if (false === tmp) {
-                        throw new TypeError(e + 'min must be number or ' +
-                                            'undefined. Found: ' + opts.min);
-                    }
-                    this.params.lower = opts.min;
-                    this.params.leq = true;
+            // Greater than.
+            if ('undefined' !== typeof opts.min) {
+                tmp = J.isNumber(opts.min);
+                if (false === tmp) {
+                    throw new TypeError(e + 'min must be number or ' +
+                                        'undefined. Found: ' + opts.min);
                 }
-                // Less than.
-                if ('undefined' !== typeof opts.max) {
-                    tmp = J.isNumber(opts.max);
-                    if (false === tmp) {
-                        throw new TypeError(e + 'max must be number or ' +
-                                            'undefined. Found: ' + opts.max);
+                this.params.lower = opts.min;
+                this.params.leq = true;
+            }
+            // Less than.
+            if ('undefined' !== typeof opts.max) {
+                tmp = J.isNumber(opts.max);
+                if (false === tmp) {
+                    throw new TypeError(e + 'max must be number or ' +
+                                        'undefined. Found: ' + opts.max);
+                }
+                this.params.upper = opts.max;
+                this.params.ueq = true;
+            }
+
+            if (opts.strictlyGreater) this.params.leq = false;
+            if (opts.strictlyLess) this.params.ueq = false;
+
+            // Checks on both min and max.
+            if ('undefined' !== typeof this.params.lower &&
+                'undefined' !== typeof this.params.upper) {
+
+                if (this.params.lower > this.params.upper) {
+                    throw new TypeError(e + 'min cannot be greater ' +
+                                        'than max. Found: ' +
+                                        opts.min + '> ' + opts.max);
+                }
+                // Exact length.
+                if (this.params.lower === this.params.upper) {
+                    if (!this.params.leq || !this.params.ueq) {
+
+                        throw new TypeError(e + 'min cannot be equal to ' +
+                                            'max when strictlyGreater or ' +
+                                            'strictlyLess are set. ' +
+                                            'Found: ' + opts.min);
                     }
-                    this.params.upper = opts.max;
-                    this.params.ueq = true;
+                    if (this.type === 'int' || this.type === 'text') {
+                        if (J.isFloat(this.params.lower)) {
+
+
+                            throw new TypeError(e + 'min cannot be a ' +
+                                                'floating point number ' +
+                                                'and equal to ' +
+                                                'max, when type ' +
+                                                'is not "float". Found: ' +
+                                                opts.min);
+                        }
+                    }
+                    // Store this to create better error strings.
+                    this.params.exactly = true;
+                }
+                else {
+                    // Store this to create better error strings.
+                    this.params.between = true;
+                }
+            }
+
+            // Checks for text only.
+            if (isText) {
+
+                this.params.noNumbers = opts.noNumbers;
+
+                if ('undefined' !== typeof this.params.lower) {
+                    if (this.params.lower < 0) {
+                        throw new TypeError(e + 'min cannot be negative ' +
+                                            'when type is "text". Found: ' +
+                                            this.params.lower);
+                    }
+                    if (!this.params.leq) this.params.lower++;
+                }
+                if ('undefined' !== typeof this.params.upper) {
+                    if (this.params.upper < 0) {
+                        throw new TypeError(e + 'max cannot be negative ' +
+                                            'when type is "text". Found: ' +
+                                            this.params.upper);
+                    }
+                    if (!this.params.ueq) this.params.upper--;
                 }
 
-                if (opts.strictlyGreater) this.params.leq = false;
-                if (opts.strictlyLess) this.params.ueq = false;
-
-                // Checks on both min and max.
-                if ('undefined' !== typeof this.params.lower &&
-                    'undefined' !== typeof this.params.upper) {
-
-                    if (this.params.lower > this.params.upper) {
-                        throw new TypeError(e + 'min cannot be greater ' +
-                                            'than max. Found: ' +
-                                            opts.min + '> ' + opts.max);
-                    }
-                    // Exact length.
-                    if (this.params.lower === this.params.upper) {
-                        if (!this.params.leq || !this.params.ueq) {
-
-                            throw new TypeError(e + 'min cannot be equal to ' +
-                                                'max when strictlyGreater or ' +
-                                                'strictlyLess are set. ' +
-                                                'Found: ' + opts.min);
-                        }
-                        if (this.type === 'int' || this.type === 'text') {
-                            if (J.isFloat(this.params.lower)) {
-
-
-                                throw new TypeError(e + 'min cannot be a ' +
-                                                    'floating point number ' +
-                                                    'and equal to ' +
-                                                    'max, when type ' +
-                                                    'is not "float". Found: ' +
-                                                    opts.min);
-                            }
-                        }
-                        // Store this to create better error strings.
-                        this.params.exactly = true;
-                    }
-                    else {
-                        // Store this to create better error strings.
-                        this.params.between = true;
-                    }
-                }
-
-                // Checks for text only.
-                if (isText) {
-
-                    this.params.noNumbers = opts.noNumbers;
-
-                    if ('undefined' !== typeof this.params.lower) {
-                        if (this.params.lower < 0) {
-                            throw new TypeError(e + 'min cannot be negative ' +
-                                                'when type is "text". Found: ' +
-                                                this.params.lower);
-                        }
-                        if (!this.params.leq) this.params.lower++;
-                    }
-                    if ('undefined' !== typeof this.params.upper) {
-                        if (this.params.upper < 0) {
-                            throw new TypeError(e + 'max cannot be negative ' +
-                                                'when type is "text". Found: ' +
-                                                this.params.upper);
-                        }
-                        if (!this.params.ueq) this.params.upper--;
-                    }
-
-                    tmp = function(value) {
+                if (!val) {
+                    val = function(value) {
                         var len, p, out, err;
                         p = that.params;
                         len = value.length;
@@ -51758,9 +51781,9 @@ if (!Array.prototype.indexOf) {
                             }
                             else {
                                 if (('undefined' !== typeof p.lower &&
-                                     len < p.lower) ||
-                                    ('undefined' !== typeof p.upper &&
-                                     len > p.upper)) {
+                                len < p.lower) ||
+                                ('undefined' !== typeof p.upper &&
+                                len > p.upper)) {
 
                                     err = true;
                                 }
@@ -51770,18 +51793,20 @@ if (!Array.prototype.indexOf) {
                         if (err) out.err = err;
                         return out;
                     };
-
-                    setValues = function() {
-                        var a, b;
-                        a = 'undefined' !== typeof that.params.lower ?
-                            (that.params.lower + 1) : 5;
-                        b = 'undefined' !== typeof that.params.upper ?
-                            that.params.upper : (a + 5);
-                        return J.randomString(J.randomInt(a, b));
-                    };
                 }
-                else {
-                    tmp = (function() {
+
+                setValues = function() {
+                    var a, b;
+                    a = 'undefined' !== typeof that.params.lower ?
+                        (that.params.lower + 1) : 5;
+                    b = 'undefined' !== typeof that.params.upper ?
+                        that.params.upper : (a + 5);
+                    return J.randomString(J.randomInt(a, b));
+                };
+            }
+            else {
+                if (!val) {
+                    val = (function() {
                         var cb;
                         if (that.type === 'float') cb = J.isFloat;
                         else if (that.type === 'int') cb = J.isInt;
@@ -51797,95 +51822,97 @@ if (!Array.prototype.indexOf) {
                             };
                         };
                     })();
-
-                    setValues = function() {
-                        var p, a, b;
-                        p = that.params;
-                        if (that.type === 'float') return J.random();
-                        a = 0;
-                        if ('undefined' !== typeof p.lower) {
-                            a = p.leq ? (p.lower - 1) : p.lower;
-                        }
-                        if ('undefined' !== typeof p.upper) {
-                            b = p.ueq ? p.upper : (p.upper - 1);
-                        }
-                        else {
-                            b = 100 + a;
-                        }
-                        return J.randomInt(a, b);
-                    };
                 }
 
-                // Preset inputWidth.
-                if (this.params.upper) {
-                    if (this.params.upper < 10) this.inputWidth = '100px';
-                    else if (this.params.upper < 20) this.inputWidth = '200px';
-                }
-
+                setValues = function() {
+                    var p, a, b;
+                    p = that.params;
+                    if (that.type === 'float') return J.random();
+                    a = 0;
+                    if ('undefined' !== typeof p.lower) {
+                        a = p.leq ? (p.lower - 1) : p.lower;
+                    }
+                    if ('undefined' !== typeof p.upper) {
+                        b = p.ueq ? p.upper : (p.upper - 1);
+                    }
+                    else {
+                        b = 100 + a;
+                    }
+                    return J.randomInt(a, b);
+                };
             }
-            else if (this.type === 'date') {
-                if ('undefined' !== typeof opts.format) {
-                    // TODO: use regex.
-                    if (opts.format !== 'mm-dd-yy' &&
-                        opts.format !== 'dd-mm-yy' &&
-                        opts.format !== 'mm-dd-yyyy' &&
-                        opts.format !== 'dd-mm-yyyy' &&
-                        opts.format !== 'mm.dd.yy' &&
-                        opts.format !== 'dd.mm.yy' &&
-                        opts.format !== 'mm.dd.yyyy' &&
-                        opts.format !== 'dd.mm.yyyy' &&
-                        opts.format !== 'mm/dd/yy' &&
-                        opts.format !== 'dd/mm/yy' &&
-                        opts.format !== 'mm/dd/yyyy' &&
-                        opts.format !== 'dd/mm/yyyy') {
 
-                        throw new Error(e + 'date format is invalid. Found: ' +
-                                        opts.format);
-                    }
-                    this.params.format = opts.format;
+            // Preset inputWidth.
+            if (this.params.upper) {
+                if (this.params.upper < 10) this.inputWidth = '100px';
+                else if (this.params.upper < 20) this.inputWidth = '200px';
+            }
+
+        }
+        else if (this.type === 'date') {
+            if ('undefined' !== typeof opts.format) {
+                // TODO: use regex.
+                if (opts.format !== 'mm-dd-yy' &&
+                    opts.format !== 'dd-mm-yy' &&
+                    opts.format !== 'mm-dd-yyyy' &&
+                    opts.format !== 'dd-mm-yyyy' &&
+                    opts.format !== 'mm.dd.yy' &&
+                    opts.format !== 'dd.mm.yy' &&
+                    opts.format !== 'mm.dd.yyyy' &&
+                    opts.format !== 'dd.mm.yyyy' &&
+                    opts.format !== 'mm/dd/yy' &&
+                    opts.format !== 'dd/mm/yy' &&
+                    opts.format !== 'mm/dd/yyyy' &&
+                    opts.format !== 'dd/mm/yyyy') {
+
+                    throw new Error(e + 'date format is invalid. Found: ' +
+                                    opts.format);
                 }
-                else {
-                    this.params.format = 'mm/dd/yyyy';
+                this.params.format = opts.format;
+            }
+            else {
+                this.params.format = 'mm/dd/yyyy';
+            }
+
+            this.params.sep = this.params.format.charAt(2);
+            tmp = this.params.format.split(this.params.sep);
+            this.params.yearDigits = tmp[2].length;
+            this.params.dayPos = tmp[0].charAt(0) === 'd' ? 0 : 1;
+            this.params.monthPos =  this.params.dayPos ? 0 : 1;
+            this.params.dateLen = tmp[2].length + 6;
+            if (opts.minDate) {
+                tmp = getParsedDate(opts.minDate, this.params);
+                if (!tmp) {
+                    throw new Error(e + 'minDate must be a Date object. ' +
+                                    'Found: ' + opts.minDate);
                 }
-
-                this.params.sep = this.params.format.charAt(2);
-                tmp = this.params.format.split(this.params.sep);
-                this.params.yearDigits = tmp[2].length;
-                this.params.dayPos = tmp[0].charAt(0) === 'd' ? 0 : 1;
-                this.params.monthPos =  this.params.dayPos ? 0 : 1;
-                this.params.dateLen = tmp[2].length + 6;
-                if (opts.minDate) {
-                    tmp = getParsedDate(opts.minDate, this.params);
-                    if (!tmp) {
-                        throw new Error(e + 'minDate must be a Date object. ' +
-                                        'Found: ' + opts.minDate);
-                    }
-                    this.params.minDate = tmp;
+                this.params.minDate = tmp;
+            }
+            if (opts.maxDate) {
+                tmp = getParsedDate(opts.maxDate, this.params);
+                if (!tmp) {
+                    throw new Error(e + 'maxDate must be a Date object. ' +
+                                    'Found: ' + opts.maxDate);
                 }
-                if (opts.maxDate) {
-                    tmp = getParsedDate(opts.maxDate, this.params);
-                    if (!tmp) {
-                        throw new Error(e + 'maxDate must be a Date object. ' +
-                                        'Found: ' + opts.maxDate);
-                    }
-                    if (this.params.minDate &&
-                        this.params.minDate.obj > tmp.obj) {
+                if (this.params.minDate &&
+                    this.params.minDate.obj > tmp.obj) {
 
-                        throw new Error(e + 'maxDate cannot be prior to ' +
-                                        'minDate. Found: ' + tmp.str +
-                                        ' < ' + this.params.minDate.str);
-                    }
-                    this.params.maxDate = tmp;
+                    throw new Error(e + 'maxDate cannot be prior to ' +
+                                    'minDate. Found: ' + tmp.str +
+                                    ' < ' + this.params.minDate.str);
                 }
+                this.params.maxDate = tmp;
+            }
 
-                // Preset inputWidth.
-                if (this.params.yearDigits === 2) this.inputWidth = '100px';
-                else this.inputWidth = '150px';
+            // Preset inputWidth.
+            if (this.params.yearDigits === 2) this.inputWidth = '100px';
+            else this.inputWidth = '150px';
 
-                // Preset placeholder.
-                this.placeholder = this.params.format;
+            // Preset placeholder.
+            this.placeholder = this.params.format;
 
-                tmp = function(value) {
+            if (!val) {
+                val = function(value) {
                     var p, tokens, tmp, res, dayNum, l1, l2;
                     p = that.params;
 
@@ -51932,7 +51959,7 @@ if (!Array.prototype.indexOf) {
                     else {
                         // Is it leap year?
                         dayNum = (res.year % 4 === 0 && res.year % 100 !== 0) ||
-                            res.year % 400 === 0 ? 29 : 28;
+                        res.year % 400 === 0 ? 29 : 28;
                     }
                     res.month = tmp;
                     // Day.
@@ -51958,51 +51985,53 @@ if (!Array.prototype.indexOf) {
                     }
                     return res;
                 };
-
-                setValues = function() {
-                    var p, minD, maxD, d, day, month, year;
-                    p = that.params;
-                    minD = p.minDate ? p.minDate.obj : new Date('01/01/1900');
-                    maxD = p.maxDate ? p.maxDate.obj : undefined;
-                    d = J.randomDate(minD, maxD);
-                    day = d.getDate();
-                    month = (d.getMonth() + 1);
-                    year = d.getFullYear();
-                    if (p.yearDigits === 2) year = ('' + year).substr(2);
-                    if (p.monthPos === 0) d = month + p.sep + day;
-                    else d = day + p.sep + month;
-                    d += p.sep + year;
-                    return d;
-                };
             }
-            else if (this.type === 'us_state') {
-                if (opts.abbreviation) {
-                    this.params.abbr = true;
-                    this.inputWidth = '100px';
-                }
-                else {
-                    this.inputWidth = '200px';
-                }
-                if (opts.territories !== false) {
-                    this.terr = true;
-                    if (this.params.abbr) {
-                        tmp = getUsStatesList('usStatesTerrByAbbrLow');
-                    }
-                    else {
-                        tmp = getUsStatesList('usStatesTerrLow');
-                    }
-                }
-                else {
-                    if (this.params.abbr) {
-                        tmp = getUsStatesList('usStatesByAbbrLow');
-                    }
-                    else {
-                        tmp = getUsStatesList('usStatesLow');
-                    }
-                }
-                this.params.usStateVal = tmp;
 
-                tmp = function(value) {
+            setValues = function() {
+                var p, minD, maxD, d, day, month, year;
+                p = that.params;
+                minD = p.minDate ? p.minDate.obj : new Date('01/01/1900');
+                maxD = p.maxDate ? p.maxDate.obj : undefined;
+                d = J.randomDate(minD, maxD);
+                day = d.getDate();
+                month = (d.getMonth() + 1);
+                year = d.getFullYear();
+                if (p.yearDigits === 2) year = ('' + year).substr(2);
+                if (p.monthPos === 0) d = month + p.sep + day;
+                else d = day + p.sep + month;
+                d += p.sep + year;
+                return d;
+            };
+        }
+        else if (this.type === 'us_state') {
+            if (opts.abbreviation) {
+                this.params.abbr = true;
+                this.inputWidth = '100px';
+            }
+            else {
+                this.inputWidth = '200px';
+            }
+            if (opts.territories !== false) {
+                this.terr = true;
+                if (this.params.abbr) {
+                    tmp = getUsStatesList('usStatesTerrByAbbrLow');
+                }
+                else {
+                    tmp = getUsStatesList('usStatesTerrLow');
+                }
+            }
+            else {
+                if (this.params.abbr) {
+                    tmp = getUsStatesList('usStatesByAbbrLow');
+                }
+                else {
+                    tmp = getUsStatesList('usStatesLow');
+                }
+            }
+            this.params.usStateVal = tmp;
+
+            if (!val) {
+                val = function(value) {
                     var res;
                     res = { value: value };
                     if (!that.params.usStateVal[value.toLowerCase()]) {
@@ -52010,14 +52039,16 @@ if (!Array.prototype.indexOf) {
                     }
                     return res;
                 };
-
-                setValues = function() {
-                    return J.randomKey(that.params.usStateVal);
-                };
-
             }
-            else if (this.type === 'us_zip') {
-                tmp = function(value) {
+
+            setValues = function() {
+                return J.randomKey(that.params.usStateVal);
+            };
+
+        }
+        else if (this.type === 'us_zip') {
+            if (val) {
+                val = function(value) {
                     var res;
                     res = { value: value };
                     if (!isValidUSZip(value)) {
@@ -52025,83 +52056,85 @@ if (!Array.prototype.indexOf) {
                     }
                     return res;
                 };
-
-                setValues = function() {
-                    return Math.floor(Math.random()*90000) + 10000;
-                };
             }
 
-            // Lists.
+            setValues = function() {
+                return Math.floor(Math.random()*90000) + 10000;
+            };
+        }
 
-            else if (this.type === 'list' ||
-                     this.type === 'us_city_state_zip') {
+        // Lists.
 
-                if (opts.listSeparator) {
-                    if ('string' !== typeof opts.listSeparator) {
-                        throw new TypeError(e + 'listSeparator must be ' +
-                                            'string or undefined. Found: ' +
-                                            opts.listSeperator);
-                    }
-                    this.params.listSep = opts.listSeparator;
+        else if (this.type === 'list' ||
+                 this.type === 'us_city_state_zip') {
+
+            if (opts.listSeparator) {
+                if ('string' !== typeof opts.listSeparator) {
+                    throw new TypeError(e + 'listSeparator must be ' +
+                                        'string or undefined. Found: ' +
+                                        opts.listSeperator);
                 }
-                else {
-                    this.params.listSep = ',';
-                }
+                this.params.listSep = opts.listSeparator;
+            }
+            else {
+                this.params.listSep = ',';
+            }
 
-                if (this.type === 'us_city_state_zip') {
+            if (this.type === 'us_city_state_zip') {
 
-                    getUsStatesList('usStatesTerrByAbbr');
-                    this.params.minItems = this.params.maxItems = 3;
-                    this.params.fixedSize = true;
-                    this.params.itemValidation = function(item, idx) {
-                        if (idx === 2) {
-                            if (!usStatesTerrByAbbr[item.toUpperCase()]) {
-                                return { err: that.getText('usStateAbbrErr') };
-                            }
+                getUsStatesList('usStatesTerrByAbbr');
+                this.params.minItems = this.params.maxItems = 3;
+                this.params.fixedSize = true;
+                this.params.itemValidation = function(item, idx) {
+                    if (idx === 2) {
+                        if (!usStatesTerrByAbbr[item.toUpperCase()]) {
+                            return { err: that.getText('usStateAbbrErr') };
                         }
-                        else if (idx === 3) {
-                            if (!isValidUSZip(item)) {
-                                return { err: that.getText('usZipErr') };
-                            }
-                        }
-                    };
-
-                    this.placeholder = 'Town' + this.params.listSep +
-                        ' State' + this.params.listSep + ' ZIP';
-                }
-                else {
-                    if ('undefined' !== typeof opts.minItems) {
-                        tmp = J.isInt(opts.minItems, 0);
-                        if (tmp === false) {
-                            throw new TypeError(e + 'minItems must be ' +
-                                                'a positive integer. Found: ' +
-                                                opts.minItems);
-                        }
-                        this.params.minItems = tmp;
                     }
-                    else if (this.required) {
-                        this.params.minItems = 1;
-                    }
-                    if ('undefined' !== typeof opts.maxItems) {
-                        tmp = J.isInt(opts.maxItems, 0);
-                        if (tmp === false) {
-                            throw new TypeError(e + 'maxItems must be ' +
-                                                'a positive integer. Found: ' +
-                                                opts.maxItems);
+                    else if (idx === 3) {
+                        if (!isValidUSZip(item)) {
+                            return { err: that.getText('usZipErr') };
                         }
-                        if (this.params.minItems &&
-                            this.params.minItems > tmp) {
+                    }
+                };
 
-                            throw new TypeError(e + 'maxItems must be larger ' +
-                                                'than minItems. Found: ' +
-                                                tmp + ' < ' +
-                                                this.params.minItems);
-                        }
-                        this.params.maxItems = tmp;
+                this.placeholder = 'Town' + this.params.listSep +
+                    ' State' + this.params.listSep + ' ZIP';
+            }
+            else {
+                if ('undefined' !== typeof opts.minItems) {
+                    tmp = J.isInt(opts.minItems, 0);
+                    if (tmp === false) {
+                        throw new TypeError(e + 'minItems must be ' +
+                                            'a positive integer. Found: ' +
+                                            opts.minItems);
                     }
+                    this.params.minItems = tmp;
                 }
+                else if (this.required) {
+                    this.params.minItems = 1;
+                }
+                if ('undefined' !== typeof opts.maxItems) {
+                    tmp = J.isInt(opts.maxItems, 0);
+                    if (tmp === false) {
+                        throw new TypeError(e + 'maxItems must be ' +
+                                            'a positive integer. Found: ' +
+                                            opts.maxItems);
+                    }
+                    if (this.params.minItems &&
+                        this.params.minItems > tmp) {
 
-                tmp = function(value) {
+                        throw new TypeError(e + 'maxItems must be larger ' +
+                                            'than minItems. Found: ' +
+                                            tmp + ' < ' +
+                                            this.params.minItems);
+                    }
+                    this.params.maxItems = tmp;
+                }
+            }
+
+            if (!val) {
+                val = function(value) {
                     var i, len, v, iVal, err;
                     value = value.split(that.params.listSep);
                     len = value.length;
@@ -52153,42 +52186,41 @@ if (!Array.prototype.indexOf) {
                     }
                     return { value: value };
                 };
+            }
 
-                if (this.type === 'us_city_state_zip') {
-                    setValues = function() {
-                        var sep;
-                        sep = that.params.listSep + ' ';
-                        return J.randomString(8) + sep +
-                            J.randomKey(usStatesTerrByAbbr) + sep +
-                            (Math.floor(Math.random()*90000) + 10000);
-                    };
-                }
-                else {
-                    setValues = function(opts) {
-                        var p, minItems, nItems, i, str, sample;
-                        p = that.params;
-                        minItems = p.minItems || 0;
-                        if (opts.availableValues) {
-                            nItems = J.randomInt(minItems,
-                                                 opts.availableValues.length);
-                            nItems--;
-                            sample = J.sample(0, (nItems-1));
-                        }
-                        else {
-                            nItems = J.randomInt(minItems,
-                                                 p.maxItems || (minItems + 5));
-                            nItems--;
-                        }
-                        str = '';
-                        for (i = 0; i < nItems; i++) {
-                            if (i !== 0) str += p.listSep + ' ';
-                            if (sample) str += opts.availableValues[sample[i]];
-                            else str += J.randomString(J.randomInt(3,10));
-                        }
-                        return str;
-                    };
-                }
-
+            if (this.type === 'us_city_state_zip') {
+                setValues = function() {
+                    var sep;
+                    sep = that.params.listSep + ' ';
+                    return J.randomString(8) + sep +
+                        J.randomKey(usStatesTerrByAbbr) + sep +
+                        (Math.floor(Math.random()*90000) + 10000);
+                };
+            }
+            else {
+                setValues = function(opts) {
+                    var p, minItems, nItems, i, str, sample;
+                    p = that.params;
+                    minItems = p.minItems || 0;
+                    if (opts.availableValues) {
+                        nItems = J.randomInt(minItems,
+                                             opts.availableValues.length);
+                        nItems--;
+                        sample = J.sample(0, (nItems-1));
+                    }
+                    else {
+                        nItems = J.randomInt(minItems,
+                                             p.maxItems || (minItems + 5));
+                        nItems--;
+                    }
+                    str = '';
+                    for (i = 0; i < nItems; i++) {
+                        if (i !== 0) str += p.listSep + ' ';
+                        if (sample) str += opts.availableValues[sample[i]];
+                        else str += J.randomString(J.randomInt(3,10));
+                    }
+                    return str;
+                };
             }
 
             // US_Town,State, Zip Code
@@ -52205,8 +52237,8 @@ if (!Array.prototype.indexOf) {
             if (value.trim() === '') {
                 if (that.required) res.err = that.getText('emptyErr');
             }
-            else if (tmp) {
-                res = tmp.call(this, value);
+            else if (val) {
+                res = val.call(this, value);
             }
             if (that.userValidation) that.userValidation.call(this, res);
             return res;
