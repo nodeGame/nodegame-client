@@ -6036,7 +6036,7 @@ if (!Array.prototype.indexOf) {
 
         // ### __update.indexes
         // If TRUE, rebuild indexes on every insert and remove
-        this.__update.indexes = true;
+        this.__update.indexes = false;
 
         // ### __update.sort
         // If TRUE, sort db on every insert and remove
@@ -28606,7 +28606,7 @@ if (!Array.prototype.indexOf) {
      *
      * Stops the timer, sets the status to UNINITIALIZED, and
      * sets the following properties to default: milliseconds,
-     * update, timeup, hooks, hookNames.
+     * update, timeup, hooks, hookNames, _timeup.
      *
      * Does **not** change properties: eventEmitterName, and
      * stagerSync.
@@ -28622,6 +28622,7 @@ if (!Array.prototype.indexOf) {
         this.timeup = 'TIMEUP';
         this.hooks = [];
         this.hookNames = {};
+        this._timeup = false;
 
         return this;
     };
@@ -50450,6 +50451,17 @@ if (!Array.prototype.indexOf) {
          * Default: TRUE
          */
         this.showPrint = null;
+
+        /**
+         * ## Consent.disconnect
+         *
+         * If TRUE, client is disconnected upon reject
+         *
+         * Default: TRUE
+         */
+        this.disconnect = null;
+
+
     }
 
     // ## Consent methods.
@@ -50472,6 +50484,8 @@ if (!Array.prototype.indexOf) {
         }
 
         this.showPrint = opts.showPrint === false ? false : true;
+
+        this.disconnect = opts.disconnect === false ? false : true;
     };
 
     Consent.prototype.enable = function() {
@@ -50590,7 +50604,9 @@ if (!Array.prototype.indexOf) {
                 a.onclick = null;
                 na.onclick = null;
 
-                node.socket.disconnect();
+                // Disconnect, if requested.
+                if (that.disconnect) node.socket.disconnect();
+
                 W.hide('consent');
                 W.show('notAgreed');
 
@@ -64591,7 +64607,14 @@ if (!Array.prototype.indexOf) {
                     //     FONT-WEIGHT: 200;
                     //     padding: 10px;
 
-                    var div, a, t, T, divT1, divT2, divT3, display, counter;
+                    // --- CAN - SOC waitroom modification --- //
+
+                    flexBox.className = 'waitroom-listContainer';
+
+                    // -------------- //
+
+                    var div, a, t, T, display, counter;
+                    var divT1, divT2, divT3, divT4;
                     counter = 0;
                     if (conf.availableTreatments) {
                         for (t in conf.availableTreatments) {
@@ -64600,8 +64623,9 @@ if (!Array.prototype.indexOf) {
                                 div.id = t;
                                 div.style.flex = '200px';
                                 div.style['margin-top'] = '10px';
-                                div.className = 'treatment';
+                                div.className = 'treatment waitroom-list';
                                 // div.style.display = 'flex';
+
                                 a = document.createElement('span');
                                 // a.className =
                                 // 'btn btn-default btn-large round btn-icon';
@@ -64634,9 +64658,11 @@ if (!Array.prototype.indexOf) {
                                     w.selectedTreatment);
                                 };
 
-                                if (t === 'treatment_latin_square') divT3 = div;
-                                else if (t === 'treatment_rotate') divT1 = div;
-                                else if (t === 'treatment_random') divT2 = div;
+                                t = t.substring(10);
+                                if (t === 'latin_square') divT3 = div;
+                                else if (t === 'rotate') divT1 = div;
+                                else if (t === 'random') divT2 = div;
+                                else if (t === 'weighted_random') divT4 = div;
                                 else flexBox.appendChild(div);
 
                             }
@@ -64644,6 +64670,9 @@ if (!Array.prototype.indexOf) {
                         div = document.createElement('div');
                         div.style.flex = '200px';
                         div.style['margin-top'] = '10px';
+
+                        div.className = 'waitroom-list';
+
                         // Hack to fit nicely the treatments.
                         flexBox.appendChild(div);
 
@@ -64651,6 +64680,7 @@ if (!Array.prototype.indexOf) {
                             flexBox.appendChild(divT1);
                             flexBox.appendChild(divT2);
                             flexBox.appendChild(divT3);
+                            flexBox.appendChild(divT4);
                         }
                     }
 
