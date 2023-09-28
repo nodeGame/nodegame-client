@@ -1646,6 +1646,19 @@ if (!Array.prototype.indexOf) {
     };
 
     /**
+     * ### DOM.write2
+     *
+     * Like `DOM.write` but with support for HTML in text (no return value)
+     *
+     * @see DOM.write
+     */
+    DOM.write2 = function(root, text) {
+        if ('undefined' === typeof text) text = "";
+        if (JSUS.isNode(text) || JSUS.isElement(text)) root.appendChild(text);
+        else root.innerHTML += text;
+    };
+
+    /**
      * ### DOM.writeln
      *
      * Write a text and a break into a root element
@@ -1666,6 +1679,18 @@ if (!Array.prototype.indexOf) {
         content = DOM.write(root, text);
         this.add(rc || 'br', root);
         return content;
+    };
+
+    /**
+     * ### DOM.writeln2
+     *
+     * Like `DOM.writeln` but with support for HTML in text (no return value)
+     *
+     * @see DOM.writeln
+     */
+    DOM.writeln2 = function(root, text, rc) {
+        DOM.write2(root, text);
+        this.add(rc || 'br', root);
     };
 
     /**
@@ -24762,7 +24787,7 @@ if (!Array.prototype.indexOf) {
         var msgHandler, node;
 
         if (!this.isPausable()) {
-            throw new Error('Game.pause: game cannot be paused.');
+            throw new Error('Game.pause: game cannot be paused');
         }
 
         node = this.node;
@@ -25314,7 +25339,7 @@ if (!Array.prototype.indexOf) {
         var widget, widgetObj, widgetRoot;
         var widgetCb, widgetExit, widgetDone;
         var doneCb, origDoneCb, exitCb, origExitCb;
-        var w, frame, uri, frameOptions, frameAutoParse, reloadFrame;
+        var w, frame, uri, frameOptions, reloadFrame;
 
         if ('object' !== typeof step) {
             throw new TypeError('Game.execStep: step must be object. Found: ' +
@@ -25522,24 +25547,15 @@ if (!Array.prototype.indexOf) {
             }
             else if ('object' === typeof frame) {
                 uri = frame.uri;
-                if ('string' !== typeof uri) {
-                    throw new TypeError('Game.execStep: frame.uri must ' +
-                                        'be string: ' + uri + '. ' +
-                                        'Step: ' + step);
+                if ('undefined' === typeof uri) {
+                    uri = this.getStepId() + '.htm';
+                }
+                else if ('string' !== typeof uri) {
+                    throw new TypeError('Game.execStep: frame.uri must be ' +
+                                        'string: ' + uri + '. Step: ' + step);
                 }
                 frameOptions.frameLoadMode = frame.loadMode;
-                frameOptions.storeMode = frame.storeMode;
-                frameAutoParse = frame.autoParse;
-                if (frameAutoParse) {
-                    // Replacing TRUE with node.game.settings.
-                    if (frameAutoParse === true) {
-                        frameAutoParse = this.settings;
-                    }
-
-                    frameOptions.autoParse = frameAutoParse;
-                    frameOptions.autoParseMod = frame.autoParseMod;
-                    frameOptions.autoParsePrefix = frame.autoParsePrefix;
-                }
+                frameOptions.storeMode = frame.storeMode;                
             }
             else {
                 throw new TypeError('Game.execStep: frame must be string or ' +
@@ -34050,7 +34066,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GameWindow
- * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * API to interface nodeGame with the browser window
@@ -35651,7 +35667,6 @@ if (!Array.prototype.indexOf) {
         var loadCache;
         var storeCacheNow, storeCacheLater;
         var scrollUp;
-        var autoParse, autoParsePrefix, autoParseMod;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
@@ -35734,35 +35749,6 @@ if (!Array.prototype.indexOf) {
             }
         }
 
-        // Parsing options.
-
-        if ('undefined' !== typeof opts.autoParse) {
-            if ('object' !== typeof opts.autoParse) {
-                throw new TypeError('GameWindow.loadFrame: opts.autoParse ' +
-                                    'must be object or undefined. Found: ' +
-                                    opts.autoParse);
-            }
-            if ('undefined' !== typeof opts.autoParsePrefix) {
-                if ('string' !== typeof opts.autoParsePrefix) {
-                    throw new TypeError('GameWindow.loadFrame: opts.' +
-                                        'autoParsePrefix must be string ' +
-                                        'or undefined. Found: ' +
-                                        opts.autoParsePrefix);
-                }
-                autoParsePrefix = opts.autoParsePrefix;
-            }
-            if ('undefined' !== typeof opts.autoParseMod) {
-                if ('string' !== typeof opts.autoParseMod) {
-                    throw new TypeError('GameWindow.loadFrame: opts.' +
-                                        'autoParseMod must be string ' +
-                                        'or undefined. Found: ' +
-                                        opts.autoParseMod);
-                }
-                autoParseMod = opts.autoParseMod;
-            }
-            autoParse = opts.autoParse;
-        }
-
         // Scroll Up.
 
         scrollUp = 'undefined' === typeof opts.scrollUp ? true : opts.scrollUp;
@@ -35839,13 +35825,9 @@ if (!Array.prototype.indexOf) {
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback, autoParses,
+                                    // Executes callback, css, replace, html,
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func,
-                                                              autoParse,
-                                                              autoParseMod,
-                                                              autoParsePrefix,
-                                                              scrollUp);
+                                    that.updateLoadFrameState(func, scrollUp);
                                 });
             });
         }
@@ -35861,13 +35843,9 @@ if (!Array.prototype.indexOf) {
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback
+                                    // Executes callback, css, replace, html,
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func,
-                                                              autoParse,
-                                                              autoParseMod,
-                                                              autoParsePrefix,
-                                                              scrollUp);
+                                    that.updateLoadFrameState(func, scrollUp);
                                 });
             }
         }
@@ -35910,14 +35888,10 @@ if (!Array.prototype.indexOf) {
      * - decrements the counter of loading iframes
      * - executes a given callback function
      * - auto parses the elements specified (if any)
+     * - updates UI, e.g., scroll-up or adds CSS
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
-     * @param {object} autoParse Optional. An object containing elements
-     *    to replace in the HTML DOM.
-     * @param {string} autoParseMod Optional. Modifier for search and replace
-     * @param {string} autoParsePrefix Optional. Custom prefix to add to the
-     *    keys of the elements in autoParse object
      * @param {boolean} scrollUp Optional. If TRUE, scrolls the page to the,
      *    top (if window.scrollTo is defined). Default: FALSE.
      *
@@ -35927,19 +35901,22 @@ if (!Array.prototype.indexOf) {
      * @emit FRAME_LOADED
      * @emit LOADED
      */
-    GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
-                                                         autoParseMod,
-                                                         autoParsePrefix,
-                                                         scrollUp) {
+    GameWindow.prototype.updateLoadFrameState = function(func, scrollUp) {
 
-        var loaded, stageLevel;
+        var css, html, replace, loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
-        if (func) func.call(node.game);
-        if (autoParse) {
-            this.searchReplace(autoParse, autoParseMod, autoParsePrefix);
-        }
+        if (func) func.call(node.game);        
         if (scrollUp && window.scrollTo) window.scrollTo(0,0);
+
+        css = node.game.getProperty('css');
+        if (css) W.cssRule(css);
+
+        html = node.game.getProperty('html');
+        if (html) W.write(html);
+
+        replace = node.game.getProperty('replace');
+        if (replace) W.searchReplace(replace, 'g', '');
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
@@ -36206,6 +36183,40 @@ if (!Array.prototype.indexOf) {
 
         // Store the value of current offset.
         W.headerOffset = offset;
+    };
+
+
+    /**
+     * ### GameWindow.cssRule
+     *
+     * Add a css rule to the page
+     *
+     * @param {string} rule The css rule
+     * @param {boolean} clear Optional. TRUE to clear all previous rules
+     *   added with this method to the page
+     *
+     * @return {Element} The HTML style element where the rules were added
+     *
+     * @see handleFrameLoad
+     */
+    GameWindow.prototype.cssRule = function(rule, clear) {
+        var root;
+        if ('string' !== typeof rule) {
+            throw new TypeError(G + 'cssRule: style property must be ' +
+                                'string. Found: ' + rule);
+        }
+        if (!this.styleElement) {
+            root = W.getFrameDocument() || window.document;
+            this.styleElement = W.append('style', root.head, {
+                type: 'text/css',
+                id: 'ng_style'
+            });
+        }
+        else if (clear) {
+            this.styleElement.innerHTML = '';
+        }
+        this.styleElement.innerHTML += rule;
+        return this.styleElement;
     };
 
 
@@ -37018,23 +37029,6 @@ if (!Array.prototype.indexOf) {
 
     "use strict";
 
-    // var J = node.JSUS;
-
-    // function getElement(idOrObj, prefix) {
-    //     var el;
-    //     if ('string' === typeof idOrObj) {
-    //         el = W.getElementById(idOrObj);
-    //     }
-    //     else if (J.isElement(idOrObj)) {
-    //         el = idOrObj;
-    //     }
-    //     else {
-    //         throw new TypeError(prefix + ': idOrObj must be string ' +
-    //                             ' or HTML Element.');
-    //     }
-    //     return el;
-    // }
-
     var GameWindow = node.GameWindow;
 
     /**
@@ -37058,37 +37052,6 @@ if (!Array.prototype.indexOf) {
         node.on('NODEGAME_GAME_CREATED', function() {
             W.init(node.conf.window);
         });
-
-//         node.on('HIDE', function(idOrObj) {
-//             var el;
-//             console.log('***GameWindow.on.HIDE is deprecated. Use ' +
-//                         'GameWindow.hide() instead.***');
-//             el = getElement(idOrObj, 'GameWindow.on.HIDE');
-//             if (el) el.style.display = 'none';
-//         });
-//
-//         node.on('SHOW', function(idOrObj) {
-//             var el;
-//             console.log('***GameWindow.on.SHOW is deprecated. Use ' +
-//                         'GameWindow.show() instead.***');
-//             el = getElement(idOrObj, 'GameWindow.on.SHOW');
-//             if (el) el.style.display = '';
-//         });
-//
-//         node.on('TOGGLE', function(idOrObj) {
-//             var el;
-//             console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
-//                         'GameWindow.toggle() instead.***');
-//             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-//             if (el) {
-//                 if (el.style.display === 'none') {
-//                     el.style.display = '';
-//                 }
-//                 else {
-//                     el.style.display = 'none';
-//                 }
-//             }
-//         });
 
         // Disable all the input forms found within a given id element.
         node.on('INPUT_DISABLE', function(id) {
@@ -37229,7 +37192,9 @@ if (!Array.prototype.indexOf) {
     }
 
     function event_PAUSED(text) {
-        text = text || W.waitScreen.defaultTexts.paused;
+        // Ignores non-string parameters.
+        text = 'string' === typeof text ?
+            text : W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML =
                 W.waitScreen.contentDiv.innerHTML;
@@ -38166,7 +38131,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # extra
- * Copyright(c) 2022 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -38180,15 +38145,20 @@ if (!Array.prototype.indexOf) {
     var GameWindow = node.GameWindow;
     var DOM = J.require('DOM');
 
+    var G = 'GameWindow.';
+
+    // ### BASIC.
+
     /**
      * ### GameWindow.getScreen
      *
      * Returns the "screen" of the game
      *
-     * i.e. the innermost element inside which to display content
+     * i.e., the innermost element inside which to display content
      *
      * In the following order the screen can be:
      *
+     * - the element with id "container" (presumably inside the iframe)
      * - the body element of the iframe
      * - the document element of the iframe
      * - the body element of the document
@@ -38198,44 +38168,42 @@ if (!Array.prototype.indexOf) {
      */
     GameWindow.prototype.getScreen = function() {
         var el;
-        el = this.getFrameDocument();
-        if (el) el = el.body || el;
-        else el = document.body || document.lastElementChild;
+        el = this.gid('container');
+        if (!el) {
+            el = this.getFrameDocument();
+            if (el) el = el.body || el;
+            else el = document.body || document.lastElementChild;
+        }
         return el;
     };
 
     /**
-     * ### GameWindow.cssRule
+     * ### GameWindow.uniqueId|generateUniqueId
      *
-     * Add a css rule to the page
+     * Generates a unique id
      *
-     * @param {string} rule The css rule
-     * @param {boolean} clear Optional. TRUE to clear all previous rules
-     *   added with this method to the page
+     * Overrides JSUS.DOM.generateUniqueId.
      *
-     * @return {Element} The HTML style element where the rules were added
+     * @param {string} prefix Optional. The prefix to use
      *
-     * @see handleFrameLoad
+     * @return {string} The generated id
+     *
+     * @experimental
+     * TODO: it is not always working fine.
      */
-    GameWindow.prototype.cssRule = function(rule, clear) {
-        var root;
-        if ('string' !== typeof rule) {
-            throw new TypeError('Game.execStep: style property must be ' +
-                                'string. Found: ' + rule);
+    GameWindow.prototype.uniqueId =
+    GameWindow.prototype.generateUniqueId = function(prefix) {
+        var id, found;
+        id = '' + (prefix || J.randomInt(0, 1000));
+        found = this.gid(id);
+        while (found) {
+            id = '' + prefix + '_' + J.randomInt(0, 1000);
+            found = this.gid(id);
         }
-        if (!this.styleElement) {
-            root = W.getFrameDocument() || window.document;
-            this.styleElement = W.append('style', root.head, {
-                type: 'text/css',
-                id: 'ng_style'
-            });
-        }
-        else if (clear) {
-            this.styleElement.innerHTML = '';
-        }
-        this.styleElement.innerHTML += rule;
-        return this.styleElement;
+        return id;
     };
+
+    // ### WRITE TO SCREEN.
 
     /**
      * ### GameWindow.write
@@ -38250,17 +38218,13 @@ if (!Array.prototype.indexOf) {
      *
      * @return {string|object} The content written
      *
+     * @see JSUS.write
      * @see GameWindow.writeln
+     * @see getDefaultRoot
      */
     GameWindow.prototype.write = function(text, root) {
-        if ('string' === typeof root) root = this.getElementById(root);
-        else if (!root) root = this.getScreen();
-
-        if (!root) {
-            throw new
-                Error('GameWindow.write: could not determine where to write');
-        }
-        return DOM.write(root, text);
+        root = getDefaultRoot(root, 'write');
+        return DOM.write2(root, text);
     };
 
     /**
@@ -38276,98 +38240,252 @@ if (!Array.prototype.indexOf) {
      *
      * @return {string|object} The content written
      *
+     * @see JSUS.writeln
      * @see GameWindow.write
+     * @see getDefaultRoot
      */
     GameWindow.prototype.writeln = function(text, root, br) {
-        if ('string' === typeof root) root = this.getElementById(root);
-        else if (!root) root = this.getScreen();
-
-        if (!root) {
-            throw new Error('GameWindow.writeln: ' +
-                            'could not determine where to write');
-        }
-        return DOM.writeln(root, text, br);
+        root = getDefaultRoot(root, 'writeln');
+        return DOM.writeln2(root, text, br);
     };
 
     /**
-     * ### GameWindow.generateUniqueId
-     *
-     * Generates a unique id
-     *
-     * Overrides JSUS.DOM.generateUniqueId.
-     *
-     * @param {string} prefix Optional. The prefix to use
-     *
-     * @return {string} The generated id
-     *
-     * @experimental
-     * TODO: it is not always working fine.
-     */
-    GameWindow.prototype.generateUniqueId = function(prefix) {
-        var id, found;
-
-        id = '' + (prefix || J.randomInt(0, 1000));
-        found = this.getElementById(id);
-
-        while (found) {
-            id = '' + prefix + '_' + J.randomInt(0, 1000);
-            found = this.getElementById(id);
-        }
-        return id;
+    * ### DOM.sprintf
+    *
+    * Builds up a decorated HTML text element
+    *
+    * Performs string substitution from an args object where the first
+    * character of the key bears the following semantic:
+    *
+    * - '@': variable substitution with escaping
+    * - '!': variable substitution without variable escaping
+    * - '%': wraps a portion of string into a _span_ element to which is
+    *        possible to associate a css class or id. Alternatively,
+    *        it also possible to add in-line style. E.g.:
+    *
+    * ```javascript
+    *      sprintf('%sImportant!%s An error has occurred: %pre@err%pre', {
+    *              '%pre': {
+    *                      style: 'font-size: 12px; font-family: courier;'
+    *              },
+    *              '%s': {
+    *                      id: 'myId',
+    *                      'class': 'myClass',
+    *              },
+    *              '@err': 'file not found',
+    *      }, document.body);
+    * ```
+    *
+    * Special span elements are %strong and %em, which add
+    * respectively a _strong_ and _em_ tag instead of the default
+    * _span_ tag. They cannot be styled.
+    *
+    * @param {string} string A text to transform
+    * @param {object} args Optional. An object containing string
+    *   transformations
+    * @param {Element} root Optional. An HTML element to which append the
+    *    string. Defaults, a new _span_ element
+    *
+    * @return {Element} The root element.
+    */
+    GameWindow.prototype.sprintf = function(string, args, root) {
+        if (!root) root = getDefaultRoot(root, 'sprintf');
+        return DOM.sprintf(string, args, root);
     };
 
     /**
-     * ### GameWindow.toggleInputs
+     * ### GameWindo.add|append
      *
-     * Enables / disables the input forms
+     * Creates and append an element with specified attributes to a root
      *
-     * If an id is provided, only input elements that are children
-     * of the element with the specified id are toggled.
+     * @param {string} name The name of the HTML tag
+     * @param {HTMLElement} root The root element to which the new element
+     *   will be appended
+     * @param {object|string} options Optional. Object containing
+     *   attributes for the element and rules about how to insert it relative
+     *   to root. Available options: insertAfter, insertBefore (default:
+     *   child of root). If string, it is the id of the element. Examples:
      *
-     * If id is not given, it toggles the input elements on the whole page,
-     * including the frame document, if found.
      *
-     * If a state parameter is given, all the input forms will be either
-     * disabled or enabled (and not toggled).
-     *
-     * @param {string} id Optional. The id of the element container
-     *   of the forms. Default: the whole page, including the frame document
-     * @param {boolean} disabled Optional. Forces all the inputs to be either
-     *   disabled or enabled (not toggled)
-     *
-     * @return {boolean} FALSE, if the method could not be executed
-     *
-     * @see GameWindow.getFrameDocument
-     * @see toggleInputs
+     * @see getDefaultRoot
      */
-    GameWindow.prototype.toggleInputs = function(id, disabled) {
-        var container;
-        if (!document.getElementsByTagName) {
-            node.err(
-                'GameWindow.toggleInputs: getElementsByTagName not found');
-            return false;
+    GameWindow.prototype.add =
+    GameWindow.prototype.append = function(el, root, opts) {
+        if (!root) root = getDefaultRoot(root, 'add');
+        return DOM.add(el, root, opts);
+    };
+
+    /**
+     * ### GameWindow.searchReplace
+     *
+     * Replaces the innerHTML of the element/s with matching id or class name
+     *
+     * It iterates through each element and passes it to
+     * `GameWindow.setInnerHTML`.
+     *
+     * If elements is array, each item in the array must be of the type:
+     *
+     * ```javascript
+     *
+     *   { search: 'key', replace: 'value' }
+     *
+     *   // or
+     *
+     *   { search: 'key', replace: 'value', mod: 'id' }
+     * ```
+     *
+     * If elements is object, it must be of the type:
+     *
+     * ```javascript
+     *
+     *    {
+     *      search1: value1, search2: value 2 // etc.
+     *    }
+     * ```
+     *
+     * It accepts a variable number of input parameters. The first is always
+     * _elements_. If there are 2 input parameters, the second is _prefix_,
+     * while if there are 3 input parameters, the second is _mod_ and the third
+     * is _prefix_.
+     *
+     * @param {object|array} Elements to search and replace
+     * @param {string} mod Optional. Modifier passed to GameWindow.setInnerHTML
+     * @param {string} prefix Optional. Prefix added to the search string.
+     *    Default: 'ng_replace_', null or '' equals no prefix.
+     *
+     * @see GameWindow.setInnerHTML
+     */
+    GameWindow.prototype.searchReplace = function() {
+        var elements, mod, prefix;
+        var name, len, i, el, rep;
+
+        if (arguments.length === 2) {
+            mod = 'g';
+            prefix = arguments[1];
         }
-        if (id && 'string' === typeof id) {
-            throw new Error('GameWindow.toggleInputs: id must be string or ' +
-                            'undefined. Found: ' + id);
+        else if (arguments.length > 2) {
+            mod = arguments[1];
+            prefix = arguments[2];
         }
-        if (id) {
-            container = this.getElementById(id);
-            if (!container) {
-                throw new Error('GameWindow.toggleInputs: no elements found ' +
-                                'with id ' + id);
+
+        if ('undefined' === typeof prefix) {
+            prefix = 'ng_replace_';
+        }
+        else if (null === prefix) {
+            prefix = '';
+        }
+        else if ('string' !== typeof prefix) {
+            throw new TypeError(G + 'searchReplace: prefix must be string, ' +
+                                'null or undefined. Found: ' + prefix);
+        }
+
+        elements = arguments[0];
+        if (J.isArray(elements)) {
+            i = -1, len = elements.length;
+            for ( ; ++i < len ; ) {
+                el = elements[i].search;
+                if ('string' !== typeof el && 'number' !== typeof el) {
+                    continue;
+                }
+                rep = elements[i].replace;
+                if ('string' !== typeof rep && 'number' !== typeof rep) {
+                    continue;
+                }
+
+                this.setInnerHTML(prefix + el,
+                                  elements[i].replace,
+                                  elements[i].mod || mod);
             }
-            toggleInputs(disabled, container);
+
+        }
+        else if ('object' === typeof elements) {
+            for (name in elements) {
+                if (elements.hasOwnProperty(name)) {
+                    el = elements[name];
+                    if ('string' !== typeof el && 'number' !== typeof el) {
+                        node.warn(G + 'searchReplace: replace for key ' + name +
+                                  ' is invalid. Found: ' + el);
+                        continue;
+                    }
+                    this.setInnerHTML(prefix + name, el, mod);
+                }
+            }
         }
         else {
-            // The whole page.
-            toggleInputs(disabled);
-            container = this.getFrameDocument();
-            // If there is a frame, apply it there too.
-            if (container) toggleInputs(disabled, container);
+            throw new TypeError(G + 'setInnerHTML: elements must be ' +
+                                'object or arrray. Found: ' + elements);
         }
-        return true;
+
     };
+
+    /**
+     * ### GameWindow.html|setInnerHTML
+     *
+     * Replaces the innerHTML of the element with matching id or class name
+     *
+     * @param {string|number} search Element id or className
+     * @param {string|number} replace The new value of the property innerHTML
+     * @param {string} mod Optional. A modifier defining how to use the
+     *    search parameter. Values:
+     *
+     *    - 'id': replaces at most one element with the same id (default)
+     *    - 'className': replaces all elements with same class name
+     *    - 'g': replaces globally, both by id and className
+     */
+    GameWindow.prototype.setInnerHTML =
+    GameWindow.prototype.html = function(search, replace, mod) {
+        var el, i, len;
+
+        // Only process strings or numbers.
+        if ('string' !== typeof search && 'number' !== typeof search) {
+            throw new TypeError(G + 'setInnerHTML: search must be ' +
+                                'string or number. Found: ' + search +
+                                " (replace = " + replace + ")");
+        }
+
+        // Only process strings or numbers.
+        if ('string' !== typeof replace && 'number' !== typeof replace) {
+            throw new TypeError(G + 'setInnerHTML: replace must be ' +
+                                'string or number. Found: ' + replace +
+                                " (search = " + search + ")");
+        }
+
+        if ('undefined' === typeof mod) {
+            mod = 'id';
+        }
+        else if ('string' === typeof mod) {
+            if (mod !== 'g' && mod !== 'id' && mod !== 'className') {
+                throw new Error(G + 'setInnerHTML: invalid ' +
+                                'mod value: ' + mod  +
+                                " (search = " + search + ")");
+            }
+        }
+        else {
+            throw new TypeError(G + 'setInnerHTML: mod must be ' +
+                                'string or undefined. Found: ' + mod  +
+                                " (search = " + search + ")");
+        }
+
+        if (mod === 'id' || mod === 'g') {
+            // Look by id.
+            el = W.getElementById(search);
+            if (el && el.className !== search) el.innerHTML = replace;
+        }
+
+        if (mod === 'className' || mod === 'g') {
+            // Look by class name.
+            el = W.getElementsByClassName(search);
+            len = el.length;
+            if (len) {
+                i = -1;
+                for ( ; ++i < len ; ) {
+                    el[i].innerHTML = replace;
+                }
+            }
+        }
+    };
+
+    // ### ADD STUFF: Event button, loading dots.
 
     /**
      * ### GameWindow.getLoadingDots
@@ -38381,7 +38499,7 @@ if (!Array.prototype.indexOf) {
      *
      * @param {number} len Optional. The maximum length of the loading dots.
      *   Default: 5
-     * @param {string} id Optional The id of the span
+     * @param {string} id Optional. The id of the span
      *
      * @return {object} An object containing two properties: the span element
      *   and a method stop, that clears the interval
@@ -38389,8 +38507,8 @@ if (!Array.prototype.indexOf) {
     GameWindow.prototype.getLoadingDots = function(len, id) {
         var spanDots, counter, intervalId;
         if (len & len < 0) {
-            throw new Error('GameWindow.getLoadingDots: len cannot be < 0. ' +
-                            'Found: ' + len);
+            throw new Error(G + 'getLoadingDots: len cannot be < 0. Found: ' +
+                            len);
         }
         spanDots = document.createElement('span');
         spanDots.id = id || 'span_dots';
@@ -38463,7 +38581,7 @@ if (!Array.prototype.indexOf) {
     GameWindow.prototype.getEventButton = function(event, attributes) {
         var b;
         if ('string' !== typeof event) {
-            throw new TypeError('GameWindow.getEventButton: event must ' +
+            throw new TypeError(G + 'getEventButton: event must ' +
                                 'be string. Found: ' + event);
         }
         if ('string' === typeof attributes) {
@@ -38501,164 +38619,58 @@ if (!Array.prototype.indexOf) {
         return root.appendChild(eb);
     };
 
-    /**
-     * ### GameWindow.searchReplace
-     *
-     * Replaces the innerHTML of the element/s with matching id or class name
-     *
-     * It iterates through each element and passes it to
-     * `GameWindow.setInnerHTML`.
-     *
-     * If elements is array, each item in the array must be of the type:
-     *
-     * ```javascript
-     *
-     *   { search: 'key', replace: 'value' }
-     *
-     *   // or
-     *
-     *   { search: 'key', replace: 'value', mod: 'id' }
-     * ```
-     *
-     * If elements is object, it must be of the type:
-     *
-     * ```javascript
-     *
-     *    {
-     *      search1: value1, search2: value 2 // etc.
-     *    }
-     * ```
-     *
-     * It accepts a variable number of input parameters. The first is always
-     * _elements_. If there are 2 input parameters, the second is _prefix_,
-     * while if there are 3 input parameters, the second is _mod_ and the third
-     * is _prefix_.
-     *
-     * @param {object|array} Elements to search and replace
-     * @param {string} mod Optional. Modifier passed to GameWindow.setInnerHTML
-     * @param {string} prefix Optional. Prefix added to the search string.
-     *    Default: 'ng_replace_', null or '' equals no prefix.
-     *
-     * @see GameWindow.setInnerHTML
-     */
-    GameWindow.prototype.searchReplace = function() {
-        var elements, mod, prefix;
-        var name, len, i;
-
-        if (arguments.length === 2) {
-            mod = 'g';
-            prefix = arguments[1];
-        }
-        else if (arguments.length > 2) {
-            mod = arguments[1];
-            prefix = arguments[2];
-        }
-
-        if ('undefined' === typeof prefix) {
-            prefix = 'ng_replace_';
-        }
-        else if (null === prefix) {
-            prefix = '';
-        }
-        else if ('string' !== typeof prefix) {
-            throw new TypeError('GameWindow.searchReplace: prefix ' +
-                                'must be string, null or undefined. Found: ' +
-                                prefix);
-        }
-
-        elements = arguments[0];
-        if (J.isArray(elements)) {
-            i = -1, len = elements.length;
-            for ( ; ++i < len ; ) {
-                this.setInnerHTML(prefix + elements[i].search,
-                                  elements[i].replace,
-                                  elements[i].mod || mod);
-            }
-
-        }
-        else if ('object' !== typeof elements) {
-            for (name in elements) {
-                if (elements.hasOwnProperty(name)) {
-                    this.setInnerHTML(prefix + name, elements[name], mod);
-                }
-            }
-        }
-        else {
-            throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-                                'object or arrray. Found: ' + elements);
-        }
-
-    };
-
-    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
-        // console.log('***deprecated: use W.html instead of W.setInnerHTML');
-        this.html(search, replace, mod);
-    };
+    // ### SHOWING, HIDING, TOGGLING.
 
     /**
-     * ### GameWindow.html
+     * ### GameWindow.toggleInputs
      *
-     * Replaces the innerHTML of the element with matching id or class name
+     * Enables / disables the input forms
      *
-     * @param {string|number} search Element id or className
-     * @param {string|number} replace The new value of the property innerHTML
-     * @param {string} mod Optional. A modifier defining how to use the
-     *    search parameter. Values:
+     * If an id is provided, only input elements that are children
+     * of the element with the specified id are toggled.
      *
-     *    - 'id': replaces at most one element with the same id (default)
-     *    - 'className': replaces all elements with same class name
-     *    - 'g': replaces globally, both by id and className
+     * If id is not given, it toggles the input elements on the whole page,
+     * including the frame document, if found.
+     *
+     * If a state parameter is given, all the input forms will be either
+     * disabled or enabled (and not toggled).
+     *
+     * @param {string} id Optional. The id of the element container
+     *   of the forms. Default: the whole page, including the frame document
+     * @param {boolean} disabled Optional. Forces all the inputs to be either
+     *   disabled or enabled (not toggled)
+     *
+     * @return {boolean} FALSE, if the method could not be executed
+     *
+     * @see GameWindow.getFrameDocument
+     * @see toggleInputs
      */
-    GameWindow.prototype.html = function(search, replace, mod) {
-        var el, i, len;
-
-        // Only process strings or numbers.
-        if ('string' !== typeof search && 'number' !== typeof search) {
-            throw new TypeError('GameWindow.setInnerHTML: search must be ' +
-                                'string or number. Found: ' + search +
-                                " (replace = " + replace + ")");
+    GameWindow.prototype.toggleInputs = function(id, disabled) {
+        var container;
+        if (!document.getElementsByTagName) {
+            node.err(G + 'toggleInputs: getElementsByTagName not found');
+            return false;
         }
-
-        // Only process strings or numbers.
-        if ('string' !== typeof replace && 'number' !== typeof replace) {
-            throw new TypeError('GameWindow.setInnerHTML: replace must be ' +
-                                'string or number. Found: ' + replace +
-                                " (search = " + search + ")");
+        if (id && 'string' === typeof id) {
+            throw new Error(G + 'toggleInputs: id must be string or ' +
+                            'undefined. Found: ' + id);
         }
-
-        if ('undefined' === typeof mod) {
-            mod = 'id';
-        }
-        else if ('string' === typeof mod) {
-            if (mod !== 'g' && mod !== 'id' && mod !== 'className') {
-                throw new Error('GameWindow.setInnerHTML: invalid ' +
-                                'mod value: ' + mod  +
-                                " (search = " + search + ")");
+        if (id) {
+            container = this.gid(id);
+            if (!container) {
+                throw new Error(G + 'toggleInputs: no elements found with id ' +
+                                id);
             }
+            toggleInputs(disabled, container);
         }
         else {
-            throw new TypeError('GameWindow.setInnerHTML: mod must be ' +
-                                'string or undefined. Found: ' + mod  +
-                                " (search = " + search + ")");
+            // The whole page.
+            toggleInputs(disabled);
+            container = this.getFrameDocument();
+            // If there is a frame, apply it there too.
+            if (container) toggleInputs(disabled, container);
         }
-
-        if (mod === 'id' || mod === 'g') {
-            // Look by id.
-            el = W.getElementById(search);
-            if (el && el.className !== search) el.innerHTML = replace;
-        }
-
-        if (mod === 'className' || mod === 'g') {
-            // Look by class name.
-            el = W.getElementsByClassName(search);
-            len = el.length;
-            if (len) {
-                i = -1;
-                for ( ; ++i < len ; ) {
-                    el[i].innerHTML = replace;
-                }
-            }
-        }
+        return true;
     };
 
     /**
@@ -38677,7 +38689,7 @@ if (!Array.prototype.indexOf) {
      */
     GameWindow.prototype.hide = function(idOrObj) {
         var el;
-        el = getElement(idOrObj, 'GameWindow.hide');
+        el = getElement(idOrObj, 'hide');
         if (el) {
             el.style.display = 'none';
             W.adjustFrameHeight(0, 0);
@@ -38705,10 +38717,10 @@ if (!Array.prototype.indexOf) {
         var el;
         display = display || '';
         if ('string' !== typeof display) {
-            throw new TypeError('GameWindow.show: display must be ' +
+            throw new TypeError(G + 'show: display must be ' +
                                 'string or undefined. Found: ' + display);
         }
-        el = getElement(idOrObj, 'GameWindow.show');
+        el = getElement(idOrObj, 'show');
         if (el) {
             el.style.display = display;
             W.adjustFrameHeight(0, 0);
@@ -38736,10 +38748,10 @@ if (!Array.prototype.indexOf) {
         var el;
         display = display || '';
         if ('string' !== typeof display) {
-            throw new TypeError('GameWindow.toggle: display must ' +
+            throw new TypeError(G + 'toggle: display must ' +
                                 'be string or undefined. Found: ' + display);
         }
-        el = getElement(idOrObj, 'GameWindow.toggle');
+        el = getElement(idOrObj, 'toggle');
         if (el) {
             if (el.style.display === 'none') el.style.display = display;
             else el.style.display = 'none';
@@ -38752,6 +38764,13 @@ if (!Array.prototype.indexOf) {
 
     /**
      * ### toggleInputs
+     *
+     * Enable/disable inputs: 'button', 'select', 'textarea', 'input'
+     *
+     * @param {boolean} state Optional. True/false to enable/disable, undefined
+     *   to toggle.
+     * @param {HTMLElement} container Optional. The element inside which
+     *   toggling takes place. Default: `document`.
      *
      * @api private
      */
@@ -38783,26 +38802,48 @@ if (!Array.prototype.indexOf) {
      *
      * Gets the element or returns it
      *
-     * @param {string|HTMLElement} The id or the HTML element itself
+     * @param {string|HTMLElement} idOrObj The id or the HTML element itself
+     * @param {string|undefined} throwAs Optional. The name of the calling
+     *   method used in the string of the error, or undefined to avoid
+     *   throwing altogether.
      *
-     * @return {HTMLElement} The HTML Element
+     * @return {HTMLElement|undefined} The HTML Element or undefined if none
+     *   is found and throwAs is falsy
      *
-     * @see GameWindow.getElementById
+     * @see GameWindow.gid
      * @api private
      */
-    function getElement(idOrObj, prefix) {
-        var el;
-        if ('string' === typeof idOrObj) {
-            el = W.getElementById(idOrObj);
+    function getElement(idOrObj, throwAs) {
+        if ('string' === typeof idOrObj) return W.gid(idOrObj);
+        if (J.isElement(idOrObj)) return idOrObj;
+        if (throwAs) {
+            throw new TypeError(G + throwAs + ': idOrObj must be string or ' +
+                               'HTML Element. Found: ' + idOrObj);
         }
-        else if (J.isElement(idOrObj)) {
-            el = idOrObj;
-        }
-        else {
-            throw new TypeError(prefix + ': idOrObj must be string ' +
-                                ' or HTML Element. Found: ' + idOrObj);
-        }
-        return el;
+    }
+
+    /**
+     * ### getDefaultRoot
+     *
+     * Tries to find a default root and returns it
+     *
+     * @param {string|HTMLElement} root Optional. The id of or the HTML
+     *   element itself to be used as root.
+     * @param {string|undefined} throwAs Optional. The name of the calling
+     *   method used in the string of the error, or undefined to avoid
+     *   throwing altogether.
+     *
+     * @return {HTMLElement|undefined} The root HTML Element, or undefined
+     *   if none is found and `throwAs` is falsy
+     *
+     * @see GameWindow.gid
+     * @api private
+     */
+    function getDefaultRoot(root, throwAs) {
+        if (!root) root = W.getScreen();
+        else root = getElement(root);
+        if (root) return root;
+        if (throwAs) throw new Error(G + throwAs + ': could not find root');
     }
 
 })(
@@ -41783,9 +41824,7 @@ if (!Array.prototype.indexOf) {
         else if ('undefined' !== typeof WidgetProto.title) {
             widget.title = WidgetProto.title;
         }
-        else {
-            widget.title = '&nbsp;';
-        }
+
         widget.panel = 'undefined' === typeof opts.panel ?
             WidgetProto.panel : opts.panel;
         widget.footer = 'undefined' === typeof opts.footer ?
@@ -42465,7 +42504,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # BackButton
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates a button that if pressed goes to the previous step
@@ -42484,7 +42523,6 @@ if (!Array.prototype.indexOf) {
     BackButton.description = 'Creates a button that if ' +
         'pressed goes to the previous step.';
 
-    BackButton.title = false;
     BackButton.panel = false;
     BackButton.className = 'backbutton';
     BackButton.texts.back = 'Back';
@@ -42741,7 +42779,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # BoxSelector
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Creates a simple box that opens a menu of items to choose from
@@ -42763,7 +42801,6 @@ if (!Array.prototype.indexOf) {
         'of items to choose from.';
 
     BoxSelector.panel = false;
-    BoxSelector.title = false;
     BoxSelector.className = 'boxselector';
 
     /**
@@ -43009,7 +43046,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Chat
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Creates a simple configurable chat
@@ -43071,7 +43108,6 @@ if (!Array.prototype.indexOf) {
     Chat.description = 'Offers a uni-/bi-directional communication interface ' +
         'between players, or between players and the server.';
 
-    Chat.title = 'Chat';
     Chat.className = 'chat';
 
     Chat.panel = false;
@@ -43867,7 +43903,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ChernoffFaces
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays multidimensional data in the shape of a Chernoff Face.
@@ -43888,7 +43924,6 @@ if (!Array.prototype.indexOf) {
     ChernoffFaces.description =
         'Display parametric data in the form of a Chernoff Face.';
 
-    ChernoffFaces.title = 'ChernoffFaces';
     ChernoffFaces.className = 'chernofffaces';
 
     // ## Dependencies
@@ -45557,7 +45592,6 @@ if (!Array.prototype.indexOf) {
     ChoiceManager.description = 'Groups together and manages a set of ' +
         'survey forms (e.g., ChoiceTable).';
 
-    ChoiceManager.title = false;
     ChoiceManager.className = 'choicemanager';
 
     // ## Dependencies
@@ -45565,6 +45599,8 @@ if (!Array.prototype.indexOf) {
     ChoiceManager.dependencies = {
         BackButton: {}, DoneButton: {}
     };
+
+    var C = 'ChoiceManager.';
 
     /**
      * ## ChoiceManager constructor
@@ -45741,6 +45777,22 @@ if (!Array.prototype.indexOf) {
          */
         this.honeypot = null;
 
+        /**
+         * ### ChoiceManager.qCounter
+         *
+         * Adds question number starting from the integer.
+         *
+         * If FALSE, no question number is added.
+         */
+        this.qCounter = 1;
+
+        /**
+         * ### ChoiceManager.qCounterSymbol
+         *
+         * The symbol used to count the questions.
+         */
+        this.qCounterSymbol = 'Q';
+
     }
 
     // ## ChoiceManager methods
@@ -45784,7 +45836,7 @@ if (!Array.prototype.indexOf) {
             this.group = options.group;
         }
         else if ('undefined' !== typeof options.group) {
-            throw new TypeError('ChoiceManager.init: options.group must ' +
+            throw new TypeError(C + 'init: options.group must ' +
                                 'be string, number or undefined. Found: ' +
                                 options.group);
         }
@@ -45795,7 +45847,7 @@ if (!Array.prototype.indexOf) {
             this.groupOrder = options.groupOrder;
         }
         else if ('undefined' !== typeof options.group) {
-            throw new TypeError('ChoiceManager.init: options.groupOrder must ' +
+            throw new TypeError(C + 'init: options.groupOrder must ' +
                                 'be number or undefined. Found: ' +
                                 options.groupOrder);
         }
@@ -45805,7 +45857,7 @@ if (!Array.prototype.indexOf) {
             this.mainText = options.mainText;
         }
         else if ('undefined' !== typeof options.mainText) {
-            throw new TypeError('ChoiceManager.init: options.mainText must ' +
+            throw new TypeError(C + 'init: options.mainText must ' +
                                 'be string or undefined. Found: ' +
                                 options.mainText);
         }
@@ -45813,12 +45865,12 @@ if (!Array.prototype.indexOf) {
         // formsOptions.
         if ('undefined' !== typeof options.formsOptions) {
             if ('object' !== typeof options.formsOptions) {
-                throw new TypeError('ChoiceManager.init: options.formsOptions' +
+                throw new TypeError(C + 'init: options.formsOptions' +
                                     ' must be object or undefined. Found: ' +
                                     options.formsOptions);
             }
             if (options.formsOptions.hasOwnProperty('name')) {
-                throw new Error('ChoiceManager.init: options.formsOptions ' +
+                throw new Error(C + 'init: options.formsOptions ' +
                                 'cannot contain property name. Found: ' +
                                 options.formsOptions);
             }
@@ -45849,6 +45901,14 @@ if (!Array.prototype.indexOf) {
 
         // If truthy a useless form is added to detect bots.
         this.honeypot = options.honeypot;
+
+        if ('undefined' !== typeof options.qCounter) {
+            this.qCounter = options.qCounter;
+        }
+
+        if ('undefined' !== typeof options.qCounterSymbol) {
+            this.qCounterSymbol = options.qCounterSymbol;
+        }
 
         // After all configuration options are evaluated, add forms.
 
@@ -45889,7 +45949,7 @@ if (!Array.prototype.indexOf) {
         if ('function' === typeof forms) {
             parsedForms = forms.call(node.game);
             if (!J.isArray(parsedForms)) {
-                throw new TypeError('ChoiceManager.setForms: forms is a ' +
+                throw new TypeError(C + 'setForms: forms is a ' +
                                     'callback, but did not returned an ' +
                                     'array. Found: ' + parsedForms);
             }
@@ -45898,13 +45958,13 @@ if (!Array.prototype.indexOf) {
             parsedForms = forms;
         }
         else {
-            throw new TypeError('ChoiceManager.setForms: forms must be array ' +
+            throw new TypeError(C + 'setForms: forms must be array ' +
                                 'or function. Found: ' + forms);
         }
 
         len = parsedForms.length;
         if (!len) {
-            throw new Error('ChoiceManager.setForms: forms is an empty array.');
+            throw new Error(C + 'setForms: forms is an empty array.');
         }
 
         // Manual clone forms.
@@ -45927,7 +45987,7 @@ if (!Array.prototype.indexOf) {
 
         // Id must be unique.
         if (W.getElementById(this.id)) {
-            throw new Error('ChoiceManager.append: id is not ' +
+            throw new Error(C + 'append: id is not ' +
                             'unique: ' + this.id);
         }
 
@@ -46042,7 +46102,7 @@ if (!Array.prototype.indexOf) {
 
                 // False is set manually, otherwise undefined.
                 if (this.required === false) {
-                    throw new Error('ChoiceManager.setForms: required is ' +
+                    throw new Error(C + 'setForms: required is ' +
                                     'false, but form "' + form.id +
                                     '" has required truthy');
                 }
@@ -46062,14 +46122,22 @@ if (!Array.prototype.indexOf) {
                 form.bootstrap5 = true;
             }
 
+            if (this.qCounter !== false) {
+                if (form.mainText) {
+                    form.mainText = '<span style="font-weight: normal; ' +
+                        'color:gray;">'
+                         + this.qCounterSymbol +
+                         this.qCounter++ + '</span> ' + form.mainText;
+                }
+            }
+
             form = node.widgets.get(name, form);
 
         }
 
         if (form.id) {
             if (this.formsById[form.id]) {
-                throw new Error('ChoiceManager.setForms: duplicated ' +
-                                'form id: ' + form.id);
+                throw new Error(C + 'setForms: duplicated form id: ' + form.id);
             }
 
         }
@@ -46194,7 +46262,7 @@ if (!Array.prototype.indexOf) {
      */
     ChoiceManager.prototype.highlight = function(border) {
         if (border && 'string' !== typeof border) {
-            throw new TypeError('ChoiceManager.highlight: border must be ' +
+            throw new TypeError(C + 'highlight: border must be ' +
                                 'string or undefined. Found: ' + border);
         }
         if (!this.dl || this.highlighted === true) return;
@@ -46378,7 +46446,7 @@ if (!Array.prototype.indexOf) {
     ChoiceManager.prototype.setValues = function(opts) {
         var i, len;
         if (!this.forms || !this.forms.length) {
-            throw new Error('ChoiceManager.setValues: no forms found.');
+            throw new Error(C + 'setValues: no forms found.');
         }
         opts = opts || {};
         i = -1, len = this.forms.length;
@@ -46409,7 +46477,7 @@ if (!Array.prototype.indexOf) {
     ChoiceManager.prototype.addHoneypot = function(opts) {
         var h, forms, that;
         if (!this.isAppended()) {
-            node.warn('ChoiceManager.addHoneypot: not appended yet');
+            node.warn(C + 'addHoneypot: not appended yet');
             return;
         }
         if ('object' !== typeof opts) opts = {};
@@ -46467,7 +46535,7 @@ if (!Array.prototype.indexOf) {
         var form, conditional, failsafe, that;
         if (!this.oneByOne) return false;
         if (!this.forms || !this.forms.length) {
-            throw new Error('ChoiceManager.next: no forms found.');
+            throw new Error(C + 'next: no forms found.');
         }
         form = this.forms[this.oneByOneCounter];
         if (!form) return false;
@@ -46517,7 +46585,7 @@ if (!Array.prototype.indexOf) {
         var form, conditional, failsafe;
         if (!this.oneByOne) return false;
         if (!this.forms || !this.forms.length) {
-            throw new Error('ChoiceManager.prev: no forms found.');
+            throw new Error(C + 'prev: no forms found.');
         }
         form = this.forms[this.oneByOneCounter];
         if (!form) return false;
@@ -46711,7 +46779,6 @@ if (!Array.prototype.indexOf) {
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
-    ChoiceTable.title = 'Make your choice';
     ChoiceTable.className = 'choicetable';
 
     ChoiceTable.texts = {
@@ -47860,7 +47927,7 @@ if (!Array.prototype.indexOf) {
                     allFixedPos.push({ fixed: fixedPos, pos: i, idx: idxOrder});
                 }
             }
-            // All fixed position collected, we need to sort them from 
+            // All fixed position collected, we need to sort them from
             // lowest to highest, then we can do the placing.
             if (allFixedPos.length) {
                 allFixedPos.sort(function(a, b) { return a.fixed < b.fixed });
@@ -49119,7 +49186,6 @@ if (!Array.prototype.indexOf) {
     ChoiceTableGroup.description = 'Groups together and manages sets of ' +
         'ChoiceTable widgets.';
 
-    ChoiceTableGroup.title = 'Make your choice';
     ChoiceTableGroup.className = 'choicetable choicetablegroup';
 
     ChoiceTableGroup.separator = '::';
@@ -50391,7 +50457,6 @@ if (!Array.prototype.indexOf) {
         s.group = that.id;
         s.groupOrder = i+1;
         s.orientation = that.orientation;
-        s.title = false;
         s.listeners = false;
         s.separator = that.separator;
 
@@ -50488,7 +50553,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Consent
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays a consent form with buttons to accept/reject it
@@ -50506,7 +50571,6 @@ if (!Array.prototype.indexOf) {
     Consent.version = '0.4.0';
     Consent.description = 'Displays a configurable consent form.';
 
-    Consent.title = false;
     Consent.panel = false;
     Consent.className = 'consent';
 
@@ -50716,7 +50780,11 @@ if (!Array.prototype.indexOf) {
                 na.onclick = null;
 
                 // Disconnect, if requested.
-                if (that.disconnect) node.socket.disconnect();
+                if (that.disconnect) {
+                    // Destroy disconnectBox (if found) before disconnecting.
+                    if (node.game.discBox) node.game.discBox.destroy();
+                    node.socket.disconnect();
+                }
 
                 W.hide('consent');
                 W.show('notAgreed');
@@ -50740,7 +50808,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # ContentBox
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays some content.
@@ -50758,7 +50826,6 @@ if (!Array.prototype.indexOf) {
     ContentBox.version = '0.2.0';
     ContentBox.description = 'Simply displays some content';
 
-    ContentBox.title = false;
     ContentBox.panel = false;
     ContentBox.className = 'contentbox';
 
@@ -50840,7 +50907,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Controls
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates and manipulates a set of forms
@@ -50860,7 +50927,6 @@ if (!Array.prototype.indexOf) {
     Controls.version = '0.5.1';
     Controls.description = 'Wraps a collection of user-inputs controls.';
 
-    Controls.title = 'Controls';
     Controls.className = 'controls';
 
     /**
@@ -50917,7 +50983,7 @@ if (!Array.prototype.indexOf) {
     }
 
     Controls.prototype.add = function(root, id, attributes) {
-        // TODO: replace W.addTextInput 
+        // TODO: replace W.addTextInput
         //return W.addTextInput(root, id, attributes);
     };
 
@@ -51033,7 +51099,7 @@ if (!Array.prototype.indexOf) {
                     };
                 }
 
-                if (attributes.label) {                    
+                if (attributes.label) {
                     W.add('label', container, {
                         'for': elem.id,
                         innerHTML: attributes.label
@@ -51268,7 +51334,7 @@ if (!Array.prototype.indexOf) {
         for (key in this.features) {
             if (this.features.hasOwnProperty(key)) {
                 el = W.getElementById(key);
-                if (el.checked) return el.value;                
+                if (el.checked) return el.value;
             }
         }
         return false;
@@ -51278,7 +51344,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # CustomInput
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Creates a configurable input form with validation
@@ -51296,7 +51362,6 @@ if (!Array.prototype.indexOf) {
     CustomInput.version = '0.12.0';
     CustomInput.description = 'Creates a configurable input form';
 
-    CustomInput.title = false;
     CustomInput.panel = false;
     CustomInput.className = 'custominput';
 
@@ -52938,7 +53003,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # CustomInputGroup
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Creates a table that groups together several custom input widgets
@@ -52959,7 +53024,6 @@ if (!Array.prototype.indexOf) {
     CustomInputGroup.description = 'Groups together and manages sets of ' +
         'CustomInput widgets.';
 
-    CustomInputGroup.title = false;
     CustomInputGroup.className = 'custominput custominputgroup';
 
     CustomInputGroup.separator = '::';
@@ -54848,7 +54912,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DisconnectBox
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Shows a disconnect button
@@ -54866,7 +54930,6 @@ if (!Array.prototype.indexOf) {
     DisconnectBox.version = '0.4.0';
     DisconnectBox.description = 'Monitors and handles disconnections';
 
-    DisconnectBox.title = false;
     DisconnectBox.panel = false;
     DisconnectBox.className = 'disconnectbox';
 
@@ -55009,7 +55072,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # DoneButton
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates a button that if pressed emits node.done()
@@ -55028,7 +55091,6 @@ if (!Array.prototype.indexOf) {
     DoneButton.description = 'Creates a button that if ' +
         'pressed emits node.done().';
 
-    DoneButton.title = false;
     DoneButton.panel = false;
     DoneButton.className = 'donebutton';
     DoneButton.texts.done = 'Done';
@@ -55318,6 +55380,15 @@ if (!Array.prototype.indexOf) {
 
 })(node);
 
+/**
+ * # DropDown
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
+ * MIT Licensed
+ *
+ * Creates a customizable dropdown menu
+ *
+ * www.nodegame.org
+ */
 (function(node) {
 
     node.widgets.register('Dropdown', Dropdown);
@@ -55346,8 +55417,6 @@ if (!Array.prototype.indexOf) {
         }
     };
 
-    // Title is displayed in the header.
-    Dropdown.title = false;
     // Classname is added to the widgets.
     Dropdown.className = 'dropdown';
 
@@ -56282,7 +56351,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EmailForm
- * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Displays a form to input email
@@ -56300,7 +56369,6 @@ if (!Array.prototype.indexOf) {
     EmailForm.version = '0.13.1';
     EmailForm.description = 'Displays a configurable email form.';
 
-    EmailForm.title = false;
     EmailForm.className = 'emailform';
 
     EmailForm.texts = {
@@ -56702,7 +56770,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # EndScreen
- * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates an interface to display final earnings, exit code, etc.
@@ -56722,7 +56790,6 @@ if (!Array.prototype.indexOf) {
     EndScreen.description = 'Game end screen. With end game message, ' +
                             'email form, and exit code.';
 
-    EndScreen.title = false;
     EndScreen.className = 'endscreen';
 
     EndScreen.texts = {
@@ -56752,11 +56819,11 @@ if (!Array.prototype.indexOf) {
      *
      * Creates a new instance of EndScreen
      *
-     * @param {object} options Configuration options
+     * @param {object} opts Configuration options
      *
      * @see EndScreen.init
      */
-    function EndScreen(options) {
+    function EndScreen(opts) {
 
         /**
          * ### EndScreen.showEmailForm
@@ -56848,86 +56915,85 @@ if (!Array.prototype.indexOf) {
          *
          * If TRUE, after being appended it sends a 'WIN' message to server
          *
-         * Default: FALSE
+         * Default: TRUE
          */
-        this.askServer = options.askServer || false;
+        this.askServer = true;
     }
 
-    EndScreen.prototype.init = function(options) {
+    EndScreen.prototype.init = function(opts) {
 
-        if (options.email === false) {
+        if ('undefined' !== typeof opts.askServer) {
+            this.askServer = !!opts.askServer;
+        }
+
+        if (opts.email === false) {
             this.showEmailForm = false;
         }
-        else if ('boolean' === typeof options.showEmailForm) {
-            this.showEmailForm = options.showEmailForm;
+        else if ('boolean' === typeof opts.showEmailForm) {
+            this.showEmailForm = opts.showEmailForm;
         }
-        else if ('undefined' !== typeof options.showEmailForm) {
-            throw new TypeError('EndScreen.init: ' +
-                                'options.showEmailForm ' +
-                                'must be boolean or undefined. ' +
-                                'Found: ' + options.showEmailForm);
+        else if ('undefined' !== typeof opts.showEmailForm) {
+            throw new TypeError('EndScreen.init: opts.showEmailForm ' +
+                                'must be boolean or undefined. Found: ' +
+                                opts.showEmailForm);
         }
 
-        if (options.feedback === false) {
+        if (opts.feedback === false) {
             this.showFeedbackForm = false;
         }
-        else if ('boolean' === typeof options.showFeedbackForm) {
-            this.showFeedbackForm = options.showFeedbackForm;
+        else if ('boolean' === typeof opts.showFeedbackForm) {
+            this.showFeedbackForm = opts.showFeedbackForm;
         }
-        else if ('undefined' !== typeof options.showFeedbackForm) {
-            throw new TypeError('EndScreen.init: ' +
-                                'options.showFeedbackForm ' +
-                                'must be boolean or undefined. ' +
-                                'Found: ' + options.showFeedbackForm);
+        else if ('undefined' !== typeof opts.showFeedbackForm) {
+            throw new TypeError('EndScreen.init: opts.showFeedbackForm ' +
+                                'must be boolean or undefined. Found: ' +
+                                opts.showFeedbackForm);
         }
 
-        if (options.totalWin === false) {
+        if (opts.totalWin === false) {
             this.showTotalWin = false;
         }
-        else if ('boolean' === typeof options.showTotalWin) {
-            this.showTotalWin = options.showTotalWin;
+        else if ('boolean' === typeof opts.showTotalWin) {
+            this.showTotalWin = opts.showTotalWin;
         }
-        else if ('undefined' !== typeof options.showTotalWin) {
-            throw new TypeError('EndScreen.init: ' +
-                                'options.showTotalWin ' +
-                                'must be boolean or undefined. ' +
-                                'Found: ' + options.showTotalWin);
-        }
-
-        if (options.exitCode === false) {
-            options.showExitCode !== false
-        }
-        else if ('boolean' === typeof options.showExitCode) {
-            this.showExitCode = options.showExitCode;
-        }
-        else if ('undefined' !== typeof options.showExitCode) {
-            throw new TypeError('EndScreen.init: ' +
-                                'options.showExitCode ' +
-                                'must be boolean or undefined. ' +
-                                'Found: ' + options.showExitCode);
+        else if ('undefined' !== typeof opts.showTotalWin) {
+            throw new TypeError('EndScreen.init: opts.showTotalWin ' +
+                                'must be boolean or undefined. Found: ' +
+                                opts.showTotalWin);
         }
 
-        if ('string' === typeof options.totalWinCurrency &&
-                 options.totalWinCurrency.trim() !== '') {
-
-            this.totalWinCurrency = options.totalWinCurrency;
+        if (opts.exitCode === false) {
+            opts.showExitCode !== false
         }
-        else if ('undefined' !== typeof options.totalWinCurrency) {
+        else if ('boolean' === typeof opts.showExitCode) {
+            this.showExitCode = opts.showExitCode;
+        }
+        else if ('undefined' !== typeof opts.showExitCode) {
+            throw new TypeError('EndScreen.init: opts.showExitCode ' +
+                                'must be boolean or undefined. Found: ' +
+                                 opts.showExitCode);
+        }
+
+        if ('string' === typeof opts.totalWinCurrency &&
+                 opts.totalWinCurrency.trim() !== '') {
+
+            this.totalWinCurrency = opts.totalWinCurrency;
+        }
+        else if ('undefined' !== typeof opts.totalWinCurrency) {
             throw new TypeError('EndScreen.init: ' +
-                                'options.totalWinCurrency must be undefined ' +
+                                'opts.totalWinCurrency must be undefined ' +
                                 'or a non-empty string. Found: ' +
-                                options.totalWinCurrency);
+                                opts.totalWinCurrency);
         }
 
-        if (options.totalWinCb) {
-            if ('function' === typeof options.totalWinCb) {
-                this.totalWinCb = options.totalWinCb;
+        if (opts.totalWinCb) {
+            if ('function' === typeof opts.totalWinCb) {
+                this.totalWinCb = opts.totalWinCb;
             }
             else {
-                throw new TypeError('EndScreen.init: ' +
-                                    'options.totalWinCb ' +
-                                    'must be function or undefined. ' +
-                                    'Found: ' + options.totalWinCb);
+                throw new TypeError('EndScreen.init: opts.totalWinCb ' +
+                                    'must be function or undefined. Found: ' +
+                                     opts.totalWinCb);
             }
         }
 
@@ -56946,13 +57012,13 @@ if (!Array.prototype.indexOf) {
                     errString: 'Please enter a valid email and retry'
                 },
                 setMsg: true // Sends a set message for logic's db.
-            }, options.email));
+            }, opts.email));
         }
 
         if (this.showFeedbackForm) {
             this.feedback = node.widgets.get('Feedback', J.mixin(
                 { storeRef: false, minChars: 50, setMsg: true },
-                options.feedback));
+                opts.feedback));
         }
     };
 
@@ -57204,7 +57270,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Feedback
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Sends a feedback message to the server
@@ -57226,7 +57292,6 @@ if (!Array.prototype.indexOf) {
     Feedback.version = '1.6.0';
     Feedback.description = 'Displays a configurable feedback form';
 
-    Feedback.title = 'Feedback';
     Feedback.className = 'feedback';
 
     Feedback.texts = {
@@ -58157,7 +58222,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # Goto
- * Copyright(c) 2022 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Creates a simple interface to go to a step in the sequence.
@@ -58193,7 +58258,6 @@ if (!Array.prototype.indexOf) {
     Goto.description = 'Creates a simple interface to move across ' +
                        'steps in the sequence.';
 
-    Goto.title = false;
     Goto.panel = false;
     Goto.className = 'goto';
 
@@ -58281,7 +58345,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # GroupMalleability
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays an interface to measure users' perception of group malleability.
@@ -58337,10 +58401,6 @@ if (!Array.prototype.indexOf) {
             'selecting a number from 1 to 7 on the scale below. <em>You ' +
             'can work quickly, your first feeling is generally best.</em>'
     };
-
-    // ## Dependencies
-
-    GroupMalleability.dependencies = {};
 
     /**
      * ## GroupMalleability constructor
@@ -58473,7 +58533,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # LanguageSelector
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2023 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * Manages and displays information about languages available and selected
@@ -58490,13 +58550,16 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    LanguageSelector.version = '0.6.2';
+    LanguageSelector.version = '0.6.3';
     LanguageSelector.description = 'Display information about the current ' +
-        'language and allows to change language.';
-    LanguageSelector.title = 'Language';
+        'language and allows users to change it.';
+
+    LanguageSelector.title = 'Select Language';
+
+
     LanguageSelector.className = 'languageselector';
 
-    LanguageSelector.texts.loading = 'Loading language information...';
+    LanguageSelector.texts.loading = 'Loading...';
 
     /**
      * ## LanguageSelector constructor
@@ -58648,13 +58711,14 @@ if (!Array.prototype.indexOf) {
          * @see LanguageSelector.setLanguage
          */
         this.onLangCallback = function(msg) {
-            var language;
+            var language, label, display, counter;
 
             // Clear display.
             while (that.displayForm.firstChild) {
                 that.displayForm.removeChild(that.displayForm.firstChild);
             }
 
+            counter = 0;
             // Initialize widget.
             that.availableLanguages = msg.data;
             if (that.usingButtons) {
@@ -58662,31 +58726,32 @@ if (!Array.prototype.indexOf) {
                 // Creates labeled buttons.
                 for (language in msg.data) {
                     if (msg.data.hasOwnProperty(language)) {
-                        that.optionsLabel[language] = W.get('label', {
+                        label = W.get('label', {
                             id: language + 'Label',
                             'for': language + 'RadioButton'
                         });
 
-                        that.optionsDisplay[language] = W.get('input', {
+                        display = W.get('input', {
                             id: language + 'RadioButton',
                             type: 'radio',
                             name: 'languageButton',
                             value: msg.data[language].name
                         });
 
-                        that.optionsDisplay[language].onclick =
-                            makeSetLanguageOnClick(language);
+                        display.onclick = makeOnClick(language);
 
-                        that.optionsLabel[language].appendChild(
-                            that.optionsDisplay[language]);
-                        that.optionsLabel[language].appendChild(
-                            document.createTextNode(
-                                msg.data[language].nativeName));
-                        W.add('br', that.displayForm);
-                        that.optionsLabel[language].className =
-                            'unselectedButtonLabel';
-                        that.displayForm.appendChild(
-                            that.optionsLabel[language]);
+                        label.appendChild(display);
+
+                        label.appendChild(document.createTextNode(
+                            msg.data[language].nativeName));
+
+                        if (++counter !== 1) W.add('br', that.displayForm);
+                        label.className = 'unselected';
+                        that.displayForm.appendChild(label);
+
+                        that.optionsLabel[language] = label;
+                        that.optionsDisplay[language] = display;
+
                     }
                 }
             }
@@ -58694,18 +58759,19 @@ if (!Array.prototype.indexOf) {
 
                 that.displaySelection = W.get('select', 'selectLanguage');
                 for (language in msg.data) {
-                    that.optionsLabel[language] =
+                    label =
                         document.createTextNode(msg.data[language].nativeName);
-                    that.optionsDisplay[language] = W.get('option', {
+                    display = W.get('option', {
                         id: language + 'Option',
                         value: language
                     });
-                    that.optionsDisplay[language].appendChild(
-                        that.optionsLabel[language]);
-                    that.displaySelection.appendChild(
-                        that.optionsDisplay[language]);
+                    display.appendChild(label);
+                    that.displaySelection.appendChild(display);
 
+                    that.optionsLabel[language] = label;
+                    that.optionsDisplay[language] = display
                 }
+
                 that.displayForm.appendChild(that.displaySelection);
                 that.displayForm.onchange = function() {
                     that.setLanguage(that.displaySelection.value,
@@ -58726,7 +58792,7 @@ if (!Array.prototype.indexOf) {
                 that.onLangCallbackExtension = null;
             }
 
-            function makeSetLanguageOnClick(langStr) {
+            function makeOnClick(langStr) {
                 return function() {
                     that.setLanguage(langStr, that.updatePlayer === 'onselect');
                 };
@@ -58831,7 +58897,7 @@ if (!Array.prototype.indexOf) {
                 this.optionsDisplay[this.currentLanguage].checked =
                     'unchecked';
                 this.optionsLabel[this.currentLanguage].className =
-                    'unselectedButtonLabel';
+                    'unselected';
             }
         }
 
@@ -58841,8 +58907,7 @@ if (!Array.prototype.indexOf) {
         if (this.usingButtons) {
             // Check language button and change className of label.
             this.optionsDisplay[this.currentLanguage].checked = 'checked';
-            this.optionsLabel[this.currentLanguage].className =
-                'selectedButtonLabel';
+            this.optionsLabel[this.currentLanguage].className = 'selected';
         }
         else {
             this.displaySelection.value = this.currentLanguage;
@@ -59102,7 +59167,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # MoodGauge
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays an interface to query users about mood, emotions and well-being
@@ -59117,11 +59182,10 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    MoodGauge.version = '0.4.0';
+    MoodGauge.version = '0.5.0';
     MoodGauge.description = 'Displays an interface to measure mood ' +
         'and emotions.';
 
-    MoodGauge.title = 'Mood Gauge';
     MoodGauge.className = 'moodgauge';
 
     MoodGauge.texts.mainText = 'Thinking about yourself and how you normally' +
@@ -59318,14 +59382,13 @@ if (!Array.prototype.indexOf) {
     // ## Available methods.
 
     // ### I_PANAS_SF
-    function I_PANAS_SF(options) {
-        var items, emotions, choices, left, right;
+    function I_PANAS_SF(opts) {
+        var items, emotions, choices, left, right, l;
         var gauge, i, len;
 
-        choices = options.choices ||
-            [ '1', '2', '3', '4', '5' ];
+        choices = opts.choices || [ '1', '2', '3', '4', '5' ];
 
-        emotions = options.emotions || [
+        emotions = opts.emotions || [
             'Upset',
             'Hostile',
             'Alert',
@@ -59337,32 +59400,32 @@ if (!Array.prototype.indexOf) {
             'Afraid',
             'Active'
         ];
-
-        left = options.left || 'never';
-
-        right = options.right || 'always';
-
         len = emotions.length;
+
+        left = opts.left || 'never';
+        right = opts.right || 'always';
 
         items = new Array(len);
 
         i = -1;
         for ( ; ++i < len ; ) {
+            l = '<span class="emotion">' + emotions[i] + ':</span> ' + left;
             items[i] = {
                 id: emotions[i],
-                left: '<span class="emotion">' + emotions[i] + ':</span> never',
+                left: l,
                 right: right,
-                choices: choices
+                sameCellWidth: '200px'
             };
         }
 
         gauge = node.widgets.get('ChoiceTableGroup', {
-            id: options.id || 'ipnassf',
+            id: opts.id || 'ipnassf',
             items: items,
             mainText: this.mainText || this.getText('mainText'),
-            title: false,
             requiredChoice: true,
-            storeRef: false
+            storeRef: false,
+            header: opts.header,
+            choices: choices,
         });
 
         return gauge;
@@ -60051,7 +60114,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # RiskGauge
- * Copyright(c) 2020 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays an interface to measure risk preferences with different methods
@@ -60072,7 +60135,6 @@ if (!Array.prototype.indexOf) {
     RiskGauge.description = 'Displays an interface to ' +
         'measure risk preferences with different methods.';
 
-    RiskGauge.title = 'Risk Gauge';
     RiskGauge.className = 'riskgauge';
 
     RiskGauge.texts =  {
@@ -60425,6 +60487,10 @@ if (!Array.prototype.indexOf) {
 
         // Public variables.
 
+        // Enables done button on open (only if DoneButton is found under
+        // node.game.doneButton).
+        this.enableDoneBtn = opts.enableDoneButton !== false;
+
         // Store locally because they are overwritten. TODO: check if needed.
         this._highlight = this.highlight;
         this._unhighlight = this.unhighlight;
@@ -60579,9 +60645,6 @@ if (!Array.prototype.indexOf) {
                     type: 'flat',
                     required: true,
                     panel: false,
-                    // texts: {
-                    //     currentValue: that.getText('sliderValue')
-                    // },
                     onmove: function(value) {
                         var i, div, c, v;
 
@@ -60610,9 +60673,9 @@ if (!Array.prototype.indexOf) {
 
                         // Update display.
                         W.gid('bomb_numBoxes').innerText = value;
-                        c = that.currency;
-                        v = that.boxValue;
                         if (that.withPrize) {
+                            c = that.currency;
+                            v = that.boxValue;
                             W.gid('bomb_boxValue').innerText = v + c;
                             W.gid('bomb_totalWin').innerText =
                                 Number((value * v)).toFixed(2) + c;
@@ -60642,7 +60705,7 @@ if (!Array.prototype.indexOf) {
                     W.add('p', infoDiv, {
                         innerHTML: that.getText('bomb_boxValue') +
                         '&nbsp;<span id="bomb_boxValue">' +
-                        this.boxValue + '</span>'
+                        that.boxValue + '</span>'
                     });
                     W.add('p', infoDiv, {
                         innerHTML: that.getText('bomb_totalWin') +
@@ -60653,7 +60716,7 @@ if (!Array.prototype.indexOf) {
                 bombResult = W.add('p', infoDiv, { id: 'bomb_result' });
 
                 button = W.add('button', that.bodyDiv, {
-                    className: 'btn-danger',
+                    className: 'btn btn-danger',
                     innerHTML: that.getText('bomb_openButton'),
                 });
                 // Initially hidden.
@@ -60683,6 +60746,12 @@ if (!Array.prototype.indexOf) {
                     bombResult.innerHTML = that.getText(cl);
                     bombResult.className += (' ' + cl);
 
+                    // Enable done button, if found and disabled.
+                    if (that.enableDoneBtn && node.game.doneButton &&
+                        node.game.doneButton.isDisabled()) {
+
+                        node.game.doneButton.enable();
+                    }
                     if (that.onopen) that.onopen(isWinner, that);
                 };
             }
@@ -60733,7 +60802,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # SDO
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays an interface to measure users' social dominance orientation (S.D.O.)
@@ -60752,7 +60821,6 @@ if (!Array.prototype.indexOf) {
     SDO.description = 'Displays an interface to measure Social ' +
         'Dominance Orientation (S.D.O.).';
 
-    SDO.title = 'SDO';
     SDO.className = 'SDO';
 
 
@@ -61038,7 +61106,6 @@ if (!Array.prototype.indexOf) {
     Slider.version = '0.7.0';
     Slider.description = 'Creates a configurable slider';
 
-    Slider.title = false;
     Slider.className = 'slider';
 
     Slider.texts = {
@@ -61242,13 +61309,9 @@ if (!Array.prototype.indexOf) {
             if (that.isHighlighted()) that.unhighlight();
 
             _listener = function() {
-                var percent, diffPercent;
+                var percent, diff;
 
                 percent = (that.slider.value - that.min) * that.scale;
-                diffPercent = percent - that.currentValue;
-                that.currentValue = percent;
-
-                // console.log(diffPercent);
                 // console.log(that.slider.value, percent);
 
                 if (that.type === 'volume') {
@@ -61262,7 +61325,7 @@ if (!Array.prototype.indexOf) {
 
                 if (that.displayValue) {
                     that.valueSpan.innerHTML =
-                        that.getText('currentValue', that.slider.value);
+                    that.getText('currentValue', that.slider.value);
                 }
 
                 if (that.displayNoChange && noChange !== true) {
@@ -61273,11 +61336,21 @@ if (!Array.prototype.indexOf) {
                 }
 
                 if (!init) {
-                    that.totalMove += Math.abs(diffPercent);
+                    // Old (currentValue was a percent).
+                    // diffPercent = percent - that.currentValue;
+                    // that.totalMove += Math.abs(diffPercent);
+                    diff = that.slider.value - that.currentValue;
+                    // console.log(diff);
+                    that.totalMove += Math.abs(diff);
                     if (that.onmove) {
-                        that.onmove.call(that, that.slider.value, diffPercent);
+                        that.onmove.call(that, that.slider.value, diff);
                     }
                 }
+
+                // Update currentValue.
+                // Change: vefore currentValue was equal to percent.
+                that.currentValue = that.slider.value;
+
 
                 timeOut = null;
             };
@@ -61304,6 +61377,13 @@ if (!Array.prototype.indexOf) {
          * @see node.timer.getTimeSince
          */
          this.timeFrom = 'step';
+
+         /**
+         * ### Slider.hideKnob
+         *
+         * If TRUE, the knob of the slider is hidden before interaction
+         */
+         this.hideKnob = false;
 
     }
 
@@ -61466,6 +61546,10 @@ if (!Array.prototype.indexOf) {
             }
             this.right = '' + tmp;
         }
+
+        if ('undefined' !== typeof opts.hideKnob) {
+            this.hideKnob = !!opts.hideKnob;
+        }
     };
 
     /**
@@ -61516,15 +61600,22 @@ if (!Array.prototype.indexOf) {
             // id: 'range-fill'
         });
 
-        this.slider = W.add('input', container, {
+        tmp = {
             className: 'volume-slider',
-            // id: 'range-slider-input',
             name: 'rangeslider',
             type: 'range',
             min: this.min,
             max: this.max,
-            step: this.step
-        });
+            step: this.step,
+        };
+        if (this.hideKnob) tmp.style = { opacity: 0 };
+        this.slider = W.add('input', container, tmp);
+        if (this.hideKnob) {
+            this.slider.onclick = function() {
+                that.slider.style.opacity = 1;
+                that.slider.onclick = null;
+            };
+        }
 
         this.slider.onmouseover = function() {
             tmpColor = that.rangeFill.style.background || 'black';
@@ -61535,7 +61626,6 @@ if (!Array.prototype.indexOf) {
         };
 
         if (this.sliderWidth) this.slider.style.width = this.sliderWidth;
-
 
         if (this.right) {
             tmp = W.add('span', container);
@@ -61692,7 +61782,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # SVOGauge
- * Copyright(c) 2021 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Displays an interface to measure users' social value orientation (S.V.O.)
@@ -61711,7 +61801,6 @@ if (!Array.prototype.indexOf) {
     SVOGauge.description = 'Displays an interface to measure social ' +
         'value orientation (S.V.O.).';
 
-    SVOGauge.title = 'SVO Gauge';
     SVOGauge.className = 'svogauge';
 
     SVOGauge.texts = {
@@ -62017,7 +62106,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualRound
- * Copyright(c) 2020 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Display information about rounds and/or stage in the game
@@ -62035,10 +62124,9 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    VisualRound.version = '0.9.0';
+    VisualRound.version = '0.9.1';
     VisualRound.description = 'Displays current/total/left round/stage/step. ';
 
-    VisualRound.title = false;
     VisualRound.className = 'visualround';
 
     VisualRound.texts = {
@@ -62245,12 +62333,6 @@ if (!Array.prototype.indexOf) {
         if (!this.stager) this.stager = this.gamePlot.stager;
 
         this.updateInformation();
-
-        if (!this.options.displayMode && this.options.displayModeNames) {
-            console.log('***VisualTimer.init: options.displayModeNames is ' +
-                        'deprecated. Use options.displayMode instead.***');
-            this.options.displayMode = this.options.displayModeNames;
-        }
 
         if (!this.options.displayMode) {
             this.setDisplayMode([
@@ -63090,7 +63172,7 @@ if (!Array.prototype.indexOf) {
 
 /**
  * # VisualStage
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2023 Stefano Balietti
  * MIT Licensed
  *
  * Shows the name of the current, previous and next step.
@@ -63111,7 +63193,6 @@ if (!Array.prototype.indexOf) {
     VisualStage.description =
         'Displays the name of the current, previous and next step of the game.';
 
-    VisualStage.title = false;
     VisualStage.className = 'visualstage';
 
     VisualStage.texts = {
