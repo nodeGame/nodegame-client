@@ -1,7 +1,7 @@
 {
     "name": "nodegame-client",
     "description": "nodeGame client for the browser and node.js",
-    "version": "7.1.0",
+    "version": "8.0.0",
     "homepage": "http://www.nodegame.org",
     "keywords": [
         "game",
