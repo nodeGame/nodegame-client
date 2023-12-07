@@ -6061,7 +6061,7 @@ if (!Array.prototype.indexOf) {
 
         // ### __update.indexes
         // If TRUE, rebuild indexes on every insert and remove
-        this.__update.indexes = false;
+        this.__update.indexes = true;
 
         // ### __update.sort
         // If TRUE, sort db on every insert and remove
@@ -10480,7 +10480,7 @@ if (!Array.prototype.indexOf) {
     node.support = JSUS.compatibility();
 
     // Auto-Generated.
-    node.version = '7.1.0';
+    node.version = '8.0.0';
 
 })(window);
 
@@ -10993,8 +10993,6 @@ if (!Array.prototype.indexOf) {
      * @param {NodeGameClient} node Reference to the active node object.
      */
     ErrorManager.prototype.init = function(node) {
-        var that;
-        that = this;
         if (!J.isNodeJS()) {
             window.onerror = function(msg, url, lineno, colno, error) {
                 var str;
@@ -11002,7 +11000,7 @@ if (!Array.prototype.indexOf) {
                     '@' + J.getTime() + '> ' +
                     url + ' ' + lineno + ',' + colno + ': ' + msg;
                 if (error) msg + ' - ' + JSON.stringify(error);
-                that.lastError = msg;
+                node.errorManager.lastError = msg;
                 node.err(msg);
                 if (node.debug) {
                     W.init({ waitScreen: true });
@@ -25547,10 +25545,7 @@ if (!Array.prototype.indexOf) {
             }
             else if ('object' === typeof frame) {
                 uri = frame.uri;
-                if ('undefined' === typeof uri) {
-                    uri = this.getStepId() + '.htm';
-                }
-                else if ('string' !== typeof uri) {
+                if ('string' !== typeof uri) {
                     throw new TypeError('Game.execStep: frame.uri must be ' +
                                         'string: ' + uri + '. Step: ' + step);
                 }
@@ -35412,6 +35407,7 @@ if (!Array.prototype.indexOf) {
      */
     GameWindow.prototype.preCacheTest = function(cb, uri) {
         var iframe, iframeName;
+
         uri = uri || '/pages/testpage.htm';
         if ('string' !== typeof uri) {
             throw new TypeError('GameWindow.precacheTest: uri must string ' +
@@ -35438,8 +35434,15 @@ if (!Array.prototype.indexOf) {
             catch(e) {
                 W.cacheSupported = false;
             }
+            // It's possible that it was already removed if two calls
+            // to preCacheTest are made one after the other.
+            try {
+                document.body.removeChild(iframe);
+            }
+            catch(e) {
+                node.warn('W.preCacheTest: iframe already removed');
+            }
 
-            document.body.removeChild(iframe);
             if (cb) cb();
         });
     };
@@ -35665,7 +35668,7 @@ if (!Array.prototype.indexOf) {
     GameWindow.prototype.loadFrame = function(uri, func, opts) {
         var that;
         var loadCache;
-        var storeCacheNow, storeCacheLater;
+        var shouldTestCache, storeCacheNow, storeCacheLater;
         var scrollUp;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
@@ -35723,6 +35726,7 @@ if (!Array.prototype.indexOf) {
                 }
                 else if (opts.cache.loadMode === 'cache') {
                     loadCache = true;
+                    shouldTestCache = true;
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
@@ -35734,17 +35738,22 @@ if (!Array.prototype.indexOf) {
                     storeCacheNow = false;
                     storeCacheLater = false;
                 }
-                else if (opts.cache.storeMode === 'onLoad') {
-                    storeCacheNow = true;
-                    storeCacheLater = false;
-                }
-                else if (opts.cache.storeMode === 'onClose') {
-                    storeCacheNow = false;
-                    storeCacheLater = true;
-                }
                 else {
-                    throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'store mode: ' + opts.cache.storeMode);
+                    
+                    if (opts.cache.storeMode === 'onLoad') {
+                        storeCacheNow = true;
+                        storeCacheLater = false;
+                    }
+                    else if (opts.cache.storeMode === 'onClose') {
+                        storeCacheNow = false;
+                        storeCacheLater = true;
+                    }
+                    else {
+                        throw new Error('GameWindow.loadFrame: unkown cache ' +
+                                        'store mode: ' + opts.cache.storeMode);
+                    }
+
+                    shouldTestCache = true;
                 }
             }
         }
@@ -35756,7 +35765,8 @@ if (!Array.prototype.indexOf) {
         // Store unprocessed uri parameter.
         this.unprocessedUri = uri;
 
-        if (this.cacheSupported === null) {
+        shouldTestCache = true;
+        if (shouldTestCache && this.cacheSupported === null) {
             this.preCacheTest(function() {
                 that.loadFrame(uri, func, opts);
             });
@@ -35906,7 +35916,7 @@ if (!Array.prototype.indexOf) {
         var css, html, replace, loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
-        if (func) func.call(node.game);        
+        if (func) func.call(node.game);
         if (scrollUp && window.scrollTo) window.scrollTo(0,0);
 
         css = node.game.getProperty('css');
@@ -41580,6 +41590,15 @@ if (!Array.prototype.indexOf) {
          */
         this.collapseTarget = null;
 
+        /**
+         * ### Widgets.decorators
+         *
+         * Map of decorators callbacks for widgets
+         *
+         * @see Widgets.decorator
+         */
+        this.decorators = {};
+
         that = this;
         node.registerSetup('widgets', function(conf) {
             var name, root, collapseTarget;
@@ -41771,6 +41790,12 @@ if (!Array.prototype.indexOf) {
         node.info('creating widget ' + widgetName  + ' v.' +
                   WidgetProto.version);
 
+        // Merge shared options (if any).
+        tmp = this.decorators['*'];
+        if (tmp) tmp(opts);
+        tmp = this.decorators[widgetName];
+        if (tmp) tmp(opts);
+
         if (opts.storeRef === false) {
             if (opts.docked === true || WidgetProto.docked) {
                 node.warn(err + ' storeRef=false ignored, widget is docked');
@@ -41884,6 +41909,11 @@ if (!Array.prototype.indexOf) {
             // Flag required is undefined, if not set to false explicitely.
             widget.required = true;
         }
+
+        // Display required mark (in some widgets).
+        widget.displayRequired = opts.displayRequired === false ? false : true;
+        widget.requiredMark = 'undefined' !== typeof opts.requiredMark ?
+            opts.requiredMark : '✳️'; // *
 
         // Fixed properties.
 
@@ -42159,9 +42189,9 @@ if (!Array.prototype.indexOf) {
                     'no-panel-heading' : 'card-footer';
             }
             else {
-                    // Bootstrap 3.
-                    tmp = options.panel === false ?
-                        'no-panel-heading' : 'panel-heading';
+                // Bootstrap 3.
+                tmp = options.panel === false ?
+                    'no-panel-heading' : 'panel-heading';
             }
 
             w.setFooter(w.footer);
@@ -42365,6 +42395,23 @@ if (!Array.prototype.indexOf) {
             lastErrored.bodyDiv.scrollIntoView({ behavior: 'smooth' });
         }
         return res;
+    };
+
+    /**
+     * ### Widgets.decorator
+     *
+     * Adds a callback to decorate options for all widgets
+     *
+     * @param {string} widget optional The name of the widget for which
+     *   the options are decorated; '*' means valid for all widgets.
+     * @param {function} cb The callback function decorating the options.
+     */
+    Widgets.prototype.decorator = function(widget, cb) {
+        if ('function' !== typeof cb) {
+            throw new TypeError('Widgets.decorator: cb must be function. ' +
+                                'Found: ' + cb);
+        }
+        this.decorators[widget] = cb
     };
 
     // ## Helper functions
@@ -45793,6 +45840,23 @@ if (!Array.prototype.indexOf) {
          */
         this.qCounterSymbol = 'Q';
 
+        /**
+         * ### ChoiceManager.qCounterCb
+         *
+         * The callback creating the question counter.
+         */
+        this.qCounterCb = function(w, mainText, form, idx) {
+            return '<span style="font-weight: normal; color:gray;">' +
+                w.qCounterSymbol + w.qCounter++ + '</span> ' + mainText;
+        };
+
+        /**
+         * ### ChoiceManager.autoId
+         *
+         * If TRUE, id forms are auto-assigned if undefined
+         */
+        this.autoId = true;
+
     }
 
     // ## ChoiceManager methods
@@ -45869,11 +45933,7 @@ if (!Array.prototype.indexOf) {
                                     ' must be object or undefined. Found: ' +
                                     options.formsOptions);
             }
-            if (options.formsOptions.hasOwnProperty('name')) {
-                throw new Error(C + 'init: options.formsOptions ' +
-                                'cannot contain property name. Found: ' +
-                                options.formsOptions);
-            }
+
             this.formsOptions = J.mixin(this.formsOptions,
                                         options.formsOptions);
         }
@@ -45908,6 +45968,14 @@ if (!Array.prototype.indexOf) {
 
         if ('undefined' !== typeof options.qCounterSymbol) {
             this.qCounterSymbol = options.qCounterSymbol;
+        }
+
+        if ('undefined' !== typeof options.qCounterCb) {
+            this.qCounterCb = options.qCounterCb;
+        }
+
+        if ('undefined' !== typeof options.autoId) {
+            this.autoId = options.autoId;
         }
 
         // After all configuration options are evaluated, add forms.
@@ -45945,7 +46013,7 @@ if (!Array.prototype.indexOf) {
      * @see ChoiceManager.buildTableAndForms
      */
     ChoiceManager.prototype.setForms = function(forms) {
-        var i, len, parsedForms;
+        var i, formIdx, len, parsedForms;
         if ('function' === typeof forms) {
             parsedForms = forms.call(node.game);
             if (!J.isArray(parsedForms)) {
@@ -45969,17 +46037,18 @@ if (!Array.prototype.indexOf) {
 
         // Manual clone forms.
         this.formsById = {};
-        this.order = new Array(len);
         this.forms = new Array(len);
-        i = -1;
-        for ( ; ++i < len ; ) {
-            this.addForm(parsedForms[i], false, i);
-            // Save the order in which the choices will be added.
-            this.order[i] = i;
-        }
 
         // Shuffle, if needed.
+        this.order = J.seq(0, len-1);
         if (this.shuffleForms) this.order = J.shuffle(this.order);
+
+        i = -1;
+        for ( ; ++i < len ; ) {
+            formIdx = this.order[i];
+            this.addForm(parsedForms[formIdx], false, i);
+            // Save the order in which the choices will be added.
+        }
     };
 
     ChoiceManager.prototype.append = function() {
@@ -46087,10 +46156,16 @@ if (!Array.prototype.indexOf) {
         if ('undefined' === typeof scrollIntoView) scrollIntoView = true;
 
         if (!node.widgets.isWidget(form)) {
-            // TODO: smart checking form name. Maybe in Stager already?
-            name = form.name || 'ChoiceTable';
+
             // Add defaults.
             J.mixout(form, this.formsOptions);
+
+
+            if (!form.id && this.autoId) {
+                name = this.autoId === true ?
+                    node.game.getStepId() : this.autoId;
+                form.id =  name + '_' + (idx + 1);
+            }
 
             // By default correctChoice means required.
             // However, it is possible to add required = false and correctChoice
@@ -46123,13 +46198,15 @@ if (!Array.prototype.indexOf) {
             }
 
             if (this.qCounter !== false) {
-                if (form.mainText) {
-                    form.mainText = '<span style="font-weight: normal; ' +
-                        'color:gray;">'
-                         + this.qCounterSymbol +
-                         this.qCounter++ + '</span> ' + form.mainText;
+                if (form.mainText && !form.qCounterAdded) {
+                    form.mainText =
+                        this.qCounterCb(this, form.mainText, form, idx);
+                    form.qCounterAdded = true;
                 }
             }
+
+            // TODO: smart checking form name. Maybe in Stager already?
+            name = form.name || 'ChoiceTable';
 
             form = node.widgets.get(name, form);
 
@@ -46712,7 +46789,9 @@ if (!Array.prototype.indexOf) {
         dl = document.createElement('dl');
         i = -1, len = w.forms.length;
         for ( ; ++i < len ; ) {
-            form = w.forms[w.order[i]];
+            // If shuffled, w.forms already follows the shuffled order.
+            form = w.forms[i];
+            // form = w.forms[w.order[i]];
             appendDT(dl, form);
         }
         return dl;
@@ -46775,7 +46854,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    ChoiceTable.version = '1.10.0';
+    ChoiceTable.version = '1.11.0';
     ChoiceTable.description = 'Creates a configurable table where ' +
         'each cell is a selectable choice.';
 
@@ -46786,7 +46865,9 @@ if (!Array.prototype.indexOf) {
         autoHint: function(w) {
             var res;
             if (!w.requiredChoice && !w.selectMultiple) return false;
-            if (!w.selectMultiple) return '*';
+            if (!w.selectMultiple) {
+                return w.displayRequired ? w.requiredMark : false;
+            }
             res = '(';
             if (!w.requiredChoice) {
                 if ('number' === typeof w.selectMultiple) {
@@ -46811,7 +46892,9 @@ if (!Array.prototype.indexOf) {
                 }
             }
             res += ')';
-            if (w.requiredChoice) res += ' *';
+            if (w.requiredChoice && w.displayRequired) {
+                res += ' ' + w.requiredMark;
+            }
             return res;
         },
 
@@ -46877,7 +46960,7 @@ if (!Array.prototype.indexOf) {
          */
         this.listener = function(e) {
             var name, value, td, ci;
-            var i, len, removed, other;
+            var i, len, removed, otherSel;
 
             e = e || window.event;
             td = e.target || e.srcElement;
@@ -46932,10 +47015,11 @@ if (!Array.prototype.indexOf) {
 
             if (that.customInput) {
                 // Is "Other" currently selected?
-                if (value === (len - 1) && !removed) {
+                otherSel = value === (len - 1);
+                if (otherSel && !removed) {
                     that.customInput.show();
                 }
-                else {
+                else if (!that.selectMultiple || otherSel) {
                     that.customInput.hide();
                 }
             }
@@ -47611,7 +47695,9 @@ if (!Array.prototype.indexOf) {
         }
         if ('string' === typeof tmp || false === tmp) {
             this.hint = tmp;
-            if (this.requiredChoice && tmp !== false) this.hint += ' *';
+            if (this.requiredChoice && tmp !== false && this.displayRequired) {
+                this.hint += ' ' + this.requiredMark;
+            }
         }
         else if ('undefined' !== typeof tmp) {
             throw new TypeError('ChoiceTable.init: opts.hint must ' +
@@ -47800,8 +47886,11 @@ if (!Array.prototype.indexOf) {
         tmp = opts.correctChoice;
         if ('undefined' !== typeof tmp) {
             if (this.requiredChoice) {
-                throw new Error('ChoiceTable.init: cannot specify both ' +
-                                'opts requiredChoice and correctChoice');
+                this.requiredChoice = null;
+                this.required = null;
+                node.warn('ChoiceTable.init: requiredChoice and ' +
+                          'correctChoice are both set; requiredChoice ignored.'
+                );
             }
             if ('function' === typeof tmp) {
                 tmp = tmp.call(this);
@@ -48363,8 +48452,10 @@ if (!Array.prototype.indexOf) {
         opts = {
             id: 'other' + this.id,
             mainText: this.getText('customInput'),
-            requiredChoice: this.requiredChoice
-        }
+            requiredChoice: this.requiredChoice,
+            displayRequired: this.displayRequired,
+            requiredMark: this.requiredMark
+        };
         // other is the string 'CustomInput' or a conf object.
         if ('object' === typeof other) J.mixin(opts, other);
         // Force initially hidden.
@@ -48856,6 +48947,7 @@ if (!Array.prototype.indexOf) {
 
         // Set values, random or pre-set.
         i = -1;
+        // Pre-set.
         if ('undefined' !== typeof options.values) {
             if (!J.isArray(options.values)) tmp = [ options.values ];
             len = tmp.length;
@@ -48914,8 +49006,8 @@ if (!Array.prototype.indexOf) {
 
         // Make a random comment.
         if (this.textarea) this.textarea.value = J.randomString(100, '!Aa0');
-        if (this.custominput && !this.custominput.isHidden()) {
-            this.custominput.setValues();
+        if (this.customInput && !this.customInput.isHidden()) {
+            this.customInput.setValues();
         }
     };
 
@@ -49191,11 +49283,6 @@ if (!Array.prototype.indexOf) {
     ChoiceTableGroup.separator = '::';
 
     ChoiceTableGroup.texts = {
-
-        autoHint: function(w) {
-            if (w.requiredChoice) return '*';
-            else return false;
-        },
 
         error: 'Selection required.'
     };
@@ -49740,17 +49827,24 @@ if (!Array.prototype.indexOf) {
                                 'be a string, false, or undefined. Found: ' +
                                 opts.hint);
         }
-        else {
-            // Returns undefined if there are no constraints.
-            this.hint = this.getText('autoHint');
-        }
 
-        if (this.required && this.hint !== false &&
-            this.hint.charAt(this.hint.length-1) != '*' &&
+        if (this.required && this.hint !== false && 
             opts.displayRequired !== false) {
+            
+            tmp = this.requiredMark;
 
-                this.hint += ' *';
+            if (this.hint) {
+                if (this.hint.charAt(this.hint.length-1) !== tmp) {
+                    this.hint += ' ' + tmp;
+                }
+            }
+            else {
+                this.hint = tmp;
+            }
+
         }
+
+        // this.hint = node.widgets.utils.processHints(opts.hint);
 
         // Set the timeFrom, if any.
         if (opts.timeFrom === false ||
@@ -50696,9 +50790,9 @@ if (!Array.prototype.indexOf) {
         // Print.
         if (this.showPrint) {
             html = this.getText('printText');
-            html += '<input class="btn btn-outline-secondary" type="button" value="' +
-            this.getText('printBtn') +
-            '" onclick="window.print()" /><br/><br/>';
+            html += '<input class="btn btn-outline-secondary" ' +
+                'type="button" value="' + this.getText('printBtn') +
+                '" onclick="window.print()" /><br/><br/>';
         }
 
         // Header for buttons.
@@ -51523,7 +51617,8 @@ if (!Array.prototype.indexOf) {
                     res = '(Must be before ' + w.params.max + ')';
                 }
             }
-            return w.required ? ((res || '') + ' *') : (res || false);
+            return w.required && w.displayRequired ?
+                ((res || '') + ' ' + w.requiredMark) : (res || false);
         },
         numericErr: function(w) {
             var str, p;
@@ -52554,7 +52649,9 @@ if (!Array.prototype.indexOf) {
                                     'undefined. Found: ' + opts.hint);
             }
             this.hint = opts.hint;
-            if (this.required) this.hint += ' *';
+            if (this.required && this.displayRequired) {
+                this.hint += ' ' + this.requiredMark;
+            }
         }
         else {
             this.hint = this.getText('autoHint');
@@ -53029,7 +53126,7 @@ if (!Array.prototype.indexOf) {
     CustomInputGroup.separator = '::';
 
     CustomInputGroup.texts.autoHint = function(w) {
-        if (w.requiredChoice) return '*';
+        if (w.requiredChoice && w.displayRequired) return w.requiredMark;
         else return false;
     };
     CustomInputGroup.texts.inputErr = 'One or more errors detected.';
@@ -53496,7 +53593,9 @@ if (!Array.prototype.indexOf) {
         // Set the hint, if any.
         if ('string' === typeof opts.hint) {
             this.hint = opts.hint;
-            if (this.requiredChoice) this.hint += ' *';
+            if (this.requiredChoice && this.displayRequired) {
+                this.hint += ' ' + this.requiredMark;
+            }
         }
         else if ('undefined' !== typeof opts.hint) {
             throw new TypeError('CustomInputGroup.init: hint must ' +
@@ -54049,6 +54148,14 @@ if (!Array.prototype.indexOf) {
 
         if ('undefined' === typeof s.requiredChoice && that.requiredChoice) {
             s.requiredChoice = that.requiredChoice;
+        }
+        
+        if ('undefined' === typeof s.displayRequired) {
+            s.displayRequired = that.displayRequired;
+        }
+
+        if ('undefined' === typeof s.requiredMark) {
+            s.requiredMark = that.requiredMark;
         }
 
         if ('undefined' === typeof s.timeFrom) s.timeFrom = that.timeFrom;
@@ -55265,10 +55372,9 @@ if (!Array.prototype.indexOf) {
         // then unlocked by GameWindow, but otherwise it must be
         // done here.
         node.on('PLAYING', function() {
-            var prop, step, delay;
+            var prop, delay;
 
-            step = node.game.getCurrentGameStage();
-            prop = node.game.plot.getProperty(step, 'donebutton');
+            prop = node.game.getProperty('donebutton');
             if (prop === false || (prop && prop.enableOnPlaying === false)) {
                 // It might be disabled already, but we do it again.
                 that.disable();
@@ -55293,10 +55399,15 @@ if (!Array.prototype.indexOf) {
                     that.enable();
                 }
             }
-            if ('string' === typeof prop) that.button.value = prop;
-            else if (prop && prop.text) that.button.value = prop.text;
+            if ('string' === typeof prop) {
+                that.button.value = prop;
+            }
+            else if (prop) {
+                if (prop.text) that.button.value = prop.text;
+                if (prop.onclick) setOnClick(that, prop.onclick, true);
+            }  
 
-            if (prop) setOnClick(this, prop.onclick, true);
+            
         });
 
         if (this.disableOnDisconnect) {
@@ -55375,6 +55486,11 @@ if (!Array.prototype.indexOf) {
                                     ' or undefined. Found: ' + onclick);
             }
             that.onclick = onclick;
+        }
+        if (step) {
+            node.once('REALLY_DONE', function() {
+                that.onclick = null;
+            });
         }
     }
 
@@ -55829,8 +55945,11 @@ if (!Array.prototype.indexOf) {
                                 'be a string, false, or undefined. Found: ' +
                                 tmp);
         }
-        if (this.requiredChoice && tmp !== false) {
-            this.hint = tmp ? this.hint + ' *' : ' *';
+        if (this.requiredChoice && tmp !== false &&
+            opts.displayRequired !== false) {
+
+            this.hint = tmp ?
+                (this.hint + ' ' + this.requiredMark) : ' ' + this.requiredMark;
         }
 
     }
@@ -57091,7 +57210,8 @@ if (!Array.prototype.indexOf) {
             exitCodeGroup.className = 'input-group-btn';
 
             exitCodeBtn = document.createElement('button');
-            exitCodeBtn.className = 'btn btn-outline-secondary endscreen-copy-btn';
+            exitCodeBtn.className =
+                'btn btn-outline-secondary endscreen-copy-btn';
             exitCodeBtn.innerHTML = this.getText('copyButton');
             exitCodeBtn.type = 'button';
             exitCodeBtn.onclick = function() {
@@ -57110,7 +57230,7 @@ if (!Array.prototype.indexOf) {
         basePay = node.game.settings.BASE_PAY;
         if ('undefined' !== typeof basePay) {
             this.updateDisplay({
-                basePay: basePay, total: basePay, exitCode: ''
+                basePay: basePay, total: basePay, exitCode: 'N/A'
             });
         }
 
@@ -58360,7 +58480,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    GroupMalleability.version = '0.1.0';
+    GroupMalleability.version = '0.2.0';
     GroupMalleability.description = 'Displays an interface to measure ' +
         'perception for group malleability.';
 
@@ -58486,6 +58606,11 @@ if (!Array.prototype.indexOf) {
         else if (opts.mainText !== false) {
              this.mainText = this.getText('mainText');
         }
+
+        // Keep reference to pass to ChoiceTableGroup on creation.
+        this.requiredMark = opts.requiredMark;
+        this.displayRequired = opts.displayRequired;
+
     };
 
     GroupMalleability.prototype.append = function() {
@@ -58499,7 +58624,9 @@ if (!Array.prototype.indexOf) {
             title: false,
             panel: false,
             requiredChoice: this.required,
-            header: this.header
+            header: this.header,
+            displayRequired: this.displayRequired,
+            requiredMark: this.requiredMark
         });
     };
 
@@ -60131,7 +60258,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    RiskGauge.version = '0.8.0';
+    RiskGauge.version = '0.9.0';
     RiskGauge.description = 'Displays an interface to ' +
         'measure risk preferences with different methods.';
 
@@ -60328,6 +60455,9 @@ if (!Array.prototype.indexOf) {
         this.on('unhighlighted', function() {
             if (gauge.unhighlight) gauge.unhighlight();
         });
+
+        this.displayRequired = opts.displayRequired;
+        this.requiredMark = opts.requiredMark;
     };
 
     RiskGauge.prototype.append = function() {
@@ -60420,7 +60550,9 @@ if (!Array.prototype.indexOf) {
             mainText: this.mainText || this.getText('holt_laury_mainText'),
             title: false,
             requiredChoice: true,
-            storeRef: false
+            storeRef: false,
+            displayRequired: this.displayRequired,
+            requiredMark: this.requiredMark
         });
 
         return gauge;
@@ -60642,6 +60774,8 @@ if (!Array.prototype.indexOf) {
                     initialValue: 0,
                     displayValue: false,
                     displayNoChange: false,
+                    displayRequired: that.displayRequired,
+                    requiredMark: that.requiredMark,
                     type: 'flat',
                     required: true,
                     panel: false,
@@ -60817,7 +60951,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    SDO.version = '0.3.0';
+    SDO.version = '0.4.0';
     SDO.description = 'Displays an interface to measure Social ' +
         'Dominance Orientation (S.D.O.).';
 
@@ -61033,6 +61167,10 @@ if (!Array.prototype.indexOf) {
             }
             this.mainText = opts.mainText;
         }
+
+        // Keep reference to pass to ChoiceTableGroup on creation.
+        this.requiredMark = opts.requiredMark;
+        this.displayRequired = opts.displayRequired;
     };
 
     SDO.prototype.append = function() {
@@ -61044,7 +61182,9 @@ if (!Array.prototype.indexOf) {
             title: false,
             panel: false,
             requiredChoice: this.required,
-            header: this.header
+            header: this.header,
+            displayRequired: this.displayRequired,
+            requiredMark: this.requiredMark
         });
     };
 
@@ -61113,6 +61253,7 @@ if (!Array.prototype.indexOf) {
             return 'Value: ' + value;
         },
         noChange: 'No change',
+        // TODO: if the knob is hidden, the message is a bit unclear.
         error: '<em>Movement required</em>. If you agree with the current ' +
         'value, move the slider away and then back to this position.',
         autoHint: function(w) {
@@ -61502,7 +61643,9 @@ if (!Array.prototype.indexOf) {
         }
 
         if (this.required && this.hint !== false) {
-            if (opts.displayRequired !== false) this.hint += ' *';
+            if (opts.displayRequired !== false) {
+                this.hint += ' ' + this.requiredMark;
+            }
         }
 
         if (opts.onmove) {
@@ -61803,7 +61946,7 @@ if (!Array.prototype.indexOf) {
 
     // ## Meta-data
 
-    SVOGauge.version = '0.8.1';
+    SVOGauge.version = '0.9.0';
     SVOGauge.description = 'Displays an interface to measure social ' +
         'value orientation (S.V.O.).';
 
@@ -61811,7 +61954,7 @@ if (!Array.prototype.indexOf) {
 
     SVOGauge.texts = {
         mainText: 'You and another randomly selected participant ' +
-        'will receive an <em>extra bonus</em>.<br/>' +
+        'will receive an <em>extra bonus</em>.  ' +
         'Choose the preferred bonus amounts (in cents) for you ' +
         'and the other participant in each row.<br/>' +
         'We will select <em>one row at random</em> ' +
@@ -61948,6 +62091,9 @@ if (!Array.prototype.indexOf) {
         this.on('unhighlighted', function() {
             gauge.unhighlight();
         });
+
+        this.displayRequired = opts.displayRequired;
+        this.requiredMark = opts.requiredMark;
     };
 
     SVOGauge.prototype.append = function() {
@@ -62102,7 +62248,9 @@ if (!Array.prototype.indexOf) {
             title: false,
             renderer: renderer,
             requiredChoice: this.required,
-            storeRef: false
+            storeRef: false,
+            displayRequired: this.displayRequired,
+            requiredMark: this.requiredMark
         });
 
         return gauge;
